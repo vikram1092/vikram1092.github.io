@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Vikram Ramkumar</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Custom Fonts -->
+    <link href="css/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600"  rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="css/devicons.css">
+
+    <!-- Plugin CSS -->
+    <link href="css/vendor/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css">
+
+    <!-- Theme CSS -->
+    <link href="css/tutorial.min.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body id="page-top">
+
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="tutorialHome.html">HOME</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="page-scroll" href="tutorial1Intro.html">Intro</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="tutorial2Xcode.html">XCode</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="tutorial3BasicViews.html">Basic views</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="tutorial4Tables.html">Table Views</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="tutorial5TabBarViews.html">Tab Bar Views</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="tutorial6NavigationViews.html">Navigation Views</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <section class="bg-primary" id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <h2 class="section-heading">iOS For Beginners</h2>
+                    <br>
+                    <h3 class="section-heading">Lesson 4 – Table Views</h3>
+                    <h4 class="section-heading">20 minute lesson</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <h2 class="section-heading">Objective</h2>
+                    <hr class="primary">
+                    <p>Given access to XCode materials, students will be able to design table views in their apps.</p>
+                <br/>
+                <br/>
+                    <h2 class="section-heading">Setting Up The Table</h2>
+                    <hr class="primary">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <ol>
+                      <li>
+                        <p>Start an Xcode project named <b>TableView</b>.</p>
+                        </li>
+                      <li>
+                        <p>In the file, <b>ViewController.swift</b>, change the class type from <i>UIViewController</i> to <i>UITableViewController</i>.</p>
+                        </li>
+                      <li>
+                        <p>To create a table view, we require a data model that the table view can use.<br/>For this lesson, we will be using the simple data model below. Copy and paste this code at the top of your <b>ViewController</b> class:
+                        </p>
+                        <pre>var cellData = [["Red", UIColor(red: 1, green: 0, blue: 0, alpha: 1)],
+                ["Green", UIColor(red: 0, green: 1, blue: 0, alpha: 1)],
+                ["Blue", UIColor(red: 0, green: 0, blue: 1, alpha: 0.8)],
+                ["Yellow", UIColor(red: 1, green: 1, blue: 0, alpha: 1)],
+                ["Gray", UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)],
+                ["Purple", UIColor(red: 0.8, green: 00, blue: 1, alpha: 1)]]</pre>
+                        </li>
+                        <br/>
+                      <li>
+                        <p>Once you have your data model, you need to implement your table view itself. You need to tell your view controller how many cells your table will have. In order to do this, you need to override and implement the function, <b>numberOfRowsInSection</b>, that belongs to the <b>UITableViewController</b>'s delegate, <i>UITableViewDelegate</i>.
+                        <br/>
+                        <br/>
+                        What is a delegate? Any view controller uses methods of their delegates to manage selections done on a custom view, such as tables, navigation views, collection views, etc.
+                        <br/>
+                        <br/>
+                        You will need to tell the delegate that your table has as many cells as the data model, <b>cellData</b>.
+                        <br/>
+                        Place the following code into your <b>ViewController</b> class:
+                        </p>
+                        <pre>
+override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    
+    return cellData.count
+}</pre>
+                        </li>
+                        <br/>
+                      <li>
+                        <p>Once you have determined the size, you need to tell the <i>UITableViewDelegate</i> how you want to initialize each cell. In order to do this, you need to implement the function, <b>cellForRowAt</b>, which handles the properties of the cell at each row.
+                        <br/>
+                        <br/>
+                        What we would like to do is have a label on each cell that says the name of the color, and the background of the cell to represent that color itself.
+                        <br/>
+                        <br/>
+                        Since we have colors and their names in our data model, we can perform this by using those parameters. In order to help you write out this function, here is the code you will need:
+                        </p>
+                        <pre>override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    
+    //Get cell from identifier
+    let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
+    
+    //Set the label with our array's first parameter
+    let label = cell.viewWithTag(1) as! UILabel
+    label.text = cellData[indexPath.row][0] as! String
+    
+    //Set the background color with our array's second parameter
+    cell.backgroundColor = cellData[indexPath.row][1] as! UIColor
+    
+    return cell
+}</pre>
+                        <br/>
+                        <p>This concludes all work within your <b>ViewController</b> class.
+                        <br/>
+                        Now we move on to <b>Main.storyboard</b>, the storyboard file, to visualize the table view, table cells, and other properties.
+                        </p>
+                        </li>
+                        <li>
+                            <p>In <b>Main.storyboard</b>, select the existing <b>ViewController</b> class and delete it.
+                            </p>
+                        </li>
+                        <li>
+                            <p>In the bottom right of Xcode, select <b>Object Library</b>, search for <b>Table View Controller</b>, and drag it to the middle.
+                            </p>
+                            <img src="img/Tutorials/4.1.png" alt="Object Library">
+                        </li>
+                        <br/>
+                        <br/>
+                        <li>
+                            <p>The table should contain a prototype cell in it already. This cell is the one that will be reused by iOS according to its identifier. Select the cell in the middle, and select <b>Attributes Inspector</b> in the right hand utilities.
+                            </p>
+                            <img src="img/Tutorials/4.2.png" alt="Attributes Inspector">
+                        </li>
+                        <br/>
+                        <br/>
+                        <li>
+                            <p>Type <b>Cell</b> in the <i>Identifier</i> option to make sure it is called by the function, <b>cellForRow</b>.
+                            </p>
+                        </li>
+                        <li>
+                            <p>Now you need to layout a label for the cell you just created. In the <b>Object Library</b>, search for <b>Label</b>, and drag it to the middle of your cell.
+                            </p>
+                        </li>
+                        <li>
+                            <p>In the <b>Attributes Inspector</b>, set the tag of the label to be <b>1</b>.
+                            </p>
+                            <img src="img/Tutorials/4.3.png" alt="Set Label Tag">
+                        </li>
+                        <br/>
+                        <li>
+                            <p>Now select the <b>Table View Controller</b> itself, then in the <b>Identity Inspector</b> (next to the <b>Attributes Inspector</b>), type <b>ViewController</b> into the <b>Class</b> option.
+                            </p>
+                        </li>
+                        <li>
+                            <p>With the <b>Table View Controller</b> selected, ensure that <b>Initial View Controller</b> is selected in the <b>Attributes Inspector</b>.
+                            </p>
+                        </li>
+                        <li>
+                            <p>Launch your application in your phone or simulator. You should be able to see the screen below.
+                            </p>
+                            <img src="img/Tutorials/4.4.jpg" alt="Phone Screen">
+                        </li>
+                    </ol>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+
+                    <br/>
+                    <br/>
+                    <br/>
+                    <h2 class="section-heading">Summary</h2>
+                    <hr class="primary">
+                    <br/>
+                    <p>Congratulations! You have created your first Table View application! 
+                    <br/>
+                    You have now learned to create table views using Xcode. You've learned how to construct the data model, how to manipulate the data structures involved, and how to display a table view in an iOS application. 
+                    <br/>
+                    <br/>
+                    Now you can move onto the next lession, where you will learn how to design and layout tab bar views.</p>
+                    <br/>
+                    <a href="tutorial5TabBarViews.html" class="btn btn-xl">Move Onto Tutorial 5</a>
+                </div>
+            </div>
+            <br>
+            <br>         
+        </div>
+    </section>
+
+    <!-- jQuery -->
+    <script src="css/vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="css/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="css/vendor/scrollreveal/scrollreveal.min.js"></script>
+    <script src="css/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+    <!-- Theme JavaScript -->
+    <script src="js/tutorial.min.js"></script>
+
+</body>
+
+</html>
