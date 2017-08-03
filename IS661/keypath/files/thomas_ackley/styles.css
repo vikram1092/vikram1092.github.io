@@ -1115,16 +1115,16 @@
 #u220 {
   border-width:0px;
   position:absolute;
-  left:80px;
+  left:158px;
   top:390px;
-  width:140px;
+  width:126px;
   height:25px;
 }
 #u220_input {
   position:absolute;
   left:0px;
   top:0px;
-  width:140px;
+  width:126px;
   height:25px;
   font-family:'Helvetica';
   font-weight:400;
@@ -1197,4 +1197,26 @@
   top:0px;
   width:195px;
   word-wrap:break-word;
+}
+#u225 {
+  border-width:0px;
+  position:absolute;
+  left:10px;
+  top:390px;
+  width:130px;
+  height:25px;
+}
+#u225_input {
+  position:absolute;
+  left:0px;
+  top:0px;
+  width:130px;
+  height:25px;
+  font-family:'Helvetica';
+  font-weight:400;
+  font-style:normal;
+  font-size:13px;
+  text-decoration:none;
+  color:#333333;
+  text-align:center;
 }
