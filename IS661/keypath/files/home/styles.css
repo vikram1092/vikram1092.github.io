@@ -2070,3 +2070,28 @@
   color:#333333;
   text-align:center;
 }
+#u145_img {
+  border-width:0px;
+  position:absolute;
+  left:0px;
+  top:0px;
+  width:21px;
+  height:21px;
+}
+#u145 {
+  border-width:0px;
+  position:absolute;
+  left:68px;
+  top:44px;
+  width:21px;
+  height:21px;
+}
+#u146 {
+  border-width:0px;
+  position:absolute;
+  left:2px;
+  top:2px;
+  width:17px;
+  visibility:hidden;
+  word-wrap:break-word;
+}
