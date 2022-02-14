@@ -269,6 +269,10 @@ header .header-content .header-content-inner p {
 .portfolio-box:focus {
   outline: none;
 }
+cling-background {
+  background: rgb(255,220,66);
+  background: linear-gradient(135deg, rgba(255,220,66,1) 0%, rgba(244,157,55,1) 100%);
+}
 @media (min-width: 768px) {
   .portfolio-box .portfolio-box-caption .portfolio-box-caption-content .project-category {
     font-size: 16px;
