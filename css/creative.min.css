@@ -38,7 +38,7 @@ h2 {
     font-family: Source Sans Pro, 'Helvetica Neue', Arial, sans-serif
 }
 hr {
-    border-color: #2BBDC1;
+    border-color: #274462;
     border-width: 1px;
     max-width: 100px
 }
@@ -47,7 +47,7 @@ hr.light {
 }
 a {
     transition: all .35s;
-    color: #2BBDC1
+    color: #274462
 }
 a:focus,
 a:hover {
@@ -59,7 +59,7 @@ p {
     margin-bottom: 20px
 }
 .bg-primary {
-    background-color: #2BBDC1
+    background-color: #274462
 }
 .skills {
     -webkit-background-size: cover;
@@ -96,7 +96,7 @@ aside {
     -moz-transition: all .35s
 }
 .navbar-default .navbar-header .navbar-brand {
-    color: #2BBDC1;
+    color: #274462;
     font-weight: 400;
     text-transform: uppercase
 }
@@ -119,11 +119,11 @@ aside {
 }
 .navbar-default .nav>li>a:focus:hover,
 .navbar-default .nav>li>a:hover {
-    color: #2BBDC1
+    color: #274462
 }
 .navbar-default .nav>li.active>a,
 .navbar-default .nav>li.active>a:focus {
-    color: #2BBDC1!important;
+    color: #274462!important;
     background-color: transparent
 }
 .navbar-default .nav>li.active>a:focus:hover,
@@ -171,7 +171,7 @@ aside {
         border-color: rgba(34, 34, 34, .05)
     }
     .navbar-default.affix .navbar-header .navbar-brand {
-        color: #2BBDC1;
+        color: #274462;
         font-size: 14px
     }
     .navbar-default.affix .navbar-header .navbar-brand:focus,
@@ -184,7 +184,7 @@ aside {
     }
     .navbar-default.affix .nav>li>a:focus:hover,
     .navbar-default.affix .nav>li>a:hover {
-        color: #2BBDC1
+        color: #274462
     }
 }
 header {
@@ -206,11 +206,11 @@ header .header-content .header-content-inner h1 {
     text-transform: uppercase;
     margin-top: 0;
     margin-bottom: 0;
-    font-size: 40px
+    font-size: 40px;
     letter-spacing: 5px;
 }
 header .header-content .header-content-inner hr {
-    margin: 30px auto
+    margin: 30px auto;
 }
 header .header-content .header-content-inner p {
     font-weight: 100;
@@ -258,7 +258,7 @@ header .header-content .header-content-inner p {
     margin: 50px auto 0
 }
 .skills-icon {
-    color: #2BBDC1;
+    color: #274462;
     font-size: 50px;
 }
 
@@ -267,7 +267,7 @@ header .header-content .header-content-inner p {
         margin: 20px auto 0
     }
     .skills-icon {
-        color: #2BBDC1;
+        color: #274462;
         font-size: 70px;
     }
 }
@@ -277,12 +277,16 @@ header .header-content .header-content-inner p {
 .portfolio-box {
     position: relative;
     display: block;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .portfolio-box .portfolio-box-caption {
     color: #fff;
     opacity: 0;
     display: block;
-    background: #2BBDC1;
+    background: #274462;
     position: absolute;
     bottom: 0;
     text-align: center;
@@ -340,7 +344,7 @@ header .header-content .header-content-inner p {
     margin: 0 auto 20px
 }
 .text-primary {
-    color: #2BBDC1
+    color: #274462
 }
 .no-gutter>[class*=col-] {
     padding-right: 0;
@@ -390,11 +394,11 @@ fieldset[disabled] .btn-default:hover {
 }
 .btn-color {
     color: #fff;
-    background-color: #2BBDC1;
-    border-color: #2BBDC1;
+    background-color: #274462;
+    border-color: #274462;
 }
 .btn-white {
-    color: #2BBDC1;
+    color: #274462;
     background-color: #fff;
     border-color: #fff;
     margin-bottom: 10px;
@@ -414,7 +418,7 @@ fieldset[disabled] .btn-default:hover {
 .btn-primary:hover,
 .open>.dropdown-toggle.btn-primary {
     color: #fff;
-    background-color: #2BBDC1;
+    background-color: #274462;
     border-color: #ed431f
 }
 .btn-primary.disabled,
@@ -435,11 +439,11 @@ fieldset[disabled] .btn-primary.focus,
 fieldset[disabled] .btn-primary:active,
 fieldset[disabled] .btn-primary:focus,
 fieldset[disabled] .btn-primary:hover {
-    background-color: #2BBDC1;
-    border-color: #2BBDC1
+    background-color: #274462;
+    border-color: #274462
 }
 .btn-primary .badge {
-    color: #2BBDC1;
+    color: #274462;
     background-color: #fff
 }
 .btn {
@@ -495,4 +499,13 @@ img::-moz-selection {
     0% { opacity:1; }
     50% { opacity:0; }
     100% { opacity:1; }
+}
+.skipper-background {
+  background-color: #004876;
+}
+@media (min-width: 992px) {
+    .row.popup-gallery {
+        display: flex;
+        flex-wrap: wrap;
+    }
 }
