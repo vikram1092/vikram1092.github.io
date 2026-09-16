@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const work = [
+  { label: 'Skipper AI', href: '/work/skipper/' },
+  { label: 'Cling', href: '/work/cling/' },
+  { label: 'The League', href: '/work/the-league/' },
+];
+---
+
+<BaseLayout
+  title="Vikram Ramkumar — Engineer, founder, builder"
+  description="Vikram Ramkumar builds ambitious products across AI and mobile."
+>
+  <main class="home t-tilt" id="main">
+    <div class="home__scene t-tilt-card">
+      <div class="home__image" aria-hidden="true"></div>
+      <div class="home__wash" aria-hidden="true"></div>
+      <div class="home__grid" aria-hidden="true"></div>
+      <div class="t-tilt-glare" aria-hidden="true"></div>
+
+      <header class="home__header t-stagger">
+        <a class="home__mark t-stagger-line t-stagger-line--1" href="/" aria-label="Vikram Ramkumar, home">VR</a>
+        <p class="home__signal t-stagger-line t-stagger-line--2">
+          <span></span>
+          <span class="t-shimmer" data-text="Available for impossible problems">Available for impossible problems</span>
+        </p>
+        <a class="home__contact t-stagger-line t-stagger-line--3" href="mailto:vik.r92@gmail.com">Contact ↗</a>
+      </header>
+
+      <section class="home__identity t-stagger" aria-labelledby="home-title">
+        <p class="home__kicker t-stagger-line t-stagger-line--1">Engineer · Founder · Builder</p>
+        <h1 id="home-title" class="t-stagger-line t-stagger-line--2">
+          <span>Vikram</span>
+          <span>Ramkumar</span>
+        </h1>
+        <p class="home__line t-stagger-line t-stagger-line--3">AI / mobile / zero → one</p>
+      </section>
+
+      <footer class="home__footer t-stagger">
+        <nav class="home__work t-stagger-line t-stagger-line--1" aria-label="Selected work">
+          <span class="home__label">Selected work</span>
+          {work.map((item, index) => (
+            <a href={item.href}><span>0{index + 1}</span>{item.label}</a>
+          ))}
+        </nav>
+        <div class="home__links t-stagger-line t-stagger-line--2">
+          <a href="/resume/vikram-ramkumar.pdf" target="_blank" rel="noreferrer">Résumé ↗</a>
+          <a href="https://www.linkedin.com/in/vikram1092" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+        </div>
+      </footer>
+
+      <span class="home__index" aria-hidden="true">001</span>
+      <span class="home__axis home__axis--x" aria-hidden="true"></span>
+      <span class="home__axis home__axis--y" aria-hidden="true"></span>
+    </div>
+  </main>
+
+  <script>
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    const tilt = document.querySelector<HTMLElement>('.t-tilt');
+    const scene = tilt?.querySelector<HTMLElement>('.t-tilt-card');
+
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.t-stagger').forEach((element) => element.classList.add('is-shown'));
+    });
+
+    function resetTilt() {
+      if (!tilt || !scene) return;
+      tilt.classList.remove('is-hover');
+      scene.classList.remove('is-tilting');
+      scene.style.setProperty('--tilt-rx', '0deg');
+      scene.style.setProperty('--tilt-ry', '0deg');
+    }
+
+    function trackTilt(event: PointerEvent) {
+      if (!tilt || !scene || reduce.matches || event.pointerType === 'touch') return;
+      const rect = tilt.getBoundingClientRect();
+      const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+      const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+      tilt.classList.add('is-hover');
+      scene.classList.add('is-tilting');
+      scene.style.setProperty('--tilt-ry', `${((x - 0.5) * 1.6).toFixed(2)}deg`);
+      scene.style.setProperty('--tilt-rx', `${((0.5 - y) * 1.2).toFixed(2)}deg`);
+      scene.style.setProperty('--tilt-gx', `${(x * 100).toFixed(1)}%`);
+      scene.style.setProperty('--tilt-gy', `${(y * 100).toFixed(1)}%`);
+    }
+
+    tilt?.addEventListener('pointermove', trackTilt);
+    tilt?.addEventListener('pointerleave', resetTilt);
+  </script>
+</BaseLayout>
