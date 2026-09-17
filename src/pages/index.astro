@@ -19,8 +19,8 @@ const lastName = Array.from('Ramkumar');
     <div class="home__scene t-tilt-card">
       <div class="home__image" aria-hidden="true"></div>
       <div class="home__wash" aria-hidden="true"></div>
-      <div class="home__grid" aria-hidden="true"></div>
       <div class="home__halftone" aria-hidden="true"></div>
+      <div class="home__ambient" aria-hidden="true"></div>
       <div class="t-tilt-glare" aria-hidden="true"></div>
 
       <header class="home__header t-stagger">
@@ -41,8 +41,8 @@ const lastName = Array.from('Ramkumar');
 
       <footer class="home__footer t-stagger">
         <nav class="home__work t-stagger-line t-stagger-line--1" aria-label="Selected work">
-          {work.map((item, index) => (
-            <a href={item.href} target="_blank" rel="noreferrer"><span>0{index + 1}</span>{item.label}<i aria-hidden="true">↗</i></a>
+          {work.map((item) => (
+            <a href={item.href} target="_blank" rel="noreferrer">{item.label}</a>
           ))}
         </nav>
         <div class="home__links t-stagger-line t-stagger-line--2">
@@ -50,10 +50,6 @@ const lastName = Array.from('Ramkumar');
           <a href="https://www.linkedin.com/in/vikram1092" target="_blank" rel="noreferrer">LinkedIn ↗</a>
         </div>
       </footer>
-
-      <span class="home__index" aria-hidden="true">001</span>
-      <span class="home__axis home__axis--x" aria-hidden="true"></span>
-      <span class="home__axis home__axis--y" aria-hidden="true"></span>
     </div>
   </main>
 
@@ -81,8 +77,8 @@ const lastName = Array.from('Ramkumar');
       const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
       tilt.classList.add('is-hover');
       scene.classList.add('is-tilting');
-      scene.style.setProperty('--tilt-ry', `${((x - 0.5) * 1.6).toFixed(2)}deg`);
-      scene.style.setProperty('--tilt-rx', `${((0.5 - y) * 1.2).toFixed(2)}deg`);
+      scene.style.setProperty('--tilt-ry', `${((x - 0.5) * 0.8).toFixed(2)}deg`);
+      scene.style.setProperty('--tilt-rx', `${((0.5 - y) * 0.6).toFixed(2)}deg`);
       scene.style.setProperty('--tilt-gx', `${(x * 100).toFixed(1)}%`);
       scene.style.setProperty('--tilt-gy', `${(y * 100).toFixed(1)}%`);
     }
