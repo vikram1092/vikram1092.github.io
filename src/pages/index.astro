@@ -2,10 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const work = [
-  { label: 'Skipper AI', href: '/work/skipper/' },
-  { label: 'Cling', href: '/work/cling/' },
-  { label: 'The League', href: '/work/the-league/' },
+  { label: 'Skipper AI', href: 'https://www.tryskipper.ai/' },
+  { label: 'Cling', href: 'https://www.cling-app.com/' },
+  { label: 'The League', href: 'https://www.theleague.com/' },
 ];
+
+const firstName = Array.from('Vikram');
+const lastName = Array.from('Ramkumar');
 ---
 
 <BaseLayout
@@ -17,31 +20,29 @@ const work = [
       <div class="home__image" aria-hidden="true"></div>
       <div class="home__wash" aria-hidden="true"></div>
       <div class="home__grid" aria-hidden="true"></div>
+      <div class="home__halftone" aria-hidden="true"></div>
       <div class="t-tilt-glare" aria-hidden="true"></div>
 
       <header class="home__header t-stagger">
         <a class="home__mark t-stagger-line t-stagger-line--1" href="/" aria-label="Vikram Ramkumar, home">VR</a>
-        <p class="home__signal t-stagger-line t-stagger-line--2">
-          <span></span>
-          <span class="t-shimmer" data-text="Available for impossible problems">Available for impossible problems</span>
-        </p>
-        <a class="home__contact t-stagger-line t-stagger-line--3" href="mailto:vik.r92@gmail.com">Contact ↗</a>
+        <a class="home__contact t-stagger-line t-stagger-line--2" href="mailto:vik.r92@gmail.com">Contact ↗</a>
       </header>
 
       <section class="home__identity t-stagger" aria-labelledby="home-title">
-        <p class="home__kicker t-stagger-line t-stagger-line--1">Engineer · Founder · Builder</p>
-        <h1 id="home-title" class="t-stagger-line t-stagger-line--2">
-          <span>Vikram</span>
-          <span>Ramkumar</span>
+        <h1 id="home-title" class="t-stagger-line t-stagger-line--1" aria-label="Vikram Ramkumar">
+          <span class="name-line" aria-hidden="true">
+            {firstName.map((letter) => <span class="name-glyph" data-letter={letter}>{letter}</span>)}
+          </span>
+          <span class="name-line name-line--outline" aria-hidden="true">
+            {lastName.map((letter) => <span class="name-glyph" data-letter={letter}>{letter}</span>)}
+          </span>
         </h1>
-        <p class="home__line t-stagger-line t-stagger-line--3">AI / mobile / zero → one</p>
       </section>
 
       <footer class="home__footer t-stagger">
         <nav class="home__work t-stagger-line t-stagger-line--1" aria-label="Selected work">
-          <span class="home__label">Selected work</span>
           {work.map((item, index) => (
-            <a href={item.href}><span>0{index + 1}</span>{item.label}</a>
+            <a href={item.href} target="_blank" rel="noreferrer"><span>0{index + 1}</span>{item.label}<i aria-hidden="true">↗</i></a>
           ))}
         </nav>
         <div class="home__links t-stagger-line t-stagger-line--2">
