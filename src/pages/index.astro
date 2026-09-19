@@ -1,89 +1,52 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-
 const work = [
   { label: 'Skipper AI', href: 'https://www.tryskipper.ai/' },
   { label: 'Cling', href: 'https://www.cling-app.com/' },
   { label: 'The League', href: 'https://www.theleague.com/' },
 ];
-
-const firstName = Array.from('Vikram');
-const lastName = Array.from('Ramkumar');
 ---
-
-<BaseLayout
-  title="Vikram Ramkumar — Engineer, founder, builder"
-  description="Vikram Ramkumar builds ambitious products across AI and mobile."
->
-  <main class="home t-tilt" id="main">
-    <div class="home__scene t-tilt-card">
-      <div class="home__image" aria-hidden="true"></div>
-      <div class="home__wash" aria-hidden="true"></div>
-      <div class="home__halftone" aria-hidden="true"></div>
-      <div class="home__ambient" aria-hidden="true"></div>
-      <div class="t-tilt-glare" aria-hidden="true"></div>
-
-      <header class="home__header t-stagger">
-        <a class="home__mark t-stagger-line t-stagger-line--1" href="/" aria-label="Vikram Ramkumar, home">VR</a>
-        <a class="home__contact t-stagger-line t-stagger-line--2" href="mailto:vik.r92@gmail.com">Contact ↗</a>
-      </header>
-
-      <section class="home__identity t-stagger" aria-labelledby="home-title">
-        <h1 id="home-title" class="t-stagger-line t-stagger-line--1" aria-label="Vikram Ramkumar">
-          <span class="name-line" aria-hidden="true">
-            {firstName.map((letter) => <span class="name-glyph" data-letter={letter}>{letter}</span>)}
-          </span>
-          <span class="name-line name-line--outline" aria-hidden="true">
-            {lastName.map((letter) => <span class="name-glyph" data-letter={letter}>{letter}</span>)}
-          </span>
-        </h1>
-      </section>
-
-      <footer class="home__footer t-stagger">
-        <nav class="home__work t-stagger-line t-stagger-line--1" aria-label="Selected work">
-          {work.map((item) => (
-            <a href={item.href} target="_blank" rel="noreferrer">{item.label}</a>
-          ))}
-        </nav>
-        <div class="home__links t-stagger-line t-stagger-line--2">
-          <a href="/resume/vikram-ramkumar.pdf" target="_blank" rel="noreferrer">Résumé ↗</a>
-          <a href="https://www.linkedin.com/in/vikram1092" target="_blank" rel="noreferrer">LinkedIn ↗</a>
-        </div>
-      </footer>
+<BaseLayout title="Vikram Ramkumar — Engineer, founder, builder"
+  description="Vikram Ramkumar builds ambitious products across AI and mobile.">
+  <main class="home" id="main">
+    <div class="home__photograph" aria-hidden="true"></div>
+    <div class="home__still-water" aria-hidden="true"></div>
+    <div class="home__canvas" id="water-scene" aria-hidden="true"></div>
+    <div class="home__shade" aria-hidden="true"></div>
+    <header class="home__header">
+      <a class="home__mark" href="/" aria-label="Vikram Ramkumar, home">vr<span>.</span></a>
+      <span class="home__descriptor">Engineer. Founder. Explorer.</span>
+      <a class="home__contact" href="mailto:vik.r92@gmail.com">Say hello <span aria-hidden="true">↗</span></a>
+    </header>
+    <section class="home__identity" aria-labelledby="home-title">
+      <p class="home__eyebrow">A little curiosity goes a long way.</p>
+      <h1 id="home-title">Vikram<br />Ramkumar</h1>
+    </section>
+    <div class="water-controls" hidden>
+      <p id="water-hint">Grab a letter. Make a little splash.</p>
+      <div class="water-controls__buttons">
+        <button id="water-drop" type="button" aria-describedby="water-hint">Drop a letter <span aria-hidden="true">↓</span></button>
+        <button id="water-reset" type="button">Reassemble <span aria-hidden="true">↺</span></button>
+        <button id="water-pause" type="button" aria-pressed="false" aria-label="Pause animation">Pause <span aria-hidden="true">Ⅱ</span></button>
+      </div>
+      <span class="sr-only" id="water-status" aria-live="polite"></span>
     </div>
+    <footer class="home__footer">
+      <div class="home__work-group">
+        <span class="home__label">Selected work</span>
+        <nav class="home__work" aria-label="Selected work">
+          {work.map((item) => <a href={item.href} target="_blank" rel="noreferrer">{item.label}<span aria-hidden="true">↗</span></a>)}
+        </nav>
+      </div>
+      <div class="home__links">
+        <a href="/resume/vikram-ramkumar.pdf" target="_blank" rel="noreferrer">Résumé <span aria-hidden="true">↗</span></a>
+        <a href="https://www.linkedin.com/in/vikram1092" target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+      </div>
+    </footer>
   </main>
-
   <script>
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-    const tilt = document.querySelector<HTMLElement>('.t-tilt');
-    const scene = tilt?.querySelector<HTMLElement>('.t-tilt-card');
-
-    requestAnimationFrame(() => {
-      document.querySelectorAll('.t-stagger').forEach((element) => element.classList.add('is-shown'));
-    });
-
-    function resetTilt() {
-      if (!tilt || !scene) return;
-      tilt.classList.remove('is-hover');
-      scene.classList.remove('is-tilting');
-      scene.style.setProperty('--tilt-rx', '0deg');
-      scene.style.setProperty('--tilt-ry', '0deg');
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      import('../scripts/water-scene').then(({ mountWaterScene }) => mountWaterScene()).catch(console.warn);
     }
-
-    function trackTilt(event: PointerEvent) {
-      if (!tilt || !scene || reduce.matches || event.pointerType === 'touch') return;
-      const rect = tilt.getBoundingClientRect();
-      const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
-      const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
-      tilt.classList.add('is-hover');
-      scene.classList.add('is-tilting');
-      scene.style.setProperty('--tilt-ry', `${((x - 0.5) * 0.8).toFixed(2)}deg`);
-      scene.style.setProperty('--tilt-rx', `${((0.5 - y) * 0.6).toFixed(2)}deg`);
-      scene.style.setProperty('--tilt-gx', `${(x * 100).toFixed(1)}%`);
-      scene.style.setProperty('--tilt-gy', `${(y * 100).toFixed(1)}%`);
-    }
-
-    tilt?.addEventListener('pointermove', trackTilt);
-    tilt?.addEventListener('pointerleave', resetTilt);
   </script>
 </BaseLayout>
