@@ -13,7 +13,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid #e3f4d9; outline-offs
 .home { position: relative; isolation: isolate; width: 100%; height: 100svh; min-height: 640px; overflow: hidden; background: var(--ink); }
 .home__photograph, .home__canvas, .home__shade { position: absolute; inset: 0; }
 .home__photograph { z-index: -4; background: linear-gradient(#08242a22, #0a252c77), url('/images/background.jpg') center 42% / cover; }
-.home__still-water { position: absolute; z-index: -3; inset: 64% 0 0; background: linear-gradient(#345963aa, #081e25), url('/images/background.jpg') center bottom / cover; }
+.home__still-water { position: absolute; z-index: -3; inset: 69% 0 0; background: linear-gradient(#345963aa, #081e25), url('/images/background.jpg') center bottom / cover; }
 .home__canvas { z-index: -2; opacity: 0; transition: opacity 900ms ease; }
 .home.is-ready .home__canvas { opacity: 1; }
 .home__canvas canvas { display: block; width: 100%; height: 100%; }
@@ -25,7 +25,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid #e3f4d9; outline-offs
 .home__contact { font-size: 12px; font-weight: 600; padding: 12px 0 12px 12px; }
 .home__contact span { margin-left: 13px; }
 .home__identity { position: absolute; top: 21%; left: 0; width: 100%; text-align: center; pointer-events: none; }
-h1 { margin: 28px 0 0; font-size: clamp(60px, 10vw, 150px); font-weight: 800; line-height: .98; letter-spacing: -.065em; text-shadow: 0 4px 35px #0b263877; }
+h1 { margin: 28px 0 0; font-size: clamp(60px, 8.8vw, 132px); font-weight: 800; line-height: .98; letter-spacing: -.065em; text-shadow: 0 4px 35px #0b263877; }
 .home__footer { bottom: max(32px, env(safe-area-inset-bottom)); align-items: flex-end; gap: 24px; }
 .home__label { display: block; color: #abc5c7; font-size: 9px; text-transform: uppercase; letter-spacing: .19em; margin-bottom: 14px; }
 .home__work { display: flex; gap: clamp(20px, 3vw, 48px); }
@@ -39,6 +39,7 @@ h1 { margin: 28px 0 0; font-size: clamp(60px, 10vw, 150px); font-weight: 800; li
 .home__canvas.is-dragging { cursor: grabbing; touch-action: none; }
 @media (max-width: 640px) {
   .home { min-height: 580px; }
+  .home__still-water { inset: 64% 0 0; }
   .home__header { top: max(18px, env(safe-area-inset-top)); }
   .home__identity { top: 28%; }
   h1 { margin-top: 38px; font-size: 16vw; }

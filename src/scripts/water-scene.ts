@@ -19,8 +19,8 @@ type Letter = {
 };
 
 const HEIGHT = 10;
-const HORIZON = .36; // UV origin is at the bottom.
-const WATER_Y = (HORIZON - .5) * HEIGHT;
+const MOBILE_HORIZON = .36; // UV origin is at the bottom.
+const DESKTOP_HORIZON = .31;
 const clamp = THREE.MathUtils.clamp;
 
 export async function mountWaterScene() {
@@ -39,6 +39,9 @@ export async function mountWaterScene() {
     return; // The server-rendered name, photograph, and links remain fully usable.
   }
   const mobile = matchMedia('(pointer: coarse)').matches;
+  const compact = matchMedia('(max-width: 640px)').matches;
+  const horizon = compact ? MOBILE_HORIZON : DESKTOP_HORIZON;
+  const waterY = (horizon - .5) * HEIGHT;
   renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 1.75));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.12;
@@ -87,7 +90,7 @@ export async function mountWaterScene() {
   const lakeMaterial = new THREE.ShaderMaterial({
     uniforms: {
       uScene: { value: target.texture }, uTime: time,
-      uHorizon: { value: HORIZON }, uAspect: { value: 1 }, uRipples: { value: ripples },
+      uHorizon: { value: horizon }, uAspect: { value: 1 }, uRipples: { value: ripples },
     },
     vertexShader: waterVertex,
     fragmentShader: waterFragment,
@@ -122,7 +125,7 @@ export async function mountWaterScene() {
   const listenerOptions = { signal: abort.signal };
 
   function announce(message: string) { status!.textContent = message; }
-  function splash(x: number, strength = 1, y = HORIZON - .01) {
+  function splash(x: number, strength = 1, y = horizon - .01) {
     ripples[rippleIndex].set(x / worldWidth + .5, y, time.value, strength);
     rippleIndex = (rippleIndex + 1) % ripples.length;
   }
@@ -136,7 +139,9 @@ export async function mountWaterScene() {
     letters.length = 0;
     // Real bevelled font outlines; each glyph is a separate deformable solid.
     const measure = (word: string) => [...word].reduce((sum, char) => sum + font.data.glyphs[char].ha / font.data.resolution + .045, 0);
-    const fontSize = Math.min(1.85, worldWidth * .84 / measure(words[1]));
+    const fontSize = compact
+      ? Math.min(1.85, worldWidth * .84 / measure(words[1]))
+      : Math.min(1.64, worldWidth * .76 / measure(words[1]));
     words.forEach((word, row) => {
       let x = -measure(word) * fontSize / 2;
       [...word].forEach((char, index) => {
@@ -151,13 +156,14 @@ export async function mountWaterScene() {
         const center = box.getCenter(new THREE.Vector3());
         geometry.translate(-center.x, -center.y, -center.z);
         const material = new THREE.MeshPhysicalMaterial({
-          color: 0x25dba2, metalness: 0, roughness: .18,
-          transmission: .52, thickness: fontSize * 1.5, ior: 1.38,
-          clearcoat: 1, clearcoatRoughness: .07,
+          color: 0x25dba2, metalness: 0, roughness: .12,
+          transmission: .44, thickness: fontSize * 1.5, ior: 1.38,
+          clearcoat: 1, clearcoatRoughness: .025,
+          specularIntensity: 1, specularColor: new THREE.Color(0xe4fff4),
           attenuationColor: new THREE.Color(0x20bd92), attenuationDistance: 2.5,
-          envMapIntensity: .8,
+          envMapIntensity: 1.1,
         });
-        const wobble = { value: .35 };
+        const wobble = { value: .28 };
         const phase = index * 1.23 + row * 2;
         material.onBeforeCompile = shader => {
           shader.uniforms.uJellyTime = time;
@@ -171,16 +177,18 @@ export async function mountWaterScene() {
             uniform float uJellySize;
             vec3 jellyDeform(vec3 p) {
               vec3 q = p / uJellySize;
-              float energy = .045 + uJellyWobble * .18;
-              float wave = uJellyTime * 5.5 + uJellyPhase;
-              // Volume-preserving stretch, travelling bends, and a soft surface pulse.
-              float stretch = 1.0 + sin(wave) * energy * .45;
+              float energy = uJellyWobble * .13;
+              float beat = uJellyTime * 8.2 + uJellyPhase;
+              float primary = sin(beat);
+              float secondary = sin(beat * 1.37 + .8);
+              // A whole-body, volume-preserving wiggle rather than a travelling wave.
+              float stretch = max(.82, 1.0 + primary * energy * .55);
               q.x /= sqrt(stretch);
               q.y *= stretch;
               q.z /= sqrt(stretch);
-              q.x += sin(q.y * 4.5 + wave) * energy * .35;
-              q.y += sin(q.x * 5.0 - wave * .8) * energy * .18;
-              q.z += sin(q.y * 4.0 + q.x * 3.0 + wave) * energy * .38;
+              float vertical = clamp(q.y * 1.6, -1.0, 1.0);
+              q.x += vertical * secondary * energy * .20;
+              q.z += (1.0 - vertical * vertical) * primary * energy * .14;
               return q * uJellySize;
             }
           ` + shader.vertexShader;
@@ -233,7 +241,7 @@ export async function mountWaterScene() {
     makeLetters();
     if (introDone) {
       const period = letters.find(letter => letter.char === '.');
-      if (period) { period.mode = 'floating'; period.wet = true; period.mesh.position.y = WATER_Y + period.size.y * .36; }
+      if (period) { period.mode = 'floating'; period.wet = true; period.mesh.position.y = waterY + period.size.y * .36; }
     }
     if (paused) render();
   }
@@ -253,8 +261,7 @@ export async function mountWaterScene() {
       const { mesh, velocity, size, mode } = letter;
       const scaleTarget = letter !== active && (mode === 'falling' || mode === 'floating') ? floatingScale : 1;
       letter.scale += (scaleTarget - letter.scale) * Math.min(1, dt * 4);
-      letter.wobble.value *= Math.exp(-dt * 3.2);
-      if (letter === hover) letter.wobble.value = Math.max(letter.wobble.value, .22);
+      letter.wobble.value *= Math.exp(-dt * 4.2);
       if (letter === active) {
         const dx = pointer.x + dragOffset.x - mesh.position.x;
         const dy = pointer.y + dragOffset.y - mesh.position.y;
@@ -262,7 +269,7 @@ export async function mountWaterScene() {
         mesh.position.y += dy * Math.min(1, dt * 24);
         letter.wobble.value = Math.min(1.6, .25 + Math.hypot(dx, dy) * .7);
       } else if (mode === 'home') {
-        mesh.position.y = letter.home.y + Math.sin(time.value * .75 + letter.phase) * .018;
+        mesh.position.y = letter.home.y;
       } else if (mode === 'returning') {
         velocity.x += ((letter.home.x - mesh.position.x) * 48 - velocity.x * 11) * dt;
         velocity.y += ((letter.home.y - mesh.position.y) * 48 - velocity.y * 11) * dt;
@@ -274,40 +281,41 @@ export async function mountWaterScene() {
           velocity.set(0, 0);
         }
       } else {
-        const floatY = WATER_Y + size.y * letter.scale * .36;
+        const floatY = waterY + size.y * letter.scale * .36;
         if (mode === 'falling') velocity.y -= 6.5 * dt;
         if (mesh.position.y < floatY) {
           if (!letter.wet) {
             splash(mesh.position.x, clamp(Math.abs(velocity.y) * .24, .45, 1.8));
-            letter.wobble.value = 1.6;
+            letter.wobble.value = 1.25;
+            velocity.y = Math.min(1.4, Math.abs(velocity.y) * .16);
             letter.wet = true;
             letter.mode = 'floating';
             announce(`${letter.char === '.' ? 'The period' : letter.char} is floating.`);
           }
         }
         if (letter.mode === 'floating') {
-          const bob = Math.sin(time.value * 1.8 + letter.phase) * .035;
-          velocity.y += ((floatY + bob - mesh.position.y) * 42 - velocity.y * 5.5) * dt;
-          velocity.x += Math.sin(time.value * .55 + letter.phase) * dt * .035;
+          const bob = Math.sin(time.value * 1.35 + letter.phase) * .018;
+          velocity.y += ((floatY + bob - mesh.position.y) * 34 - velocity.y * 9.5) * dt;
+          velocity.x += Math.sin(time.value * .45 + letter.phase) * dt * .018;
         }
         velocity.x *= Math.exp(-dt * 1.1);
         mesh.position.x += velocity.x * dt;
         mesh.position.y += velocity.y * dt;
-        mesh.position.y = Math.max(WATER_Y - size.y * .25, mesh.position.y);
+        mesh.position.y = Math.max(waterY - size.y * .25, mesh.position.y);
         const edge = worldWidth / 2 - size.x * letter.scale / 2 - .15;
         if (Math.abs(mesh.position.x) > edge) {
           mesh.position.x = clamp(mesh.position.x, -edge, edge);
           velocity.x *= -.5;
         }
       }
-      const squash = Math.sin(time.value * 12 + letter.phase) * letter.wobble.value * .055;
+      const squash = Math.sin(time.value * 9.5 + letter.phase) * letter.wobble.value * .035;
       mesh.scale.set((1 + squash) * letter.scale, (1 - squash) * letter.scale, (1 + squash * .5) * letter.scale);
       const depthTarget = letter === active ? 1.2 : letter.mode === 'falling' || letter.mode === 'floating' ? .65 : 0;
       mesh.position.z += (depthTarget - mesh.position.z) * Math.min(1, dt * 8);
       const targetAngle = letter === active ? clamp(velocity.x * -.045, -.2, .2)
-        : letter.mode === 'floating' ? Math.sin(time.value * 1.4 + letter.phase) * .075 : 0;
+        : letter.mode === 'floating' ? clamp(velocity.x * -.06, -.09, .09) : 0;
       mesh.rotation.z += (targetAngle - mesh.rotation.z) * Math.min(1, dt * 7);
-      mesh.rotation.y = Math.sin(time.value * .65 + letter.phase) * .025;
+      mesh.rotation.y = Math.sin(time.value * 8.2 + letter.phase) * letter.wobble.value * .025;
     }
     // Soft lateral collisions keep floating letters from piling into one another.
     for (let i = 0; i < letters.length; i++) {
@@ -380,8 +388,8 @@ export async function mountWaterScene() {
       previousPointerTime = event.timeStamp;
       active.velocity.set(0, 0);
       host.classList.add('is-dragging');
-    } else if (pointer.y < WATER_Y) {
-      splash(pointer.x, .8, clamp(pointer.y / HEIGHT + .5, .02, HORIZON));
+    } else if (pointer.y < waterY) {
+      splash(pointer.x, .8, clamp(pointer.y / HEIGHT + .5, .02, horizon));
     }
   }, listenerOptions);
   renderer.domElement.addEventListener('pointermove', event => {
