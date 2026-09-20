@@ -21,21 +21,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid #e3f4d9; outline-offs
 .home__header, .home__footer { position: absolute; left: clamp(24px, 4vw, 64px); right: clamp(24px, 4vw, 64px); display: flex; align-items: center; justify-content: space-between; }
 .home__header { top: max(24px, env(safe-area-inset-top)); height: 52px; gap: 20px; }
 .home__mark { font-size: 32px; font-weight: 800; letter-spacing: -3px; padding-right: 8px; }
-.home__mark span { color: #c0d9bf; }
 .home__descriptor { position: absolute; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 600; letter-spacing: .13em; white-space: nowrap; }
 .home__contact { font-size: 12px; font-weight: 600; padding: 12px 0 12px 12px; }
 .home__contact span { margin-left: 13px; }
 .home__identity { position: absolute; top: 21%; left: 0; width: 100%; text-align: center; pointer-events: none; }
-.home__eyebrow { margin: 0; font-size: 10px; letter-spacing: .21em; text-transform: uppercase; color: #e4ede6; text-shadow: 0 1px 12px #071e25; }
 h1 { margin: 28px 0 0; font-size: clamp(60px, 10vw, 150px); font-weight: 800; line-height: .98; letter-spacing: -.065em; text-shadow: 0 4px 35px #0b263877; }
-.water-controls { position: absolute; bottom: 19%; width: 100%; text-align: center; pointer-events: none; }
-.water-controls[hidden] { display: none; }
-.water-controls p { font-size: 11px; letter-spacing: .03em; color: #d4e3df; margin: 0 0 15px; text-shadow: 0 1px 10px #061d29; }
-.water-controls__buttons { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid #d4e9e12b; border-radius: 100px; background: #0d2b3580; backdrop-filter: blur(14px); pointer-events: auto; }
-.water-controls button { cursor: pointer; min-height: 40px; padding: 0 15px; border: 0; border-radius: 100px; background: transparent; color: #e3eeea; font-size: 10px; transition: background 180ms ease; }
-.water-controls button:hover { background: #c7e1d521; }
-.water-controls button span { margin-left: 7px; }
-.water-controls button:disabled { opacity: .4; cursor: default; }
 .home__footer { bottom: max(32px, env(safe-area-inset-bottom)); align-items: flex-end; gap: 24px; }
 .home__label { display: block; color: #abc5c7; font-size: 9px; text-transform: uppercase; letter-spacing: .19em; margin-bottom: 14px; }
 .home__work { display: flex; gap: clamp(20px, 3vw, 48px); }
@@ -48,22 +38,18 @@ h1 { margin: 28px 0 0; font-size: clamp(60px, 10vw, 150px); font-weight: 800; li
 .home__canvas.is-grabbable { cursor: grab; }
 .home__canvas.is-dragging { cursor: grabbing; touch-action: none; }
 @media (max-width: 640px) {
-  .home { min-height: 650px; }
+  .home { min-height: 580px; }
   .home__header { top: max(18px, env(safe-area-inset-top)); }
-  .home__descriptor { display: none; }
-  .home__identity { top: 24%; }
-  .home__eyebrow { font-size: 8px; letter-spacing: .15em; }
+  .home__identity { top: 28%; }
   h1 { margin-top: 38px; font-size: 16vw; }
-  .water-controls { bottom: 23%; }
-  .water-controls p { font-size: 10px; }
-  .water-controls button { padding: 0 12px; min-height: 44px; }
-  .home__footer { bottom: max(22px, env(safe-area-inset-bottom)); align-items: stretch; flex-direction: column; gap: 13px; }
-  .home__label { margin-bottom: 5px; font-size: 8px; }
-  .home__work { justify-content: space-between; gap: 12px; }
-  .home__work a { font-size: 11px; gap: 10px; }
-  .home__links { gap: 22px; padding-top: 10px; border-top: 1px solid #c7e0db26; }
-  .home__links a { font-size: 10px; }
+  .home__footer { bottom: max(24px, env(safe-area-inset-bottom)); align-items: flex-end; gap: 24px; }
+  .home__work, .home__links { flex-direction: column; gap: 4px; }
+  .home__links { align-items: flex-end; }
+  .home__work a, .home__links a { min-height: 36px; font-size: 11px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+.scene-accessibility button:focus-visible { position: fixed; z-index: 10; top: 90px; left: 24px; width: auto; height: auto; margin: 0; padding: 12px 18px; clip-path: none; overflow: visible; border: 0; border-radius: 24px; background: #123e43; color: #e9fff5; }
+.home__identity h1 { color: #51d7ad; }

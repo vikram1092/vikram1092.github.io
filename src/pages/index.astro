@@ -14,33 +14,26 @@ const work = [
     <div class="home__canvas" id="water-scene" aria-hidden="true"></div>
     <div class="home__shade" aria-hidden="true"></div>
     <header class="home__header">
-      <a class="home__mark" href="/" aria-label="Vikram Ramkumar, home">vr<span>.</span></a>
-      <span class="home__descriptor">Engineer. Founder. Explorer.</span>
-      <a class="home__contact" href="mailto:vik.r92@gmail.com">Say hello <span aria-hidden="true">↗</span></a>
+      <a class="home__mark" href="/" aria-label="Vikram Ramkumar, home">vr</a>
     </header>
     <section class="home__identity" aria-labelledby="home-title">
-      <p class="home__eyebrow">A little curiosity goes a long way.</p>
-      <h1 id="home-title">Vikram<br />Ramkumar</h1>
+      <h1 id="home-title">Vikram<br />Ramkumar.</h1>
     </section>
-    <div class="water-controls" hidden>
-      <p id="water-hint">Grab a letter. Make a little splash.</p>
-      <div class="water-controls__buttons">
-        <button id="water-drop" type="button" aria-describedby="water-hint">Drop a letter <span aria-hidden="true">↓</span></button>
-        <button id="water-reset" type="button">Reassemble <span aria-hidden="true">↺</span></button>
-        <button id="water-pause" type="button" aria-pressed="false" aria-label="Pause animation">Pause <span aria-hidden="true">Ⅱ</span></button>
-      </div>
-      <span class="sr-only" id="water-status" aria-live="polite"></span>
+    <div class="scene-accessibility" hidden>
+      <button class="sr-only" id="water-reset" type="button">Reassemble name</button>
+      <button class="sr-only" id="water-pause" type="button" aria-pressed="false">Pause animation</button>
     </div>
+    <span class="sr-only" id="water-status" aria-live="polite"></span>
     <footer class="home__footer">
       <div class="home__work-group">
-        <span class="home__label">Selected work</span>
         <nav class="home__work" aria-label="Selected work">
-          {work.map((item) => <a href={item.href} target="_blank" rel="noreferrer">{item.label}<span aria-hidden="true">↗</span></a>)}
+          {work.map((item) => <a href={item.href} target="_blank" rel="noreferrer">{item.label}</a>)}
         </nav>
       </div>
       <div class="home__links">
-        <a href="/resume/vikram-ramkumar.pdf" target="_blank" rel="noreferrer">Résumé <span aria-hidden="true">↗</span></a>
-        <a href="https://www.linkedin.com/in/vikram1092" target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+        <a href="/resume/vikram-ramkumar.pdf" target="_blank" rel="noreferrer">Résumé</a>
+        <a href="https://www.linkedin.com/in/vikram1092" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="mailto:vik.r92@gmail.com">Contact</a>
       </div>
     </footer>
   </main>

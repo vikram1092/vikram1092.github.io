@@ -7,7 +7,7 @@ import { waterVertex, waterFragment } from './water-shader';
 
 type Letter = {
   char: string;
-  mesh: THREE.Mesh<TextGeometry, THREE.MeshPhysicalMaterial>;
+  mesh: THREE.Mesh<THREE.BufferGeometry, THREE.MeshPhysicalMaterial>;
   home: THREE.Vector2;
   velocity: THREE.Vector2;
   size: THREE.Vector2;
@@ -26,12 +26,11 @@ const clamp = THREE.MathUtils.clamp;
 export async function mountWaterScene() {
   const host = document.querySelector<HTMLElement>('#water-scene');
   const home = document.querySelector<HTMLElement>('.home');
-  const controls = document.querySelector<HTMLElement>('.water-controls');
-  const dropButton = document.querySelector<HTMLButtonElement>('#water-drop');
+  const controls = document.querySelector<HTMLElement>('.scene-accessibility');
   const resetButton = document.querySelector<HTMLButtonElement>('#water-reset');
   const pauseButton = document.querySelector<HTMLButtonElement>('#water-pause');
   const status = document.querySelector<HTMLElement>('#water-status');
-  if (!host || !home || !controls || !dropButton || !resetButton || !pauseButton || !status) return;
+  if (!host || !home || !controls || !resetButton || !pauseButton || !status) return;
 
   let renderer: THREE.WebGLRenderer;
   try {
@@ -101,7 +100,7 @@ export async function mountWaterScene() {
   const lakeCamera = new THREE.Camera();
   const font = new FontLoader().parse(fontData as unknown as FontData);
   const letters: Letter[] = [];
-  const words = ['Vikram', 'Ramkumar'];
+  const words = ['Vikram', 'Ramkumar.'];
   let worldWidth = 16;
   let width = 1;
   let height = 1;
@@ -111,6 +110,7 @@ export async function mountWaterScene() {
   let animationFrame = 0;
   let lastTime = 0;
   let introDone = false;
+  let introTimer: ReturnType<typeof setTimeout> | undefined;
   let active: Letter | undefined;
   let pointerId: number | undefined;
   let hover: Letter | undefined;
@@ -140,7 +140,7 @@ export async function mountWaterScene() {
     words.forEach((word, row) => {
       let x = -measure(word) * fontSize / 2;
       [...word].forEach((char, index) => {
-        const geometry = new TextGeometry(char, {
+        const geometry = char === '.' ? new THREE.SphereGeometry(fontSize * .09, 24, 16) : new TextGeometry(char, {
           font, size: fontSize, depth: fontSize * .16, curveSegments: mobile ? 8 : 12,
           bevelEnabled: true, bevelThickness: fontSize * .11,
           bevelSize: fontSize * .065, bevelSegments: 8,
@@ -151,30 +151,56 @@ export async function mountWaterScene() {
         const center = box.getCenter(new THREE.Vector3());
         geometry.translate(-center.x, -center.y, -center.z);
         const material = new THREE.MeshPhysicalMaterial({
-          color: 0xc7e9dd, metalness: 0, roughness: .12,
-          transmission: .84, thickness: fontSize * 1.2, ior: 1.33,
+          color: 0x25dba2, metalness: 0, roughness: .18,
+          transmission: .52, thickness: fontSize * 1.5, ior: 1.38,
           clearcoat: 1, clearcoatRoughness: .07,
-          attenuationColor: new THREE.Color(0x8fc6b5), attenuationDistance: 4,
+          attenuationColor: new THREE.Color(0x20bd92), attenuationDistance: 2.5,
           envMapIntensity: .8,
         });
-        const wobble = { value: 0 };
+        const wobble = { value: .35 };
         const phase = index * 1.23 + row * 2;
         material.onBeforeCompile = shader => {
           shader.uniforms.uJellyTime = time;
           shader.uniforms.uJellyWobble = wobble;
           shader.uniforms.uJellyPhase = { value: phase };
-          shader.vertexShader = `uniform float uJellyTime; uniform float uJellyWobble; uniform float uJellyPhase;\n${shader.vertexShader}`;
+          shader.uniforms.uJellySize = { value: fontSize };
+          shader.vertexShader = `
+            uniform float uJellyTime;
+            uniform float uJellyWobble;
+            uniform float uJellyPhase;
+            uniform float uJellySize;
+            vec3 jellyDeform(vec3 p) {
+              vec3 q = p / uJellySize;
+              float energy = .045 + uJellyWobble * .18;
+              float wave = uJellyTime * 5.5 + uJellyPhase;
+              // Volume-preserving stretch, travelling bends, and a soft surface pulse.
+              float stretch = 1.0 + sin(wave) * energy * .45;
+              q.x /= sqrt(stretch);
+              q.y *= stretch;
+              q.z /= sqrt(stretch);
+              q.x += sin(q.y * 4.5 + wave) * energy * .35;
+              q.y += sin(q.x * 5.0 - wave * .8) * energy * .18;
+              q.z += sin(q.y * 4.0 + q.x * 3.0 + wave) * energy * .38;
+              return q * uJellySize;
+            }
+          ` + shader.vertexShader;
+          // Move normals with the surface so highlights flow with the jelly.
+          shader.vertexShader = shader.vertexShader.replace('#include <beginnormal_vertex>', `
+            #include <beginnormal_vertex>
+            vec3 tangentA = normalize(cross(objectNormal, abs(objectNormal.y) < .9 ? vec3(0.,1.,0.) : vec3(1.,0.,0.)));
+            vec3 tangentB = normalize(cross(objectNormal, tangentA));
+            float e = .002 * uJellySize;
+            vec3 base = jellyDeform(position);
+            objectNormal = normalize(cross(jellyDeform(position + tangentA * e) - base, jellyDeform(position + tangentB * e) - base));
+          `);
           shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `
-            #include <begin_vertex>
-            float jelly = sin(position.y * 5.0 + uJellyTime * 9.0 + uJellyPhase);
-            transformed.x += jelly * uJellyWobble * .065;
-            transformed.y += sin(position.x * 6.0 - uJellyTime * 8.0) * uJellyWobble * .045;
-            transformed.z += jelly * uJellyWobble * .10;
+            vec3 transformed = jellyDeform(position);
           `);
         };
         const mesh = new THREE.Mesh(geometry, material);
         // Align glyphs to a shared baseline (including the dot on the i).
         const lineY = row === 0 ? 1.28 : 1.28 - fontSize * .91;
+        if (char === '.') center.y = fontSize * .09;
         mesh.position.set(x + center.x, lineY + center.y - fontSize * .37, 0);
         const letter: Letter = {
           char, mesh, home: new THREE.Vector2(mesh.position.x, mesh.position.y),
@@ -205,6 +231,10 @@ export async function mountWaterScene() {
     const coverWidth = Math.max(worldWidth, HEIGHT * imageAspect);
     backdrop.scale.set(coverWidth, coverWidth / imageAspect, 1);
     makeLetters();
+    if (introDone) {
+      const period = letters.find(letter => letter.char === '.');
+      if (period) { period.mode = 'floating'; period.wet = true; period.mesh.position.y = WATER_Y + period.size.y * .36; }
+    }
     if (paused) render();
   }
 
@@ -252,7 +282,7 @@ export async function mountWaterScene() {
             letter.wobble.value = 1.6;
             letter.wet = true;
             letter.mode = 'floating';
-            announce(`${letter.char} is floating. Drop another letter or reassemble your name.`);
+            announce(`${letter.char === '.' ? 'The period' : letter.char} is floating.`);
           }
         }
         if (letter.mode === 'floating') {
@@ -304,12 +334,6 @@ export async function mountWaterScene() {
     const dt = Math.min((now - (lastTime || now)) / 1000, .25);
     lastTime = now;
     time.value += dt;
-    // A gentle single invitation, without disassembling the visitor's first view.
-    if (!introDone && time.value > 1.2) {
-      splash(worldWidth * .2, .55);
-      letters[5].wobble.value = .7;
-      introDone = true;
-    }
     // Fixed-size substeps keep buoyancy stable without slowing it on modest GPUs.
     const steps = Math.max(1, Math.ceil(dt / (1 / 60)));
     for (let step = 0; step < steps; step++) simulate(dt / steps);
@@ -388,15 +412,6 @@ export async function mountWaterScene() {
   renderer.domElement.addEventListener('touchstart', event => {
     if (active) event.preventDefault();
   }, { ...listenerOptions, passive: false });
-  dropButton.addEventListener('click', () => {
-    const letter = letters.find(item => item.mode === 'home');
-    if (!letter) { announce('All letters are in the water. Choose Reassemble to start again.'); return; }
-    letter.mode = 'falling';
-    letter.wet = false;
-    letter.velocity.set(.15 * Math.sin(letter.phase), .45);
-    letter.wobble.value = 1;
-    announce(`${letter.char} dropped into the water.`);
-  }, listenerOptions);
   resetButton.addEventListener('click', () => {
     release();
     for (const letter of letters) {
@@ -413,7 +428,6 @@ export async function mountWaterScene() {
     pauseButton.setAttribute('aria-pressed', String(paused));
     pauseButton.setAttribute('aria-label', paused ? 'Resume animation' : 'Pause animation');
     pauseButton.innerHTML = paused ? 'Resume <span aria-hidden="true">▷</span>' : 'Pause <span aria-hidden="true">Ⅱ</span>';
-    dropButton.disabled = paused;
     resetButton.disabled = paused;
     if (paused) { cancelAnimationFrame(animationFrame); animationFrame = 0; }
     else start();
@@ -432,6 +446,7 @@ export async function mountWaterScene() {
     if (destroyed) return;
     destroyed = true;
     cancelAnimationFrame(animationFrame);
+    clearTimeout(introTimer);
     abort.abort();
     observer.disconnect();
     home!.classList.remove('is-ready');
@@ -457,6 +472,18 @@ export async function mountWaterScene() {
     home.classList.add('is-ready');
     controls.hidden = false;
     start();
+    // Begin the 1.5-second beat when the finished scene first becomes visible.
+    introTimer = setTimeout(() => {
+      if (destroyed || introDone) return;
+      introDone = true;
+      const period = letters.find(letter => letter.char === '.');
+      if (!period || period === active || period.mode !== 'home') return;
+      period.mode = 'falling';
+      period.wet = false;
+      period.velocity.set(.08, 0);
+      period.wobble.value = 1.3;
+      announce('The period dropped into the water.');
+    }, 1500);
   } catch (error) {
     console.warn('Water scene unavailable; retaining the photographic homepage.', error);
     destroy();

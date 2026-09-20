@@ -22,7 +22,7 @@ class OutlinePen(BasePen):
     def _closePath(self): pass
 
 glyphs = {}
-for char in set('VikramRamkumar?'):
+for char in set('VikramRamkumar.?'):
     name = font.getBestCmap()[ord(char)]
     pen = OutlinePen()
     glyph_set[name].draw(pen)
