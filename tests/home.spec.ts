@@ -14,6 +14,7 @@ test('green jelly scene has clean navigation and drops the period after 1.5 seco
   });
   await page.goto('/');
   await expect(page.locator('.home')).toHaveClass(/is-ready/, { timeout: 45_000 });
+  await expect(page.locator('.home__canvas')).toHaveCSS('opacity', '1');
   await expect(page.locator('h1')).toHaveText('VikramRamkumar.');
   await expect(page.locator('.home__mark')).toHaveText('vr');
   await expect(page.locator('.water-controls')).toHaveCount(0);
@@ -43,6 +44,7 @@ test('mobile preserves left and right footer groups and touch dragging', async (
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
   await expect(page.locator('.home')).toHaveClass(/is-ready/, { timeout: 45_000 });
+  await expect(page.locator('.home__canvas')).toHaveCSS('opacity', '1');
   await page.screenshot({ path: 'test-results/mobile-water.png' });
   const touch = await context.newCDPSession(page);
   await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 276, y: 320 }] });

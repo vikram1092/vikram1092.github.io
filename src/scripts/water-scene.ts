@@ -1,9 +1,7 @@
 import * as THREE from 'three';
 import { FontLoader, type FontData } from 'three/addons/loaders/FontLoader.js';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { MarchingCubes } from 'three/addons/objects/MarchingCubes.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js';
-import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import fontData from '../assets/manrope-jelly.json';
 import { waterVertex, waterFragment } from './water-shader';
 
@@ -14,7 +12,8 @@ type Letter = {
   velocity: THREE.Vector2;
   size: THREE.Vector2;
   mode: 'home' | 'falling' | 'floating' | 'returning';
-  wobble: { value: number };
+  deformation: { value: THREE.Vector3 };
+  springVelocity: THREE.Vector3;
   phase: number;
   wet: boolean;
   scale: number;
@@ -59,11 +58,11 @@ export async function mountWaterScene() {
   scene.environment = environment.texture;
   room.dispose();
   environmentGenerator.dispose();
-  scene.add(new THREE.HemisphereLight(0xe7f6ed, 0x2b566a, .65));
-  const keyLight = new THREE.DirectionalLight(0xfff5dd, 1.4);
+  scene.add(new THREE.HemisphereLight(0xe7f6ed, 0x426875, .85));
+  const keyLight = new THREE.DirectionalLight(0xfff5e9, 1.5);
   keyLight.position.set(-5, 8, 9);
   scene.add(keyLight);
-  const rim = new THREE.DirectionalLight(0xb3e0f1, .8);
+  const rim = new THREE.DirectionalLight(0xc4ecff, .8);
   rim.position.set(8, 2, 5);
   scene.add(rim);
 
@@ -149,37 +148,53 @@ export async function mountWaterScene() {
   }
 
   function makePillowyGeometry(char: string, fontSize: number) {
-    const depth = fontSize * .22;
-    const bevelThickness = fontSize * .045;
-    const curveSegments = mobile ? 9 : 13;
-    let geometry: THREE.BufferGeometry = new TextGeometry(char, {
-      font, size: fontSize, depth, curveSegments,
-      bevelEnabled: true, bevelThickness,
-      bevelSize: fontSize * .035, bevelSegments: 7,
-    });
-    geometry = new TessellateModifier(fontSize * (mobile ? .15 : .11), mobile ? 3 : 4).modify(geometry);
-
-    const outlines = font.generateShapes(char, fontSize).flatMap(shape => {
-      const points = shape.extractPoints(curveSegments);
+    const outlines = font.generateShapes(char, 1).flatMap(shape => {
+      const points = shape.extractPoints(20);
       return [points.shape, ...points.holes];
     });
-    const positions = geometry.getAttribute('position') as THREE.BufferAttribute;
-    const front = depth + bevelThickness;
-    const back = -bevelThickness;
-    const maximumDome = fontSize * .078;
-    for (let index = 0; index < positions.count; index++) {
-      const z = positions.getZ(index);
-      if (Math.abs(z - front) > .0001 && Math.abs(z - back) > .0001) continue;
-      const distance = distanceToOutline(positions.getX(index), positions.getY(index), outlines);
-      const dome = maximumDome * (1 - Math.exp(-distance / (maximumDome * .72)));
-      positions.setZ(index, z + (z > 0 ? dome : -dome * .45));
+    const bounds = new THREE.Box2().setFromPoints(outlines.flat());
+    const center = bounds.getCenter(new THREE.Vector2());
+    const span = Math.max(bounds.max.x - bounds.min.x, bounds.max.y - bounds.min.y) + .32;
+    const resolution = mobile ? 48 : 64;
+    const placeholder = new THREE.MeshBasicMaterial();
+    const surface = new MarchingCubes(resolution, placeholder, false, false, 40000);
+    surface.isolation = 0;
+    // An implicit pillow surface avoids bevel seams and long cap triangles.
+    // Even/odd winding preserves counters and the separate dot of the i.
+    for (let y = 0; y < resolution; y++) {
+      const py = center.y + (y / resolution - .5) * span;
+      for (let x = 0; x < resolution; x++) {
+        const px = center.x + (x / resolution - .5) * span;
+        let inside = false;
+        for (const points of outlines) {
+          for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+            const a = points[i], b = points[j];
+            if ((a.y > py) !== (b.y > py) && px < (b.x - a.x) * (py - a.y) / (b.y - a.y) + a.x) inside = !inside;
+          }
+        }
+        const distance = distanceToOutline(px, py, outlines) * (inside ? 1 : -1);
+        const inflation = 1 - Math.exp(clamp(-(distance + .035) / .045, -20, 20));
+        for (let z = 0; z < resolution; z++) {
+          const pz = (z / resolution - .5) * span;
+          surface.field[x + y * resolution + z * resolution * resolution] = inflation - (pz / .19) ** 2;
+        }
+      }
     }
-    positions.needsUpdate = true;
-    geometry.deleteAttribute('normal');
-    geometry.deleteAttribute('uv');
-    geometry = mergeVertices(geometry, 1e-4);
-    geometry.computeVertexNormals();
+    // Round joins and corners in the field before extracting smooth normals.
+    surface.blur(1);
+    surface.blur(1);
+    surface.update();
+    const geometry = new THREE.BufferGeometry();
+    // Trim MarchingCubes' reusable buffers before computing bounds or rendering.
+    for (const name of ['position', 'normal']) {
+      const attribute = surface.geometry.getAttribute(name);
+      geometry.setAttribute(name, new THREE.Float32BufferAttribute(attribute.array.slice(0, surface.count * 3), 3));
+    }
+    geometry.scale(span * fontSize / 2, span * fontSize / 2, span * fontSize / 2);
+    geometry.translate(center.x * fontSize, center.y * fontSize, 0);
     geometry.computeBoundingBox();
+    surface.geometry.dispose();
+    placeholder.dispose();
     return geometry;
   }
 
@@ -190,53 +205,47 @@ export async function mountWaterScene() {
       letter.mesh.material.dispose();
     }
     letters.length = 0;
-    // Real bevelled font outlines; each glyph is a separate deformable solid.
+    // Each glyph is a separate rounded, deformable solid.
     const measure = (word: string) => [...word].reduce((sum, char) => sum + font.data.glyphs[char].ha / font.data.resolution + .045, 0);
     const fontSize = compact
       ? Math.min(1.85, worldWidth * .84 / measure(words[1]))
       : Math.min(1.64, worldWidth * .76 / measure(words[1]));
+    const glyphs = new Map<string, THREE.BufferGeometry>();
     words.forEach((word, row) => {
       let x = -measure(word) * fontSize / 2;
       [...word].forEach((char, index) => {
-        const geometry = char === '.' ? new THREE.SphereGeometry(fontSize * .09, 24, 16) : makePillowyGeometry(char, fontSize);
+        if (!glyphs.has(char)) glyphs.set(char, char === '.'
+          ? new THREE.SphereGeometry(fontSize * .09, 24, 16) : makePillowyGeometry(char, fontSize));
+        const geometry = glyphs.get(char)!.clone();
         geometry.computeBoundingBox();
         const box = geometry.boundingBox!;
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
         geometry.translate(-center.x, -center.y, -center.z);
         const material = new THREE.MeshPhysicalMaterial({
-          color: 0x25dba2, metalness: 0, roughness: .3,
-          transmission: .22, thickness: fontSize * 1.15, ior: 1.38,
-          clearcoat: .62, clearcoatRoughness: .16,
+          color: 0x079c80, metalness: 0, roughness: .52,
+          transmission: 0, thickness: fontSize * .5, ior: 1.4,
+          clearcoat: .16, clearcoatRoughness: .4,
+          sheen: .3, sheenRoughness: .7, sheenColor: new THREE.Color(0xa2ffe1),
           attenuationColor: new THREE.Color(0x20bd92), attenuationDistance: 2.5,
           envMapIntensity: .5,
         });
-        const wobble = { value: .28 };
+        const deformation = { value: new THREE.Vector3() };
         const phase = index * 1.23 + row * 2;
         material.onBeforeCompile = shader => {
-          shader.uniforms.uJellyTime = time;
-          shader.uniforms.uJellyWobble = wobble;
-          shader.uniforms.uJellyPhase = { value: phase };
+          shader.uniforms.uJellyDeformation = deformation;
           shader.uniforms.uJellySize = { value: fontSize };
           shader.vertexShader = `
-            uniform float uJellyTime;
-            uniform float uJellyWobble;
-            uniform float uJellyPhase;
+            uniform vec3 uJellyDeformation;
             uniform float uJellySize;
             vec3 jellyDeform(vec3 p) {
               vec3 q = p / uJellySize;
-              float energy = uJellyWobble * .15;
-              float beat = uJellyTime * 8.2 + uJellyPhase;
-              float primary = sin(beat);
-              float secondary = sin(beat * 1.37 + .8);
-              // A whole-body, volume-preserving wiggle rather than a travelling wave.
-              float stretch = max(.82, 1.0 + primary * energy * .55);
-              q.x /= sqrt(stretch);
-              q.y *= stretch;
-              q.z /= sqrt(stretch);
-              float vertical = clamp(q.y * 1.6, -1.0, 1.0);
-              q.x += vertical * secondary * energy * .20;
-              q.z += (1.0 - vertical * vertical) * primary * energy * .14;
+              // One coherent spring-driven body; preserve volume when compressed.
+              float stretch = exp(uJellyDeformation.x);
+              q *= vec3(inversesqrt(stretch), stretch, inversesqrt(stretch));
+              float y = q.y;
+              q.x += uJellyDeformation.y * y;
+              q.z += uJellyDeformation.z * (y * y - .06);
               return q * uJellySize;
             }
           ` + shader.vertexShader;
@@ -262,13 +271,14 @@ export async function mountWaterScene() {
         const letter: Letter = {
           char, mesh, home: new THREE.Vector2(mesh.position.x, mesh.position.y),
           velocity: new THREE.Vector2(), size: new THREE.Vector2(size.x, size.y),
-          mode: 'home', wobble, phase, wet: false, scale: 1,
+          mode: 'home', deformation, springVelocity: new THREE.Vector3(.45, 0, 0), phase, wet: false, scale: 1,
         };
         letters.push(letter);
         scene.add(mesh);
         x += (font.data.glyphs[char].ha / font.data.resolution + .045) * fontSize;
       });
     });
+    for (const geometry of glyphs.values()) geometry.dispose();
   }
 
   function resize() {
@@ -302,6 +312,12 @@ export async function mountWaterScene() {
     renderer.render(lakeScene, lakeCamera);
   }
 
+  function kick(letter: Letter, compression: number, shear = 0) {
+    letter.springVelocity.x = clamp(letter.springVelocity.x + compression, -3, 3);
+    letter.springVelocity.y = clamp(letter.springVelocity.y + shear, -3, 3);
+    letter.springVelocity.z = clamp(letter.springVelocity.z + compression * .6, -3, 3);
+  }
+
   function simulate(dt: number) {
     const floatingWidth = letters.reduce((total, letter) => total +
       (letter.mode === 'floating' || letter.mode === 'falling' ? letter.size.x + .05 : 0), 0);
@@ -310,14 +326,24 @@ export async function mountWaterScene() {
       const { mesh, velocity, size, mode } = letter;
       const scaleTarget = letter !== active && (mode === 'falling' || mode === 'floating') ? floatingScale : 1;
       letter.scale += (scaleTarget - letter.scale) * Math.min(1, dt * 4);
-      letter.wobble.value *= Math.exp(-dt * 1.8);
+      const shape = letter.deformation.value;
+      const spring = letter.springVelocity;
+      // Damped, independent deformation modes. Input changes their rest shape;
+      // release and impacts inject velocity, so rebounds remain continuous.
+      const dragX = letter === active ? pointer.x + dragOffset.x - mesh.position.x : 0;
+      const dragY = letter === active ? pointer.y + dragOffset.y - mesh.position.y : 0;
+      const stretchTarget = letter === active ? clamp(dragY * .13 - .055, -.16, .16) : 0;
+      const shearTarget = clamp(dragX * -.3, -.28, .28);
+      spring.x += ((stretchTarget - shape.x) * 155 - spring.x * 5.5) * dt;
+      spring.y += ((shearTarget - shape.y) * 110 - spring.y * 4.8) * dt;
+      spring.z += (-shape.z * 125 - spring.z * 6) * dt;
+      shape.addScaledVector(spring, dt);
+      shape.clampScalar(-.35, .35);
       if (letter === active) {
         const dx = pointer.x + dragOffset.x - mesh.position.x;
         const dy = pointer.y + dragOffset.y - mesh.position.y;
         mesh.position.x += dx * Math.min(1, dt * 24);
         mesh.position.y += dy * Math.min(1, dt * 24);
-        letter.wobble.value = Math.max(letter.wobble.value,
-          Math.min(1.8, .48 + velocity.length() * .1 + Math.hypot(dx, dy) * .45));
       } else if (mode === 'home') {
         mesh.position.y = letter.home.y;
       } else if (mode === 'returning') {
@@ -336,7 +362,7 @@ export async function mountWaterScene() {
         if (mesh.position.y < floatY) {
           if (!letter.wet) {
             splash(mesh.position.x, clamp(Math.abs(velocity.y) * .24, .45, 1.8));
-            letter.wobble.value = 1.25;
+            kick(letter, -Math.min(2.2, Math.abs(velocity.y) * .35), velocity.x * .12);
             velocity.y = Math.min(1.4, Math.abs(velocity.y) * .16);
             letter.wet = true;
             letter.mode = 'floating';
@@ -358,14 +384,14 @@ export async function mountWaterScene() {
           velocity.x *= -.5;
         }
       }
-      const squash = Math.sin(time.value * 9.5 + letter.phase) * letter.wobble.value * .048;
-      mesh.scale.set((1 + squash) * letter.scale, (1 - squash) * letter.scale, (1 + squash * .5) * letter.scale);
+      mesh.scale.setScalar(letter.scale);
       const depthTarget = letter === active ? 1.2 : letter.mode === 'falling' || letter.mode === 'floating' ? .65 : 0;
       mesh.position.z += (depthTarget - mesh.position.z) * Math.min(1, dt * 8);
       const targetAngle = letter === active ? clamp(velocity.x * -.045, -.2, .2)
         : letter.mode === 'floating' ? clamp(velocity.x * -.06, -.09, .09) : 0;
       mesh.rotation.z += (targetAngle - mesh.rotation.z) * Math.min(1, dt * 7);
-      mesh.rotation.y = -.06 + Math.sin(time.value * 8.2 + letter.phase) * letter.wobble.value * .025;
+      mesh.rotation.y = -.06 + shape.y * .22;
+      mesh.rotation.x = -.075 + shape.z * .12;
     }
     // Soft lateral collisions keep floating letters from piling into one another.
     for (let i = 0; i < letters.length; i++) {
@@ -380,6 +406,7 @@ export async function mountWaterScene() {
           const push = Math.sign(dx || .1) * overlap * .12;
           a.mesh.position.x -= push;
           b.mesh.position.x += push;
+          if (overlap > .025) { kick(a, -overlap * dt * 5, -push * dt * 30); kick(b, -overlap * dt * 5, push * dt * 30); }
           a.velocity.x -= push * 2;
           b.velocity.x += push * 2;
         }
@@ -419,7 +446,7 @@ export async function mountWaterScene() {
     if (active) {
       active.mode = 'falling';
       active.wet = false;
-      active.wobble.value = Math.max(active.wobble.value, 1.5);
+      kick(active, 1.3, clamp(active.velocity.x * -.12, -1.2, 1.2));
       active = undefined;
     }
     if (pointerId !== undefined && renderer.domElement.hasPointerCapture(pointerId)) renderer.domElement.releasePointerCapture(pointerId);
@@ -437,7 +464,7 @@ export async function mountWaterScene() {
       previousPointer.copy(pointer);
       previousPointerTime = event.timeStamp;
       active.velocity.set(0, 0);
-      active.wobble.value = 1.3;
+      kick(active, -2, clamp((pointer.x - active.mesh.position.x) * 3, -.8, .8));
       host.classList.add('is-dragging');
     } else if (pointer.y < waterY) {
       splash(pointer.x, .8, clamp(pointer.y / HEIGHT + .5, .02, horizon));
@@ -453,7 +480,7 @@ export async function mountWaterScene() {
       previousPointerTime = event.timeStamp;
     } else {
       const next = hitTest();
-      if (next && next !== hover) next.wobble.value = 1.1;
+      if (next && next !== hover) kick(next, -1.5, pointer.x < next.mesh.position.x ? 1.2 : -1.2);
       hover = next;
       host.classList.toggle('is-grabbable', !!hover);
     }
@@ -476,7 +503,7 @@ export async function mountWaterScene() {
     for (const letter of letters) {
       letter.mode = 'returning';
       letter.velocity.set(0, 0);
-      letter.wobble.value = .65;
+      kick(letter, .7, .35);
       letter.wet = false;
     }
     announce('Reassembling Vikram Ramkumar.');
@@ -540,7 +567,7 @@ export async function mountWaterScene() {
       period.mode = 'falling';
       period.wet = false;
       period.velocity.set(.08, 0);
-      period.wobble.value = 1.3;
+      kick(period, .9, .3);
       announce('The period dropped into the water.');
     }, 1500);
   } catch (error) {
