@@ -57,11 +57,11 @@ export async function mountWaterScene() {
   scene.environment = environment.texture;
   room.dispose();
   environmentGenerator.dispose();
-  scene.add(new THREE.HemisphereLight(0xe7f6ed, 0x2b566a, .52));
-  const keyLight = new THREE.DirectionalLight(0xfff5dd, 1.12);
+  scene.add(new THREE.HemisphereLight(0x89e8bc, 0x103d35, .3));
+  const keyLight = new THREE.DirectionalLight(0xc5ffdc, .5);
   keyLight.position.set(-5, 8, 9);
   scene.add(keyLight);
-  const rim = new THREE.DirectionalLight(0xb3e0f1, .65);
+  const rim = new THREE.DirectionalLight(0x54c99f, .32);
   rim.position.set(8, 2, 5);
   scene.add(rim);
 
@@ -146,9 +146,9 @@ export async function mountWaterScene() {
       let x = -measure(word) * fontSize / 2;
       [...word].forEach((char, index) => {
         const geometry = char === '.' ? new THREE.SphereGeometry(fontSize * .09, 24, 16) : new TextGeometry(char, {
-          font, size: fontSize, depth: fontSize * .26, curveSegments: mobile ? 10 : 14,
-          bevelEnabled: true, bevelThickness: fontSize * .035,
-          bevelSize: fontSize * .025, bevelSegments: 5,
+          font, size: fontSize, depth: fontSize * .3, curveSegments: mobile ? 10 : 14,
+          bevelEnabled: true, bevelThickness: fontSize * .06,
+          bevelSize: fontSize * .04, bevelSegments: 8,
         });
         geometry.computeBoundingBox();
         const box = geometry.boundingBox!;
@@ -156,12 +156,13 @@ export async function mountWaterScene() {
         const center = box.getCenter(new THREE.Vector3());
         geometry.translate(-center.x, -center.y, -center.z);
         const material = new THREE.MeshPhysicalMaterial({
-          color: 0x10bd80, metalness: 0, roughness: .2,
-          transmission: .035, thickness: fontSize * .8, ior: 1.42,
-          clearcoat: 1, clearcoatRoughness: .065,
-          specularIntensity: .78, specularColor: new THREE.Color(0xe4fff4),
-          attenuationColor: new THREE.Color(0x20bd92), attenuationDistance: 2.5,
-          envMapIntensity: .75,
+          color: 0x007f49,
+          metalness: 0, roughness: .28,
+          transmission: .025, thickness: fontSize, ior: 1.4,
+          clearcoat: .48, clearcoatRoughness: .2,
+          specularIntensity: .18, specularColor: new THREE.Color(0x8bffc4),
+          attenuationColor: new THREE.Color(0x00a963), attenuationDistance: 2,
+          envMapIntensity: .28,
         });
         const wobble = { value: .28 };
         const phase = index * 1.23 + row * 2;
@@ -177,7 +178,7 @@ export async function mountWaterScene() {
             uniform float uJellySize;
             vec3 jellyDeform(vec3 p) {
               vec3 q = p / uJellySize;
-              float energy = uJellyWobble * .13;
+              float energy = uJellyWobble * .17;
               float beat = uJellyTime * 8.2 + uJellyPhase;
               float primary = sin(beat);
               float secondary = sin(beat * 1.37 + .8);
@@ -203,6 +204,11 @@ export async function mountWaterScene() {
           `);
           shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `
             vec3 transformed = jellyDeform(position);
+          `);
+          // Keep even the brightest clear-coat response green instead of bleaching white.
+          shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
+            outgoingLight *= vec3(.2, 1.0, .48);
+            #include <opaque_fragment>
           `);
         };
         const mesh = new THREE.Mesh(geometry, material);
@@ -262,13 +268,13 @@ export async function mountWaterScene() {
       const { mesh, velocity, size, mode } = letter;
       const scaleTarget = letter !== active && (mode === 'falling' || mode === 'floating') ? floatingScale : 1;
       letter.scale += (scaleTarget - letter.scale) * Math.min(1, dt * 4);
-      letter.wobble.value *= Math.exp(-dt * 4.2);
+      letter.wobble.value *= Math.exp(-dt * 2.6);
       if (letter === active) {
         const dx = pointer.x + dragOffset.x - mesh.position.x;
         const dy = pointer.y + dragOffset.y - mesh.position.y;
         mesh.position.x += dx * Math.min(1, dt * 24);
         mesh.position.y += dy * Math.min(1, dt * 24);
-        letter.wobble.value = Math.min(1.6, .25 + Math.hypot(dx, dy) * .7);
+        letter.wobble.value = Math.min(1.85, .55 + Math.hypot(dx, dy) * .9);
       } else if (mode === 'home') {
         mesh.position.y = letter.home.y;
       } else if (mode === 'returning') {
@@ -309,7 +315,7 @@ export async function mountWaterScene() {
           velocity.x *= -.5;
         }
       }
-      const squash = Math.sin(time.value * 9.5 + letter.phase) * letter.wobble.value * .035;
+      const squash = Math.sin(time.value * 9.5 + letter.phase) * letter.wobble.value * .048;
       mesh.scale.set((1 + squash) * letter.scale, (1 - squash) * letter.scale, (1 + squash * .5) * letter.scale);
       const depthTarget = letter === active ? 1.2 : letter.mode === 'falling' || letter.mode === 'floating' ? .65 : 0;
       mesh.position.z += (depthTarget - mesh.position.z) * Math.min(1, dt * 8);
@@ -370,7 +376,7 @@ export async function mountWaterScene() {
     if (active) {
       active.mode = 'falling';
       active.wet = false;
-      active.wobble.value = 1;
+      active.wobble.value = 1.35;
       active = undefined;
     }
     if (pointerId !== undefined && renderer.domElement.hasPointerCapture(pointerId)) renderer.domElement.releasePointerCapture(pointerId);
@@ -388,6 +394,7 @@ export async function mountWaterScene() {
       previousPointer.copy(pointer);
       previousPointerTime = event.timeStamp;
       active.velocity.set(0, 0);
+      active.wobble.value = 1.15;
       host.classList.add('is-dragging');
     } else if (pointer.y < waterY) {
       splash(pointer.x, .8, clamp(pointer.y / HEIGHT + .5, .02, horizon));
@@ -403,7 +410,7 @@ export async function mountWaterScene() {
       previousPointerTime = event.timeStamp;
     } else {
       const next = hitTest();
-      if (next && next !== hover) next.wobble.value = .8;
+      if (next && next !== hover) next.wobble.value = 1.1;
       hover = next;
       host.classList.toggle('is-grabbable', !!hover);
     }
