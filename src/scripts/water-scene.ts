@@ -14,6 +14,10 @@ type Letter = {
   mode: 'home' | 'falling' | 'floating' | 'returning';
   deformation: { value: THREE.Vector3 };
   springVelocity: THREE.Vector3;
+  grabPoint: { value: THREE.Vector2 };
+  touch: { value: THREE.Vector3 };
+  touchVelocity: THREE.Vector3;
+  fontSize: number;
   phase: number;
   wet: boolean;
   scale: number;
@@ -226,21 +230,28 @@ export async function mountWaterScene() {
         const center = box.getCenter(new THREE.Vector3());
         geometry.translate(-center.x, -center.y, -center.z);
         const material = new THREE.MeshPhysicalMaterial({
-          color: 0x4a927a, metalness: 0, roughness: .78,
-          // A little of the scene shows through while the soft surface stays matte.
-          transparent: true, opacity: .84, depthWrite: false,
-          clearcoat: 0, specularIntensity: .24,
+          color: 0x4a927a, metalness: 0, roughness: .58,
+          // Clearer faces with denser jade edges, shaped in the fragment shader.
+          transparent: true, opacity: .58, depthWrite: false,
+          clearcoat: 0, specularIntensity: .3,
           sheen: .12, sheenRoughness: 1,
           sheenColor: new THREE.Color(0xb8c4a5),
         });
         const deformation = { value: new THREE.Vector3() };
+        const grabPoint = { value: new THREE.Vector2() };
+        // x/y: local pull; z: fingertip pressure. All three recover with springs.
+        const touch = { value: new THREE.Vector3() };
         const phase = index * 1.23 + row * 2;
         material.onBeforeCompile = shader => {
           shader.uniforms.uJellyDeformation = deformation;
           shader.uniforms.uJellySize = { value: fontSize };
+          shader.uniforms.uJellyGrab = grabPoint;
+          shader.uniforms.uJellyTouch = touch;
           shader.vertexShader = `
             uniform vec3 uJellyDeformation;
             uniform float uJellySize;
+            uniform vec2 uJellyGrab;
+            uniform vec3 uJellyTouch;
             vec3 jellyDeform(vec3 p) {
               vec3 q = p / uJellySize;
               // One coherent spring-driven body; preserve volume when compressed.
@@ -249,6 +260,13 @@ export async function mountWaterScene() {
               float y = q.y;
               q.x += uJellyDeformation.y * y;
               q.z += uJellyDeformation.z * (y * y - .06);
+              // Local pressure dents the front and gently bulges the surrounding
+              // surface. A weighted pull lets the grabbed patch lead the body.
+              vec2 delta = p.xy / uJellySize - uJellyGrab;
+              float influence = exp(-dot(delta, delta) / .045);
+              q.xy += uJellyTouch.xy * influence;
+              q.xy += delta * uJellyTouch.z * influence * .65;
+              q.z -= uJellyTouch.z * influence * smoothstep(-.04, .08, p.z / uJellySize);
               return q * uJellySize;
             }
           ` + shader.vertexShader;
@@ -264,6 +282,15 @@ export async function mountWaterScene() {
           shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `
             vec3 transformed = jellyDeform(position);
           `);
+          shader.fragmentShader = shader.fragmentShader.replace('#include <normal_fragment_maps>', `
+            #include <normal_fragment_maps>
+            // In this orthographic scene the view direction is constant.
+            // Keep 42% of the background visible through faces; denser edges
+            // read as thickness instead of a uniformly faded-out letter.
+            float jellyEdge = pow(1.0 - abs(normal.z), 1.6);
+            diffuseColor.a = mix(opacity, .84, jellyEdge);
+            diffuseColor.rgb *= mix(1.0, .74, jellyEdge);
+          `);
         };
         const mesh = new THREE.Mesh(geometry, material);
         mesh.rotation.x = -.075;
@@ -274,7 +301,8 @@ export async function mountWaterScene() {
         const letter: Letter = {
           char, mesh, home: new THREE.Vector2(mesh.position.x, mesh.position.y),
           velocity: new THREE.Vector2(), size: new THREE.Vector2(size.x, size.y),
-          mode: 'home', deformation, springVelocity: new THREE.Vector3(.45, 0, 0), phase, wet: false, scale: 1,
+          mode: 'home', deformation, springVelocity: new THREE.Vector3(.45, 0, 0),
+          grabPoint, touch, touchVelocity: new THREE.Vector3(), fontSize, phase, wet: false, scale: 1,
         };
         letters.push(letter);
         scene.add(mesh);
@@ -342,11 +370,27 @@ export async function mountWaterScene() {
       spring.z += (-shape.z * 125 - spring.z * 7) * dt;
       shape.addScaledVector(spring, dt);
       shape.clampScalar(-.35, .35);
+      const touchShape = letter.touch.value;
+      const touchSpeed = letter.touchVelocity;
+      const angle = mesh.rotation.z;
+      const unit = letter.fontSize * letter.scale;
+      const pullX = clamp((dragX * Math.cos(angle) + dragY * Math.sin(angle)) / unit * .75, -.24, .24);
+      const pullY = clamp((-dragX * Math.sin(angle) + dragY * Math.cos(angle)) / unit * .75, -.24, .24);
+      const pressure = letter === active ? .095 : 0;
+      const stiffness = letter === active ? 210 : 135;
+      const damping = letter === active ? 13 : 7.5;
+      touchSpeed.x += ((pullX - touchShape.x) * stiffness - touchSpeed.x * damping) * dt;
+      touchSpeed.y += ((pullY - touchShape.y) * stiffness - touchSpeed.y * damping) * dt;
+      touchSpeed.z += ((pressure - touchShape.z) * stiffness - touchSpeed.z * damping) * dt;
+      touchShape.addScaledVector(touchSpeed, dt).clampScalar(-.28, .28);
       if (letter === active) {
         const dx = pointer.x + dragOffset.x - mesh.position.x;
         const dy = pointer.y + dragOffset.y - mesh.position.y;
-        mesh.position.x += dx * Math.min(1, dt * 24);
-        mesh.position.y += dy * Math.min(1, dt * 24);
+        const follow = 1 - Math.exp(-dt * 12);
+        mesh.position.x += dx * follow;
+        mesh.position.y += dy * follow;
+        // A held-still letter must not retain an old flick velocity.
+        if (lastTime - previousPointerTime > 80) velocity.multiplyScalar(Math.exp(-dt * 14));
       } else if (mode === 'home') {
         mesh.position.y = letter.home.y;
       } else if (mode === 'returning') {
@@ -447,6 +491,7 @@ export async function mountWaterScene() {
   }
   function release() {
     if (active) {
+      if (performance.now() - previousPointerTime > 120) active.velocity.set(0, 0);
       active.mode = 'falling';
       active.wet = false;
       kick(active, 1.3, clamp(active.velocity.x * -.12, -1.2, 1.2));
@@ -467,7 +512,11 @@ export async function mountWaterScene() {
       previousPointer.copy(pointer);
       previousPointerTime = event.timeStamp;
       active.velocity.set(0, 0);
-      kick(active, -2, clamp((pointer.x - active.mesh.position.x) * 3, -.8, .8));
+      active.mesh.updateMatrixWorld(true);
+      const localGrab = active.mesh.worldToLocal(new THREE.Vector3(pointer.x, pointer.y, active.mesh.position.z));
+      active.grabPoint.value.set(localGrab.x / active.fontSize, localGrab.y / active.fontSize);
+      active.touchVelocity.z += .5;
+      kick(active, -.9, clamp((pointer.x - active.mesh.position.x) * 3, -.8, .8));
       host.classList.add('is-dragging');
     } else if (pointer.y < waterY) {
       splash(pointer.x, .8, clamp(pointer.y / HEIGHT + .5, .02, horizon));
