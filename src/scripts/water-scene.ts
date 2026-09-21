@@ -227,6 +227,8 @@ export async function mountWaterScene() {
         geometry.translate(-center.x, -center.y, -center.z);
         const material = new THREE.MeshPhysicalMaterial({
           color: 0x4a927a, metalness: 0, roughness: .78,
+          // A little of the scene shows through while the soft surface stays matte.
+          transparent: true, opacity: .84, depthWrite: false,
           clearcoat: 0, specularIntensity: .24,
           sheen: .12, sheenRoughness: 1,
           sheenColor: new THREE.Color(0xb8c4a5),
@@ -537,6 +539,7 @@ export async function mountWaterScene() {
     abort.abort();
     observer.disconnect();
     home!.classList.remove('is-ready');
+    document.documentElement.dataset.scene = 'fallback';
     controls!.hidden = true;
     for (const letter of letters) { letter.mesh.geometry.dispose(); letter.mesh.material.dispose(); }
     photo.dispose(); photoMaterial.dispose(); backdrop.geometry.dispose();
@@ -557,6 +560,7 @@ export async function mountWaterScene() {
     if (destroyed) return;
     render();
     home.classList.add('is-ready');
+    document.documentElement.dataset.scene = 'ready';
     controls.hidden = false;
     start();
     // Begin the 1.5-second beat when the finished scene first becomes visible.

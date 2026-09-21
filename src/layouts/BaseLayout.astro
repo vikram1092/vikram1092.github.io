@@ -22,6 +22,11 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script is:inline>
+      // Set before the first paint; no static name/water flashes during startup.
+      document.documentElement.dataset.scene = matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'fallback' : 'loading';
+    </script>
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />

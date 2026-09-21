@@ -66,6 +66,8 @@ test('reduced motion and no WebGL preserve the static name and links', async ({ 
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.locator('canvas')).toHaveCount(0);
+  await expect(page.locator('html')).toHaveAttribute('data-scene', 'fallback');
+  await expect(page.locator('.home__identity')).toHaveCSS('opacity', '1');
   await expect(page.locator('h1')).toHaveText('VikramRamkumar.');
   await expect(page.getByRole('navigation', { name: 'Selected work' }).getByRole('link')).toHaveCount(3);
   await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -77,6 +79,31 @@ test('reduced motion and no WebGL preserve the static name and links', async ({ 
     } as typeof getContext;
   });
   await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-scene', 'fallback');
+  await expect(page.locator('.home__identity')).toHaveCSS('opacity', '1');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.getByRole('link', { name: 'LinkedIn' })).toBeVisible();
+});
+
+test('loading shows the photograph without static letters or water, then reveals the scene', async ({ page }) => {
+  let resume!: () => void;
+  const downloading = new Promise<void>(resolve => { resume = resolve; });
+  await page.route('**/_astro/*.js', async route => {
+    await downloading;
+    await route.continue();
+  });
+  await page.goto('/', { waitUntil: 'commit' });
+  try {
+    await expect(page.locator('html')).toHaveAttribute('data-scene', 'loading');
+    await expect(page.locator('.home__identity')).toHaveCSS('opacity', '0');
+    await expect(page.locator('.home__still-water')).toBeHidden();
+    await expect(page.locator('.home__canvas')).toHaveCSS('opacity', '0');
+    await expect(page.getByRole('link', { name: 'Contact' })).toBeVisible();
+    await page.screenshot({ path: 'test-results/loading-photo.png' });
+  } finally {
+    resume();
+  }
+  await expect(page.locator('html')).toHaveAttribute('data-scene', 'ready', { timeout: 45_000 });
+  await expect(page.locator('.home__canvas')).toHaveCSS('opacity', '1');
+  await expect(page.locator('.home__still-water')).toBeHidden();
 });

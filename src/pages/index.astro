@@ -39,7 +39,13 @@ const work = [
   </main>
   <script>
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      import('../scripts/water-scene').then(({ mountWaterScene }) => mountWaterScene()).catch(console.warn);
+      import('../scripts/water-scene')
+        .then(({ mountWaterScene }) => mountWaterScene())
+        .catch(console.warn)
+        .finally(() => {
+          // Restore the accessible static view only when startup cannot finish.
+          if (!document.querySelector('.home.is-ready')) document.documentElement.dataset.scene = 'fallback';
+        });
     }
   </script>
 </BaseLayout>
