@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { FontLoader, type FontData } from 'three/addons/loaders/FontLoader.js';
 import { MarchingCubes } from 'three/addons/objects/MarchingCubes.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import fontData from '../assets/manrope-jelly.json';
 import { waterVertex, waterFragment } from './water-shader';
 
@@ -47,30 +47,24 @@ export async function mountWaterScene() {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.12;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.transmissionResolutionScale = .5;
   host.append(renderer.domElement);
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(-8, 8, 5, -5, .1, 80);
   camera.position.z = 20;
-  const environmentGenerator = new THREE.PMREMGenerator(renderer);
-  const room = new RoomEnvironment();
-  const environment = environmentGenerator.fromScene(room, .06);
-  scene.environment = environment.texture;
-  room.dispose();
-  environmentGenerator.dispose();
-  scene.add(new THREE.HemisphereLight(0xe7f6ed, 0x426875, .85));
-  const keyLight = new THREE.DirectionalLight(0xfff5e9, 1.5);
-  keyLight.position.set(-5, 8, 9);
+  // A single large warm softbox gives one broad highlight. Gentle hemisphere
+  // fill keeps the underside readable without glossy room reflections.
+  RectAreaLightUniformsLib.init();
+  scene.add(new THREE.AmbientLight(0xfff6ed, .9));
+  scene.add(new THREE.HemisphereLight(0xfff5e6, 0x879a8b, .65));
+  const keyLight = new THREE.RectAreaLight(0xffead4, 12, 8, 6);
+  keyLight.position.set(-4, 5, 10);
+  keyLight.lookAt(0, .5, 0);
   scene.add(keyLight);
-  const rim = new THREE.DirectionalLight(0xc4ecff, .8);
-  rim.position.set(8, 2, 5);
-  scene.add(rim);
 
   let photo: THREE.Texture;
   try {
     photo = await new THREE.TextureLoader().loadAsync('/images/background.jpg');
   } catch {
-    environment.dispose();
     renderer.dispose();
     renderer.domElement.remove();
     return;
@@ -150,6 +144,14 @@ export async function mountWaterScene() {
   function makePillowyGeometry(char: string, fontSize: number) {
     const outlines = font.generateShapes(char, 1).flatMap(shape => {
       const points = shape.extractPoints(20);
+      if (char === 'i') {
+        // Reserve real negative space before inflation: both islands otherwise
+        // expand into the font's small gap and fuse into a single capsule.
+        const isDot = Math.min(...points.shape.map(point => point.y)) > .6;
+        for (const point of points.shape) {
+          point.y = isDot ? point.y + .035 : point.y * (.505 / .54);
+        }
+      }
       return [points.shape, ...points.holes];
     });
     const bounds = new THREE.Box2().setFromPoints(outlines.flat());
@@ -183,6 +185,7 @@ export async function mountWaterScene() {
     // Round joins and corners in the field before extracting smooth normals.
     surface.blur(1);
     surface.blur(1);
+    if (char === 'V' || char === 'k' || char === 'R') surface.blur(.65);
     surface.update();
     const geometry = new THREE.BufferGeometry();
     // Trim MarchingCubes' reusable buffers before computing bounds or rendering.
@@ -223,12 +226,10 @@ export async function mountWaterScene() {
         const center = box.getCenter(new THREE.Vector3());
         geometry.translate(-center.x, -center.y, -center.z);
         const material = new THREE.MeshPhysicalMaterial({
-          color: 0x079c80, metalness: 0, roughness: .52,
-          transmission: 0, thickness: fontSize * .5, ior: 1.4,
-          clearcoat: .16, clearcoatRoughness: .4,
-          sheen: .3, sheenRoughness: .7, sheenColor: new THREE.Color(0xa2ffe1),
-          attenuationColor: new THREE.Color(0x20bd92), attenuationDistance: 2.5,
-          envMapIntensity: .5,
+          color: 0x4a927a, metalness: 0, roughness: .78,
+          clearcoat: 0, specularIntensity: .24,
+          sheen: .12, sheenRoughness: 1,
+          sheenColor: new THREE.Color(0xb8c4a5),
         });
         const deformation = { value: new THREE.Vector3() };
         const phase = index * 1.23 + row * 2;
@@ -334,9 +335,9 @@ export async function mountWaterScene() {
       const dragY = letter === active ? pointer.y + dragOffset.y - mesh.position.y : 0;
       const stretchTarget = letter === active ? clamp(dragY * .13 - .055, -.16, .16) : 0;
       const shearTarget = clamp(dragX * -.3, -.28, .28);
-      spring.x += ((stretchTarget - shape.x) * 155 - spring.x * 5.5) * dt;
-      spring.y += ((shearTarget - shape.y) * 110 - spring.y * 4.8) * dt;
-      spring.z += (-shape.z * 125 - spring.z * 6) * dt;
+      spring.x += ((stretchTarget - shape.x) * 155 - spring.x * 6.8) * dt;
+      spring.y += ((shearTarget - shape.y) * 110 - spring.y * 6) * dt;
+      spring.z += (-shape.z * 125 - spring.z * 7) * dt;
       shape.addScaledVector(spring, dt);
       shape.clampScalar(-.35, .35);
       if (letter === active) {
@@ -539,7 +540,7 @@ export async function mountWaterScene() {
     controls!.hidden = true;
     for (const letter of letters) { letter.mesh.geometry.dispose(); letter.mesh.material.dispose(); }
     photo.dispose(); photoMaterial.dispose(); backdrop.geometry.dispose();
-    environment.dispose(); target.dispose(); lakeMaterial.dispose(); lakeQuad.geometry.dispose();
+    target.dispose(); lakeMaterial.dispose(); lakeQuad.geometry.dispose();
     renderer.dispose(); renderer.domElement.remove();
   }
   renderer.domElement.addEventListener('webglcontextlost', event => {
