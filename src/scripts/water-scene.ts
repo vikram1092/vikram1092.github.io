@@ -57,11 +57,11 @@ export async function mountWaterScene() {
   scene.environment = environment.texture;
   room.dispose();
   environmentGenerator.dispose();
-  scene.add(new THREE.HemisphereLight(0xe7f6ed, 0x2b566a, .65));
-  const keyLight = new THREE.DirectionalLight(0xfff5dd, 1.4);
+  scene.add(new THREE.HemisphereLight(0xe7f6ed, 0x2b566a, .52));
+  const keyLight = new THREE.DirectionalLight(0xfff5dd, 1.12);
   keyLight.position.set(-5, 8, 9);
   scene.add(keyLight);
-  const rim = new THREE.DirectionalLight(0xb3e0f1, .8);
+  const rim = new THREE.DirectionalLight(0xb3e0f1, .65);
   rim.position.set(8, 2, 5);
   scene.add(rim);
 
@@ -146,9 +146,9 @@ export async function mountWaterScene() {
       let x = -measure(word) * fontSize / 2;
       [...word].forEach((char, index) => {
         const geometry = char === '.' ? new THREE.SphereGeometry(fontSize * .09, 24, 16) : new TextGeometry(char, {
-          font, size: fontSize, depth: fontSize * .16, curveSegments: mobile ? 8 : 12,
-          bevelEnabled: true, bevelThickness: fontSize * .11,
-          bevelSize: fontSize * .065, bevelSegments: 8,
+          font, size: fontSize, depth: fontSize * .26, curveSegments: mobile ? 10 : 14,
+          bevelEnabled: true, bevelThickness: fontSize * .035,
+          bevelSize: fontSize * .025, bevelSegments: 5,
         });
         geometry.computeBoundingBox();
         const box = geometry.boundingBox!;
@@ -156,12 +156,12 @@ export async function mountWaterScene() {
         const center = box.getCenter(new THREE.Vector3());
         geometry.translate(-center.x, -center.y, -center.z);
         const material = new THREE.MeshPhysicalMaterial({
-          color: 0x25dba2, metalness: 0, roughness: .12,
-          transmission: .44, thickness: fontSize * 1.5, ior: 1.38,
-          clearcoat: 1, clearcoatRoughness: .025,
-          specularIntensity: 1, specularColor: new THREE.Color(0xe4fff4),
+          color: 0x10bd80, metalness: 0, roughness: .2,
+          transmission: .035, thickness: fontSize * .8, ior: 1.42,
+          clearcoat: 1, clearcoatRoughness: .065,
+          specularIntensity: .78, specularColor: new THREE.Color(0xe4fff4),
           attenuationColor: new THREE.Color(0x20bd92), attenuationDistance: 2.5,
-          envMapIntensity: 1.1,
+          envMapIntensity: .75,
         });
         const wobble = { value: .28 };
         const phase = index * 1.23 + row * 2;
@@ -206,6 +206,7 @@ export async function mountWaterScene() {
           `);
         };
         const mesh = new THREE.Mesh(geometry, material);
+        mesh.rotation.x = -.075;
         // Align glyphs to a shared baseline (including the dot on the i).
         const lineY = row === 0 ? 1.28 : 1.28 - fontSize * .91;
         if (char === '.') center.y = fontSize * .09;
@@ -315,7 +316,7 @@ export async function mountWaterScene() {
       const targetAngle = letter === active ? clamp(velocity.x * -.045, -.2, .2)
         : letter.mode === 'floating' ? clamp(velocity.x * -.06, -.09, .09) : 0;
       mesh.rotation.z += (targetAngle - mesh.rotation.z) * Math.min(1, dt * 7);
-      mesh.rotation.y = Math.sin(time.value * 8.2 + letter.phase) * letter.wobble.value * .025;
+      mesh.rotation.y = -.06 + Math.sin(time.value * 8.2 + letter.phase) * letter.wobble.value * .025;
     }
     // Soft lateral collisions keep floating letters from piling into one another.
     for (let i = 0; i < letters.length; i++) {
