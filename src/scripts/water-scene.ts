@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { FontLoader, type FontData } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import fontData from '../assets/manrope-jelly.json';
 import { waterVertex, waterFragment } from './water-shader';
 
@@ -57,11 +59,11 @@ export async function mountWaterScene() {
   scene.environment = environment.texture;
   room.dispose();
   environmentGenerator.dispose();
-  scene.add(new THREE.HemisphereLight(0x89e8bc, 0x103d35, .3));
-  const keyLight = new THREE.DirectionalLight(0xc5ffdc, .5);
+  scene.add(new THREE.HemisphereLight(0xe7f6ed, 0x2b566a, .65));
+  const keyLight = new THREE.DirectionalLight(0xfff5dd, 1.4);
   keyLight.position.set(-5, 8, 9);
   scene.add(keyLight);
-  const rim = new THREE.DirectionalLight(0x54c99f, .32);
+  const rim = new THREE.DirectionalLight(0xb3e0f1, .8);
   rim.position.set(8, 2, 5);
   scene.add(rim);
 
@@ -130,6 +132,57 @@ export async function mountWaterScene() {
     rippleIndex = (rippleIndex + 1) % ripples.length;
   }
 
+  function distanceToOutline(x: number, y: number, outlines: THREE.Vector2[][]) {
+    let minimum = Infinity;
+    for (const points of outlines) {
+      for (let index = 0; index < points.length; index++) {
+        const start = points[index];
+        const end = points[(index + 1) % points.length];
+        const dx = end.x - start.x;
+        const dy = end.y - start.y;
+        const lengthSquared = dx * dx + dy * dy;
+        const t = lengthSquared ? clamp(((x - start.x) * dx + (y - start.y) * dy) / lengthSquared, 0, 1) : 0;
+        minimum = Math.min(minimum, Math.hypot(x - (start.x + dx * t), y - (start.y + dy * t)));
+      }
+    }
+    return minimum;
+  }
+
+  function makePillowyGeometry(char: string, fontSize: number) {
+    const depth = fontSize * .22;
+    const bevelThickness = fontSize * .045;
+    const curveSegments = mobile ? 9 : 13;
+    let geometry: THREE.BufferGeometry = new TextGeometry(char, {
+      font, size: fontSize, depth, curveSegments,
+      bevelEnabled: true, bevelThickness,
+      bevelSize: fontSize * .035, bevelSegments: 7,
+    });
+    geometry = new TessellateModifier(fontSize * (mobile ? .15 : .11), mobile ? 3 : 4).modify(geometry);
+
+    const outlines = font.generateShapes(char, fontSize).flatMap(shape => {
+      const points = shape.extractPoints(curveSegments);
+      return [points.shape, ...points.holes];
+    });
+    const positions = geometry.getAttribute('position') as THREE.BufferAttribute;
+    const front = depth + bevelThickness;
+    const back = -bevelThickness;
+    const maximumDome = fontSize * .078;
+    for (let index = 0; index < positions.count; index++) {
+      const z = positions.getZ(index);
+      if (Math.abs(z - front) > .0001 && Math.abs(z - back) > .0001) continue;
+      const distance = distanceToOutline(positions.getX(index), positions.getY(index), outlines);
+      const dome = maximumDome * (1 - Math.exp(-distance / (maximumDome * .72)));
+      positions.setZ(index, z + (z > 0 ? dome : -dome * .45));
+    }
+    positions.needsUpdate = true;
+    geometry.deleteAttribute('normal');
+    geometry.deleteAttribute('uv');
+    geometry = mergeVertices(geometry, 1e-4);
+    geometry.computeVertexNormals();
+    geometry.computeBoundingBox();
+    return geometry;
+  }
+
   function makeLetters() {
     for (const letter of letters) {
       scene.remove(letter.mesh);
@@ -145,24 +198,18 @@ export async function mountWaterScene() {
     words.forEach((word, row) => {
       let x = -measure(word) * fontSize / 2;
       [...word].forEach((char, index) => {
-        const geometry = char === '.' ? new THREE.SphereGeometry(fontSize * .09, 24, 16) : new TextGeometry(char, {
-          font, size: fontSize, depth: fontSize * .3, curveSegments: mobile ? 10 : 14,
-          bevelEnabled: true, bevelThickness: fontSize * .06,
-          bevelSize: fontSize * .04, bevelSegments: 8,
-        });
+        const geometry = char === '.' ? new THREE.SphereGeometry(fontSize * .09, 24, 16) : makePillowyGeometry(char, fontSize);
         geometry.computeBoundingBox();
         const box = geometry.boundingBox!;
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
         geometry.translate(-center.x, -center.y, -center.z);
         const material = new THREE.MeshPhysicalMaterial({
-          color: 0x007f49,
-          metalness: 0, roughness: .28,
-          transmission: .025, thickness: fontSize, ior: 1.4,
-          clearcoat: .48, clearcoatRoughness: .2,
-          specularIntensity: .18, specularColor: new THREE.Color(0x8bffc4),
-          attenuationColor: new THREE.Color(0x00a963), attenuationDistance: 2,
-          envMapIntensity: .28,
+          color: 0x25dba2, metalness: 0, roughness: .3,
+          transmission: .22, thickness: fontSize * 1.15, ior: 1.38,
+          clearcoat: .62, clearcoatRoughness: .16,
+          attenuationColor: new THREE.Color(0x20bd92), attenuationDistance: 2.5,
+          envMapIntensity: .5,
         });
         const wobble = { value: .28 };
         const phase = index * 1.23 + row * 2;
@@ -178,7 +225,7 @@ export async function mountWaterScene() {
             uniform float uJellySize;
             vec3 jellyDeform(vec3 p) {
               vec3 q = p / uJellySize;
-              float energy = uJellyWobble * .17;
+              float energy = uJellyWobble * .15;
               float beat = uJellyTime * 8.2 + uJellyPhase;
               float primary = sin(beat);
               float secondary = sin(beat * 1.37 + .8);
@@ -204,11 +251,6 @@ export async function mountWaterScene() {
           `);
           shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `
             vec3 transformed = jellyDeform(position);
-          `);
-          // Keep even the brightest clear-coat response green instead of bleaching white.
-          shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
-            outgoingLight *= vec3(.2, 1.0, .48);
-            #include <opaque_fragment>
           `);
         };
         const mesh = new THREE.Mesh(geometry, material);
@@ -268,13 +310,14 @@ export async function mountWaterScene() {
       const { mesh, velocity, size, mode } = letter;
       const scaleTarget = letter !== active && (mode === 'falling' || mode === 'floating') ? floatingScale : 1;
       letter.scale += (scaleTarget - letter.scale) * Math.min(1, dt * 4);
-      letter.wobble.value *= Math.exp(-dt * 2.6);
+      letter.wobble.value *= Math.exp(-dt * 1.8);
       if (letter === active) {
         const dx = pointer.x + dragOffset.x - mesh.position.x;
         const dy = pointer.y + dragOffset.y - mesh.position.y;
         mesh.position.x += dx * Math.min(1, dt * 24);
         mesh.position.y += dy * Math.min(1, dt * 24);
-        letter.wobble.value = Math.min(1.85, .55 + Math.hypot(dx, dy) * .9);
+        letter.wobble.value = Math.max(letter.wobble.value,
+          Math.min(1.8, .48 + velocity.length() * .1 + Math.hypot(dx, dy) * .45));
       } else if (mode === 'home') {
         mesh.position.y = letter.home.y;
       } else if (mode === 'returning') {
@@ -376,7 +419,7 @@ export async function mountWaterScene() {
     if (active) {
       active.mode = 'falling';
       active.wet = false;
-      active.wobble.value = 1.35;
+      active.wobble.value = Math.max(active.wobble.value, 1.5);
       active = undefined;
     }
     if (pointerId !== undefined && renderer.domElement.hasPointerCapture(pointerId)) renderer.domElement.releasePointerCapture(pointerId);
@@ -394,7 +437,7 @@ export async function mountWaterScene() {
       previousPointer.copy(pointer);
       previousPointerTime = event.timeStamp;
       active.velocity.set(0, 0);
-      active.wobble.value = 1.15;
+      active.wobble.value = 1.3;
       host.classList.add('is-dragging');
     } else if (pointer.y < waterY) {
       splash(pointer.x, .8, clamp(pointer.y / HEIGHT + .5, .02, horizon));
