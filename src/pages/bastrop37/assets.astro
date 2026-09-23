@@ -1,0 +1,10 @@
+---
+import '@fontsource-variable/manrope';
+import '../../styles/bastrop37.css';
+const assets = [
+{file:'bike',title:'B37 / Red motorcycle',size:'32 × 64',description:'Long red fairing, enclosed wheels, low rider, cyan stabilizers. One controlled sprite rotates into lean and slide poses in the game.'},
+{file:'coupe',title:'Night coupe',size:'32 × 56',description:'Cold steel bodywork, dark glass, pink rear lamps. A readable narrow obstacle for practicing close calls.'},
+{file:'hauler',title:'Industrial hauler',size:'44 × 84',description:'Heavy ribbed cargo body and warm cab. A longer, wider obstacle that asks you to commit to a gap.'}
+];
+---
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>BASTROP37 — Asset garage</title></head><body><main class="garage"><header class="mast"><a href="/bastrop37/">↙ BACK TO THE CIRCUIT</a><span>BASTROP37 / ASSET GARAGE / 001</span></header><p class="eyebrow" style="margin-top:40px">THE FIRST PIECES</p><h1>ASSET <span>GARAGE</span></h1><p class="garage-copy">Milestones 01–02. These are deliberately small, original, code-drawn SVG prototype sprites on an integer pixel grid. Transparent backgrounds; crisp edges; no external image dependencies. The road, buildings, rain, sparks and energy trails are drawn live in Canvas. This is the handling kit, not the final production art pass.</p><section class="gallery">{assets.map(asset=><article class="asset"><div class="sprite-stage"><img src={`/bastrop37/assets/${asset.file}.svg`} alt={asset.title}/></div><h2>{asset.title}</h2><p>{asset.size} logical pixels · transparent SVG</p><p>{asset.description}</p><a href={`/bastrop37/assets/${asset.file}.svg`} target="_blank" rel="noreferrer">OPEN ORIGINAL SPRITE ↗</a></article>)}</section><p class="development" style="margin-top:30px">Palette: midnight navy / signal red / oxidized steel / electric mint.</p></main></body></html>

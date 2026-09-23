@@ -57,3 +57,6 @@ h1 { margin: 28px 0 0; font-size: clamp(60px, 8.8vw, 132px); font-weight: 800; l
 
 .scene-accessibility button:focus-visible { position: fixed; z-index: 10; top: 90px; left: 24px; width: auto; height: auto; margin: 0; padding: 12px 18px; clip-path: none; overflow: visible; border: 0; border-radius: 24px; background: #123e43; color: #e9fff5; }
 .home__identity h1 { color: #51d7ad; }
+
+.home__afterhours { font: 10px var(--sans); font-weight: 700; letter-spacing: .15em; padding: 12px 0 12px 16px; color: #e6efea; }
+.home__afterhours:hover { color: #a6f5db; }
