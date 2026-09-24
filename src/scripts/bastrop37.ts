@@ -1,4 +1,4 @@
-// BASTROP37 step 2: rear chase camera. X and Z are shared road-space units.
+// BASTROP37 step 3: bike handling and abilities. X and Z are shared road-space units.
 // Project only for drawing; collision uses the same vehicle footprints.
 type Car = { x: number; z: number; w: number; h: number; kind: string; velocity: number; passed: boolean };
 type Particle = { x: number; y: number; vx: number; vy: number; life: number; color: string };
@@ -18,38 +18,43 @@ export function mountGame() {
   let W = 640, H = 360;
   const left = 128, right = 512;
   const bounds: Record<string, {x:number;y:number;w:number;h:number}> = {};
-  const horizon = () => H * .28;
+  const horizon = () => H * .28 + (reduced ? 0 : cameraPitch);
   function project(wx:number, z:number) {
     // Close chase: enlarge the whole road-space view, tracking the rider laterally.
     const scale = 65 / (65 + Math.max(-53,z));
-    const zoom = W < H ? 3 : 2.2;
+    const zoom = (W < H ? 3 : 2.2) * (1 - (reduced ? 0 : turboView * .07));
     const unit = Math.min(W * .9, 520) / (right-left) * zoom;
-    const cameraX = 320 + (x-320)*.85;
     return {x:W/2+(wx-cameraX)*unit*scale, y:horizon()+(H*.84-horizon())*scale, scale:unit*scale};
   }
   let state: 'ready' | 'playing' | 'paused' | 'crashed' = 'ready';
-  let x = 320, y = 270, vx = 0, angle = 0, direction = 1;
-  let charge = 0, boost = 0, speed = 180, distance = 0, calls = 0, elapsed = 0;
+  let x = 320, vx = 0, angle = 0;
+  let charge = 1, boost = 0, speed = 180, distance = 0, calls = 0, elapsed = 0;
   let sliding = false, spawn = 0, offset = 0, last = 0, feedbackTime = 0;
   let traffic: Car[] = [], particles: Particle[] = [];
   let frames = 0;
+  let cameraX = 320, cameraPitch = 0, turboView = 0;
+  let height = 0, verticalSpeed = 0, jumpWindup = 0, jumpCooldown = 0;
+  let landing = 0, blades = 0, slices = 0;
+  const pressed = new Set<string>();
+  function press(key:string) { if(!keys.has(key)) pressed.add(key); keys.add(key); }
+  const actionKeys = ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space','ShiftLeft','KeyB','KeyJ'];
   function size() {
     const portrait = canvas.clientWidth / canvas.clientHeight < 1;
     const nw = portrait ? 360 : 640, nh = portrait ? 450 : 360;
     if (W === nw && H === nh) return;
     W = canvas.width = nw; H = canvas.height = nh;
-    y = H * .84;
   }
   const resize = new ResizeObserver(() => { size(); if (state === 'playing') pause(); });
   resize.observe(canvas);
   function setMessage(text: string, seconds = 1) { el('feedback').textContent = text; feedbackTime = seconds; }
-  function clearInput() { keys.clear(); sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
+  function clearInput() { keys.clear(); pressed.clear(); sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
   function reset() {
-    clearInput(); x = 320; y = H * .84; vx = angle = charge = boost = distance = calls = elapsed = offset = 0;
-    speed = 180; spawn = .8; particles = [];
+    clearInput(); x = 320; vx = angle = charge = boost = distance = calls = elapsed = offset = 0;
+    charge = 1; speed = 150; spawn = .8; particles = [];
+    cameraX = 320; cameraPitch = turboView = height = verticalSpeed = jumpWindup = jumpCooldown = landing = blades = slices = 0;
     traffic = [makeVehicle(1, 430, 'coupe'), makeVehicle(3, 730, 'hauler')];
     state = 'playing'; overlay.hidden = true; pauseButton.disabled = false; pauseButton.textContent = 'Ⅱ PAUSE';
-    setMessage('HOLD SLIDE → RELEASE TO BURST', 3); canvas.focus({preventScroll:true});
+    setMessage('SHIFT: TURBO · B: BLADES · J: JUMP', 3); canvas.focus({preventScroll:true});
   }
   function pause() {
     if (state !== 'playing') return;
@@ -68,12 +73,12 @@ export function mountGame() {
   }
   start.addEventListener('click', () => state === 'paused' ? resume() : reset());
   pauseButton.addEventListener('click', () => state === 'paused' ? resume() : pause());
-  const aliases: Record<string,string> = { KeyA:'ArrowLeft',KeyD:'ArrowRight',KeyW:'ArrowUp',KeyS:'ArrowDown' };
+  const aliases: Record<string,string> = { KeyA:'ArrowLeft',KeyD:'ArrowRight',KeyW:'ArrowUp',KeyS:'ArrowDown',ShiftRight:'ShiftLeft' };
   addEventListener('keydown', e => {
     // Keep keyboard activation and navigation working on page controls.
     if ((e.target as HTMLElement)?.tagName === 'BUTTON' || (e.target as HTMLElement)?.tagName === 'A') return;
     const key = aliases[e.code] || e.code;
-    if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space'].includes(key)) { e.preventDefault(); if (state === 'playing') keys.add(key); }
+    if (actionKeys.includes(key)) { e.preventDefault(); if (state === 'playing' && !e.repeat) press(key); }
     if (e.repeat) return;
     if (e.code === 'KeyP' || e.code === 'Escape') state === 'paused' ? resume() : pause();
     if (e.code === 'KeyR' && start.disabled === false) reset();
@@ -82,30 +87,51 @@ export function mountGame() {
   addEventListener('blur', pause);
   document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
   document.querySelectorAll<HTMLButtonElement>('[data-key]').forEach(button => {
-    button.addEventListener('pointerdown', e => { e.preventDefault(); if(state!=='playing')return; button.setPointerCapture(e.pointerId); keys.add(button.dataset.key!); button.classList.add('held'); });
+    button.addEventListener('pointerdown', e => { e.preventDefault(); if(state!=='playing')return; button.setPointerCapture(e.pointerId); press(button.dataset.key!); button.classList.add('held'); });
     const release = () => { keys.delete(button.dataset.key!); button.classList.remove('held'); };
     button.addEventListener('pointerup', release); button.addEventListener('pointercancel', release); button.addEventListener('lostpointercapture', release);
   });
-  function sparks(count:number, color:string) {
-    for(let i=0;i<count;i++) particles.push({x:x+(Math.random()-.5)*15,y:y+16,vx:(Math.random()-.5)*70,vy:40+Math.random()*90,life:.25+Math.random()*.3,color});
+  function sparks(count:number, color:string, wx=x, z=0) {
+    const p=project(wx,z);
+    for(let i=0;i<count;i++) particles.push({x:p.x+(Math.random()-.5)*15,y:p.y-height*p.scale,vx:(Math.random()-.5)*130,vy:40+Math.random()*90,life:.25+Math.random()*.3,color});
   }
   function update(dt:number) {
     elapsed += dt; feedbackTime -= dt;
     const input = Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
-    if(input) direction = input;
-    const nextSlide = keys.has('Space');
-    if(sliding && !nextSlide && charge >= .12) { boost = .25+charge*.95; sparks(18,'#ffe575'); setMessage('BURST / FIND THE OPENING',1.1); charge = 0; }
-    sliding = nextSlide;
     boost = Math.max(0, boost-dt);
-    if(sliding) { charge = clamp(charge+dt*.43,0,1); boost=0; } else charge = Math.max(0,charge-dt*.65);
-    const target = sliding ? 122 : boost>0 ? 330 : keys.has('ArrowDown') ? 125 : keys.has('ArrowUp') ? 210 : 180;
-    speed += (target-speed)*(1-Math.exp(-9*dt));
-    vx += (input*(sliding?205:180)-vx)*(1-Math.exp(-22*dt));
+    jumpCooldown = Math.max(0,jumpCooldown-dt);
+    landing = Math.max(0,landing-dt);
+    if(pressed.has('ShiftLeft')) {
+      if(boost===0 && charge>=.4) { charge-=.4; boost=1.15; sparks(18,'#ffe575'); setMessage('TURBO / TAKE THE GAP',1.15); }
+      else if(boost===0) setMessage('TURBO RECHARGING',.8);
+    }
+    if(pressed.has('KeyJ') && height===0 && jumpWindup===0 && jumpCooldown===0) {
+      jumpWindup=.12; jumpCooldown=1.25; setMessage('SPRING LOADED',.12);
+    }
+    pressed.clear();
+    if(jumpWindup>0) {
+      jumpWindup=Math.max(0,jumpWindup-dt);
+      if(jumpWindup===0) { verticalSpeed=190; setMessage('AIRBORNE / CLEAR LOW TRAFFIC',.8); }
+    }
+    if(verticalSpeed!==0 || height>0) {
+      verticalSpeed-=380*dt; height+=verticalSpeed*dt;
+      if(height<=0) { height=verticalSpeed=0; landing=.42; sparks(20,'#8fffea'); setMessage('TOUCHDOWN',.5); }
+    }
+    blades += ((keys.has('KeyB')?1:0)-blades)*(1-Math.exp(-25*dt));
+    sliding = keys.has('Space') && height===0 && boost===0;
+    // Slide is a deliberate lateral reposition, with countersteer and strong release grip.
+    if(boost===0) charge=clamp(charge+dt*(sliding&&input ? .3 : .10),0,1);
+    const target = sliding ? 142 : boost>0 ? 335 : keys.has('ArrowDown') ? 110 : keys.has('ArrowUp') ? 225 : 185;
+    speed += (target-speed)*(1-Math.exp(-(boost>0?7:4)*dt));
+    vx += (input*(sliding?230:180)*(height>0?.8:1)-vx)*(1-Math.exp(-(sliding?10:20)*dt));
     x = clamp(x+vx*dt,left+22,right-22);
-    y = H * .84; // Fixed chase camera: steering changes lateral road position only.
-    angle += ((sliding?direction*1.02:input*.19)-angle)*(1-Math.exp(-16*dt));
+    if(x===left+22 || x===right-22) vx=0;
+    angle += ((sliding?input*.65:input*.19)-angle)*(1-Math.exp(-16*dt));
+    cameraX += (320+(x-320)*.85-cameraX)*(1-Math.exp(-12*dt));
+    turboView += ((boost>0?1:0)-turboView)*(1-Math.exp(-5*dt));
+    cameraPitch += ((boost>0?5:0)-height*.08+(landing>0?Math.sin((.42-landing)*22)*landing*10:0)-cameraPitch)*(1-Math.exp(-8*dt));
     offset += speed*dt; distance += speed*dt/3.6;
-    if(sliding && Math.random()<.65) sparks(1,'#f87085');
+    if(sliding && Math.random()<.65) sparks(1,'#8fffea');
     if(boost>0) sparks(2,'#ffe575');
     spawn -= dt;
     if(spawn<=0) {
@@ -120,8 +146,14 @@ export function mountGame() {
       const oldZ = car.z;
       car.z -= (speed-car.velocity)*dt;
       const dx = Math.abs(x-car.x), reach = (bh+car.h)/2;
+      // Step 3 uses the existing passive drones as blade targets; encounters come later.
+      if(car.kind==='drone' && blades>.65 && height<18 && dx<car.w/2+72 && oldZ>-40 && car.z<40) {
+        car.passed=true; car.z=-100; slices++; sparks(24,'#ffe575',car.x,0);
+        setMessage('DRONE SLICED',1); continue;
+      }
+      const clearance = car.kind==='hauler'?90:car.kind==='drone'?23:29;
       // Swept depth interval avoids tunnelling during turbo or a slow frame.
-      if(dx<(bw+car.w)/2 && oldZ > -reach && car.z < reach) { crash(); break; }
+      if(height<clearance && dx<(bw+car.w)/2 && oldZ > -reach && car.z < reach) { crash(); break; }
       if(!car.passed && car.z < -reach) {
         car.passed=true;
         const gap = dx-(bw+car.w)/2;
@@ -131,7 +163,7 @@ export function mountGame() {
     traffic=traffic.filter(car=>car.z>-65);
     particles=particles.filter(p=>p.life>0).slice(-180);
     for(const p of particles) {p.life-=dt;p.x+=p.vx*dt;p.y+=(p.vy+speed*.4)*dt;}
-    if(feedbackTime<=0) el('feedback').textContent=sliding?'RELEASE TO BURST':boost>0?'BURST':'HOLD SLIDE → RELEASE TO BURST';
+    if(feedbackTime<=0) el('feedback').textContent=height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'SHIFT: TURBO · B: BLADES · J: JUMP';
   }
   function makeVehicle(lane:number,z:number,kind:string):Car {
     return {x:left+(lane+.5)*(right-left)/5,z,w:kind==='hauler'?63:kind==='drone'?38:53,
@@ -149,7 +181,7 @@ export function mountGame() {
     if(img&&b) {
       // Uniform scaling preserves the artwork, including the wider turning poses.
       // Keep rider height steady; traffic retains its road-space width.
-      const assetScale = name.startsWith('bike') ? height/b.h : width/b.w;
+      const assetScale = ['bike','slide','jump'].some(prefix=>name.startsWith(prefix)) ? height/b.h : width/b.w;
       const drawW = b.w*assetScale*p.scale, drawH = b.h*assetScale*p.scale;
       c.drawImage(img,b.x,b.y,b.w,b.h,p.x-drawW/2,p.y-lift*p.scale-drawH,drawW,drawH);
     }
@@ -184,10 +216,22 @@ export function mountGame() {
     const drawBike=()=>{
       const p=project(x,0);
       // Exhaust and sparks remain independent of the approved vehicle sprite.
-      if(boost>0) polygon([{x:p.x-7*p.scale,y:p.y-7},{x:p.x+7*p.scale,y:p.y-7},{x:p.x+4*p.scale,y:H},{x:p.x-4*p.scale,y:H}],'#ffe35e88');
-      const pose=angle<-.08?'bikeLeft':angle>.08?'bikeRight':'bike';
-      sprite(pose,x,0,sliding?34:26,47);
-      for(const particle of particles){c.globalAlpha=clamp(particle.life*3,0,1);c.fillStyle=particle.color;c.fillRect(p.x+(particle.x-x)*p.scale,particle.y,2,boost>0?7:3);}c.globalAlpha=1;
+      if(boost>0) polygon([{x:p.x-7*p.scale,y:p.y-height*p.scale-7},{x:p.x+7*p.scale,y:p.y-height*p.scale-7},{x:p.x+4*p.scale,y:H},{x:p.x-4*p.scale,y:H}],'#ffe35e88');
+      const bounce=landing>0?Math.sin((.42-landing)*22)*landing*8:0;
+      const lift=height + bounce - (jumpWindup>0?Math.sin(jumpWindup/.12*Math.PI)*3:0);
+      if(sliding && Math.abs(vx)>20) {
+        c.strokeStyle='#8fffea99';c.lineWidth=2;c.beginPath();c.moveTo(p.x-14,p.y);c.lineTo(p.x-vx*.22,p.y+28);c.stroke();
+      }
+      if(blades>.03) {
+        const by=p.y-(32+lift)*p.scale, reach=72*blades*p.scale;
+        c.save(); c.strokeStyle='#ffe553';c.lineWidth=5*p.scale*blades;
+        c.shadowColor='#ffce32';c.shadowBlur=reduced?0:14;
+        c.beginPath();c.moveTo(p.x-reach,by+8*p.scale);c.lineTo(p.x-10*p.scale,by);c.moveTo(p.x+10*p.scale,by);c.lineTo(p.x+reach,by+8*p.scale);c.stroke();
+        c.strokeStyle='#fffbd0';c.lineWidth=1.5*p.scale;c.stroke();c.restore();
+      }
+      const pose=height>0?(angle<-.08?'jumpLeft':angle>.08?'jumpRight':'jump'):sliding&&Math.abs(angle)>.3?(angle<0?'slideLeft':'slideRight'):angle<-.08?'bikeLeft':angle>.08?'bikeRight':'bike';
+      sprite(pose,x,0,sliding?34:26,47,lift);
+      for(const particle of particles){c.globalAlpha=clamp(particle.life*3,0,1);c.fillStyle=particle.color;c.fillRect(particle.x,particle.y,2,boost>0?7:3);}c.globalAlpha=1;
     };
     let bikeDrawn=false;
     for(const car of [...traffic].sort((a,b)=>b.z-a.z)) {
@@ -199,10 +243,10 @@ export function mountGame() {
     el('speed').textContent=Math.round(speed).toString();el('near').textContent=calls.toString();
     el('charge-value').textContent=Math.round(charge*100)+'%';el('charge-bar').style.width=charge*100+'%';
     // Small observable state is useful for regression tests and tuning controls.
-    canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);
+    canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);
   }
   function frame(now:number){const dt=Math.min((now-last)/1000,1/30);last=now;if(state==='playing')update(dt);if(state==='playing'||frames++%3===0)render();requestAnimationFrame(frame);}
-  const assets:Record<string,string>={bike:'bike-normal-straight',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',coupe:'traffic-coupe',hauler:'traffic-hauler',drone:'drone-hover'};
+  const assets:Record<string,string>={bike:'bike-normal-straight',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-normal-left-35',slideRight:'bike-normal-right-35',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',hauler:'traffic-hauler',drone:'drone-hover'};
   Promise.all(Object.entries(assets).map(([name,file])=>new Promise<void>((resolve,reject)=>{
     const img=new Image();img.onload=()=>{
       images[name]=img;
