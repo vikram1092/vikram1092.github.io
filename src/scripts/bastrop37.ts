@@ -390,12 +390,12 @@ export function mountGame() {
     c.save(); c.globalAlpha=clamp(fragment.life*1.8,0,1); c.translate(p.x,p.y-fragment.lift*p.scale); c.rotate(fragment.rotation);
     c.drawImage(img,b.x,b.y,b.w,b.h,-b.w*scale/2,-b.h*scale/2,b.w*scale,b.h*scale); c.restore();
   }
-  function drawEffect(name:string,wx:number,z:number,width:number,lift=0,alpha=1,scalePulse=1) {
+  function drawEffect(name:string,wx:number,z:number,width:number,lift=0,alpha=1,scalePulse=1,yOffset=0) {
     const p=project(wx,z), img=images[name], b=bounds[name];
     if(!img||!b)return;
     const scale=width/b.w*p.scale*scalePulse;
     c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=alpha;
-    c.drawImage(img,b.x,b.y,b.w,b.h,p.x-b.w*scale/2,p.y-lift*p.scale-b.h*scale/2,b.w*scale,b.h*scale);
+    c.drawImage(img,b.x,b.y,b.w,b.h,p.x-b.w*scale/2,p.y-lift*p.scale-b.h*scale/2+yOffset*p.scale,b.w*scale,b.h*scale);
     c.restore();
   }
   function drawBurst(effect:EffectBurst) {
@@ -434,11 +434,13 @@ export function mountGame() {
       drawEffect('hoverThrust',car.x,car.z,car.w*.9,hoverLift(car)-8,.5+.18*Math.sin(elapsed*18));
     const drawBike=()=>{
       const lift=bikeLift();
-      if(sliding && Math.abs(vx)>20) drawEffect('cyanTrail',x-vx*.035,0,40,lift-11,.72);
-      if(boost>0) drawEffect('yellowTurbo',x,0,48,lift-13,.85+.1*Math.sin(elapsed*26));
+      // Effects are road-layer art: render them behind the bike, centered on its exhaust/axle.
+      for(const effect of effects.filter(effect=>effect.sprite==='landingRing')) drawBurst(effect);
+      if(sliding && Math.abs(vx)>20) drawEffect('cyanTrail',x-vx*.035,0,32,lift-9,.72,1,10);
+      if(boost>0) drawEffect('yellowTurbo',x,0,30,lift-10,.85+.1*Math.sin(elapsed*26),.9,12);
+      if(blades>.08) drawEffect('bladeEffect',x,0,42,lift+1,Math.min(1,blades*.85),.9,9);
       const pose=bikePose();
       sprite(pose,x,0,sliding?34:26,47,lift);
-      if(blades>.08) drawEffect('bladeEffect',x,0,blades*56,lift,Math.min(1,blades*.85));
       for(const particle of particles){c.globalAlpha=clamp(particle.life*3,0,1);c.fillStyle=particle.color;c.fillRect(particle.x,particle.y,2,boost>0?7:3);}c.globalAlpha=1;
     };
     let bikeDrawn=false;
@@ -451,7 +453,7 @@ export function mountGame() {
     }
     if(!bikeDrawn)drawBike();
     for(const fragment of [...fragments].sort((a,b)=>b.z-a.z))drawFragment(fragment);
-    for(const effect of [...effects].sort((a,b)=>b.z-a.z))drawBurst(effect);
+    for(const effect of [...effects].filter(effect=>effect.sprite!=='landingRing').sort((a,b)=>b.z-a.z))drawBurst(effect);
     if(!reduced&&boost>0){c.strokeStyle='#ffe57b55';for(let i=0;i<8;i++){const px=(i*137)%W;c.beginPath();c.moveTo(px,H);c.lineTo(W/2+(px-W/2)*.8,H*.8);c.stroke();}}
     el('speed').textContent=Math.round(speed).toString();el('near').textContent=calls.toString();
     el('charge-value').textContent=Math.round(charge*100)+'%';el('charge-bar').style.width=charge*100+'%';
@@ -459,7 +461,7 @@ export function mountGame() {
     const drone=activeDrone();canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);
   }
   function frame(now:number){const dt=Math.min((now-last)/1000,1/30);last=now;if(state==='playing')update(dt);if(state==='playing'||frames++%3===0)render();requestAnimationFrame(frame);}
-  const assets:Record<string,string>={bike:'bike-normal-straight',bikeBlades:'bike-blades-straight',bikeBladesLeft:'bike-blades-left-15',bikeBladesRight:'bike-blades-right-15',bikeBladesLeft35:'bike-blades-left-35',bikeBladesRight35:'bike-blades-right-35',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-normal-left-35',slideRight:'bike-normal-right-35',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',hauler:'traffic-hauler',drone:'drone-hover',droneFlankLeft:'drone-flank-left',droneFlankRight:'drone-flank-right',droneWarning:'drone-attack-warning',droneLunge:'drone-lunge',droneFragmentLeft:'drone-fragment-left',droneFragmentRight:'drone-fragment-right',droneCore:'drone-core',cyanTrail:'effects-cyan-trail',yellowTurbo:'effects-yellow-turbo',hoverThrust:'effects-hover-thrust',bladeEffect:'effects-blades',cutSparks:'effects-cut-sparks',impactSparks:'effects-impact-sparks',landingRing:'effects-landing-ring',debris:'effects-debris'};
+  const assets:Record<string,string>={bike:'bike-normal-straight',bikeBlades:'bike-blades-straight',bikeBladesLeft:'bike-blades-left-15',bikeBladesRight:'bike-blades-right-15',bikeBladesLeft35:'bike-blades-left-35',bikeBladesRight35:'bike-blades-right-35',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-slide-left',slideRight:'bike-slide-right',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',hauler:'traffic-hauler',drone:'drone-hover',droneFlankLeft:'drone-flank-left',droneFlankRight:'drone-flank-right',droneWarning:'drone-attack-warning',droneLunge:'drone-lunge',droneFragmentLeft:'drone-fragment-left',droneFragmentRight:'drone-fragment-right',droneCore:'drone-core',cyanTrail:'effects-cyan-trail',yellowTurbo:'effects-yellow-turbo',hoverThrust:'effects-hover-thrust',bladeEffect:'effects-blades',cutSparks:'effects-cut-sparks',impactSparks:'effects-impact-sparks',landingRing:'effects-landing-ring',debris:'effects-debris'};
   Promise.all(Object.entries(assets).map(([name,file])=>new Promise<void>((resolve,reject)=>{
     const img=new Image();img.onload=()=>{
       images[name]=img;
