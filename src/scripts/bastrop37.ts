@@ -1,5 +1,5 @@
 // BASTROP37 step 3: bike handling and abilities. X and Z are shared road-space units.
-// Project only for drawing; collision uses the same vehicle footprints.
+// Depth gates physical contact; projected opaque bodies decide visible contact.
 type Car = { x: number; z: number; w: number; h: number; kind: string; velocity: number; passed: boolean };
 type Particle = { x: number; y: number; vx: number; vy: number; life: number; color: string };
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
@@ -15,13 +15,7 @@ export function mountGame() {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const keys = new Set<string>();
   const images: Record<string, HTMLImageElement> = {};
-  // Extend only the blade pixels; rider and chassis keep their original proportions.
-  const bladeLayers: Record<string, {image:HTMLCanvasElement;root:number;tip:number}[]> = {};
-  const bladeRoots: Record<string, number[]> = {
-    bikeBlades:[242,400], bikeBladesLeft:[211,422], bikeBladesLeft35:[205,414],
-    bikeBladesRight:[233,418], bikeBladesRight35:[209,432],
-  };
-  const bladeExtension = 3;
+  const masks: Record<string, Uint8Array> = {};
   let W = 640, H = 360;
   const left = 128, right = 512;
   const bounds: Record<string, {x:number;y:number;w:number;h:number}> = {};
@@ -35,7 +29,7 @@ export function mountGame() {
   }
   let state: 'ready' | 'playing' | 'paused' | 'crashed' = 'ready';
   let x = 320, vx = 0, angle = 0;
-  let charge = 1, boost = 0, speed = 180, distance = 0, calls = 0, elapsed = 0;
+  let charge = 1, boost = 0, speed = 260, distance = 0, calls = 0, elapsed = 0;
   let sliding = false, spawn = 0, offset = 0, last = 0, feedbackTime = 0;
   let traffic: Car[] = [], particles: Particle[] = [];
   let frames = 0;
@@ -57,7 +51,7 @@ export function mountGame() {
   function clearInput() { keys.clear(); pressed.clear(); sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
   function reset() {
     clearInput(); x = 320; vx = angle = charge = boost = distance = calls = elapsed = offset = 0;
-    charge = 1; speed = 150; spawn = .8; particles = [];
+    charge = 1; speed = 210; spawn = .65; particles = [];
     cameraX = 320; cameraPitch = turboView = height = verticalSpeed = jumpWindup = jumpCooldown = landing = blades = slices = 0;
     traffic = [makeVehicle(1, 430, 'coupe'), makeVehicle(3, 730, 'hauler')];
     state = 'playing'; overlay.hidden = true; pauseButton.disabled = false; pauseButton.textContent = 'Ⅱ PAUSE';
@@ -106,14 +100,46 @@ export function mountGame() {
     return Math.abs(angle)>.3 ? (angle<0?'bikeBladesLeft35':'bikeBladesRight35')
       : angle<-.08?'bikeBladesLeft':angle>.08?'bikeBladesRight':'bikeBlades';
   }
-  function bladeReach(targetX:number) {
+  function bladeReach() {
     const b=bounds[bladePose()];
-    // Use the same extended tips as the renderer, including each turning pose.
-    const layers=bladeLayers[bladePose()];
-    const layer=layers?.[targetX<x?0:1];
-    return b && layer ? Math.abs(layer.root+(layer.tip-layer.root)*bladeExtension-(b.x+b.w/2))/b.h*47 : 0;
+    // Same uniform height scaling as the renderer: hits end at the sprite's tips.
+    return b ? b.w/b.h*47/2 : 0;
+  }
+  function bikePose(bodyOnly=false) {
+    return !bodyOnly&&blades>.65?bladePose():height>0?(angle<-.08?'jumpLeft':angle>.08?'jumpRight':'jump'):sliding&&Math.abs(angle)>.3?(angle<0?'slideLeft':'slideRight'):angle<-.08?'bikeLeft':angle>.08?'bikeRight':'bike';
+  }
+  function bikeLift() {
+    return height+(landing>0?Math.sin((.42-landing)*22)*landing*8:0)-(jumpWindup>0?Math.sin(jumpWindup/.12*Math.PI)*3:0);
+  }
+  function hoverLift(car:Car) {
+    return (car.kind==='drone'?16:car.kind==='hauler'?12:9)+Math.sin(elapsed*3+car.x)*1.2;
+  }
+  function spriteRect(name:string,wx:number,z:number,width:number,height:number,lift:number) {
+    const p=project(wx,z), b=bounds[name];
+    if(!b)return null;
+    const scale=(['bike','slide','jump'].some(prefix=>name.startsWith(prefix))?height/b.h:width/b.w)*p.scale;
+    return {x:p.x-b.w*scale/2,y:p.y-lift*p.scale-b.h*scale,w:b.w*scale,h:b.h*scale};
+  }
+  function bodyContact(car:Car,z:number,wx:number) {
+    // Blades, exhaust, shadows and transparent sprite corners are not crash bodies.
+    const name=bikePose(true), a=spriteRect(name,wx,0,26,47,bikeLift());
+    const b=spriteRect(car.kind,car.x,z,car.w,0,hoverLift(car));
+    if(!a||!b)return false;
+    const am=masks[name], bm=masks[car.kind];
+    if(!am||!bm)return false;
+    const left=Math.max(a.x,b.x), right=Math.min(a.x+a.w,b.x+b.w);
+    const top=Math.max(a.y,b.y), bottom=Math.min(a.y+a.h,b.y+b.h);
+    // Sample only the overlapping area, at sub-mask resolution, for a forgiving silhouette hit.
+    const step=Math.max(.5,Math.min(a.w,a.h,b.w,b.h)/64);
+    for(let yy=top+step/2;yy<bottom;yy+=step)for(let xx=left+step/2;xx<right;xx+=step) {
+      const ai=Math.floor((yy-a.y)/a.h*64)*64+Math.floor((xx-a.x)/a.w*64);
+      const bi=Math.floor((yy-b.y)/b.h*64)*64+Math.floor((xx-b.x)/b.w*64);
+      if(am[ai]&&bm[bi])return true;
+    }
+    return false;
   }
   function update(dt:number) {
+    const oldX=x;
     elapsed += dt; feedbackTime -= dt;
     const input = Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
     boost = Math.max(0, boost-dt);
@@ -139,7 +165,8 @@ export function mountGame() {
     sliding = keys.has('Space') && height===0 && boost===0;
     // Slide is a deliberate lateral reposition, with countersteer and strong release grip.
     if(boost===0) charge=clamp(charge+dt*(sliding&&input ? .3 : .10),0,1);
-    const target = sliding ? 142 : boost>0 ? 335 : keys.has('ArrowDown') ? 110 : keys.has('ArrowUp') ? 225 : 185;
+    // Faster road motion and closing speed, while keeping ability timers in real time.
+    const target = sliding ? 200 : boost>0 ? 470 : keys.has('ArrowDown') ? 155 : keys.has('ArrowUp') ? 320 : 260;
     speed += (target-speed)*(1-Math.exp(-(boost>0?7:4)*dt));
     vx += (input*(sliding?230:180)*(height>0?.8:1)-vx)*(1-Math.exp(-(sliding?10:20)*dt));
     x = clamp(x+vx*dt,left+22,right-22);
@@ -157,7 +184,7 @@ export function mountGame() {
       const kind = Math.random()<.22 ? 'hauler' : Math.random()<.15 ? 'drone' : 'coupe';
       // One vehicle per wave leaves four lanes open; all enter at the far plane.
       traffic.push(makeVehicle(lane, 950, kind));
-      spawn = 1.3+Math.random()*.45;
+      spawn = 1.05+Math.random()*.35;
     }
     const bw = 26 + (sliding ? 8 : 0), bh = 24;
     for(const car of traffic) {
@@ -165,13 +192,21 @@ export function mountGame() {
       car.z -= (speed-car.velocity)*dt;
       const dx = Math.abs(x-car.x), reach = (bh+car.h)/2;
       // Step 3 uses the existing passive drones as blade targets; encounters come later.
-      if(car.kind==='drone' && blades>.65 && height<18 && dx<car.w/2+bladeReach(car.x) && oldZ>-40 && car.z<40) {
+      if(car.kind==='drone' && blades>.65 && height<18 && dx<car.w/2+bladeReach() && oldZ>-40 && car.z<40) {
         car.passed=true; car.z=-100; slices++; sparks(24,'#ffe575',car.x,0);
         setMessage('DRONE SLICED',1); continue;
       }
-      const clearance = car.kind==='hauler'?90:car.kind==='drone'?23:29;
+      const clearance = car.kind==='hauler'?110:car.kind==='drone'?32:38;
       // Swept depth interval avoids tunnelling during turbo or a slow frame.
-      if(height<clearance && dx<(bw+car.w)/2 && oldZ > -reach && car.z < reach) { crash(); break; }
+      if(height<clearance && oldZ > -reach && car.z < reach) {
+        // Sweep both steering and approach, so turbo cannot skip a narrow contact.
+        const steps=Math.max(1,Math.ceil(Math.max(Math.abs(car.z-oldZ),Math.abs(x-oldX))/2));
+        for(let i=0;i<=steps;i++) {
+          const t=i/steps, z=oldZ+(car.z-oldZ)*t;
+          if(Math.abs(z)<reach&&bodyContact(car,z,oldX+(x-oldX)*t)) { crash(); break; }
+        }
+        if(state==='crashed')break;
+      }
       if(!car.passed && car.z < -reach) {
         car.passed=true;
         const gap = dx-(bw+car.w)/2;
@@ -184,8 +219,8 @@ export function mountGame() {
     if(feedbackTime<=0) el('feedback').textContent=height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'SHIFT: TURBO · B: BLADES · J: JUMP';
   }
   function makeVehicle(lane:number,z:number,kind:string):Car {
-    return {x:left+(lane+.5)*(right-left)/5,z,w:kind==='hauler'?63:kind==='drone'?38:53,
-      h:kind==='hauler'?52:kind==='drone'?22:36,kind,velocity:kind==='hauler'?22:38,passed:false};
+    return {x:left+(lane+.5)*(right-left)/5,z,w:kind==='hauler'?76:kind==='drone'?48:64,
+      h:kind==='hauler'?62:kind==='drone'?28:43,kind,velocity:kind==='hauler'?22:38,passed:false};
   }
   function polygon(points:{x:number;y:number}[],color:string) {
     c.fillStyle=color;c.beginPath();points.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.fill();
@@ -197,19 +232,8 @@ export function mountGame() {
     const p=project(wx,z), img=images[name], b=bounds[name];
     c.fillStyle='#02071188';c.beginPath();c.ellipse(p.x,p.y,width*p.scale*.53,5*p.scale,0,0,Math.PI*2);c.fill();
     if(img&&b) {
-      // Uniform scaling preserves the artwork, including the wider turning poses.
-      // Keep rider height steady; traffic retains its road-space width.
-      const assetScale = ['bike','slide','jump'].some(prefix=>name.startsWith(prefix)) ? height/b.h : width/b.w;
-      const drawW = b.w*assetScale*p.scale, drawH = b.h*assetScale*p.scale;
-      c.drawImage(img,b.x,b.y,b.w,b.h,p.x-drawW/2,p.y-lift*p.scale-drawH,drawW,drawH);
-      for(const layer of bladeLayers[name] || []) {
-        const scale=assetScale*p.scale;
-        c.save();
-        c.translate(p.x+(layer.root-b.x-b.w/2)*scale,p.y-lift*p.scale-drawH);
-        c.scale(scale*bladeExtension,scale);
-        c.drawImage(layer.image,-layer.root,-b.y);
-        c.restore();
-      }
+      const r=spriteRect(name,wx,z,width,height,lift)!;
+      c.drawImage(img,b.x,b.y,b.w,b.h,r.x,r.y,r.w,r.h);
     }
   }
   function render() {
@@ -243,19 +267,20 @@ export function mountGame() {
       const p=project(x,0);
       // Exhaust and sparks remain independent of the approved vehicle sprite.
       if(boost>0) polygon([{x:p.x-7*p.scale,y:p.y-height*p.scale-7},{x:p.x+7*p.scale,y:p.y-height*p.scale-7},{x:p.x+4*p.scale,y:H},{x:p.x-4*p.scale,y:H}],'#ffe35e88');
-      const bounce=landing>0?Math.sin((.42-landing)*22)*landing*8:0;
-      const lift=height + bounce - (jumpWindup>0?Math.sin(jumpWindup/.12*Math.PI)*3:0);
+      const lift=bikeLift();
       if(sliding && Math.abs(vx)>20) {
         c.strokeStyle='#8fffea99';c.lineWidth=2;c.beginPath();c.moveTo(p.x-14,p.y);c.lineTo(p.x-vx*.22,p.y+28);c.stroke();
       }
-      const pose=blades>.65?bladePose():height>0?(angle<-.08?'jumpLeft':angle>.08?'jumpRight':'jump'):sliding&&Math.abs(angle)>.3?(angle<0?'slideLeft':'slideRight'):angle<-.08?'bikeLeft':angle>.08?'bikeRight':'bike';
+      const pose=bikePose();
       sprite(pose,x,0,sliding?34:26,47,lift);
       for(const particle of particles){c.globalAlpha=clamp(particle.life*3,0,1);c.fillStyle=particle.color;c.fillRect(particle.x,particle.y,2,boost>0?7:3);}c.globalAlpha=1;
     };
     let bikeDrawn=false;
     for(const car of [...traffic].sort((a,b)=>b.z-a.z)) {
       if(car.z<0&&!bikeDrawn){drawBike();bikeDrawn=true;}
-      sprite(car.kind,car.x,car.z,car.w,car.kind==='hauler'?55:car.kind==='drone'?30:26,car.kind==='drone'?7:0);
+      // Lift the sprite independently of its road-plane shadow; preserve its aspect ratio.
+      const hover = hoverLift(car);
+      sprite(car.kind,car.x,car.z,car.w,car.kind==='hauler'?66:car.kind==='drone'?38:31,hover);
     }
     if(!bikeDrawn)drawBike();
     if(!reduced&&boost>0){c.strokeStyle='#ffe57b55';for(let i=0;i<8;i++){const px=(i*137)%W;c.beginPath();c.moveTo(px,H);c.lineTo(W/2+(px-W/2)*.8,H*.8);c.stroke();}}
@@ -275,22 +300,12 @@ export function mountGame() {
       let x0=img.width,y0=img.height,x1=0,y1=0;
       for(let yy=0;yy<img.height;yy++)for(let xx=0;xx<img.width;xx++)if(data[(yy*img.width+xx)*4+3]>80){x0=Math.min(x0,xx);x1=Math.max(x1,xx);y0=Math.min(y0,yy);y1=Math.max(y1,yy);}
       bounds[name]={x:x0,y:y0,w:Math.max(1,x1-x0+1),h:Math.max(1,y1-y0+1)};
-      if(bladeRoots[name]) bladeLayers[name]=bladeRoots[name].map((root,side)=>{
-        const image=document.createElement('canvas');image.width=img.width;image.height=img.height;
-        const context=image.getContext('2d')!, pixels=context.createImageData(img.width,img.height);
-        let tip=root;
-        for(let yy=0;yy<img.height;yy++)for(let xx=0;xx<img.width;xx++) {
-          const i=(yy*img.width+xx)*4;
-          // Isolate the yellow blade and its pale core beyond its mounting point.
-          if(yy>=300 && yy<=365 && (side===0?xx<root:xx>root) && data[i]>140 && data[i+1]>110 &&
-            data[i+1]>data[i]*.68 && data[i+2]<=data[i+1]*1.05 && data[i+3]>0) {
-            pixels.data.set(data.subarray(i,i+4),i);
-            if(data[i+3]>80) tip=side===0?Math.min(tip,xx):Math.max(tip,xx);
-          }
-        }
-        context.putImageData(pixels,0,0);
-        return {image,root,tip};
-      });
+      const b=bounds[name], maskCanvas=document.createElement('canvas');
+      maskCanvas.width=maskCanvas.height=64;
+      const mc=maskCanvas.getContext('2d')!;
+      mc.drawImage(img,b.x,b.y,b.w,b.h,0,0,64,64);
+      const pixels=mc.getImageData(0,0,64,64).data;
+      masks[name]=Uint8Array.from({length:4096},(_,i)=>pixels[i*4+3]>200?1:0);
       resolve();
     };img.onerror=reject;img.src=`/bastrop37/assets/sprites/${file}.png`;
   })))
