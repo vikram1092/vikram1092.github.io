@@ -28,7 +28,7 @@ export function mountGame() {
   }
   let state: 'ready' | 'playing' | 'paused' | 'crashed' = 'ready';
   let x = 320, vx = 0, angle = 0;
-  let charge = 1, boost = 0, speed = 180, distance = 0, calls = 0, elapsed = 0;
+  let charge = 1, boost = 0, speed = 260, distance = 0, calls = 0, elapsed = 0;
   let sliding = false, spawn = 0, offset = 0, last = 0, feedbackTime = 0;
   let traffic: Car[] = [], particles: Particle[] = [];
   let frames = 0;
@@ -50,7 +50,7 @@ export function mountGame() {
   function clearInput() { keys.clear(); pressed.clear(); sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
   function reset() {
     clearInput(); x = 320; vx = angle = charge = boost = distance = calls = elapsed = offset = 0;
-    charge = 1; speed = 150; spawn = .8; particles = [];
+    charge = 1; speed = 210; spawn = .65; particles = [];
     cameraX = 320; cameraPitch = turboView = height = verticalSpeed = jumpWindup = jumpCooldown = landing = blades = slices = 0;
     traffic = [makeVehicle(1, 430, 'coupe'), makeVehicle(3, 730, 'hauler')];
     state = 'playing'; overlay.hidden = true; pauseButton.disabled = false; pauseButton.textContent = 'Ⅱ PAUSE';
@@ -121,7 +121,8 @@ export function mountGame() {
     sliding = keys.has('Space') && height===0 && boost===0;
     // Slide is a deliberate lateral reposition, with countersteer and strong release grip.
     if(boost===0) charge=clamp(charge+dt*(sliding&&input ? .3 : .10),0,1);
-    const target = sliding ? 142 : boost>0 ? 335 : keys.has('ArrowDown') ? 110 : keys.has('ArrowUp') ? 225 : 185;
+    // Faster road motion and closing speed, while keeping ability timers in real time.
+    const target = sliding ? 200 : boost>0 ? 470 : keys.has('ArrowDown') ? 155 : keys.has('ArrowUp') ? 320 : 260;
     speed += (target-speed)*(1-Math.exp(-(boost>0?7:4)*dt));
     vx += (input*(sliding?230:180)*(height>0?.8:1)-vx)*(1-Math.exp(-(sliding?10:20)*dt));
     x = clamp(x+vx*dt,left+22,right-22);
@@ -139,7 +140,7 @@ export function mountGame() {
       const kind = Math.random()<.22 ? 'hauler' : Math.random()<.15 ? 'drone' : 'coupe';
       // One vehicle per wave leaves four lanes open; all enter at the far plane.
       traffic.push(makeVehicle(lane, 950, kind));
-      spawn = 1.3+Math.random()*.45;
+      spawn = 1.05+Math.random()*.35;
     }
     const bw = 26 + (sliding ? 8 : 0), bh = 24;
     for(const car of traffic) {
@@ -151,7 +152,7 @@ export function mountGame() {
         car.passed=true; car.z=-100; slices++; sparks(24,'#ffe575',car.x,0);
         setMessage('DRONE SLICED',1); continue;
       }
-      const clearance = car.kind==='hauler'?90:car.kind==='drone'?23:29;
+      const clearance = car.kind==='hauler'?110:car.kind==='drone'?32:38;
       // Swept depth interval avoids tunnelling during turbo or a slow frame.
       if(height<clearance && dx<(bw+car.w)/2 && oldZ > -reach && car.z < reach) { crash(); break; }
       if(!car.passed && car.z < -reach) {
@@ -166,8 +167,8 @@ export function mountGame() {
     if(feedbackTime<=0) el('feedback').textContent=height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'SHIFT: TURBO · B: BLADES · J: JUMP';
   }
   function makeVehicle(lane:number,z:number,kind:string):Car {
-    return {x:left+(lane+.5)*(right-left)/5,z,w:kind==='hauler'?63:kind==='drone'?38:53,
-      h:kind==='hauler'?52:kind==='drone'?22:36,kind,velocity:kind==='hauler'?22:38,passed:false};
+    return {x:left+(lane+.5)*(right-left)/5,z,w:kind==='hauler'?76:kind==='drone'?48:64,
+      h:kind==='hauler'?62:kind==='drone'?28:43,kind,velocity:kind==='hauler'?22:38,passed:false};
   }
   function polygon(points:{x:number;y:number}[],color:string) {
     c.fillStyle=color;c.beginPath();points.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.fill();
@@ -236,7 +237,9 @@ export function mountGame() {
     let bikeDrawn=false;
     for(const car of [...traffic].sort((a,b)=>b.z-a.z)) {
       if(car.z<0&&!bikeDrawn){drawBike();bikeDrawn=true;}
-      sprite(car.kind,car.x,car.z,car.w,car.kind==='hauler'?55:car.kind==='drone'?30:26,car.kind==='drone'?7:0);
+      // Lift the sprite independently of its road-plane shadow; preserve its aspect ratio.
+      const hover = (car.kind==='drone'?16:car.kind==='hauler'?12:9) + Math.sin(elapsed*3+car.x)*1.2;
+      sprite(car.kind,car.x,car.z,car.w,car.kind==='hauler'?66:car.kind==='drone'?38:31,hover);
     }
     if(!bikeDrawn)drawBike();
     if(!reduced&&boost>0){c.strokeStyle='#ffe57b55';for(let i=0;i<8;i++){const px=(i*137)%W;c.beginPath();c.moveTo(px,H);c.lineTo(W/2+(px-W/2)*.8,H*.8);c.stroke();}}
