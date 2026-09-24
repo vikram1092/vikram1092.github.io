@@ -9,7 +9,7 @@ test('riding responds, slides position, turbo is deliberate, and pause freezes s
   const game=page.locator('#game');
   await expect(game).toHaveAttribute('data-state','playing');
   const before=Number(await game.getAttribute('data-x'));
-  await page.keyboard.down('ArrowRight');await page.clock.runFor(180);await page.keyboard.up('ArrowRight');
+  await page.keyboard.down('ArrowRight');await page.clock.runFor(100);await page.keyboard.up('ArrowRight');
   expect(Number(await game.getAttribute('data-x'))).toBeGreaterThan(before+10);
   await page.keyboard.down('Shift');await page.clock.runFor(100);await page.keyboard.up('Shift');
   await expect.poll(async()=>Number(await game.getAttribute('data-boost'))).toBeGreaterThan(.2);
@@ -79,7 +79,7 @@ test('jump clears a car, lands, and holding jump does not auto-repeat',async({pa
   await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
   const game=page.locator('#game');
   await page.clock.pauseAt(new Date(Date.now()+100));
-  while(Number(await game.getAttribute('data-hazard'))>90 || await game.getAttribute('data-hazard')===null) await page.clock.runFor(32);
+  while(Number(await game.getAttribute('data-hazard'))>150 || await game.getAttribute('data-hazard')===null) await page.clock.runFor(32);
   await page.keyboard.down('KeyJ');
   await page.clock.runFor(500);
   expect(Number(await game.getAttribute('data-height'))).toBeGreaterThan(30);
@@ -111,4 +111,30 @@ test('holding turbo cannot retrigger; pause clears held abilities',async({page})
   await page.keyboard.press('KeyP');await page.keyboard.up('Shift');await page.keyboard.up('KeyB');
   await page.getByRole('button',{name:'RESUME RIDE'}).click();
   await expect.poll(async()=>Number(await game.getAttribute('data-blades'))).toBeLessThan(.05);
+});
+
+test('purple coupe contact requires visible sprite overlap',async({page})=>{
+  await page.addInitScript(()=>{
+    Math.random=()=>.5;
+    const original=CanvasRenderingContext2D.prototype.drawImage;
+    (window as any).vehicleRects={};
+    CanvasRenderingContext2D.prototype.drawImage=function(...args:any[]) {
+      const image=args[0];
+      if(this.canvas.id==='game' && image instanceof HTMLImageElement && args.length===9) {
+        (window as any).vehicleRects[image.src.split('/').pop()!]=args.slice(5);
+      }
+      return (original as any).apply(this,args);
+    } as typeof original;
+  });
+  await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
+  await page.keyboard.down('ArrowLeft');await page.clock.runFor(260);await page.keyboard.up('ArrowLeft');
+  const game=page.locator('#game');
+  for(let i=0;i<250&&await game.getAttribute('data-state')==='playing';i++)await page.clock.runFor(16);
+  await expect(game).toHaveAttribute('data-state','crashed');
+  // Render the stopped scene; the only coupe drawn last is the nearby purple car.
+  await page.clock.runFor(64);
+  const r=await page.evaluate(()=>(window as any).vehicleRects);
+  const a=r['bike-normal-straight.png'], b=r['traffic-coupe.png'];
+  expect(Math.min(a[0]+a[2],b[0]+b[2])-Math.max(a[0],b[0])).toBeGreaterThan(0);
+  expect(Math.min(a[1]+a[3],b[1]+b[3])-Math.max(a[1],b[1])).toBeGreaterThan(0);
 });
