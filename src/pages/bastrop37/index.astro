@@ -4,11 +4,11 @@ import '../../styles/bastrop37.css';
 ---
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><meta name="theme-color" content="#090d19"/><meta name="description" content="BASTROP37 — a pixel arcade motorcycle experiment. Slide, skim traffic, release to burst."/><title>BASTROP37 — Afterhours</title></head>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><meta name="theme-color" content="#090d19"/><meta name="description" content="BASTROP37 — a rear chase motorcycle experiment. Slide, skim traffic, release to burst."/><title>BASTROP37 — Afterhours</title></head>
 <body>
 <main>
 <header class="mast"><a href="/" class="back">↙ BACK TO DAYLIGHT</a><span class="edition">AFTERHOURS / EXPERIMENT 001</span><a href="/bastrop37/assets/">ASSET GARAGE ↗</a></header>
-<section class="identity"><div><p class="eyebrow">MIDNIGHT MOTOR DIVISION</p><h1>BASTROP<span>37</span><i>•</i></h1></div><p class="build">01—02 / HANDLING PROTOTYPE<br/><span>NO FINISH LINE. FIND YOUR FLOW.</span></p></section>
+<section class="identity"><div><p class="eyebrow">MIDNIGHT MOTOR DIVISION</p><h1>BASTROP<span>37</span><i>•</i></h1></div><p class="build">02 / REAR CHASE PROTOTYPE<br/><span>READ THE ROAD. FIND YOUR GAP.</span></p></section>
 <section class="cabinet" aria-label="Motorcycle riding prototype">
 <div class="telemetry"><span><b class="live-dot">●</b> TEST CIRCUIT / NIGHT</span><div><span id="speed">180</span> <small>KM/H</small><span class="divider">/</span><span id="near">0</span> <small>CLOSE CALLS</small></div><button id="pause" aria-label="Pause game" disabled>Ⅱ PAUSE</button></div>
 <div class="screen" id="screen">
@@ -16,10 +16,10 @@ import '../../styles/bastrop37.css';
 <div class="overlay" id="overlay"><p class="eyebrow" id="overline">CIRCUIT 37 / OPEN PRACTICE</p><h2 id="headline">CHASE THE<br/><em>FEELING.</em></h2><p id="message">Thread the traffic. Hold a slide.<br/>Release it into something faster.</p><button class="primary" id="start" disabled>LOADING CIRCUIT…</button><p class="small" id="hint">ARROWS / WASD TO STEER · SPACE TO SLIDE</p></div>
 <div class="charge"><span>ENERGY <b id="charge-value">0%</b></span><div><i id="charge-bar"></i></div><span id="feedback">HOLD SLIDE → RELEASE TO BURST</span></div>
 </div>
-<div class="touch-controls"><div class="dpad"><button data-key="ArrowLeft" aria-label="Steer left">←</button><div><button data-key="ArrowUp" aria-label="Steer forward">↑</button><button data-key="ArrowDown" aria-label="Steer back">↓</button></div><button data-key="ArrowRight" aria-label="Steer right">→</button></div><button class="slide-control" data-key="Space">HOLD TO SLIDE<span>RELEASE TO BURST</span></button></div>
+<div class="touch-controls"><div class="dpad"><button data-key="ArrowLeft" aria-label="Steer left">←</button><div><button data-key="ArrowUp" aria-label="Accelerate">↑</button><button data-key="ArrowDown" aria-label="Slow down">↓</button></div><button data-key="ArrowRight" aria-label="Steer right">→</button></div><button class="slide-control" data-key="Space">HOLD TO SLIDE<span>RELEASE TO BURST</span></button></div>
 </section>
-<footer class="notes"><p><b>01 / STEER</b><span>Arrows or WASD. Find the gaps.</span></p><p><b>02 / SLIDE</b><span>Hold Space. Skim traffic for extra charge.</span></p><p><b>03 / BURST</b><span>Release Space. Commit to the opening.</span></p><p class="utility">P — PAUSE &nbsp; R — RETRY<br/>KEYBOARD + TOUCH</p></footer>
-<p class="development">A riding experiment by Vikram Ramkumar. Prototype sprites & mechanics. The city comes next.</p>
+<footer class="notes"><p><b>01 / STEER</b><span>← → steer. ↑ ↓ adjust speed.</span></p><p><b>02 / SLIDE</b><span>Hold Space. Skim traffic for extra charge.</span></p><p><b>03 / BURST</b><span>Release Space. Commit to the opening.</span></p><p class="utility">P — PAUSE &nbsp; R — RETRY<br/>KEYBOARD + TOUCH</p></footer>
+<p class="development">A riding experiment by Vikram Ramkumar. Prototype sprites & mechanics. Rear chase camera + traffic sandbox.</p>
 <noscript><p>Enable JavaScript to ride. You can still browse the <a href="/bastrop37/assets/">asset garage</a>.</p></noscript>
 </main>
 <script>import { mountGame } from '../../scripts/bastrop37'; mountGame();</script>
