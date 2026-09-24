@@ -95,6 +95,15 @@ export function mountGame() {
     const p=project(wx,z);
     for(let i=0;i<count;i++) particles.push({x:p.x+(Math.random()-.5)*15,y:p.y-height*p.scale,vx:(Math.random()-.5)*130,vy:40+Math.random()*90,life:.25+Math.random()*.3,color});
   }
+  function bladePose() {
+    return Math.abs(angle)>.3 ? (angle<0?'bikeBladesLeft35':'bikeBladesRight35')
+      : angle<-.08?'bikeBladesLeft':angle>.08?'bikeBladesRight':'bikeBlades';
+  }
+  function bladeReach() {
+    const b=bounds[bladePose()];
+    // Same uniform height scaling as the renderer: hits end at the sprite's tips.
+    return b ? b.w/b.h*47/2 : 0;
+  }
   function update(dt:number) {
     elapsed += dt; feedbackTime -= dt;
     const input = Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
@@ -148,7 +157,7 @@ export function mountGame() {
       car.z -= (speed-car.velocity)*dt;
       const dx = Math.abs(x-car.x), reach = (bh+car.h)/2;
       // Step 3 uses the existing passive drones as blade targets; encounters come later.
-      if(car.kind==='drone' && blades>.65 && height<18 && dx<car.w/2+72 && oldZ>-40 && car.z<40) {
+      if(car.kind==='drone' && blades>.65 && height<18 && dx<car.w/2+bladeReach() && oldZ>-40 && car.z<40) {
         car.passed=true; car.z=-100; slices++; sparks(24,'#ffe575',car.x,0);
         setMessage('DRONE SLICED',1); continue;
       }
@@ -223,14 +232,7 @@ export function mountGame() {
       if(sliding && Math.abs(vx)>20) {
         c.strokeStyle='#8fffea99';c.lineWidth=2;c.beginPath();c.moveTo(p.x-14,p.y);c.lineTo(p.x-vx*.22,p.y+28);c.stroke();
       }
-      if(blades>.03) {
-        const by=p.y-(32+lift)*p.scale, reach=72*blades*p.scale;
-        c.save(); c.strokeStyle='#ffe553';c.lineWidth=5*p.scale*blades;
-        c.shadowColor='#ffce32';c.shadowBlur=reduced?0:14;
-        c.beginPath();c.moveTo(p.x-reach,by+8*p.scale);c.lineTo(p.x-10*p.scale,by);c.moveTo(p.x+10*p.scale,by);c.lineTo(p.x+reach,by+8*p.scale);c.stroke();
-        c.strokeStyle='#fffbd0';c.lineWidth=1.5*p.scale;c.stroke();c.restore();
-      }
-      const pose=height>0?(angle<-.08?'jumpLeft':angle>.08?'jumpRight':'jump'):sliding&&Math.abs(angle)>.3?(angle<0?'slideLeft':'slideRight'):angle<-.08?'bikeLeft':angle>.08?'bikeRight':'bike';
+      const pose=blades>.65?bladePose():height>0?(angle<-.08?'jumpLeft':angle>.08?'jumpRight':'jump'):sliding&&Math.abs(angle)>.3?(angle<0?'slideLeft':'slideRight'):angle<-.08?'bikeLeft':angle>.08?'bikeRight':'bike';
       sprite(pose,x,0,sliding?34:26,47,lift);
       for(const particle of particles){c.globalAlpha=clamp(particle.life*3,0,1);c.fillStyle=particle.color;c.fillRect(particle.x,particle.y,2,boost>0?7:3);}c.globalAlpha=1;
     };
@@ -249,7 +251,7 @@ export function mountGame() {
     canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);
   }
   function frame(now:number){const dt=Math.min((now-last)/1000,1/30);last=now;if(state==='playing')update(dt);if(state==='playing'||frames++%3===0)render();requestAnimationFrame(frame);}
-  const assets:Record<string,string>={bike:'bike-normal-straight',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-normal-left-35',slideRight:'bike-normal-right-35',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',hauler:'traffic-hauler',drone:'drone-hover'};
+  const assets:Record<string,string>={bike:'bike-normal-straight',bikeBlades:'bike-blades-straight',bikeBladesLeft:'bike-blades-left-15',bikeBladesRight:'bike-blades-right-15',bikeBladesLeft35:'bike-blades-left-35',bikeBladesRight35:'bike-blades-right-35',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-normal-left-35',slideRight:'bike-normal-right-35',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',hauler:'traffic-hauler',drone:'drone-hover'};
   Promise.all(Object.entries(assets).map(([name,file])=>new Promise<void>((resolve,reject)=>{
     const img=new Image();img.onload=()=>{
       images[name]=img;
