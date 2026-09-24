@@ -7,7 +7,7 @@ Build and ship the playable Bastrop37 game slice: a futuristic motorcycle escape
 - [x] 1. Prepare assets — approved bike, drone, traffic, and effect sprites are in `public/bastrop37/assets/`. Trails, sparks, and other effects remain separate from vehicle sprites.
 - [x] 2. Replace the camera and road — rear chase perspective, receding city road, distance-scaled hazards, readable lanes and landing zones, and aligned collision space.
 - [x] 3. Make the bike feel incredible — responsive steering, energy slides, turbo, deployable blades, spring jumps, feedback, and keyboard/touch controls.
-- [ ] 4. Build one excellent drone encounter
+- [x] 4. Build one excellent drone encounter
 - [ ] 5. Make a complete short escape
 - [ ] 6. Add the atmosphere
 - [ ] 7. Polish and publish
