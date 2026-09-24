@@ -41,6 +41,15 @@ test('traffic collision offers immediate retry and assets all load', async ({pag
   await page.screenshot({path:'test-results/bastrop37-assets.png',fullPage:true});
 });
 
+test('traffic uses lane-perspective sprites and can change lanes',async({page})=>{
+  await page.goto('/bastrop37/');
+  await page.getByRole('button',{name:'START RIDING'}).click();
+  const game=page.locator('#game');
+  await expect(game).toHaveAttribute('data-traffic-sprites',/coupeLeft,haulerRight,sedanLeft/);
+  await page.clock.runFor(3200);
+  await expect.poll(async()=>Number(await game.getAttribute('data-lane-changes'))).toBeGreaterThan(0);
+});
+
 test.describe('touch layout',()=>{
  test.use({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
  test('mobile multi-touch steers while sliding without page overflow',async({page,context})=>{
@@ -121,7 +130,8 @@ test('purple coupe contact requires visible sprite overlap',async({page})=>{
     CanvasRenderingContext2D.prototype.drawImage=function(...args:any[]) {
       const image=args[0];
       if(this.canvas.id==='game' && image instanceof HTMLImageElement && args.length===9) {
-        (window as any).vehicleRects[image.src.split('/').pop()!]=args.slice(5);
+        const name=image.src.split('/').pop()!;
+        ((window as any).vehicleRects[name]??=[]).push(args.slice(5));
       }
       return (original as any).apply(this,args);
     } as typeof original;
@@ -134,7 +144,8 @@ test('purple coupe contact requires visible sprite overlap',async({page})=>{
   // Render the stopped scene; the only coupe drawn last is the nearby purple car.
   await page.clock.runFor(64);
   const r=await page.evaluate(()=>(window as any).vehicleRects);
-  const a=r['bike-normal-straight.png'], b=r['traffic-coupe.png'];
-  expect(Math.min(a[0]+a[2],b[0]+b[2])-Math.max(a[0],b[0])).toBeGreaterThan(0);
-  expect(Math.min(a[1]+a[3],b[1]+b[3])-Math.max(a[1],b[1])).toBeGreaterThan(0);
+  const bikes=r['bike-normal-straight.png'], coupes=['traffic-coupe.png','traffic-coupe-left.png','traffic-coupe-right.png'].flatMap(name=>r[name]||[]);
+  expect(bikes.some((a:number[])=>coupes.some((b:number[])=>
+    Math.min(a[0]+a[2],b[0]+b[2])-Math.max(a[0],b[0])>0&&
+    Math.min(a[1]+a[3],b[1]+b[3])-Math.max(a[1],b[1])>0))).toBe(true);
 });
