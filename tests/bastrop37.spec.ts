@@ -45,9 +45,10 @@ test('traffic uses lane-perspective sprites and can change lanes',async({page})=
   await page.goto('/bastrop37/');
   await page.getByRole('button',{name:'START RIDING'}).click();
   const game=page.locator('#game');
-  await expect(game).toHaveAttribute('data-traffic-sprites',/coupeLeft,haulerRight,sedanLeft/);
-  await page.clock.runFor(3200);
+  await expect(game).toHaveAttribute('data-traffic-sprites',/^coupe,hauler,sedan/);
+  await page.clock.runFor(1400);
   await expect.poll(async()=>Number(await game.getAttribute('data-lane-changes'))).toBeGreaterThan(0);
+  await expect(game).toHaveAttribute('data-traffic-sprites',/(Left|Right)/);
 });
 
 test.describe('touch layout',()=>{

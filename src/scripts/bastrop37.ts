@@ -72,7 +72,7 @@ export function mountGame() {
     charge = 1; speed = 210; spawn = .65; particles = []; fragments = []; effects = [];
     cameraX = 320; cameraPitch = turboView = height = verticalSpeed = jumpWindup = jumpCooldown = landing = blades = slices = droneDodges = laneChanges = 0;
     droneOutcome = 'none';
-    traffic = [makeVehicle(1, 430, 'coupe'), makeVehicle(3, 730, 'hauler'), makeVehicle(0, 1009, 'sedan')];
+    traffic = [makeVehicle(1, 430, 'coupe'), makeVehicle(3, 730, 'hauler'), makeVehicle(0, 850, 'sedan')];
     state = 'playing'; overlay.hidden = true; pauseButton.disabled = false; pauseButton.textContent = 'Ⅱ PAUSE';
     setMessage('SHIFT: TURBO · CMD/CTRL: BLADES · OPT/ALT: JUMP', 3); canvas.focus({preventScroll:true});
   }
@@ -145,7 +145,9 @@ export function mountGame() {
   }
   function vehicleSprite(car:Car) {
     if(car.kind!=='drone') {
-      const laneSide=car.turn || (car.x<320-(right-left)/10?-1:car.x>320+(right-left)/10?1:0);
+      // Far traffic reads cleanly from the rear; nearby traffic reveals its camera angle.
+      const nearLaneSide=car.z<330?(car.x<320-(right-left)/10?-1:car.x>320+(right-left)/10?1:0):0;
+      const laneSide=car.turn || nearLaneSide;
       if(car.kind==='sedan') return laneSide<0?'sedanLeft':laneSide>0?'sedanRight':'sedan';
       if(car.kind==='hauler') return laneSide<0?'haulerLeft':laneSide>0?'haulerRight':'hauler';
       return laneSide<0?'coupeLeft':laneSide>0?'coupeRight':'coupe';
@@ -299,7 +301,8 @@ export function mountGame() {
     cameraX += (320+(x-320)*.85-cameraX)*(1-Math.exp(-12*dt));
     turboView += ((boost>0?1:0)-turboView)*(1-Math.exp(-5*dt));
     cameraPitch += ((boost>0?5:0)-height*.08+(landing>0?Math.sin((.42-landing)*22)*landing*10:0)-cameraPitch)*(1-Math.exp(-8*dt));
-    offset += speed*dt; distance += speed*dt/3.6;
+    // Denser road flow sells velocity without changing collision or encounter timing.
+    offset += speed*dt*1.55; distance += speed*dt/3.6;
     if(sliding && Math.random()<.65) sparks(1,'#8fffea');
     if(boost>0) sparks(2,'#ffe575');
     spawn -= dt;
@@ -367,7 +370,7 @@ export function mountGame() {
     const vehicle=kind as Car['kind'];
     return {x:left+(lane+.5)*(right-left)/5,z,w:vehicle==='hauler'?76:vehicle==='drone'?48:64,
       h:vehicle==='hauler'?62:vehicle==='drone'?28:43,kind:vehicle,velocity:vehicle==='hauler'?22:38,passed:false,
-      lane,targetLane:lane,turn:0,changeZ:520,changed:lane===2||(Math.floor(z)+lane*7+vehicle.length)%3!==0,
+      lane,targetLane:lane,turn:0,changeZ:720,changed:lane===2||(Math.floor(z)+lane*7+vehicle.length)%3!==0,
       ...(vehicle==='drone'?{phase:'approach' as DronePhase,phaseTime:0,side:(lane<=2?-1:1) as -1|1,attackX:320,outcome:'none' as DroneOutcome}:{})};
   }
   function polygon(points:{x:number;y:number}[],color:string) {
