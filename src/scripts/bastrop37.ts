@@ -16,6 +16,14 @@ export function mountGame() {
   const keys = new Set<string>();
   const images: Record<string, HTMLImageElement> = {};
   const masks: Record<string, Uint8Array> = {};
+  // Extend only the blade pixels; rider and chassis keep their original proportions.
+  const bladeLayers: Record<string, {image:HTMLCanvasElement;root:number;tip:number}[]> = {};
+  const bladeRoots: Record<string, number[]> = {
+    bikeBlades:[242,400], bikeBladesLeft:[211,422], bikeBladesLeft35:[205,414],
+    bikeBladesRight:[233,418], bikeBladesRight35:[209,432],
+  };
+  const bladeExtension = 3;
+
   let W = 640, H = 360;
   const left = 128, right = 512;
   const bounds: Record<string, {x:number;y:number;w:number;h:number}> = {};
@@ -100,10 +108,12 @@ export function mountGame() {
     return Math.abs(angle)>.3 ? (angle<0?'bikeBladesLeft35':'bikeBladesRight35')
       : angle<-.08?'bikeBladesLeft':angle>.08?'bikeBladesRight':'bikeBlades';
   }
-  function bladeReach() {
+  function bladeReach(targetX:number) {
     const b=bounds[bladePose()];
-    // Same uniform height scaling as the renderer: hits end at the sprite's tips.
-    return b ? b.w/b.h*47/2 : 0;
+    // Use the same extended tips as the renderer, including each turning pose.
+    const layers=bladeLayers[bladePose()];
+    const layer=layers?.[targetX<x?0:1];
+    return b && layer ? Math.abs(layer.root+(layer.tip-layer.root)*bladeExtension-(b.x+b.w/2))/b.h*47 : 0;
   }
   function bikePose(bodyOnly=false) {
     return !bodyOnly&&blades>.65?bladePose():height>0?(angle<-.08?'jumpLeft':angle>.08?'jumpRight':'jump'):sliding&&Math.abs(angle)>.3?(angle<0?'slideLeft':'slideRight'):angle<-.08?'bikeLeft':angle>.08?'bikeRight':'bike';
@@ -192,7 +202,7 @@ export function mountGame() {
       car.z -= (speed-car.velocity)*dt;
       const dx = Math.abs(x-car.x), reach = (bh+car.h)/2;
       // Step 3 uses the existing passive drones as blade targets; encounters come later.
-      if(car.kind==='drone' && blades>.65 && height<18 && dx<car.w/2+bladeReach() && oldZ>-40 && car.z<40) {
+      if(car.kind==='drone' && blades>.65 && height<18 && dx<car.w/2+bladeReach(car.x) && oldZ>-40 && car.z<40) {
         car.passed=true; car.z=-100; slices++; sparks(24,'#ffe575',car.x,0);
         setMessage('DRONE SLICED',1); continue;
       }
@@ -234,6 +244,15 @@ export function mountGame() {
     if(img&&b) {
       const r=spriteRect(name,wx,z,width,height,lift)!;
       c.drawImage(img,b.x,b.y,b.w,b.h,r.x,r.y,r.w,r.h);
+      for(const layer of bladeLayers[name] || []) {
+        const scale=r.h/b.h;
+        c.save();
+        c.translate(r.x+(layer.root-b.x)*scale,r.y);
+        c.scale(scale*bladeExtension,scale);
+        c.drawImage(layer.image,-layer.root,-b.y);
+        c.restore();
+      }
+
     }
   }
   function render() {
@@ -280,6 +299,7 @@ export function mountGame() {
       if(car.z<0&&!bikeDrawn){drawBike();bikeDrawn=true;}
       // Lift the sprite independently of its road-plane shadow; preserve its aspect ratio.
       const hover = hoverLift(car);
+
       sprite(car.kind,car.x,car.z,car.w,car.kind==='hauler'?66:car.kind==='drone'?38:31,hover);
     }
     if(!bikeDrawn)drawBike();
@@ -306,6 +326,23 @@ export function mountGame() {
       mc.drawImage(img,b.x,b.y,b.w,b.h,0,0,64,64);
       const pixels=mc.getImageData(0,0,64,64).data;
       masks[name]=Uint8Array.from({length:4096},(_,i)=>pixels[i*4+3]>200?1:0);
+      if(bladeRoots[name]) bladeLayers[name]=bladeRoots[name].map((root,side)=>{
+        const image=document.createElement('canvas');image.width=img.width;image.height=img.height;
+        const context=image.getContext('2d')!, pixels=context.createImageData(img.width,img.height);
+        let tip=root;
+        for(let yy=0;yy<img.height;yy++)for(let xx=0;xx<img.width;xx++) {
+          const i=(yy*img.width+xx)*4;
+          // Isolate the yellow blade and its pale core beyond its mounting point.
+          if(yy>=300 && yy<=365 && (side===0?xx<root:xx>root) && data[i]>140 && data[i+1]>110 &&
+            data[i+1]>data[i]*.68 && data[i+2]<=data[i+1]*1.05 && data[i+3]>0) {
+            pixels.data.set(data.subarray(i,i+4),i);
+            if(data[i+3]>80) tip=side===0?Math.min(tip,xx):Math.max(tip,xx);
+          }
+        }
+        context.putImageData(pixels,0,0);
+        return {image,root,tip};
+      });
+
       resolve();
     };img.onerror=reject;img.src=`/bastrop37/assets/sprites/${file}.png`;
   })))
