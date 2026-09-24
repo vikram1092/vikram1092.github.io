@@ -206,7 +206,8 @@ export function mountGame() {
         car.passed=true; car.z=-100; slices++; sparks(24,'#ffe575',car.x,0);
         setMessage('DRONE SLICED',1); continue;
       }
-      const clearance = car.kind==='hauler'?110:car.kind==='drone'?32:38;
+      // The coupe's windows and glow extend above its physical body.
+      const clearance = car.kind==='hauler'?110:car.kind==='drone'?32:24;
       // Swept depth interval avoids tunnelling during turbo or a slow frame.
       if(height<clearance && oldZ > -reach && car.z < reach) {
         // Sweep both steering and approach, so turbo cannot skip a narrow contact.
