@@ -15,6 +15,13 @@ export function mountGame() {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const keys = new Set<string>();
   const images: Record<string, HTMLImageElement> = {};
+  // Extend only the blade pixels; rider and chassis keep their original proportions.
+  const bladeLayers: Record<string, {image:HTMLCanvasElement;root:number;tip:number}[]> = {};
+  const bladeRoots: Record<string, number[]> = {
+    bikeBlades:[242,400], bikeBladesLeft:[211,422], bikeBladesLeft35:[205,414],
+    bikeBladesRight:[233,418], bikeBladesRight35:[209,432],
+  };
+  const bladeExtension = 3;
   let W = 640, H = 360;
   const left = 128, right = 512;
   const bounds: Record<string, {x:number;y:number;w:number;h:number}> = {};
@@ -99,10 +106,12 @@ export function mountGame() {
     return Math.abs(angle)>.3 ? (angle<0?'bikeBladesLeft35':'bikeBladesRight35')
       : angle<-.08?'bikeBladesLeft':angle>.08?'bikeBladesRight':'bikeBlades';
   }
-  function bladeReach() {
+  function bladeReach(targetX:number) {
     const b=bounds[bladePose()];
-    // Same uniform height scaling as the renderer: hits end at the sprite's tips.
-    return b ? b.w/b.h*47/2 : 0;
+    // Use the same extended tips as the renderer, including each turning pose.
+    const layers=bladeLayers[bladePose()];
+    const layer=layers?.[targetX<x?0:1];
+    return b && layer ? Math.abs(layer.root+(layer.tip-layer.root)*bladeExtension-(b.x+b.w/2))/b.h*47 : 0;
   }
   function update(dt:number) {
     elapsed += dt; feedbackTime -= dt;
@@ -156,7 +165,7 @@ export function mountGame() {
       car.z -= (speed-car.velocity)*dt;
       const dx = Math.abs(x-car.x), reach = (bh+car.h)/2;
       // Step 3 uses the existing passive drones as blade targets; encounters come later.
-      if(car.kind==='drone' && blades>.65 && height<18 && dx<car.w/2+bladeReach() && oldZ>-40 && car.z<40) {
+      if(car.kind==='drone' && blades>.65 && height<18 && dx<car.w/2+bladeReach(car.x) && oldZ>-40 && car.z<40) {
         car.passed=true; car.z=-100; slices++; sparks(24,'#ffe575',car.x,0);
         setMessage('DRONE SLICED',1); continue;
       }
@@ -193,6 +202,14 @@ export function mountGame() {
       const assetScale = ['bike','slide','jump'].some(prefix=>name.startsWith(prefix)) ? height/b.h : width/b.w;
       const drawW = b.w*assetScale*p.scale, drawH = b.h*assetScale*p.scale;
       c.drawImage(img,b.x,b.y,b.w,b.h,p.x-drawW/2,p.y-lift*p.scale-drawH,drawW,drawH);
+      for(const layer of bladeLayers[name] || []) {
+        const scale=assetScale*p.scale;
+        c.save();
+        c.translate(p.x+(layer.root-b.x-b.w/2)*scale,p.y-lift*p.scale-drawH);
+        c.scale(scale*bladeExtension,scale);
+        c.drawImage(layer.image,-layer.root,-b.y);
+        c.restore();
+      }
     }
   }
   function render() {
@@ -257,7 +274,24 @@ export function mountGame() {
       const sc=surface.getContext('2d')!;sc.drawImage(img,0,0);const data=sc.getImageData(0,0,img.width,img.height).data;
       let x0=img.width,y0=img.height,x1=0,y1=0;
       for(let yy=0;yy<img.height;yy++)for(let xx=0;xx<img.width;xx++)if(data[(yy*img.width+xx)*4+3]>80){x0=Math.min(x0,xx);x1=Math.max(x1,xx);y0=Math.min(y0,yy);y1=Math.max(y1,yy);}
-      bounds[name]={x:x0,y:y0,w:Math.max(1,x1-x0+1),h:Math.max(1,y1-y0+1)};resolve();
+      bounds[name]={x:x0,y:y0,w:Math.max(1,x1-x0+1),h:Math.max(1,y1-y0+1)};
+      if(bladeRoots[name]) bladeLayers[name]=bladeRoots[name].map((root,side)=>{
+        const image=document.createElement('canvas');image.width=img.width;image.height=img.height;
+        const context=image.getContext('2d')!, pixels=context.createImageData(img.width,img.height);
+        let tip=root;
+        for(let yy=0;yy<img.height;yy++)for(let xx=0;xx<img.width;xx++) {
+          const i=(yy*img.width+xx)*4;
+          // Isolate the yellow blade and its pale core beyond its mounting point.
+          if(yy>=300 && yy<=365 && (side===0?xx<root:xx>root) && data[i]>140 && data[i+1]>110 &&
+            data[i+1]>data[i]*.68 && data[i+2]<=data[i+1]*1.05 && data[i+3]>0) {
+            pixels.data.set(data.subarray(i,i+4),i);
+            if(data[i+3]>80) tip=side===0?Math.min(tip,xx):Math.max(tip,xx);
+          }
+        }
+        context.putImageData(pixels,0,0);
+        return {image,root,tip};
+      });
+      resolve();
     };img.onerror=reject;img.src=`/bastrop37/assets/sprites/${file}.png`;
   })))
     .then(()=>{size();start.disabled=false;start.textContent='START RIDING →';requestAnimationFrame(frame);})
