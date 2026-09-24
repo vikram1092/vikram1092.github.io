@@ -3,11 +3,11 @@ import '@fontsource-variable/manrope';
 import '../../styles/bastrop37.css';
 
 const assets = [
-  { file: 'https://chatgpt.com/api/library/files/libfile_ab38ee9071ac8191bd7c36ff0240bc9c/download', title: 'B37 / Rider combat kit', size: 'Approved high-definition concept', description: 'Rear three-quarter bike art showing the core gameplay language: five-foot yellow energy blades, a yellow turbo trail, and the spring jump silhouette.', art: true },
-  { file: 'https://chatgpt.com/api/library/files/libfile_7e903fc6de3c8191a7891c5751ecf398/download', title: 'White ring drone / encounter kit', size: 'Approved high-definition concept', description: 'The white hovering attacker: ring body, thrusters, attack read, and the visual language for a satisfying split-and-tumble destruction.', art: true },
-  { file: '/bastrop37/assets/bike.svg', title: 'B37 / Red motorcycle', size: '32 × 64', description: 'Current live handling sprite.' },
-  { file: '/bastrop37/assets/coupe.svg', title: 'Night coupe', size: '32 × 56', description: 'Current live handling sprite.' },
-  { file: '/bastrop37/assets/hauler.svg', title: 'Industrial hauler', size: '44 × 84', description: 'Current live handling sprite.' },
+  { file: '/bastrop37/assets/bike-blades-turbo-jump.png', title: 'B37 / Rider combat kit', size: 'Approved high-definition concept', description: 'Rear three-quarter bike art showing the core gameplay language: five-foot yellow energy blades, a yellow turbo trail, and the spring jump silhouette.', art: true },
+  { file: '/bastrop37/assets/white-ring-drone-concept.png', title: 'White ring drone / encounter kit', size: 'Approved high-definition concept', description: 'The white hovering attacker: ring body, thrusters, attack read, and the visual language for a satisfying split-and-tumble destruction.', art: true },
+  { file: '/bastrop37/assets/bike.svg', title: 'B37 / Red motorcycle', size: '32 × 64', description: 'Legacy handling sprite — superseded by the approved concept art above.' },
+  { file: '/bastrop37/assets/coupe.svg', title: 'Night coupe', size: '32 × 56', description: 'Current traffic handling sprite.' },
+  { file: '/bastrop37/assets/hauler.svg', title: 'Industrial hauler', size: '44 × 84', description: 'Current traffic handling sprite.' },
 ];
 ---
 <!doctype html>
@@ -18,7 +18,7 @@ const assets = [
       <header class="mast"><a href="/bastrop37/">↙ BACK TO THE CIRCUIT</a><span>BASTROP37 / ASSET GARAGE / 001</span></header>
       <p class="eyebrow" style="margin-top:40px">APPROVED ART + PROTOTYPE KIT</p>
       <h1>ASSET <span>GARAGE</span></h1>
-      <p class="garage-copy">The approved high-definition B37 bike and white ring drone are here first. The SVGs below are the current live handling placeholders.</p>
+      <p class="garage-copy">The approved high-definition B37 bike and white ring drone are the production direction. The SVGs below are legacy handling placeholders.</p>
       <section class="gallery">
         {assets.map((asset) => (
           <article class="asset">
