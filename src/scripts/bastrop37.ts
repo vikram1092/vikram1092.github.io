@@ -20,9 +20,12 @@ export function mountGame() {
   const bounds: Record<string, {x:number;y:number;w:number;h:number}> = {};
   const horizon = () => H * .28;
   function project(wx:number, z:number) {
-    const scale = 110 / (110 + Math.max(-65,z));
-    const unit = Math.min(W * .9, 520) / (right-left);
-    return {x:W/2+(wx-320)*unit*scale, y:horizon()+(H*.84-horizon())*scale, scale:unit*scale};
+    // Close chase: enlarge the whole road-space view, tracking the rider laterally.
+    const scale = 65 / (65 + Math.max(-53,z));
+    const zoom = W < H ? 3 : 2.2;
+    const unit = Math.min(W * .9, 520) / (right-left) * zoom;
+    const cameraX = 320 + (x-320)*.85;
+    return {x:W/2+(wx-cameraX)*unit*scale, y:horizon()+(H*.84-horizon())*scale, scale:unit*scale};
   }
   let state: 'ready' | 'playing' | 'paused' | 'crashed' = 'ready';
   let x = 320, y = 270, vx = 0, angle = 0, direction = 1;
