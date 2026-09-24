@@ -58,7 +58,7 @@ test.describe('touch layout',()=>{
   await expect(page.locator('#game')).toHaveAttribute('data-boost','0.00');
   await page.locator('[data-key=ShiftLeft]').tap();
   await expect.poll(async()=>Number(await page.locator('#game').getAttribute('data-boost'))).toBeGreaterThan(0);
-  await page.locator('[data-key=KeyJ]').tap();
+  await page.locator('[data-key=AltLeft]').tap();
   await expect.poll(async()=>Number(await page.locator('#game').getAttribute('data-height'))).toBeGreaterThan(10);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(390);
   await page.screenshot({path:'test-results/bastrop37-mobile.png',fullPage:true});
@@ -80,35 +80,35 @@ test('jump clears a car, lands, and holding jump does not auto-repeat',async({pa
   const game=page.locator('#game');
   await page.clock.pauseAt(new Date(Date.now()+100));
   while(Number(await game.getAttribute('data-hazard'))>150 || await game.getAttribute('data-hazard')===null) await page.clock.runFor(32);
-  await page.keyboard.down('KeyJ');
+  await page.keyboard.down('Alt');
   await page.clock.runFor(500);
   expect(Number(await game.getAttribute('data-height'))).toBeGreaterThan(30);
   await page.screenshot({path:'test-results/bastrop37-jump.png'});
   await page.clock.runFor(650);
   await expect(game).toHaveAttribute('data-state','playing');
   await expect(game).toHaveAttribute('data-height','0.00');
-  await page.keyboard.up('KeyJ');
+  await page.keyboard.up('Alt');
 });
 
 test('blades slice existing drones and retract on release',async({page})=>{
   await page.addInitScript(()=>{let n=0;Math.random=()=>[.5,.5,.1,.5][n++%4];});
   await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
   await page.evaluate(()=>{let n=0;Math.random=()=>[.5,.5,.1,.5][n++%4];});
-  const game=page.locator('#game');await page.keyboard.down('KeyB');
+  const game=page.locator('#game');await page.keyboard.down('Control');
   await page.clock.runFor(7500);
   await expect.poll(async()=>Number(await game.getAttribute('data-slices')),{timeout:12000}).toBeGreaterThan(0);
   await expect(game).toHaveAttribute('data-state','playing');
   await page.screenshot({path:'test-results/bastrop37-blades.png'});
-  await page.keyboard.up('KeyB');
+  await page.keyboard.up('Control');
   await expect.poll(async()=>Number(await game.getAttribute('data-blades'))).toBeLessThan(.05);
 });
 
 test('holding turbo cannot retrigger; pause clears held abilities',async({page})=>{
   await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
-  const game=page.locator('#game');await page.keyboard.down('Shift');await page.keyboard.down('KeyB');
+  const game=page.locator('#game');await page.keyboard.down('Shift');await page.keyboard.down('Control');
   await expect.poll(async()=>Number(await game.getAttribute('data-boost'))).toBeGreaterThan(0);
   await page.clock.runFor(1400);await expect(game).toHaveAttribute('data-boost','0.00');
-  await page.keyboard.press('KeyP');await page.keyboard.up('Shift');await page.keyboard.up('KeyB');
+  await page.keyboard.press('KeyP');await page.keyboard.up('Shift');await page.keyboard.up('Control');
   await page.getByRole('button',{name:'RESUME RIDE'}).click();
   await expect.poll(async()=>Number(await game.getAttribute('data-blades'))).toBeLessThan(.05);
 });
