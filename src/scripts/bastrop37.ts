@@ -146,7 +146,13 @@ export function mountGame() {
   function sprite(name:string,wx:number,z:number,width:number,height:number,lift=0) {
     const p=project(wx,z), img=images[name], b=bounds[name];
     c.fillStyle='#02071188';c.beginPath();c.ellipse(p.x,p.y,width*p.scale*.53,5*p.scale,0,0,Math.PI*2);c.fill();
-    if(img&&b)c.drawImage(img,b.x,b.y,b.w,b.h,p.x-width*p.scale/2,p.y-(height+lift)*p.scale,width*p.scale,height*p.scale);
+    if(img&&b) {
+      // Uniform scaling preserves the artwork, including the wider turning poses.
+      // Keep rider height steady; traffic retains its road-space width.
+      const assetScale = name.startsWith('bike') ? height/b.h : width/b.w;
+      const drawW = b.w*assetScale*p.scale, drawH = b.h*assetScale*p.scale;
+      c.drawImage(img,b.x,b.y,b.w,b.h,p.x-drawW/2,p.y-lift*p.scale-drawH,drawW,drawH);
+    }
   }
   function render() {
     c.imageSmoothingEnabled=true;
