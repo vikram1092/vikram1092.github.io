@@ -1,6 +1,7 @@
 ---
 import '@fontsource-variable/manrope';
 import '../../styles/bastrop37.css';
+import manifest from '../../../public/bastrop37/assets/sprites/manifest.json';
 
 const assets = [
   { file: '/bastrop37/assets/bike-combat-concept.jpg', title: 'B37 / Rider combat kit', description: 'Approved bike concept: rear three-quarter chase angle, five-foot yellow front energy blades, yellow turbo trail, and spring jump.' },
@@ -16,7 +17,23 @@ const assets = [
       <header class="mast"><a href="/bastrop37/">↙ BACK TO THE CIRCUIT</a><span>BASTROP37 / ASSET GARAGE / 001</span></header>
       <p class="eyebrow" style="margin-top:40px">APPROVED CONCEPT ART</p>
       <h1>ASSET <span>GARAGE</span></h1>
-      <p class="garage-copy">The three approved BASTROP37 concept images: bike combat kit, white ring drone, and scarlet bike through neon traffic. Sprite extraction comes later.</p>
+      <p class="garage-copy">Transparent sprite kit: five matching bike angles in normal, blades, and jump states; 8 drone states and destruction parts; 6 traffic views; and 8 separate effects. Additional bike transition poses are included in the manifest.</p>
+      <p><a href="/bastrop37/assets/sprites/manifest.json">FRAME MANIFEST ↗</a></p>
+      {['bike', 'drone', 'traffic', 'effects'].map(group => (
+        <section aria-label={`${group} sprites`}>
+          <h2 style="margin-top:40px;text-transform:uppercase">{group}</h2>
+          <a href={`/bastrop37/assets/sprites/${group === 'bike' ? 'bike-angles' : group}-sheet.png`}>OPEN SPRITE SHEET ↗</a>
+          <div class="sprite-grid">
+            {Object.entries(manifest.frames).filter(([name, frame]) => name.startsWith(`${group}-`) && (group !== 'bike' || frame.source === 'bike-angles-sheet.png')).map(([name, frame]) => (
+              <a class="sprite-card" href={`/bastrop37/assets/sprites/${frame.file}`} download>
+                <img src={`/bastrop37/assets/sprites/${frame.file}`} alt={name.replaceAll('-', ' ')} width="640" height="640" loading="lazy" />
+                <span>{name.replaceAll('-', ' ')}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+      <h2 style="margin-top:48px">APPROVED CONCEPT ART</h2>
       <section class="gallery">
         {assets.map((asset) => (
           <article class="asset">
@@ -29,3 +46,9 @@ const assets = [
     </main>
   </body>
 </html>
+<style>
+  .sprite-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-top:18px; }
+  .sprite-card { display:block; border:1px solid #ffffff20; padding:10px; color:#e4e9ef; text-decoration:none; background:#19232d; }
+  .sprite-card img { display:block; width:100%; height:auto; background:repeating-conic-gradient(#25323d 0% 25%,#1c2832 0% 50%) 0/24px 24px; }
+  .sprite-card span { display:block; margin-top:8px; font-size:12px; text-transform:uppercase; }
+</style>
