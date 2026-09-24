@@ -3,11 +3,9 @@ import '@fontsource-variable/manrope';
 import '../../styles/bastrop37.css';
 
 const assets = [
-  { file: '/bastrop37/assets/bike-blades-turbo-jump.png', title: 'B37 / Rider combat kit', size: 'Approved high-definition concept', description: 'Rear three-quarter bike art showing the core gameplay language: five-foot yellow energy blades, a yellow turbo trail, and the spring jump silhouette.', art: true },
-  { file: '/bastrop37/assets/white-ring-drone-concept.png', title: 'White ring drone / encounter kit', size: 'Approved high-definition concept', description: 'The white hovering attacker: ring body, thrusters, attack read, and the visual language for a satisfying split-and-tumble destruction.', art: true },
-  { file: '/bastrop37/assets/bike.svg', title: 'B37 / Red motorcycle', size: '32 × 64', description: 'Legacy handling sprite — superseded by the approved concept art above.' },
-  { file: '/bastrop37/assets/coupe.svg', title: 'Night coupe', size: '32 × 56', description: 'Current traffic handling sprite.' },
-  { file: '/bastrop37/assets/hauler.svg', title: 'Industrial hauler', size: '44 × 84', description: 'Current traffic handling sprite.' },
+  { file: '/bastrop37/assets/bike-combat-concept.jpg', title: 'B37 / Rider combat kit', description: 'Approved bike concept: rear three-quarter chase angle, five-foot yellow front energy blades, yellow turbo trail, and spring jump.' },
+  { file: '/bastrop37/assets/white-ring-drone-concept.jpg', title: 'White ring drone / encounter kit', description: 'Approved hovering enemy concept: white circular body, hover thrust, attack read, and split-and-tumble destruction language.' },
+  { file: '/bastrop37/assets/scarlet-bike-neon-traffic.jpg', title: 'Scarlet bike through neon traffic', description: 'Approved world and traffic concept: raised chase view, futuristic vehicles, readable gaps, and the city palette.' },
 ];
 ---
 <!doctype html>
@@ -16,15 +14,15 @@ const assets = [
   <body>
     <main class="garage">
       <header class="mast"><a href="/bastrop37/">↙ BACK TO THE CIRCUIT</a><span>BASTROP37 / ASSET GARAGE / 001</span></header>
-      <p class="eyebrow" style="margin-top:40px">APPROVED ART + PROTOTYPE KIT</p>
+      <p class="eyebrow" style="margin-top:40px">APPROVED CONCEPT ART</p>
       <h1>ASSET <span>GARAGE</span></h1>
-      <p class="garage-copy">The approved high-definition B37 bike and white ring drone are the production direction. The SVGs below are legacy handling placeholders.</p>
+      <p class="garage-copy">The three approved BASTROP37 concept images: bike combat kit, white ring drone, and scarlet bike through neon traffic. Sprite extraction comes later.</p>
       <section class="gallery">
         {assets.map((asset) => (
           <article class="asset">
             <div class="sprite-stage"><img src={asset.file} alt={asset.title} /></div>
-            <h2>{asset.title}</h2><p>{asset.size}</p><p>{asset.description}</p>
-            <a href={asset.file} target="_blank" rel="noreferrer">{asset.art ? 'OPEN APPROVED ART ↗' : 'OPEN ORIGINAL SPRITE ↗'}</a>
+            <h2>{asset.title}</h2><p>{asset.description}</p>
+            <a href={asset.file} target="_blank" rel="noreferrer">OPEN FULL IMAGE ↗</a>
           </article>
         ))}
       </section>
