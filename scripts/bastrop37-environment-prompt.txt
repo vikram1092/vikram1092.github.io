@@ -1,11 +1,25 @@
+CITY SKYLINE LAYER
+
 Use case: stylized-concept
-Asset type: 16:9 real-time arcade racing game environment plate, used behind gameplay sprites
-Primary request: Create an awe-inspiring futuristic midnight megacity and wet expressway background closely aligned to the visual language of the supplied BASTROP37 concept reference, but as a clean environment-only plate.
-Input images: scarlet-bike-neon-traffic.jpg is the approved style, atmosphere, palette, and perspective reference. Do not copy its typography, HUD, characters, or vehicles.
-Scene/backdrop: Monumental vertical city canyon at night, layered needle-like towers disappearing into storm clouds, elevated circular transit structures, distant bridges and architectural ribs, atmospheric fog banks, rain haze, many tiny warm windows and selective scarlet/cyan signage glows; broad five-lane wet black expressway racing toward a centered vanishing point.
-Composition/framing: Exact 16:9 landscape; rear-chase camera at low height; centered vanishing point around 30% from top; roadway occupies bottom 70%; open and unobstructed center lanes for gameplay; dramatic dense architecture concentrated on the left and right thirds; enough overscan at both sides for subtle camera movement.
-Style/medium: Premium cinematic sci-fi concept art, crisp highly detailed hard-surface architecture, painterly atmospheric depth, believable scale, polished game key art quality, not pixel art, not low-poly, not flat vector art.
-Lighting/mood: Awe-inspiring, immense, dangerous and beautiful; deep navy night, steel blue rain, crimson and restrained cyan luminous accents; strong wet-road reflections with delicate specular texture.
-Road requirements: Smooth believable asphalt with drainage seams, reflective puddling, subtle tire wear and long perspective lane dividers; no chunky geometric slabs, no checkerboard pattern, no large repeated tiles. The road center and lane boundaries must remain visually readable.
-Constraints: Environment only; no motorcycle, no rider, no cars, no drones, no pedestrians; no HUD, no logos, no legible words, no numbers, no watermark; do not place any object in the center lanes; preserve a clear horizon and gameplay silhouette readability.
-Avoid: Blocky building silhouettes, simplistic rectangles, low-detail facades, voxel art, cartoon style, flat gradients, exaggerated neon clutter, magenta wash, symmetrical mirrored buildings, close foreground barriers.
+Asset type: 16:9 background-only skyline layer for a real-time arcade motorcycle game
+Primary request: Create an awe-inspiring futuristic midnight megacity background for a high rear-chase motorcycle camera. This is the city layer only; a separate moving roadway will be composited over its lower portion.
+Input images: scarlet-bike-neon-traffic.jpg is the approved BASTROP37 world concept and primary art-direction reference. city-expressway-v2.jpg is a reference for architectural detail, atmosphere, material quality, and palette, but its low road-level camera angle must not be repeated.
+Scene/backdrop: Immense vertical city canyon in rain, needle towers disappearing into storm clouds, layered bridges and elevated transit rings, architectural ribs, distant fog shelves, tiny warm windows, selective scarlet and cyan light, believable depth and monumental scale.
+Composition/framing: Exact wide 16:9 landscape; camera positioned several meters above the roadway as if directly behind and above a motorcycle, looking downward about 12–15 degrees; centered vanishing point near 32% from the top; tall detailed architecture concentrated on both side thirds and across the far horizon; center remains readable; lower 55% should be unobstructed dark atmospheric space that can be covered by a separate perspective road layer; no foreground road surface, close guardrails, or foreground objects.
+Style/medium: Premium cinematic sci-fi concept art, crisp highly detailed hard-surface architecture, painterly atmospheric depth, polished game key-art finish, realistic material detail; not pixel art, low-poly, or flat vector art.
+Lighting/mood: Awe-inspiring, immense, dangerous and beautiful; deep navy night, steel-blue rain, crimson and restrained cyan accents; mist and volumetric depth.
+Constraints: Environment only; no road surface in foreground, motorcycle, rider, cars, drones, people, HUD, logos, legible text, numbers, or watermark; do not place any object in the central gameplay corridor.
+Avoid: Low camera at asphalt level, blocky silhouettes, simplistic rectangles, low-detail facades, voxel art, flat gradients, neon clutter, magenta wash, mirrored symmetry.
+
+LOOPING ROAD LAYER
+
+Use case: stylized-concept
+Asset type: vertically looping roadway texture for a real-time arcade racing game
+Primary request: Create a premium wet futuristic five-lane expressway surface asset viewed from a perfectly orthographic top-down camera. It will be perspective-warped and scrolled beneath a high rear-chase camera, so the source itself must have zero perspective convergence.
+Input images: scarlet-bike-neon-traffic.jpg is the approved reference for wet asphalt, material richness, rain, reflection color, lane language, and finish. city-expressway-v2.jpg is a reference for road-surface quality only.
+Surface: Dark nearly black rain-soaked asphalt with fine aggregate, drainage seams, subtle repaired cracks, shallow puddling, delicate tire wear, and richly detailed but restrained elongated scarlet/cyan/amber reflected light. Five equal-width driving lanes running vertically from top edge to bottom edge. Four parallel dashed off-white lane dividers plus subtle outer edge strips. No objects.
+Composition/framing: Square texture tile; perfectly straight-on top-down orthographic view; road fills the entire canvas edge to edge; all lane dividers remain parallel and vertical with equal spacing; no horizon, skyline, curb, barrier, shoulder, or vanishing point. Make the top and bottom edges visually compatible for vertical looping; keep the left/right edges dark.
+Style/medium: High-end cinematic sci-fi game texture, photorealistic concept-art finish, crisp micro-detail, physically believable wet asphalt and reflections, matching BASTROP37.
+Lighting/mood: Midnight rain; deep navy-black pavement; restrained scarlet and cyan reflections; high contrast but gameplay-readable.
+Constraints: Exactly five lanes and four dashed internal divider lines; no letters, numbers, arrows, logos, watermark, vehicles, people, debris, buildings, horizon, perspective, solid center line, or duplicated competing markings.
+Avoid: Low-poly geometry, chunky slabs, checkerboard tiles, broad opaque color bands, close-up macro pebbles, strong diagonal light streaks, perspective convergence, road-level camera, fixed vehicle shadows.
