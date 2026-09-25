@@ -5,7 +5,7 @@ type DroneOutcome = 'none' | 'slice' | 'boost' | 'jump' | 'miss';
 type Car = {
   x: number; z: number; w: number; h: number; kind: 'coupe' | 'sedan' | 'hauler' | 'drone';
   velocity: number; passed: boolean; phase?: DronePhase; phaseTime?: number;
-  side?: -1 | 1; attackX?: number; outcome?: DroneOutcome;
+  side?: -1 | 1; attackX?: number; outcome?: DroneOutcome; attackPasses?: number;
   lane: number; targetLane: number; turn: -1 | 0 | 1; changeZ: number; changed: boolean;
 };
 type Particle = { x: number; y: number; vx: number; vy: number; life: number; color: string };
@@ -217,7 +217,10 @@ export function mountGame() {
   }
   function finishDrone(car:Car,outcome:DroneOutcome) {
     if(car.phase==='recover'||car.passed)return;
-    car.phase='recover'; car.phaseTime=.65; car.outcome=outcome; droneOutcome=outcome;
+    car.attackPasses=(car.attackPasses||0)+1;
+    car.phase='recover'; car.phaseTime=1.45; car.outcome=outcome; droneOutcome=outcome;
+    // Keep a completed lunge on-screen so recovery can visibly carry it back out.
+    car.z=Math.max(car.z,-24);
     car.side=car.x<x?-1:1; spawn=Math.max(spawn,.7);
     if(outcome==='slice') {
       slices++; splitDrone(car); car.passed=true; car.z=-100;
@@ -226,7 +229,7 @@ export function mountGame() {
       droneDodges++; setMessage('DRONE OUTRUN / TURBO',1.15);
     } else if(outcome==='jump') {
       droneDodges++; setMessage('LUNGE CLEARED / AIRBORNE',1.15);
-    } else setMessage('DRONE MISSED / HOLD THE LINE',.9);
+    } else setMessage('DRONE MISSED / IT IS COMING BACK',1.15);
   }
   function canSignalDrone(drone:Car) {
     // The drone commits only after ordinary traffic has cleared the answer window.
@@ -235,38 +238,46 @@ export function mountGame() {
   function updateDrone(car:Car,dt:number,oldX:number) {
     const oldZ=car.z;
     if(car.phase==='approach') {
-      car.z-=(speed-car.velocity)*dt;
+      car.z-=Math.min(115,Math.max(70,speed-car.velocity))*dt;
       if(car.z<=610) {
-        car.phase='flank'; car.phaseTime=.7;
+        car.phase='flank'; car.phaseTime=1.05;
         setMessage('DRONE APPROACH / WATCH THE FLANK',1);
       }
     } else if(car.phase==='flank') {
       car.phaseTime=Math.max(0,(car.phaseTime||0)-dt);
       const flankX=clamp(x+(car.side||1)*82,left+28,right-28);
-      car.x+=(flankX-car.x)*(1-Math.exp(-4.5*dt));
-      car.z-=(speed-car.velocity)*dt;
+      car.x+=(flankX-car.x)*(1-Math.exp(-3.2*dt));
+      car.z-=Math.min(105,Math.max(62,speed-car.velocity))*dt;
       if(car.phaseTime===0&&car.z<=235&&canSignalDrone(car)) {
-        car.phase='signal'; car.phaseTime=.5; car.attackX=x; car.z=185;
+        car.phase='signal'; car.phaseTime=.8; car.attackX=x; car.z=205;
         setMessage('ATTACK SIGNAL / SLICE · BOOST · JUMP',.9);
       } else if(car.z<170) car.z=170;
     } else if(car.phase==='signal') {
       car.phaseTime=Math.max(0,(car.phaseTime||0)-dt);
-      car.z+=(185-car.z)*(1-Math.exp(-8*dt));
+      car.z+=(205-car.z)*(1-Math.exp(-6*dt));
       if(boost>0) { finishDrone(car,'boost'); return; }
       if(car.phaseTime===0) {
-        car.phase='lunge'; car.phaseTime=.7;
+        car.phase='lunge'; car.phaseTime=1.05;
         setMessage('LUNGE / ACT NOW',.55);
       }
     } else if(car.phase==='lunge') {
       if(boost>0&&car.z>34) { finishDrone(car,'boost'); return; }
       car.phaseTime=Math.max(0,(car.phaseTime||0)-dt);
-      car.x+=((car.attackX??x)-car.x)*(1-Math.exp(-10*dt));
-      car.z-=560*dt;
+      car.x+=((car.attackX??x)-car.x)*(1-Math.exp(-7*dt));
+      car.z-=300*dt;
     } else {
       car.phaseTime=Math.max(0,(car.phaseTime||0)-dt);
-      car.x+=((x-(car.side||1)*145)-car.x)*(1-Math.exp(-5*dt));
-      car.z-=420*dt;
-      if(car.phaseTime===0||car.z< -115)car.passed=true;
+      const retreatX=clamp(x+(car.side||1)*130,left+28,right-28);
+      car.x+=(retreatX-car.x)*(1-Math.exp(-3.6*dt));
+      car.z+=(255-car.z)*(1-Math.exp(-2.7*dt));
+      if(car.phaseTime===0) {
+        if((car.attackPasses||0)>=3) { car.passed=true; car.z=-100; }
+        else {
+          car.phase='flank'; car.phaseTime=1.15; car.side=car.side===-1?1:-1;
+          car.attackX=x; car.outcome='none';
+          setMessage(`DRONE RESET / PASS ${(car.attackPasses||0)+1} INCOMING`,1);
+        }
+      }
       return;
     }
 
@@ -407,7 +418,7 @@ export function mountGame() {
     return {x:left+(lane+.5)*(right-left)/5,z,w:vehicle==='hauler'?76:vehicle==='drone'?48:64,
       h:vehicle==='hauler'?62:vehicle==='drone'?28:43,kind:vehicle,velocity:vehicle==='hauler'?22:38,passed:false,
       lane,targetLane:lane,turn:0,changeZ:720,changed:lane===2||(Math.floor(z)+lane*7+vehicle.length)%3!==0,
-      ...(vehicle==='drone'?{phase:'approach' as DronePhase,phaseTime:0,side:(lane<=2?-1:1) as -1|1,attackX:320,outcome:'none' as DroneOutcome}:{})};
+      ...(vehicle==='drone'?{phase:'approach' as DronePhase,phaseTime:0,side:(lane<=2?-1:1) as -1|1,attackX:320,outcome:'none' as DroneOutcome,attackPasses:0}:{})};
   }
   function polygon(points:{x:number;y:number}[],color:string) {
     c.fillStyle=color;c.beginPath();points.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.fill();
@@ -538,7 +549,7 @@ export function mountGame() {
     el('speed').textContent=Math.round(speed).toString();el('near').textContent=calls.toString();
     el('charge-value').textContent=Math.round(charge*100)+'%';el('charge-bar').style.width=charge*100+'%';
     // Small observable state is useful for regression tests and tuning controls.
-    const drone=activeDrone();canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.time=remaining.toFixed(1);canvas.dataset.score=String(Math.floor(score));canvas.dataset.sector=el('sector').textContent||'';
+    const drone=activeDrone();canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.dronePasses=String(drone?.attackPasses||0);canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.time=remaining.toFixed(1);canvas.dataset.score=String(Math.floor(score));canvas.dataset.sector=el('sector').textContent||'';
   }
   function frame(now:number){const dt=Math.min((now-last)/1000,1/30);last=now;if(state==='playing')update(dt);if(state==='playing'||frames++%3===0)render();requestAnimationFrame(frame);}
   const assets:Record<string,string>={bike:'bike-normal-straight',bikeBlades:'bike-blades-straight',bikeBladesLeft:'bike-blades-left-15',bikeBladesRight:'bike-blades-right-15',bikeBladesLeft35:'bike-blades-left-35',bikeBladesRight35:'bike-blades-right-35',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-slide-left',slideRight:'bike-slide-right',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',coupeLeft:'traffic-coupe-right',coupeRight:'traffic-coupe-left',sedan:'traffic-sedan',sedanLeft:'traffic-sedan-left',sedanRight:'traffic-sedan-right',hauler:'traffic-hauler',haulerLeft:'traffic-hauler-left',haulerRight:'traffic-hauler-right',drone:'drone-hover',droneFlankLeft:'drone-flank-left',droneFlankRight:'drone-flank-right',droneWarning:'drone-attack-warning',droneLunge:'drone-lunge',droneFragmentLeft:'drone-fragment-left',droneFragmentRight:'drone-fragment-right',droneCore:'drone-core',cyanTrail:'effects-cyan-trail',yellowTurbo:'effects-yellow-turbo',hoverThrust:'effects-hover-thrust',bladeEffect:'effects-blades',cutSparks:'effects-cut-sparks',impactSparks:'effects-impact-sparks',landingRing:'effects-landing-ring',debris:'effects-debris'};
