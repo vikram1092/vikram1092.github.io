@@ -1,4 +1,4 @@
-// BASTROP37 step 5: a timed city-to-sea-wall escape.
+// BASTROP37 step 6: a timed city-to-sea-wall escape with a reactive night soundtrack.
 // X and Z are shared road-space units; projected opaque bodies decide visible contact.
 type DronePhase = 'approach' | 'flank' | 'signal' | 'lunge' | 'recover';
 type DroneOutcome = 'none' | 'slice' | 'boost' | 'jump' | 'miss';
@@ -44,7 +44,7 @@ export function mountGame() {
     const unit = Math.min(W * .9, 520) / (right-left) * zoom;
     return {x:W/2+(wx-cameraX)*unit*scale, y:horizon()+(H*.84-horizon())*scale, scale:unit*scale};
   }
-  type GameState = 'ready' | 'playing' | 'paused' | 'crashed' | 'escaped' | 'timeout';
+  type GameState = 'ready' | 'intro' | 'playing' | 'paused' | 'crashed' | 'escaped' | 'timeout';
   let state: GameState = 'ready';
   let x = 320, vx = 0, angle = 0;
   let charge = 1, boost = 0, speed = 260, distance = 0, calls = 0, elapsed = 0;
@@ -59,6 +59,11 @@ export function mountGame() {
   const timeLimit = 90;
   const finishDistance = 6000;
   let score = 0;
+  let introTimer = 0, musicStep = 0, musicClock = 0, bladesAudible = false;
+  let muted = false;
+  try { muted = localStorage.getItem('bastrop37-muted') === 'true'; } catch {}
+  type AudioRig = { ctx:AudioContext; master:GainNode; music:GainNode; engine:GainNode; blade:GainNode; fx:GainNode; motor:OscillatorNode; whine:OscillatorNode; bladeOsc:OscillatorNode };
+  let audio: AudioRig | null = null;
   const pressed = new Set<string>();
   function press(key:string) { if(!keys.has(key)) pressed.add(key); keys.add(key); }
   const actionKeys = ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space','ShiftLeft','ControlLeft','AltLeft'];
@@ -77,25 +82,91 @@ export function mountGame() {
   }
   const resize = new ResizeObserver(() => { size(); if (state === 'playing') pause(); });
   resize.observe(canvas);
+  const muteButton = document.querySelector<HTMLButtonElement>('#mute')!;
+  function updateMuteButton() {
+    muteButton.setAttribute('aria-pressed',String(muted));
+    muteButton.setAttribute('aria-label',muted?'Unmute audio':'Mute audio');
+    muteButton.textContent=muted?'◌ MUTED':'◉ SOUND';
+  }
+  function initAudio() {
+    if(audio) { void audio.ctx.resume(); return; }
+    const AudioCtor=(window.AudioContext||(window as typeof window & {webkitAudioContext?:typeof AudioContext}).webkitAudioContext);
+    if(!AudioCtor)return;
+    const ac=new AudioCtor(),master=ac.createGain(),music=ac.createGain(),engine=ac.createGain(),blade=ac.createGain(),fx=ac.createGain();
+    const compressor=ac.createDynamicsCompressor();
+    compressor.threshold.value=-18;compressor.knee.value=18;compressor.ratio.value=5;
+    master.gain.value=muted?0:.18;music.gain.value=.0001;engine.gain.value=.0001;blade.gain.value=.0001;fx.gain.value=.65;
+    music.connect(master);engine.connect(master);blade.connect(master);fx.connect(master);master.connect(compressor);compressor.connect(ac.destination);
+    const motor=ac.createOscillator(),whine=ac.createOscillator(),bladeOsc=ac.createOscillator();
+    const motorFilter=ac.createBiquadFilter();motorFilter.type='lowpass';motorFilter.frequency.value=420;
+    motor.type='sawtooth';motor.frequency.value=58;whine.type='triangle';whine.frequency.value=116;bladeOsc.type='square';bladeOsc.frequency.value=980;
+    motor.connect(motorFilter);motorFilter.connect(engine);whine.connect(engine);bladeOsc.connect(blade);
+    motor.start();whine.start();bladeOsc.start();audio={ctx:ac,master,music,engine,blade,fx,motor,whine,bladeOsc};
+  }
+  function tone(frequency:number,duration=.14,type:OscillatorType='square',volume=.12,delay=0,bus:'fx'|'music'='fx') {
+    if(!audio||muted)return;
+    const t=audio.ctx.currentTime+delay,o=audio.ctx.createOscillator(),g=audio.ctx.createGain();
+    o.type=type;o.frequency.setValueAtTime(frequency,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+duration);
+    o.connect(g);g.connect(bus==='music'?audio.music:audio.fx);o.start(t);o.stop(t+duration+.03);
+  }
+  function sound(name:'signal'|'turbo'|'jump'|'land'|'warning'|'lunge'|'slice'|'impact'|'success'|'timeout'|'close') {
+    const notes:Record<typeof name,number[]>={signal:[220,330,165],turbo:[110,220,440],jump:[180,270],land:[92,62],warning:[740,740],lunge:[310,155],slice:[1180,760],impact:[72,48],success:[220,330,440,660],timeout:[220,185,147],close:[620,820]};
+    const gap=name==='warning'?.13:.07;
+    notes[name].forEach((note,i)=>tone(note,name==='impact'?.28:.12,name==='impact'?'sawtooth':name==='slice'?'triangle':'square',name==='impact'?.22:.1,i*gap));
+  }
+  function syncAudio(dt=0) {
+    if(!audio)return;
+    const now=audio.ctx.currentTime,active=state==='playing';
+    audio.master.gain.setTargetAtTime(muted?0:.18,now,.025);
+    audio.engine.gain.setTargetAtTime(active?.1:.0001,now,.08);
+    audio.music.gain.setTargetAtTime(active?.075:state==='intro'?.035:.0001,now,.18);
+    audio.blade.gain.setTargetAtTime(active&&blades>.08?.045+.035*blades:.0001,now,.025);
+    audio.motor.frequency.setTargetAtTime(43+speed*.12+(boost>0?24:0),now,.045);
+    audio.whine.frequency.setTargetAtTime(92+speed*.31+(boost>0?80:0),now,.04);
+    audio.bladeOsc.frequency.setTargetAtTime(760+blades*520+Math.sin(elapsed*45)*55,now,.018);
+    if(active&&dt>0) {
+      musicClock-=dt;
+      if(musicClock<=0) {
+        const scale=[55,82.41,65.41,98,73.42,110,65.41,82.41];
+        tone(scale[musicStep++%scale.length],.23,'sawtooth',.055,0,'music');
+        musicClock=.28;
+      }
+    }
+    const bladeNow=active&&blades>.35;
+    if(bladeNow&&!bladesAudible)tone(920,.09,'triangle',.08);
+    bladesAudible=bladeNow;
+  }
+  updateMuteButton();
+  muteButton.addEventListener('click',()=>{
+    muted=!muted;try{localStorage.setItem('bastrop37-muted',String(muted));}catch{}
+    updateMuteButton();if(!muted)initAudio();syncAudio();
+  });
   function setMessage(text: string, seconds = 1) { el('feedback').textContent = text; feedbackTime = seconds; }
   function clearInput() { keys.clear(); pressed.clear(); sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
   function reset() {
+    clearTimeout(introTimer);el('transmission').hidden=true;el('briefing').hidden=false;overlay.classList.remove('transmitting');
+    el('hint').textContent='ARROWS / WASD · SPACE SLIDE · SHIFT TURBO · CMD/CTRL BLADES · OPT/ALT JUMP';
     clearInput(); x = 320; vx = angle = charge = boost = distance = calls = elapsed = offset = score = 0;
     charge = 1; speed = 210; spawn = 7.5; particles = []; fragments = []; effects = [];
     cameraX = 320; cameraPitch = turboView = height = verticalSpeed = jumpWindup = jumpCooldown = landing = blades = slices = droneDodges = laneChanges = 0;
     droneOutcome = 'none'; introDroneSpawned = false;
     traffic = [makeVehicle(1, 430, 'coupe'), makeVehicle(3, 730, 'hauler'), makeVehicle(0, 850, 'sedan')];
     state = 'playing'; overlay.hidden = true; pauseButton.disabled = false; pauseButton.textContent = 'Ⅱ PAUSE';
-    setMessage('SHIFT: TURBO · CMD/CTRL: BLADES · OPT/ALT: JUMP', 3); canvas.focus({preventScroll:true});
+    musicClock=0;musicStep=0;syncAudio();setMessage('SHIFT: TURBO · CMD/CTRL: BLADES · OPT/ALT: JUMP', 3); canvas.focus({preventScroll:true});
+  }
+  function beginIntro() {
+    initAudio();state='intro';overlay.classList.add('transmitting');el('briefing').hidden=true;el('transmission').hidden=false;
+    start.textContent='SKIP TRANSMISSION →';el('hint').textContent='CLICK TO CUT THE SIGNAL AND RIDE';pauseButton.disabled=true;
+    sound('signal');syncAudio();introTimer=window.setTimeout(reset,reduced?1200:4200);
   }
   function pause() {
     if (state !== 'playing') return;
     state = 'paused'; clearInput(); overlay.hidden = false;
     el('overline').textContent = 'CIRCUIT ON HOLD'; el('headline').textContent = 'TAKE A BREATH.';
     el('message').textContent = 'Your ride is right where you left it.'; start.textContent = 'RESUME RIDE →';
-    pauseButton.textContent = '▶ RESUME';
+    pauseButton.textContent = '▶ RESUME'; syncAudio();
   }
-  function resume() { state = 'playing'; clearInput(); overlay.hidden = true; pauseButton.textContent = 'Ⅱ PAUSE'; canvas.focus({preventScroll:true}); }
+  function resume() { state = 'playing'; clearInput(); overlay.hidden = true; pauseButton.textContent = 'Ⅱ PAUSE'; syncAudio(); canvas.focus({preventScroll:true}); }
   function crash() {
     burst('impactSparks',x,0,bikeLift(),74,.55);
     burst('debris',x,0,bikeLift(),62,.75);
@@ -103,7 +174,7 @@ export function mountGame() {
     el('overline').textContent = 'CONTACT / CIRCUIT RESET'; el('headline').textContent = 'ONE MORE RUN.';
     el('message').textContent = `${Math.floor(distance)} m ridden · ${formatScore(score)} points · ${calls} close calls.`;
     start.textContent = 'RIDE AGAIN →'; pauseButton.disabled = true;
-    setMessage('CONTACT — R TO RETRY', 5);
+    sound('impact');syncAudio();setMessage('CONTACT — R TO RETRY', 5);
   }
   function formatScore(value:number) { return Math.max(0,Math.floor(value)).toString().padStart(6,'0'); }
   function endRun(result:'escaped'|'timeout') {
@@ -114,14 +185,15 @@ export function mountGame() {
       score+=bonus;
       el('overline').textContent='SEA WALL / GATE CLEARED'; el('headline').innerHTML='ESCAPE<br/><em>COMPLETE.</em>';
       el('message').textContent=`${formatScore(score)} points · ${Math.max(0,timeLimit-elapsed).toFixed(1)} seconds left · ${slices} drones cut.`;
-      start.textContent='RIDE AGAIN →'; setMessage(`EXTRACTED / +${bonus} TIME BONUS`,5);
+      start.textContent='RIDE AGAIN →'; sound('success');setMessage(`EXTRACTED / +${bonus} TIME BONUS`,5);
     } else {
       el('overline').textContent='SEA WALL / GATE SEALED'; el('headline').innerHTML='TIME<br/><em>EXPIRED.</em>';
       el('message').textContent=`${Math.floor(distance)} of ${finishDistance} m · ${formatScore(score)} points. The route is still warm.`;
-      start.textContent='RETRY ESCAPE →'; setMessage('GATE SEALED — R TO RETRY',5);
+      start.textContent='RETRY ESCAPE →'; sound('timeout');setMessage('GATE SEALED — R TO RETRY',5);
     }
+    syncAudio();
   }
-  start.addEventListener('click', () => state === 'paused' ? resume() : reset());
+  start.addEventListener('click', () => state === 'ready' ? beginIntro() : state === 'paused' ? resume() : reset());
   pauseButton.addEventListener('click', () => state === 'paused' ? resume() : pause());
   const aliases: Record<string,string> = {
     KeyA:'ArrowLeft', KeyD:'ArrowRight', KeyW:'ArrowUp', KeyS:'ArrowDown',
@@ -135,6 +207,7 @@ export function mountGame() {
     if (e.repeat) return;
     if (e.code === 'KeyP' || e.code === 'Escape') state === 'paused' ? resume() : pause();
     if (e.code === 'KeyR' && start.disabled === false) reset();
+    if (e.code === 'KeyM') muteButton.click();
   });
   addEventListener('keyup', e => keys.delete(aliases[e.code] || e.code));
   addEventListener('blur', pause);
@@ -231,7 +304,7 @@ export function mountGame() {
     car.side=car.x<x?-1:1; spawn=Math.max(spawn,.7);
     if(outcome==='slice') {
       slices++; splitDrone(car); car.passed=true; car.z=-100;
-      setMessage('DRONE SLICED / CLEAN CUT',1.15);
+      sound('slice');setMessage('DRONE SLICED / CLEAN CUT',1.15);
     } else if(outcome==='boost') {
       droneDodges++; setMessage('DRONE OUTRUN / TURBO',1.15);
     } else if(outcome==='jump') {
@@ -260,7 +333,7 @@ export function mountGame() {
       car.z-=Math.min(105,Math.max(62,speed-car.velocity))*dt;
       if(car.phaseTime===0&&car.z<=235&&canSignalDrone(car)) {
         car.phase='signal'; car.phaseTime=.8; car.attackX=x; car.z=205;
-        setMessage('ATTACK SIGNAL / SLICE · BOOST · JUMP',.9);
+        sound('warning');setMessage('ATTACK SIGNAL / SLICE · BOOST · JUMP',.9);
       } else if(car.z<170) car.z=170;
     } else if(car.phase==='signal') {
       car.phaseTime=Math.max(0,(car.phaseTime||0)-dt);
@@ -268,7 +341,7 @@ export function mountGame() {
       if(boost>0) { finishDrone(car,'boost'); return; }
       if(car.phaseTime===0) {
         car.phase='lunge'; car.phaseTime=1.05;
-        setMessage('LUNGE / ACT NOW',.55);
+        sound('lunge');setMessage('LUNGE / ACT NOW',.55);
       }
     } else if(car.phase==='lunge') {
       if(boost>0&&car.z>34) { finishDrone(car,'boost'); return; }
@@ -309,17 +382,18 @@ export function mountGame() {
   function update(dt:number) {
     const oldX=x;
     elapsed += dt; feedbackTime -= dt;
+    syncAudio(dt);
     if(elapsed>=timeLimit) { endRun('timeout'); return; }
     const input = Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
     boost = Math.max(0, boost-dt);
     jumpCooldown = Math.max(0,jumpCooldown-dt);
     landing = Math.max(0,landing-dt);
     if(pressed.has('ShiftLeft')) {
-      if(boost===0 && charge>=.4) { charge-=.4; boost=1.15; sparks(18,'#ffe575'); setMessage('TURBO / TAKE THE GAP',1.15); }
+      if(boost===0 && charge>=.4) { charge-=.4; boost=1.15; sparks(18,'#ffe575'); sound('turbo');setMessage('TURBO / TAKE THE GAP',1.15); }
       else if(boost===0) setMessage('TURBO RECHARGING',.8);
     }
     if(pressed.has('AltLeft') && height===0 && jumpWindup===0 && jumpCooldown===0) {
-      jumpWindup=.12; jumpCooldown=1.25; setMessage('SPRING LOADED',.12);
+      jumpWindup=.12; jumpCooldown=1.25; sound('jump');setMessage('SPRING LOADED',.12);
     }
     pressed.clear();
     if(jumpWindup>0) {
@@ -328,7 +402,7 @@ export function mountGame() {
     }
     if(verticalSpeed!==0 || height>0) {
       verticalSpeed-=380*dt; height+=verticalSpeed*dt;
-      if(height<=0) { height=verticalSpeed=0; landing=.42; burst('landingRing',x,0,0,72,.5); sparks(20,'#8fffea'); setMessage('TOUCHDOWN',.5); }
+      if(height<=0) { height=verticalSpeed=0; landing=.42; burst('landingRing',x,0,0,72,.5); sparks(20,'#8fffea'); sound('land');setMessage('TOUCHDOWN',.5); }
     }
     blades += ((keys.has('ControlLeft')?1:0)-blades)*(1-Math.exp(-25*dt));
     sliding = keys.has('Space') && height===0 && boost===0;
@@ -406,7 +480,7 @@ export function mountGame() {
       if(!car.passed && car.z < -reach) {
         car.passed=true;
         const gap = dx-(bw+car.w)/2;
-        if(gap>=0 && gap<17) { calls++; charge=clamp(charge+.3,0,1); sparks(10,'#ffd5a3'); setMessage('CLOSE CALL / +30 ENERGY',1.2); }
+        if(gap>=0 && gap<17) { calls++; charge=clamp(charge+.3,0,1); sparks(10,'#ffd5a3'); sound('close');setMessage('CLOSE CALL / +30 ENERGY',1.2); }
       }
     }
     traffic=traffic.filter(car=>car.z>-65);
@@ -571,7 +645,7 @@ export function mountGame() {
     el('speed').textContent=Math.round(speed).toString();el('near').textContent=calls.toString();
     el('charge-value').textContent=Math.round(charge*100)+'%';el('charge-bar').style.width=charge*100+'%';
     // Small observable state is useful for regression tests and tuning controls.
-    const drone=activeDrone();canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.dronePasses=String(drone?.attackPasses||0);canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.time=remaining.toFixed(1);canvas.dataset.score=String(Math.floor(score));canvas.dataset.sector=el('sector').textContent||'';
+    const drone=activeDrone();canvas.dataset.audio=audio?'ready':'locked';canvas.dataset.muted=String(muted);canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.dronePasses=String(drone?.attackPasses||0);canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.time=remaining.toFixed(1);canvas.dataset.score=String(Math.floor(score));canvas.dataset.sector=el('sector').textContent||'';
   }
   function frame(now:number){const dt=Math.min((now-last)/1000,1/30);last=now;if(state==='playing')update(dt);if(state==='playing'||frames++%3===0)render();requestAnimationFrame(frame);}
   const assets:Record<string,string>={bike:'bike-normal-straight',bikeBlades:'bike-blades-straight',bikeBladesLeft:'bike-blades-left-15',bikeBladesRight:'bike-blades-right-15',bikeBladesLeft35:'bike-blades-left-35',bikeBladesRight35:'bike-blades-right-35',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-slide-left',slideRight:'bike-slide-right',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',coupeLeft:'traffic-coupe-right',coupeRight:'traffic-coupe-left',sedan:'traffic-sedan',sedanLeft:'traffic-sedan-left',sedanRight:'traffic-sedan-right',hauler:'traffic-hauler',haulerLeft:'traffic-hauler-left',haulerRight:'traffic-hauler-right',drone:'drone-hover',droneFlankLeft:'drone-flank-left',droneFlankRight:'drone-flank-right',droneWarning:'drone-attack-warning',droneLunge:'drone-lunge',droneFragmentLeft:'drone-fragment-left',droneFragmentRight:'drone-fragment-right',droneCore:'drone-core',cyanTrail:'effects-cyan-trail',yellowTurbo:'effects-yellow-turbo',hoverThrust:'effects-hover-thrust',bladeEffect:'effects-blades',cutSparks:'effects-cut-sparks',impactSparks:'effects-impact-sparks',landingRing:'effects-landing-ring',debris:'effects-debris'};

@@ -9,7 +9,7 @@ Build and ship the playable Bastrop37 game slice: a futuristic motorcycle escape
 - [x] 3. Make the bike feel incredible — responsive steering, energy slides, turbo, deployable blades, spring jumps, feedback, and keyboard/touch controls.
 - [x] 4. Build one excellent drone encounter
 - [x] 5. Make a complete short escape
-- [ ] 6. Add the atmosphere
+- [x] 6. Add the atmosphere — skippable villain transmission, reactive synthesized score, engine/blade/ability/impact cues, autoplay-safe startup, and persistent mute controls.
 - [ ] 7. Polish and publish
 
 ## Repository and workflow
@@ -20,18 +20,6 @@ Build and ship the playable Bastrop37 game slice: a futuristic motorcycle escape
 - Preserve the approved visual direction and keep gameplay effects separate from vehicle sprites.
 
 ## Remaining work
-
-### 4. Build one excellent drone encounter
-
-Implement a readable `approach → flank → signal attack → lunge` sequence. Support three reliable responses: slice the drone, boost away, or jump over its attack. Telegraph attacks clearly, avoid unavoidable hits, and split destroyed drones into tumbling fragments with separate sparks and debris effects.
-
-### 5. Make a complete short escape
-
-Create a roughly 90-second run with an opening, escalating pressure, and a sea-wall finish. Introduce traffic first, then drones, then combinations. Include a visible countdown, scoring, success/failure states, and instant retry.
-
-### 6. Add the atmosphere
-
-Layer in the city backdrop, futuristic traffic, a brief skippable villain opening, synth music, engine audio, blade crackle, and impact effects. Respect browser audio restrictions and provide mute controls while maintaining gameplay readability.
 
 ### 7. Polish and publish
 

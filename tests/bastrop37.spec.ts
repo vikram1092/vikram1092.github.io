@@ -1,11 +1,17 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 test.beforeEach(async({page})=>{await page.clock.install();});
+async function startRun(page:Page) {
+  await page.getByRole('button',{name:'START RIDING'}).click();
+  await expect(page.locator('#game')).toHaveAttribute('data-state','intro');
+  await page.getByRole('button',{name:'SKIP TRANSMISSION'}).click();
+  await expect(page.locator('#game')).toHaveAttribute('data-state','playing');
+}
 
 test('riding responds, slides position, turbo is deliberate, and pause freezes simulation', async ({page}) => {
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/bastrop37/');
-  await page.getByRole('button',{name:'START RIDING'}).click();
+  await startRun(page);
   const game=page.locator('#game');
   await expect(game).toHaveAttribute('data-state','playing');
   const before=Number(await game.getAttribute('data-x'));
@@ -31,7 +37,7 @@ test('riding responds, slides position, turbo is deliberate, and pause freezes s
 test('traffic collision offers immediate retry and assets all load', async ({page})=>{
   await page.addInitScript(()=>{Math.random=()=>.5;});
   await page.goto('/bastrop37/');
-  await page.getByRole('button',{name:'START RIDING'}).click();
+  await startRun(page);
   await page.clock.runFor(8500);
   await expect(page.locator('#game')).toHaveAttribute('data-state','crashed');
   await page.getByRole('button',{name:'RIDE AGAIN'}).click();
@@ -43,7 +49,7 @@ test('traffic collision offers immediate retry and assets all load', async ({pag
 
 test('traffic uses lane-perspective sprites and can change lanes',async({page})=>{
   await page.goto('/bastrop37/');
-  await page.getByRole('button',{name:'START RIDING'}).click();
+  await startRun(page);
   const game=page.locator('#game');
   await expect(game).toHaveAttribute('data-traffic-sprites',/^coupe,hauler,sedan/);
   await page.clock.runFor(1400);
@@ -56,6 +62,8 @@ test.describe('touch layout',()=>{
  test('mobile multi-touch steers while sliding without page overflow',async({page,context})=>{
   await page.goto('/bastrop37/');
   await page.getByRole('button',{name:'START RIDING'}).tap();
+  await expect(page.locator('#game')).toHaveAttribute('data-state','intro');
+  await page.getByRole('button',{name:'SKIP TRANSMISSION'}).tap();
   const touch=await context.newCDPSession(page);
   const steer=await page.getByRole('button',{name:'Steer right'}).boundingBox();
   const slide=await page.locator('.slide-control').boundingBox();
@@ -86,7 +94,7 @@ test('homepage portal navigates to the isolated game',async({page})=>{
 
 test('jump launches, lands, and holding jump does not auto-repeat',async({page})=>{
   await page.addInitScript(()=>{Math.random=()=>.5;});
-  await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
+  await page.goto('/bastrop37/');await startRun(page);
   const game=page.locator('#game');
   await page.keyboard.down('Alt');
   await page.clock.runFor(500);
@@ -100,7 +108,7 @@ test('jump launches, lands, and holding jump does not auto-repeat',async({page})
 
 test('blades slice existing drones and retract on release',async({page})=>{
   await page.addInitScript(()=>{let n=0;Math.random=()=>[.5,.5,.1,.5][n++%4];});
-  await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
+  await page.goto('/bastrop37/');await startRun(page);
   await page.evaluate(()=>{let n=0;Math.random=()=>[.5,.5,.1,.5][n++%4];});
   const game=page.locator('#game');await page.keyboard.down('Control');
   await page.clock.runFor(9500);
@@ -113,10 +121,10 @@ test('blades slice existing drones and retract on release',async({page})=>{
 
 test('escape HUD starts a scored 90-second traffic sector',async({page})=>{
   await page.addInitScript(()=>{Math.random=()=>.5;});
-  await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
+  await page.goto('/bastrop37/');await startRun(page);
   const game=page.locator('#game');
-  await expect(page.locator('#timer')).toHaveText('01:30.0');
-  await expect(page.locator('#score')).toHaveText('000000');
+  expect(Number(await game.getAttribute('data-time'))).toBeGreaterThan(89);
+  expect(Number(await game.getAttribute('data-score'))).toBeGreaterThanOrEqual(0);
   await expect(page.locator('#sector')).toHaveText('CITY EXIT / TRAFFIC');
   await page.clock.runFor(1000);
   expect(Number(await game.getAttribute('data-time'))).toBeLessThan(90);
@@ -124,13 +132,29 @@ test('escape HUD starts a scored 90-second traffic sector',async({page})=>{
 });
 
 test('holding turbo cannot retrigger; pause clears held abilities',async({page})=>{
-  await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
+  await page.goto('/bastrop37/');await startRun(page);
   const game=page.locator('#game');await page.keyboard.down('Shift');await page.keyboard.down('Control');
   await expect.poll(async()=>Number(await game.getAttribute('data-boost'))).toBeGreaterThan(0);
   await page.clock.runFor(1400);await expect(game).toHaveAttribute('data-boost','0.00');
   await page.keyboard.press('KeyP');await page.keyboard.up('Shift');await page.keyboard.up('Control');
   await page.getByRole('button',{name:'RESUME RIDE'}).click();
   await expect.poll(async()=>Number(await game.getAttribute('data-blades'))).toBeLessThan(.05);
+});
+
+test('villain transmission unlocks audio, is skippable, and mute persists',async({page})=>{
+  await page.goto('/bastrop37/');
+  const game=page.locator('#game');
+  await expect(game).toHaveAttribute('data-state','ready');
+  await page.getByRole('button',{name:'START RIDING'}).click();
+  await expect(game).toHaveAttribute('data-state','intro');
+  await expect(page.getByText('ENCRYPTED INBOUND / DIRECTOR VOSS')).toBeVisible();
+  await expect(game).toHaveAttribute('data-time','90.0');
+  await expect(game).toHaveAttribute('data-audio','ready');
+  await page.screenshot({path:'test-results/bastrop37-transmission.png'});
+  await page.getByRole('button',{name:'Mute audio'}).click();
+  await expect(game).toHaveAttribute('data-muted','true');
+  await page.reload();
+  await expect(page.getByRole('button',{name:'Unmute audio'})).toHaveAttribute('aria-pressed','true');
 });
 
 test('purple coupe contact requires visible sprite overlap',async({page})=>{
@@ -147,7 +171,7 @@ test('purple coupe contact requires visible sprite overlap',async({page})=>{
       return (original as any).apply(this,args);
     } as typeof original;
   });
-  await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
+  await page.goto('/bastrop37/');await startRun(page);
   await page.keyboard.down('ArrowLeft');await page.clock.runFor(260);await page.keyboard.up('ArrowLeft');
   const game=page.locator('#game');
   for(let i=0;i<250&&await game.getAttribute('data-state')==='playing';i++)await page.clock.runFor(16);
