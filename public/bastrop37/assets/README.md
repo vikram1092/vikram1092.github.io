@@ -13,7 +13,7 @@ Primary bike set: `bike-angles-sheet.png` supplies five matching views (straight
 
 Art generated once with built-in image_gen using the three approved concepts. Prompts: `scripts/bastrop37-sprite-prompts.json`. Rebuild individual frames with `node scripts/package-bastrop37-sprites.mjs` (ImageMagick required). Generated alpha is preserved, including soft edge transparency. Sprite sheets are pose/state collections; jump height, transition timing, scale, trails, and fragment motion belong to the game renderer.
 
-The environment is split into `environment/city-skyline-v3.jpg`, an elevated rear-chase skyline plate, and `environment/road-loop-v3.jpg`, an orthographic five-lane wet-road texture. The Canvas renderer perspective-maps and loops the complete road asset beneath the stationary city layer, so its painted asphalt and lane markings move together without competing procedural lines. Prompts: `scripts/bastrop37-environment-prompt.txt`.
+The environment is split into lossless high-definition assets: `environment/city-skyline-v4.png`, a clean elevated rear-chase skyline plate, and `environment/road-loop-v4.png`, a pristine orthographic five-lane wet-road texture. The Canvas renderer perspective-maps and loops the complete road asset beneath the stationary city layer, so its asphalt and lane markings move together without competing procedural lines. Its backing resolution scales up to 2× for large and Retina-class displays while gameplay stays in the original logical coordinate system. Prompts: `scripts/bastrop37-environment-prompt.txt`.
 
 ## Original prototype
 

@@ -33,7 +33,7 @@ export function mountGame() {
   };
   const bladeExtension = 3;
 
-  let W = 640, H = 360;
+  let W = 640, H = 360, renderScale = 0;
   const left = 128, right = 512;
   const bounds: Record<string, {x:number;y:number;w:number;h:number}> = {};
   const horizon = () => H * .28 + (reduced ? 0 : cameraPitch);
@@ -65,8 +65,15 @@ export function mountGame() {
   function size() {
     const portrait = canvas.clientWidth / canvas.clientHeight < 1;
     const nw = portrait ? 360 : 640, nh = portrait ? 450 : 360;
-    if (W === nw && H === nh) return;
-    W = canvas.width = nw; H = canvas.height = nh;
+    // Preserve the game's logical coordinate system while rendering enough
+    // backing pixels for the actual display size and Retina-class screens.
+    const cssScale=canvas.clientWidth>0?canvas.clientWidth/nw:1;
+    const nextScale=Math.min(2,Math.max(1,window.devicePixelRatio||1,cssScale));
+    const pixelWidth=Math.round(nw*nextScale),pixelHeight=Math.round(nh*nextScale);
+    if(W===nw&&H===nh&&canvas.width===pixelWidth&&canvas.height===pixelHeight)return;
+    W=nw;H=nh;renderScale=nextScale;
+    canvas.width=pixelWidth;canvas.height=pixelHeight;
+    c.setTransform(renderScale,0,0,renderScale,0,0);
   }
   const resize = new ResizeObserver(() => { size(); if (state === 'playing') pause(); });
   resize.observe(canvas);
@@ -570,11 +577,11 @@ export function mountGame() {
   const assets:Record<string,string>={bike:'bike-normal-straight',bikeBlades:'bike-blades-straight',bikeBladesLeft:'bike-blades-left-15',bikeBladesRight:'bike-blades-right-15',bikeBladesLeft35:'bike-blades-left-35',bikeBladesRight35:'bike-blades-right-35',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-slide-left',slideRight:'bike-slide-right',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',coupeLeft:'traffic-coupe-right',coupeRight:'traffic-coupe-left',sedan:'traffic-sedan',sedanLeft:'traffic-sedan-left',sedanRight:'traffic-sedan-right',hauler:'traffic-hauler',haulerLeft:'traffic-hauler-left',haulerRight:'traffic-hauler-right',drone:'drone-hover',droneFlankLeft:'drone-flank-left',droneFlankRight:'drone-flank-right',droneWarning:'drone-attack-warning',droneLunge:'drone-lunge',droneFragmentLeft:'drone-fragment-left',droneFragmentRight:'drone-fragment-right',droneCore:'drone-core',cyanTrail:'effects-cyan-trail',yellowTurbo:'effects-yellow-turbo',hoverThrust:'effects-hover-thrust',bladeEffect:'effects-blades',cutSparks:'effects-cut-sparks',impactSparks:'effects-impact-sparks',landingRing:'effects-landing-ring',debris:'effects-debris'};
   const cityReady=new Promise<void>((resolve,reject)=>{
     const img=new Image();img.onload=()=>{images.city=img;resolve();};img.onerror=reject;
-    img.src='/bastrop37/assets/environment/city-skyline-v3.jpg';
+    img.src='/bastrop37/assets/environment/city-skyline-v4.png';
   });
   const roadReady=new Promise<void>((resolve,reject)=>{
     const img=new Image();img.onload=()=>{images.road=img;resolve();};img.onerror=reject;
-    img.src='/bastrop37/assets/environment/road-loop-v3.jpg';
+    img.src='/bastrop37/assets/environment/road-loop-v4.png';
   });
   Promise.all([cityReady,roadReady,...Object.entries(assets).map(([name,file])=>new Promise<void>((resolve,reject)=>{
     const img=new Image();img.onload=()=>{
