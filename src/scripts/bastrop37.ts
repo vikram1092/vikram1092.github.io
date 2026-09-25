@@ -1,4 +1,4 @@
-// BASTROP37 step 4: bike handling plus a telegraphed drone encounter.
+// BASTROP37 step 5: a timed city-to-sea-wall escape.
 // X and Z are shared road-space units; projected opaque bodies decide visible contact.
 type DronePhase = 'approach' | 'flank' | 'signal' | 'lunge' | 'recover';
 type DroneOutcome = 'none' | 'slice' | 'boost' | 'jump' | 'miss';
@@ -44,7 +44,8 @@ export function mountGame() {
     const unit = Math.min(W * .9, 520) / (right-left) * zoom;
     return {x:W/2+(wx-cameraX)*unit*scale, y:horizon()+(H*.84-horizon())*scale, scale:unit*scale};
   }
-  let state: 'ready' | 'playing' | 'paused' | 'crashed' = 'ready';
+  type GameState = 'ready' | 'playing' | 'paused' | 'crashed' | 'escaped' | 'timeout';
+  let state: GameState = 'ready';
   let x = 320, vx = 0, angle = 0;
   let charge = 1, boost = 0, speed = 260, distance = 0, calls = 0, elapsed = 0;
   let sliding = false, spawn = 0, offset = 0, last = 0, feedbackTime = 0;
@@ -54,6 +55,10 @@ export function mountGame() {
   let height = 0, verticalSpeed = 0, jumpWindup = 0, jumpCooldown = 0;
   let landing = 0, blades = 0, slices = 0, droneDodges = 0, laneChanges = 0;
   let droneOutcome: DroneOutcome = 'none';
+  let introDroneSpawned = false;
+  const timeLimit = 90;
+  const finishDistance = 6000;
+  let score = 0;
   const pressed = new Set<string>();
   function press(key:string) { if(!keys.has(key)) pressed.add(key); keys.add(key); }
   const actionKeys = ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space','ShiftLeft','ControlLeft','AltLeft'];
@@ -68,10 +73,10 @@ export function mountGame() {
   function setMessage(text: string, seconds = 1) { el('feedback').textContent = text; feedbackTime = seconds; }
   function clearInput() { keys.clear(); pressed.clear(); sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
   function reset() {
-    clearInput(); x = 320; vx = angle = charge = boost = distance = calls = elapsed = offset = 0;
-    charge = 1; speed = 210; spawn = .65; particles = []; fragments = []; effects = [];
+    clearInput(); x = 320; vx = angle = charge = boost = distance = calls = elapsed = offset = score = 0;
+    charge = 1; speed = 210; spawn = 7.5; particles = []; fragments = []; effects = [];
     cameraX = 320; cameraPitch = turboView = height = verticalSpeed = jumpWindup = jumpCooldown = landing = blades = slices = droneDodges = laneChanges = 0;
-    droneOutcome = 'none';
+    droneOutcome = 'none'; introDroneSpawned = false;
     traffic = [makeVehicle(1, 430, 'coupe'), makeVehicle(3, 730, 'hauler'), makeVehicle(0, 850, 'sedan')];
     state = 'playing'; overlay.hidden = true; pauseButton.disabled = false; pauseButton.textContent = 'Ⅱ PAUSE';
     setMessage('SHIFT: TURBO · CMD/CTRL: BLADES · OPT/ALT: JUMP', 3); canvas.focus({preventScroll:true});
@@ -89,9 +94,25 @@ export function mountGame() {
     burst('debris',x,0,bikeLift(),62,.75);
     state = 'crashed'; clearInput(); charge = boost = 0; overlay.hidden = false;
     el('overline').textContent = 'CONTACT / CIRCUIT RESET'; el('headline').textContent = 'ONE MORE RUN.';
-    el('message').textContent = `${Math.floor(distance)} m ridden · ${calls} close calls. Your next gap is waiting.`;
+    el('message').textContent = `${Math.floor(distance)} m ridden · ${formatScore(score)} points · ${calls} close calls.`;
     start.textContent = 'RIDE AGAIN →'; pauseButton.disabled = true;
     setMessage('CONTACT — R TO RETRY', 5);
+  }
+  function formatScore(value:number) { return Math.max(0,Math.floor(value)).toString().padStart(6,'0'); }
+  function endRun(result:'escaped'|'timeout') {
+    if(state!=='playing')return;
+    state=result; clearInput(); boost=0; overlay.hidden=false; pauseButton.disabled=true;
+    if(result==='escaped') {
+      const bonus=Math.ceil(Math.max(0,timeLimit-elapsed))*100;
+      score+=bonus;
+      el('overline').textContent='SEA WALL / GATE CLEARED'; el('headline').innerHTML='ESCAPE<br/><em>COMPLETE.</em>';
+      el('message').textContent=`${formatScore(score)} points · ${Math.max(0,timeLimit-elapsed).toFixed(1)} seconds left · ${slices} drones cut.`;
+      start.textContent='RIDE AGAIN →'; setMessage(`EXTRACTED / +${bonus} TIME BONUS`,5);
+    } else {
+      el('overline').textContent='SEA WALL / GATE SEALED'; el('headline').innerHTML='TIME<br/><em>EXPIRED.</em>';
+      el('message').textContent=`${Math.floor(distance)} of ${finishDistance} m · ${formatScore(score)} points. The route is still warm.`;
+      start.textContent='RETRY ESCAPE →'; setMessage('GATE SEALED — R TO RETRY',5);
+    }
   }
   start.addEventListener('click', () => state === 'paused' ? resume() : reset());
   pauseButton.addEventListener('click', () => state === 'paused' ? resume() : pause());
@@ -267,6 +288,7 @@ export function mountGame() {
   function update(dt:number) {
     const oldX=x;
     elapsed += dt; feedbackTime -= dt;
+    if(elapsed>=timeLimit) { endRun('timeout'); return; }
     const input = Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
     boost = Math.max(0, boost-dt);
     jumpCooldown = Math.max(0,jumpCooldown-dt);
@@ -306,12 +328,24 @@ export function mountGame() {
     if(sliding && Math.random()<.65) sparks(1,'#8fffea');
     if(boost>0) sparks(2,'#ffe575');
     spawn -= dt;
-    if(spawn<=0&&!activeDrone()) {
+    // An authored first encounter follows the traffic-only opening; later drones
+    // join the procedural pressure curve and eventually overlap with traffic.
+    if(!introDroneSpawned&&elapsed>=6.2) {
+      introDroneSpawned=true;
+      // Open a fair answer window before the authored lunge.
+      traffic=traffic.filter(car=>car.kind==='drone'||car.z< -90||car.z>700);
+      traffic.push(makeVehicle(x<320?3:1,420,'drone'));
+    }
+    const runProgress=distance/finishDistance;
+    if(spawn<=0&&(!activeDrone()||runProgress>=.6)) {
       const lane = Math.floor(Math.random()*5);
-      const kind = Math.random()<.22 ? 'hauler' : Math.random()<.15 ? 'drone' : Math.random()<.42 ? 'sedan' : 'coupe';
+      const progress=runProgress;
+      const droneChance=progress<.24?0:progress<.6?.16:.25;
+      const roll=Math.random();
+      const kind = !activeDrone()&&roll<droneChance ? 'drone' : roll<droneChance+.2 ? 'hauler' : Math.random()<.48 ? 'sedan' : 'coupe';
       // One vehicle per wave leaves four lanes open; all enter at the far plane.
       traffic.push(makeVehicle(lane, 950, kind));
-      spawn = 1.05+Math.random()*.35;
+      spawn = (progress<.24?1.2:progress<.6?1.05:.86)+Math.random()*.28;
     }
     const bw = 26 + (sliding ? 8 : 0), bh = 24;
     for(const car of traffic) {
@@ -364,6 +398,8 @@ export function mountGame() {
     effects=effects.filter(effect=>effect.life>0&&effect.z>-100);
     particles=particles.filter(p=>p.life>0).slice(-180);
     for(const p of particles) {p.life-=dt;p.x+=p.vx*dt;p.y+=(p.vy+speed*.4)*dt;}
+    score=Math.max(score,distance*8+calls*350+slices*1200+droneDodges*700);
+    if(distance>=finishDistance) { endRun('escaped'); return; }
     if(feedbackTime<=0) el('feedback').textContent=height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'SHIFT: TURBO · CMD/CTRL: BLADES · OPT/ALT: JUMP';
   }
   function makeVehicle(lane:number,z:number,kind:string):Car {
@@ -425,6 +461,21 @@ export function mountGame() {
     const progress=1-effect.life/effect.duration;
     drawEffect(effect.sprite,effect.x,effect.z,effect.width,effect.lift,Math.sin(Math.PI*progress),.78+progress*.45);
   }
+  function drawSeaWall() {
+    const z=(finishDistance-distance)*3.6;
+    if(z>2600||z< -55)return;
+    const gateHalf=66, wallLeft=project(left-70,z), wallRight=project(right+70,z);
+    const gateL=project(320-gateHalf,z), gateR=project(320+gateHalf,z);
+    const topY=Math.min(gateL.y,gateR.y)-190*gateL.scale;
+    c.fillStyle='#091522';
+    c.fillRect(wallLeft.x,topY,Math.max(0,gateL.x-wallLeft.x),wallLeft.y-topY);
+    c.fillRect(gateR.x,topY,Math.max(0,wallRight.x-gateR.x),wallRight.y-topY);
+    c.strokeStyle='#77e5df';c.lineWidth=Math.max(1,3*gateL.scale);
+    c.beginPath();c.moveTo(gateL.x,gateL.y);c.lineTo(gateL.x,topY);c.lineTo(gateR.x,topY);c.lineTo(gateR.x,gateR.y);c.stroke();
+    c.fillStyle='#ff5d70';c.font=`${Math.max(5,10*gateL.scale)}px monospace`;c.textAlign='center';
+    c.fillText('SEA WALL 37 / EXTRACTION', (gateL.x+gateR.x)/2, topY+16*gateL.scale);
+    c.textAlign='start';
+  }
   function render() {
     c.imageSmoothingEnabled=true;
     const sky=c.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#070c20');sky.addColorStop(.32,'#56364f');sky.addColorStop(1,'#0c1527');c.fillStyle=sky;c.fillRect(0,0,W,H);
@@ -452,6 +503,7 @@ export function mountGame() {
       const p=project(edge,z-offset%150);
       c.strokeStyle='#67c6d077';c.lineWidth=Math.max(1,2*p.scale);c.beginPath();c.moveTo(p.x,p.y);c.lineTo(p.x,p.y-95*p.scale);c.stroke();
     }
+    drawSeaWall();
     for(const car of traffic) if(car.kind==='drone') drawTelegraph(car);
     for(const car of traffic) if(car.kind==='drone'&&car.phase!=='lunge')
       drawEffect('hoverThrust',car.x,car.z,car.w*.9,hoverLift(car)-8,.5+.18*Math.sin(elapsed*18));
@@ -478,10 +530,15 @@ export function mountGame() {
     for(const fragment of [...fragments].sort((a,b)=>b.z-a.z))drawFragment(fragment);
     for(const effect of [...effects].filter(effect=>effect.sprite!=='landingRing').sort((a,b)=>b.z-a.z))drawBurst(effect);
     if(!reduced&&boost>0){c.strokeStyle='#ffe57b55';for(let i=0;i<8;i++){const px=(i*137)%W;c.beginPath();c.moveTo(px,H);c.lineTo(W/2+(px-W/2)*.8,H*.8);c.stroke();}}
+    const remaining=Math.max(0,timeLimit-elapsed),minutes=Math.floor(remaining/60),seconds=remaining-minutes*60;
+    el('timer').textContent=`0${minutes}:${seconds.toFixed(1).padStart(4,'0')}`;
+    el('timer').classList.toggle('urgent',remaining<=15);
+    el('score').textContent=formatScore(score);
+    el('sector').textContent=distance<finishDistance*.24?'CITY EXIT / TRAFFIC':distance<finishDistance*.6?'UNDERPASS / DRONES':distance<finishDistance-700?'PURSUIT / COMBINED':'SEA WALL / FINAL';
     el('speed').textContent=Math.round(speed).toString();el('near').textContent=calls.toString();
     el('charge-value').textContent=Math.round(charge*100)+'%';el('charge-bar').style.width=charge*100+'%';
     // Small observable state is useful for regression tests and tuning controls.
-    const drone=activeDrone();canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);
+    const drone=activeDrone();canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.time=remaining.toFixed(1);canvas.dataset.score=String(Math.floor(score));canvas.dataset.sector=el('sector').textContent||'';
   }
   function frame(now:number){const dt=Math.min((now-last)/1000,1/30);last=now;if(state==='playing')update(dt);if(state==='playing'||frames++%3===0)render();requestAnimationFrame(frame);}
   const assets:Record<string,string>={bike:'bike-normal-straight',bikeBlades:'bike-blades-straight',bikeBladesLeft:'bike-blades-left-15',bikeBladesRight:'bike-blades-right-15',bikeBladesLeft35:'bike-blades-left-35',bikeBladesRight35:'bike-blades-right-35',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-slide-left',slideRight:'bike-slide-right',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',coupeLeft:'traffic-coupe-right',coupeRight:'traffic-coupe-left',sedan:'traffic-sedan',sedanLeft:'traffic-sedan-left',sedanRight:'traffic-sedan-right',hauler:'traffic-hauler',haulerLeft:'traffic-hauler-left',haulerRight:'traffic-hauler-right',drone:'drone-hover',droneFlankLeft:'drone-flank-left',droneFlankRight:'drone-flank-right',droneWarning:'drone-attack-warning',droneLunge:'drone-lunge',droneFragmentLeft:'drone-fragment-left',droneFragmentRight:'drone-fragment-right',droneCore:'drone-core',cyanTrail:'effects-cyan-trail',yellowTurbo:'effects-yellow-turbo',hoverThrust:'effects-hover-thrust',bladeEffect:'effects-blades',cutSparks:'effects-cut-sparks',impactSparks:'effects-impact-sparks',landingRing:'effects-landing-ring',debris:'effects-debris'};

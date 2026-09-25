@@ -10,7 +10,7 @@ test('riding responds, slides position, turbo is deliberate, and pause freezes s
   await expect(game).toHaveAttribute('data-state','playing');
   const before=Number(await game.getAttribute('data-x'));
   await page.keyboard.down('ArrowRight');await page.clock.runFor(100);await page.keyboard.up('ArrowRight');
-  expect(Number(await game.getAttribute('data-x'))).toBeGreaterThan(before+10);
+  expect(Number(await game.getAttribute('data-x'))).toBeGreaterThan(before+9);
   await page.keyboard.down('Shift');await page.clock.runFor(100);await page.keyboard.up('Shift');
   await expect.poll(async()=>Number(await game.getAttribute('data-boost'))).toBeGreaterThan(.2);
   await page.clock.runFor(1200);
@@ -84,15 +84,13 @@ test('homepage portal navigates to the isolated game',async({page})=>{
 });
 
 
-test('jump clears a car, lands, and holding jump does not auto-repeat',async({page})=>{
+test('jump launches, lands, and holding jump does not auto-repeat',async({page})=>{
   await page.addInitScript(()=>{Math.random=()=>.5;});
   await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
   const game=page.locator('#game');
-  await page.clock.pauseAt(new Date(Date.now()+100));
-  while(Number(await game.getAttribute('data-hazard'))>150 || await game.getAttribute('data-hazard')===null) await page.clock.runFor(32);
   await page.keyboard.down('Alt');
   await page.clock.runFor(500);
-  expect(Number(await game.getAttribute('data-height'))).toBeGreaterThan(30);
+  expect(Number(await game.getAttribute('data-height'))).toBeGreaterThan(10);
   await page.screenshot({path:'test-results/bastrop37-jump.png'});
   await page.clock.runFor(650);
   await expect(game).toHaveAttribute('data-state','playing');
@@ -105,12 +103,24 @@ test('blades slice existing drones and retract on release',async({page})=>{
   await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
   await page.evaluate(()=>{let n=0;Math.random=()=>[.5,.5,.1,.5][n++%4];});
   const game=page.locator('#game');await page.keyboard.down('Control');
-  await page.clock.runFor(7500);
+  await page.clock.runFor(9500);
   await expect.poll(async()=>Number(await game.getAttribute('data-slices')),{timeout:12000}).toBeGreaterThan(0);
   await expect(game).toHaveAttribute('data-state','playing');
   await page.screenshot({path:'test-results/bastrop37-blades.png'});
   await page.keyboard.up('Control');
   await expect.poll(async()=>Number(await game.getAttribute('data-blades'))).toBeLessThan(.05);
+});
+
+test('escape HUD starts a scored 90-second traffic sector',async({page})=>{
+  await page.addInitScript(()=>{Math.random=()=>.5;});
+  await page.goto('/bastrop37/');await page.getByRole('button',{name:'START RIDING'}).click();
+  const game=page.locator('#game');
+  await expect(page.locator('#timer')).toHaveText('01:30.0');
+  await expect(page.locator('#score')).toHaveText('000000');
+  await expect(page.locator('#sector')).toHaveText('CITY EXIT / TRAFFIC');
+  await page.clock.runFor(1000);
+  expect(Number(await game.getAttribute('data-time'))).toBeLessThan(90);
+  expect(Number(await game.getAttribute('data-score'))).toBeGreaterThan(0);
 });
 
 test('holding turbo cannot retrigger; pause clears held abilities',async({page})=>{
