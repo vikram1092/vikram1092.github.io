@@ -36,7 +36,9 @@ export function mountGame() {
   let W = 640, H = 360;
   const left = 128, right = 512;
   const bounds: Record<string, {x:number;y:number;w:number;h:number}> = {};
-  const horizon = () => H * .28 + (reduced ? 0 : cameraPitch);
+  // The environment plate's road vanishes just below the city shelf. Keeping the
+  // projection on that same horizon makes traffic feel embedded in the painting.
+  const horizon = () => H * .475 + (reduced ? 0 : cameraPitch);
   function project(wx:number, z:number) {
     // Close chase: enlarge the whole road-space view, tracking the rider laterally.
     const scale = 65 / (65 + Math.max(-53,z));
@@ -232,8 +234,11 @@ export function mountGame() {
     } else setMessage('DRONE MISSED / IT IS COMING BACK',1.15);
   }
   function canSignalDrone(drone:Car) {
-    // The drone commits only after ordinary traffic has cleared the answer window.
-    return traffic.every(car=>car===drone||car.kind==='drone'||car.z< -90||car.z>360);
+    // Only hold an attack for traffic that is actually occupying the rider's
+    // escape corridor. Requiring the whole road to clear starves later drones
+    // because procedural traffic continually replenishes the larger zone.
+    return traffic.every(car=>car===drone||car.kind==='drone'||car.z< -60||car.z>135||
+      Math.abs(car.x-x)>(car.w+70)/2);
   }
   function updateDrone(car:Car,dt:number,oldX:number) {
     const oldZ=car.z;
@@ -487,32 +492,49 @@ export function mountGame() {
     c.fillText('SEA WALL 37 / EXTRACTION', (gateL.x+gateR.x)/2, topY+16*gateL.scale);
     c.textAlign='start';
   }
+  function drawEnvironment() {
+    const img=images.environment;
+    if(!img)return;
+    // Cover gives portrait screens a cinematic center crop. A little overscan
+    // leaves room for restrained lateral parallax without exposing an edge.
+    const scale=Math.max(W/img.width,H/img.height)*1.055;
+    const dw=img.width*scale,dh=img.height*scale;
+    const parallax=-(cameraX-320)*.055;
+    c.drawImage(img,(W-dw)/2+parallax,(H-dh)/2,dw,dh);
+
+    // Keep the road dark enough for silhouettes while retaining the plate's
+    // puddles, seams, specular detail, and colored architectural reflections.
+    const roadShade=c.createLinearGradient(0,horizon(),0,H);
+    roadShade.addColorStop(0,'#06101a00');
+    roadShade.addColorStop(.35,'#04081212');
+    roadShade.addColorStop(1,'#02050a38');
+    c.fillStyle=roadShade;c.fillRect(0,horizon(),W,H-horizon());
+
+    const vignette=c.createRadialGradient(W/2,H*.58,H*.08,W/2,H*.56,Math.max(W,H)*.72);
+    vignette.addColorStop(.45,'#00000000');vignette.addColorStop(1,'#02061172');
+    c.fillStyle=vignette;c.fillRect(0,0,W,H);
+  }
   function render() {
     c.imageSmoothingEnabled=true;
-    const sky=c.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#070c20');sky.addColorStop(.32,'#56364f');sky.addColorStop(1,'#0c1527');c.fillStyle=sky;c.fillRect(0,0,W,H);
-    // Stable skyline, with the vanishing point clear of tall scenery.
-    for(let i=0;i<34;i++) {
-      const bx=i*W/33, height=18+((i*73)%79), width=W/33+2;
-      c.fillStyle=i%3?'#111c30':'#1b233d';c.fillRect(bx,horizon()-height,width,height+20);
-      c.fillStyle=i%4?'#61748966':'#e5699555';
-      for(let yy=horizon()-height+8;yy<horizon();yy+=9) c.fillRect(bx+4,yy,3,2);
-    }
-    strip(left-60,right+60,-65,2800,'#162032');
-    strip(left,right,-65,2800,'#1c2939');
-    for(let z=2400;z>-65;z-=40) {
-      const zz=z-offset%40;
+    drawEnvironment();
+    // Gameplay geometry now sits lightly over the painted asphalt instead of
+    // replacing it with broad, flat trapezoids.
+    strip(left,right,-65,2800,'#02071318');
+    for(let z=2500;z>-65;z-=96) {
+      const zz=z-offset%96;
       if(zz < -65)continue;
-      strip(left,right,zz,zz+20,'#1a2535');
       for(let lane=1;lane<5;lane++) {
         const lx=left+lane*(right-left)/5;
-        strip(lx-.7,lx+.7,zz,zz+18,'#81929c88');
+        strip(lx-.52,lx+.52,zz,zz+42,'#d6edf0a0');
       }
-      strip(left-3,left,zz,zz+25,'#e7779d');strip(right,right+3,zz,zz+25,'#65cdd1');
+      strip(left-1.8,left,zz,zz+56,'#ff6b78aa');strip(right,right+1.8,zz,zz+56,'#67e1e6aa');
     }
-    // Perspective roadside pylons reinforce distance without obscuring traffic.
-    for(let z=1500;z>0;z-=150) for(const edge of [left-18,right+18]) {
-      const p=project(edge,z-offset%150);
-      c.strokeStyle='#67c6d077';c.lineWidth=Math.max(1,2*p.scale);c.beginPath();c.moveTo(p.x,p.y);c.lineTo(p.x,p.y-95*p.scale);c.stroke();
+    // Small reflected guide lights add motion without rebuilding the roadside
+    // architecture from primitive shapes.
+    for(let z=1800;z>0;z-=120) for(const [edge,color] of [[left-8,'#ff6979'],[right+8,'#7bf5ef']] as const) {
+      const p=project(edge,z-offset%120),radius=Math.max(.45,2.6*p.scale);
+      c.save();c.shadowColor=color;c.shadowBlur=8*p.scale;c.fillStyle=color;
+      c.beginPath();c.ellipse(p.x,p.y,radius,radius*.34,0,0,Math.PI*2);c.fill();c.restore();
     }
     drawSeaWall();
     for(const car of traffic) if(car.kind==='drone') drawTelegraph(car);
@@ -553,7 +575,11 @@ export function mountGame() {
   }
   function frame(now:number){const dt=Math.min((now-last)/1000,1/30);last=now;if(state==='playing')update(dt);if(state==='playing'||frames++%3===0)render();requestAnimationFrame(frame);}
   const assets:Record<string,string>={bike:'bike-normal-straight',bikeBlades:'bike-blades-straight',bikeBladesLeft:'bike-blades-left-15',bikeBladesRight:'bike-blades-right-15',bikeBladesLeft35:'bike-blades-left-35',bikeBladesRight35:'bike-blades-right-35',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-slide-left',slideRight:'bike-slide-right',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',coupeLeft:'traffic-coupe-right',coupeRight:'traffic-coupe-left',sedan:'traffic-sedan',sedanLeft:'traffic-sedan-left',sedanRight:'traffic-sedan-right',hauler:'traffic-hauler',haulerLeft:'traffic-hauler-left',haulerRight:'traffic-hauler-right',drone:'drone-hover',droneFlankLeft:'drone-flank-left',droneFlankRight:'drone-flank-right',droneWarning:'drone-attack-warning',droneLunge:'drone-lunge',droneFragmentLeft:'drone-fragment-left',droneFragmentRight:'drone-fragment-right',droneCore:'drone-core',cyanTrail:'effects-cyan-trail',yellowTurbo:'effects-yellow-turbo',hoverThrust:'effects-hover-thrust',bladeEffect:'effects-blades',cutSparks:'effects-cut-sparks',impactSparks:'effects-impact-sparks',landingRing:'effects-landing-ring',debris:'effects-debris'};
-  Promise.all(Object.entries(assets).map(([name,file])=>new Promise<void>((resolve,reject)=>{
+  const environmentReady=new Promise<void>((resolve,reject)=>{
+    const img=new Image();img.onload=()=>{images.environment=img;resolve();};img.onerror=reject;
+    img.src='/bastrop37/assets/environment/city-expressway-v2.jpg';
+  });
+  Promise.all([environmentReady,...Object.entries(assets).map(([name,file])=>new Promise<void>((resolve,reject)=>{
     const img=new Image();img.onload=()=>{
       images[name]=img;
       // Remove transparent padding at draw time, leaving source art untouched.
@@ -587,7 +613,7 @@ export function mountGame() {
 
       resolve();
     };img.onerror=reject;img.src=`/bastrop37/assets/sprites/${file}.png`;
-  })))
+  }))])
     .then(()=>{size();start.disabled=false;start.textContent='START RIDING →';requestAnimationFrame(frame);})
     .catch(()=>{el('message').textContent='A sprite could not load. Refresh to try again.';start.textContent='ASSET LOAD FAILED';});
 }
