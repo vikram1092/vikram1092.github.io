@@ -10,7 +10,7 @@ Build and ship the playable Bastrop37 game slice: a futuristic motorcycle escape
 - [x] 4. Build one excellent drone encounter
 - [x] 5. Make a complete short escape
 - [x] 6. Add the atmosphere — skippable villain transmission, reactive synthesized score, engine/blade/ability/impact cues, autoplay-safe startup, and persistent mute controls.
-- [ ] 7. Polish and publish
+- [x] 7. Polish and publish
 
 ## Repository and workflow
 

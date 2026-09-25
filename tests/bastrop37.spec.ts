@@ -131,6 +131,44 @@ test('escape HUD starts a scored 90-second traffic sector',async({page})=>{
   expect(Number(await game.getAttribute('data-score'))).toBeGreaterThan(0);
 });
 
+test('a complete escape reaches the sea wall and can restart without reloading',async({page})=>{
+  test.setTimeout(150_000);
+  // Keep procedural traffic in the center lane so the run is repeatable while
+  // still exercising the authored drone encounter and the real finish logic.
+  await page.addInitScript(()=>{
+    Math.random=()=>.5;
+    const drawImage=CanvasRenderingContext2D.prototype.drawImage;
+    CanvasRenderingContext2D.prototype.drawImage=function(...args:any[]) {
+      if(this.canvas.id==='game')return;
+      return (drawImage as any).apply(this,args);
+    } as typeof drawImage;
+  });
+  await page.goto('/bastrop37/');await startRun(page);
+  const game=page.locator('#game');
+  await page.keyboard.down('ArrowRight');
+  await page.keyboard.down('ArrowUp');
+  await page.keyboard.down('Control');
+  for(let second=0;second<64;second+=4) {
+    await page.keyboard.press('Shift');
+    await page.clock.runFor(4_000);
+    if(await game.getAttribute('data-state')==='escaped')break;
+  }
+  await page.keyboard.up('Control');
+  await page.keyboard.up('ArrowUp');
+  await page.keyboard.up('ArrowRight');
+  await expect(game).toHaveAttribute('data-state','escaped');
+  expect(Number(await game.getAttribute('data-distance'))).toBeGreaterThanOrEqual(6000);
+  expect(Number(await game.getAttribute('data-time'))).toBeGreaterThan(0);
+  await expect(page.getByText('SEA WALL / GATE CLEARED')).toBeVisible();
+  await expect(page.getByRole('heading',{name:'ESCAPE COMPLETE.'})).toBeVisible();
+  await page.getByRole('button',{name:'RIDE AGAIN'}).click();
+  await expect(game).toHaveAttribute('data-state','playing');
+  await page.keyboard.press('KeyP');
+  await expect(game).toHaveAttribute('data-state','paused');
+  expect(Number(await game.getAttribute('data-distance'))).toBeLessThan(10);
+  expect(Number(await game.getAttribute('data-time'))).toBeGreaterThan(89);
+});
+
 test('holding turbo cannot retrigger; pause clears held abilities',async({page})=>{
   await page.goto('/bastrop37/');await startRun(page);
   const game=page.locator('#game');await page.keyboard.down('Shift');await page.keyboard.down('Control');
