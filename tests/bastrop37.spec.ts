@@ -119,6 +119,15 @@ test('blades slice existing drones and retract on release',async({page})=>{
   await expect.poll(async()=>Number(await game.getAttribute('data-blades'))).toBeLessThan(.05);
 });
 
+test('the authored pursuit keeps multiple drones in the attack',async({page})=>{
+  await page.addInitScript(()=>{Math.random=()=>.5;});
+  await page.goto('/bastrop37/');await startRun(page);
+  const game=page.locator('#game');
+  await page.clock.runFor(6300);
+  expect(Number(await game.getAttribute('data-drone-count'))).toBeGreaterThanOrEqual(2);
+  expect((await game.getAttribute('data-drone-phases'))?.split(',')).toHaveLength(2);
+});
+
 test('escape HUD starts a scored 90-second traffic sector',async({page})=>{
   await page.addInitScript(()=>{Math.random=()=>.5;});
   await page.goto('/bastrop37/');await startRun(page);
