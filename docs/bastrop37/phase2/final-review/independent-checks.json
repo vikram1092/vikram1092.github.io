@@ -1,0 +1,6205 @@
+{
+  "timestamp": "2026-09-27T19:14:11.350Z",
+  "manifest": {
+    "entries": 39,
+    "approved": 11,
+    "pending": 28,
+    "groups": [
+      "ENV-L1",
+      "CHAR-VLAD",
+      "CHAR-OMEGA",
+      "CHAR-JO",
+      "PROP-SIGNAL",
+      "PROP-SERVICE-GATE",
+      "VEH-EVAC",
+      "ENV-L2",
+      "ENV-L3",
+      "ENV-L4",
+      "ENV-L5",
+      "PROP-INTAKE",
+      "VEH-RECOVERY",
+      "PROP-RELAY",
+      "PROP-CIVIC-NODE",
+      "PROP-SPILLWAY",
+      "PROP-ROADBLOCK"
+    ],
+    "errors": []
+  },
+  "consoleErrors": [],
+  "rows": [
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "title",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 522,
+          "width": 420,
+          "height": 344,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "BASTROP37\nA city running dark.\nA delivery in motion.\n\nThe module is already on Jo’s bike.\n\nSTART DELIVERY\nCONTINUE · CHECKPOINT SAMPLE\nReturn to site"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "drain",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 347.421875,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 383.421875,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVER THE MODULE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "TRAFFIC CLEARING\n\nKeep riding. Conversation will follow."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "service",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 384.84375,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 420.84375,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "SERVICE LANE →\n\nOpen gate · approach marker beyond"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l2-neutral",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 453.03125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 489.03125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "INSPECTION ROUTE\n\nStay beside the recovery vehicle."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l2-record-1",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 453.03125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 489.03125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 601.9375,
+          "width": 420,
+          "height": 264.0625,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nCARRIER / LOCAL ORDER RECORD\n\nWIPE MODULE\nDETAIN COURIER\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l2-record-2",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 453.03125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 489.03125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 636.125,
+          "width": 420,
+          "height": 229.875,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nCARRIER / LOCAL ORDER RECORD\n\nPOWER SHUTDOWN\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l2-confrontation",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 453.03125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 489.03125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 626.40625,
+          "width": 420,
+          "height": 239.59375,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "LOCAL MODULE\nOMEGA\n\nThe carrier's orders: erase the module, then detain its courier.\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l2-lock",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 444.953125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 480.953125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "LOCK ACTIVE · EXIT LEFT\n\nSteering escape available · turbo optional"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l2-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 444.953125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 480.953125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 698,
+          "width": 420,
+          "height": 168,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "02 / COMPLETE\nRECOVERY LOCK BROKEN\nRIDE TO THE RELAY"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "abilities-ready",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 444.953125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 480.953125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 554,
+          "width": 420,
+          "height": 312,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nREADY\n↗ TURBO — READY\n↑ JUMP — READY\n◇ BLADES — READY\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "abilities-active",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 444.953125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 480.953125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 554,
+          "width": 420,
+          "height": 312,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nACTIVE\n↗ TURBO — ACTIVE\n↑ JUMP — ACTIVE\n◇ BLADES — ACTIVE\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "abilities-cooldown",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 444.953125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 480.953125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 554,
+          "width": 420,
+          "height": 312,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nCOOLDOWN · 40%\n↗ TURBO — COOLDOWN · 40%\n↑ JUMP — COOLDOWN · 40%\n◇ BLADES — COOLDOWN · 40%\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "abilities-unavailable",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 444.953125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 480.953125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 554,
+          "width": 420,
+          "height": 312,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nUNAVAILABLE\n↗ TURBO — UNAVAILABLE\n↑ JUMP — UNAVAILABLE\n◇ BLADES — UNAVAILABLE\n◈ OVERDRIVE — UNAVAILABLE\n\nSafe cruise. Combat controls dormant."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l3-range",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 374.328125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 410.328125,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "IN RANGE\n\nRelay A · local preparation only"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l3-linking",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 374.328125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 410.328125,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKING\n\nRelay A · Omega remains contained"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l3-out",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 374.328125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 410.328125,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 117,
+          "bottom": 387,
+          "right": 336,
+          "scroll": false,
+          "text": "OUT OF RANGE\n\nLINK INCOMPLETE — FOLLOW SERVICE LOOP"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l3-linked",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 374.328125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 410.328125,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKED\n\nBoth relay points ready · Omega contained"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l3-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 374.328125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 410.328125,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 630,
+          "width": 420,
+          "height": 236,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "03 / COMPLETE\nPUBLIC ROUTE READY\n\nBoth relay points are ready. Omega remains inside the module.\n\nTAKE THE RESERVOIR ROAD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l4-geography",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 369.015625,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 405.015625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "CIVIC RAMP ↑\n\nReservoir above lower road · shared barrier"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l4-record",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 369.015625,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 405.015625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 636.125,
+          "width": 420,
+          "height": 229.875,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nSPILLWAY / LOCAL ORDER RECORD\n\nLOWER ROAD DISCHARGE\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l4-order",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 369.015625,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 405.015625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 626.40625,
+          "width": 420,
+          "height": 239.59375,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "LOCAL MODULE\nOMEGA\n\nThe spillway shows an order from Vlad. Water is being sent toward the lower road.\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l4-controller",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 365.71875,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 401.71875,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nCLEAR THE BUS ROUTE\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 100,
+          "bottom": 370,
+          "right": 336,
+          "scroll": false,
+          "text": "DISABLE THE MARKED CONTROLLER\n\nUse blades · repeat service approach if missed"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l4-open",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 365.71875,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 401.71875,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nCLEAR THE BUS ROUTE\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "BARRIER OPEN\n\nShared uphill escape corridor is accessible"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l4-rescue",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 347.265625,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 383.265625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 97,
+          "bottom": 367,
+          "right": 336,
+          "scroll": false,
+          "text": "BUS CONDITION · 3 / 3\n\nIN RANGE · escort corridor to civic ramp"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l4-rescue-out",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 347.265625,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 383.265625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 97,
+          "bottom": 367,
+          "right": 336,
+          "scroll": false,
+          "text": "BUS CONDITION · 2 / 3\n\nOUT OF RANGE · return to escort band"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l4-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 347.265625,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 383.265625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 668,
+          "width": 420,
+          "height": 198,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "04 / COMPLETE\nEVACUATION ROUTE CLEARED\nENTER THE CIVIC DISTRICT"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "failure",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 347.265625,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 383.265625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 552,
+          "width": 420,
+          "height": 314,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "ROUTE INTERRUPTED\nEVACUATION ROUTE LOST\n\nThe bus lost all three condition segments.\n\nRESTART CHECKPOINT\nRESTART LEVEL\nMENU"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "pause",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 374.328125,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 410.328125,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 432,
+          "width": 420,
+          "height": 434,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "PAUSED\nLINK THE PUBLIC RELAY\n\nAction and story held.\n\nControls\nRecent communications\nSettings\nRESUME\nRESTART CHECKPOINT\nMENU"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "save-success",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 384.84375,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 420.84375,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 624,
+          "width": 420,
+          "height": 242,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVERY APPROACH REACHED\n\n✓ Saved\n\nCONTINUE TO INTAKE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "save-failure",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 384.84375,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 420.84375,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 624,
+          "width": 420,
+          "height": 242,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVERY APPROACH REACHED\n\nSession only — progress could not be saved.\n\nCONTINUE TO INTAKE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l5-section-a",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 279.9375,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 315.9375,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKING · SECTION A / 2\n\nSection A 60% · section B not yet available"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l5-between",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 279.9375,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 315.9375,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "SECTION A VALIDATED\n\nClear the interception before section B"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l5-section-b",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 279.9375,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 315.9375,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKING · SECTION B / 2\n\nSection A validated · clear corridor"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l5-public",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 279.9375,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 315.9375,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "OMEGA / PUBLIC ACCESS ACTIVE\n\nRelease committed · protected safe cruise"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 650.40625,
+          "width": 420,
+          "height": 215.59375,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "MUNICIPAL COMMS\nMAYOR VLAD\n\nJo. You had no right.\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l5-dawn",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 484.515625,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 520.515625,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 650.40625,
+          "width": 420,
+          "height": 215.59375,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "RIDER / JO\nJO\n\nWhere do we start?\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l5-recovery",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 484.515625,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 520.515625,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "RECOVERY ROUTE\n\nProtected travel · limited signals restored"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "id": "l5-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 484.515625,
+          "height": 99.25,
+          "bottom": 266.25,
+          "right": 520.515625,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 984,
+          "y": 573,
+          "width": 420,
+          "height": 293,
+          "bottom": 866,
+          "right": 1404,
+          "scroll": false,
+          "text": "RECOVERY ROUTE COMPLETE\nBASTROP / PUBLIC ACCESS RESTORED\n\nPublic guidance is available. Repairs continue.\n\nCHAPTER REPLAY\nRETURN TO TITLE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1440,
+        "height": 765,
+        "bottom": 900,
+        "right": 1440
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "title",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 342,
+          "width": 420,
+          "height": 344,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "BASTROP37\nA city running dark.\nA delivery in motion.\n\nThe module is already on Jo’s bike.\n\nSTART DELIVERY\nCONTINUE · CHECKPOINT SAMPLE\nReturn to site"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "drain",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 331.703125,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 367.703125,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVER THE MODULE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "TRAFFIC CLEARING\n\nKeep riding. Conversation will follow."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "service",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 367.25,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 403.25,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "SERVICE LANE →\n\nOpen gate · approach marker beyond"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l2-neutral",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 431.953125,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 467.953125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "INSPECTION ROUTE\n\nStay beside the recovery vehicle."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l2-record-1",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 431.953125,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 467.953125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 421.9375,
+          "width": 420,
+          "height": 264.0625,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nCARRIER / LOCAL ORDER RECORD\n\nWIPE MODULE\nDETAIN COURIER\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l2-record-2",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 431.953125,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 467.953125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 456.125,
+          "width": 420,
+          "height": 229.875,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nCARRIER / LOCAL ORDER RECORD\n\nPOWER SHUTDOWN\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l2-confrontation",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 431.953125,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 467.953125,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 446.40625,
+          "width": 420,
+          "height": 239.59375,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "LOCAL MODULE\nOMEGA\n\nThe carrier's orders: erase the module, then detain its courier.\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l2-lock",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 424.25,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 460.25,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "LOCK ACTIVE · EXIT LEFT\n\nSteering escape available · turbo optional"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l2-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 424.25,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 460.25,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 518,
+          "width": 420,
+          "height": 168,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "02 / COMPLETE\nRECOVERY LOCK BROKEN\nRIDE TO THE RELAY"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "abilities-ready",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 424.25,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 460.25,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 374,
+          "width": 420,
+          "height": 312,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nREADY\n↗ TURBO — READY\n↑ JUMP — READY\n◇ BLADES — READY\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "abilities-active",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 424.25,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 460.25,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 374,
+          "width": 420,
+          "height": 312,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nACTIVE\n↗ TURBO — ACTIVE\n↑ JUMP — ACTIVE\n◇ BLADES — ACTIVE\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "abilities-cooldown",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 424.25,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 460.25,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 374,
+          "width": 420,
+          "height": 312,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nCOOLDOWN · 40%\n↗ TURBO — COOLDOWN · 40%\n↑ JUMP — COOLDOWN · 40%\n◇ BLADES — COOLDOWN · 40%\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "abilities-unavailable",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 424.25,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 460.25,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 374,
+          "width": 420,
+          "height": 312,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nUNAVAILABLE\n↗ TURBO — UNAVAILABLE\n↑ JUMP — UNAVAILABLE\n◇ BLADES — UNAVAILABLE\n◈ OVERDRIVE — UNAVAILABLE\n\nSafe cruise. Combat controls dormant."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l3-range",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 357.265625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 393.265625,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "IN RANGE\n\nRelay A · local preparation only"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l3-linking",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 357.265625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 393.265625,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKING\n\nRelay A · Omega remains contained"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l3-out",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 357.265625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 393.265625,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 117,
+          "bottom": 387,
+          "right": 336,
+          "scroll": false,
+          "text": "OUT OF RANGE\n\nLINK INCOMPLETE — FOLLOW SERVICE LOOP"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l3-linked",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 357.265625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 393.265625,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKED\n\nBoth relay points ready · Omega contained"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l3-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 357.265625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 393.265625,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 450,
+          "width": 420,
+          "height": 236,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "03 / COMPLETE\nPUBLIC ROUTE READY\n\nBoth relay points are ready. Omega remains inside the module.\n\nTAKE THE RESERVOIR ROAD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l4-geography",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 352.21875,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 388.21875,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "CIVIC RAMP ↑\n\nReservoir above lower road · shared barrier"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l4-record",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 352.21875,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 388.21875,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 456.125,
+          "width": 420,
+          "height": 229.875,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nSPILLWAY / LOCAL ORDER RECORD\n\nLOWER ROAD DISCHARGE\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l4-order",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 352.21875,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 388.21875,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 446.40625,
+          "width": 420,
+          "height": 239.59375,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "LOCAL MODULE\nOMEGA\n\nThe spillway shows an order from Vlad. Water is being sent toward the lower road.\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l4-controller",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 349.0625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 385.0625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nCLEAR THE BUS ROUTE\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 100,
+          "bottom": 370,
+          "right": 336,
+          "scroll": false,
+          "text": "DISABLE THE MARKED CONTROLLER\n\nUse blades · repeat service approach if missed"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l4-open",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 349.0625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 385.0625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nCLEAR THE BUS ROUTE\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "BARRIER OPEN\n\nShared uphill escape corridor is accessible"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l4-rescue",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 331.5625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 367.5625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 97,
+          "bottom": 367,
+          "right": 336,
+          "scroll": false,
+          "text": "BUS CONDITION · 3 / 3\n\nIN RANGE · escort corridor to civic ramp"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l4-rescue-out",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 331.5625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 367.5625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 97,
+          "bottom": 367,
+          "right": 336,
+          "scroll": false,
+          "text": "BUS CONDITION · 2 / 3\n\nOUT OF RANGE · return to escort band"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l4-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 331.5625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 367.5625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 488,
+          "width": 420,
+          "height": 198,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "04 / COMPLETE\nEVACUATION ROUTE CLEARED\nENTER THE CIVIC DISTRICT"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "failure",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 331.5625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 367.5625,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 372,
+          "width": 420,
+          "height": 314,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "ROUTE INTERRUPTED\nEVACUATION ROUTE LOST\n\nThe bus lost all three condition segments.\n\nRESTART CHECKPOINT\nRESTART LEVEL\nMENU"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "pause",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 357.265625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 393.265625,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 252,
+          "width": 420,
+          "height": 434,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "PAUSED\nLINK THE PUBLIC RELAY\n\nAction and story held.\n\nControls\nRecent communications\nSettings\nRESUME\nRESTART CHECKPOINT\nMENU"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "save-success",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 367.25,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 403.25,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 444,
+          "width": 420,
+          "height": 242,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVERY APPROACH REACHED\n\n✓ Saved\n\nCONTINUE TO INTAKE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "save-failure",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 367.25,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 403.25,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 444,
+          "width": 420,
+          "height": 242,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVERY APPROACH REACHED\n\nSession only — progress could not be saved.\n\nCONTINUE TO INTAKE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l5-section-a",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 267.640625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 303.640625,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKING · SECTION A / 2\n\nSection A 60% · section B not yet available"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l5-between",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 267.640625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 303.640625,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "SECTION A VALIDATED\n\nClear the interception before section B"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l5-section-b",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 267.640625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 303.640625,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKING · SECTION B / 2\n\nSection A validated · clear corridor"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l5-public",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 267.640625,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 303.640625,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "OMEGA / PUBLIC ACCESS ACTIVE\n\nRelease committed · protected safe cruise"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 470.40625,
+          "width": 420,
+          "height": 215.59375,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "MUNICIPAL COMMS\nMAYOR VLAD\n\nJo. You had no right.\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l5-dawn",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 461.8125,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 497.8125,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 470.40625,
+          "width": 420,
+          "height": 215.59375,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "RIDER / JO\nJO\n\nWhere do we start?\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l5-recovery",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 461.8125,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 497.8125,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "RECOVERY ROUTE\n\nProtected travel · limited signals restored"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "id": "l5-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 461.8125,
+          "height": 97.484375,
+          "bottom": 264.484375,
+          "right": 497.8125,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 824,
+          "y": 393,
+          "width": 420,
+          "height": 293,
+          "bottom": 686,
+          "right": 1244,
+          "scroll": false,
+          "text": "RECOVERY ROUTE COMPLETE\nBASTROP / PUBLIC ACCESS RESTORED\n\nPublic guidance is available. Repairs continue.\n\nCHAPTER REPLAY\nRETURN TO TITLE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1280,
+        "height": 585,
+        "bottom": 720,
+        "right": 1280
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "title",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 390,
+          "width": 420,
+          "height": 344,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "BASTROP37\nA city running dark.\nA delivery in motion.\n\nThe module is already on Jo’s bike.\n\nSTART DELIVERY\nCONTINUE · CHECKPOINT SAMPLE\nReturn to site"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "drain",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 274.25,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 310.25,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVER THE MODULE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "TRAFFIC CLEARING\n\nKeep riding. Conversation will follow."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "service",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 302.859375,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 338.859375,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "SERVICE LANE →\n\nOpen gate · approach marker beyond"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l2-neutral",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 354.875,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 390.875,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "INSPECTION ROUTE\n\nStay beside the recovery vehicle."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l2-record-1",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 354.875,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 390.875,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 469.9375,
+          "width": 420,
+          "height": 264.0625,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nCARRIER / LOCAL ORDER RECORD\n\nWIPE MODULE\nDETAIN COURIER\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l2-record-2",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 354.875,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 390.875,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 504.125,
+          "width": 420,
+          "height": 229.875,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nCARRIER / LOCAL ORDER RECORD\n\nPOWER SHUTDOWN\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l2-confrontation",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 354.875,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 390.875,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 494.40625,
+          "width": 420,
+          "height": 239.59375,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "LOCAL MODULE\nOMEGA\n\nThe carrier's orders: erase the module, then detain its courier.\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l2-lock",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 348.59375,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 384.59375,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "LOCK ACTIVE · EXIT LEFT\n\nSteering escape available · turbo optional"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l2-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 348.59375,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 384.59375,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 566,
+          "width": 420,
+          "height": 168,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "02 / COMPLETE\nRECOVERY LOCK BROKEN\nRIDE TO THE RELAY"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "abilities-ready",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 348.59375,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 384.59375,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 422,
+          "width": 420,
+          "height": 312,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nREADY\n↗ TURBO — READY\n↑ JUMP — READY\n◇ BLADES — READY\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "abilities-active",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 348.59375,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 384.59375,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 422,
+          "width": 420,
+          "height": 312,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nACTIVE\n↗ TURBO — ACTIVE\n↑ JUMP — ACTIVE\n◇ BLADES — ACTIVE\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "abilities-cooldown",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 348.59375,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 384.59375,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 422,
+          "width": 420,
+          "height": 312,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nCOOLDOWN · 40%\n↗ TURBO — COOLDOWN · 40%\n↑ JUMP — COOLDOWN · 40%\n◇ BLADES — COOLDOWN · 40%\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "abilities-unavailable",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 348.59375,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 384.59375,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 422,
+          "width": 420,
+          "height": 312,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nUNAVAILABLE\n↗ TURBO — UNAVAILABLE\n↑ JUMP — UNAVAILABLE\n◇ BLADES — UNAVAILABLE\n◈ OVERDRIVE — UNAVAILABLE\n\nSafe cruise. Combat controls dormant."
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l3-range",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 294.875,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 330.875,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "IN RANGE\n\nRelay A · local preparation only"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l3-linking",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 294.875,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 330.875,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKING\n\nRelay A · Omega remains contained"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l3-out",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 294.875,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 330.875,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 117,
+          "bottom": 387,
+          "right": 336,
+          "scroll": false,
+          "text": "OUT OF RANGE\n\nLINK INCOMPLETE — FOLLOW SERVICE LOOP"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l3-linked",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 294.875,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 330.875,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKED\n\nBoth relay points ready · Omega contained"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l3-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 294.875,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 330.875,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 498,
+          "width": 420,
+          "height": 236,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "03 / COMPLETE\nPUBLIC ROUTE READY\n\nBoth relay points are ready. Omega remains inside the module.\n\nTAKE THE RESERVOIR ROAD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l4-geography",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 290.78125,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 326.78125,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "CIVIC RAMP ↑\n\nReservoir above lower road · shared barrier"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l4-record",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 290.78125,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 326.78125,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 504.125,
+          "width": 420,
+          "height": 229.875,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nSPILLWAY / LOCAL ORDER RECORD\n\nLOWER ROAD DISCHARGE\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l4-order",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 290.78125,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 326.78125,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 494.40625,
+          "width": 420,
+          "height": 239.59375,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "LOCAL MODULE\nOMEGA\n\nThe spillway shows an order from Vlad. Water is being sent toward the lower road.\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l4-controller",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 288.203125,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 324.203125,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nCLEAR THE BUS ROUTE\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 100,
+          "bottom": 370,
+          "right": 336,
+          "scroll": false,
+          "text": "DISABLE THE MARKED CONTROLLER\n\nUse blades · repeat service approach if missed"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l4-open",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 288.203125,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 324.203125,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nCLEAR THE BUS ROUTE\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "BARRIER OPEN\n\nShared uphill escape corridor is accessible"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l4-rescue",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 274.203125,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 310.203125,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 97,
+          "bottom": 367,
+          "right": 336,
+          "scroll": false,
+          "text": "BUS CONDITION · 3 / 3\n\nIN RANGE · escort corridor to civic ramp"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l4-rescue-out",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 274.203125,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 310.203125,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 97,
+          "bottom": 367,
+          "right": 336,
+          "scroll": false,
+          "text": "BUS CONDITION · 2 / 3\n\nOUT OF RANGE · return to escort band"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l4-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 274.203125,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 310.203125,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 536,
+          "width": 420,
+          "height": 198,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "04 / COMPLETE\nEVACUATION ROUTE CLEARED\nENTER THE CIVIC DISTRICT"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "failure",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 274.203125,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 310.203125,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 420,
+          "width": 420,
+          "height": 314,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "ROUTE INTERRUPTED\nEVACUATION ROUTE LOST\n\nThe bus lost all three condition segments.\n\nRESTART CHECKPOINT\nRESTART LEVEL\nMENU"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "pause",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 294.875,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 330.875,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 300,
+          "width": 420,
+          "height": 434,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "PAUSED\nLINK THE PUBLIC RELAY\n\nAction and story held.\n\nControls\nRecent communications\nSettings\nRESUME\nRESTART CHECKPOINT\nMENU"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "save-success",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 302.859375,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 338.859375,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 492,
+          "width": 420,
+          "height": 242,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVERY APPROACH REACHED\n\n✓ Saved\n\nCONTINUE TO INTAKE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "save-failure",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 302.859375,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 338.859375,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 492,
+          "width": 420,
+          "height": 242,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVERY APPROACH REACHED\n\nSession only — progress could not be saved.\n\nCONTINUE TO INTAKE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l5-section-a",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 227.265625,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 263.265625,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKING · SECTION A / 2\n\nSection A 60% · section B not yet available"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l5-between",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 227.265625,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 263.265625,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "SECTION A VALIDATED\n\nClear the interception before section B"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l5-section-b",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 227.265625,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 263.265625,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 99,
+          "bottom": 369,
+          "right": 336,
+          "scroll": false,
+          "text": "LINKING · SECTION B / 2\n\nSection A validated · clear corridor"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l5-public",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 227.265625,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 263.265625,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "OMEGA / PUBLIC ACCESS ACTIVE\n\nRelease committed · protected safe cruise"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 518.40625,
+          "width": 420,
+          "height": 215.59375,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "MUNICIPAL COMMS\nMAYOR VLAD\n\nJo. You had no right.\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l5-dawn",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 378.75,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 414.75,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 518.40625,
+          "width": 420,
+          "height": 215.59375,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "RIDER / JO\nJO\n\nWhere do we start?\n\nCONTINUE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l5-recovery",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 378.75,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 414.75,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 36,
+          "y": 270,
+          "width": 300,
+          "height": 76,
+          "bottom": 346,
+          "right": 336,
+          "scroll": false,
+          "text": "RECOVERY ROUTE\n\nProtected travel · limited signals restored"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "id": "l5-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 36,
+          "y": 167,
+          "width": 378.75,
+          "height": 91.09375,
+          "bottom": 258.09375,
+          "right": 414.75,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 568,
+          "y": 441,
+          "width": 420,
+          "height": 293,
+          "bottom": 734,
+          "right": 988,
+          "scroll": false,
+          "text": "RECOVERY ROUTE COMPLETE\nBASTROP / PUBLIC ACCESS RESTORED\n\nPublic guidance is available. Repairs continue.\n\nCHAPTER REPLAY\nRETURN TO TITLE"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 135,
+        "width": 1024,
+        "height": 633,
+        "bottom": 768,
+        "right": 1024
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "title",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 445.71875,
+          "width": 366,
+          "height": 307.28125,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "BASTROP37\nA city running dark.\nA delivery in motion.\n\nThe module is already on Jo’s bike.\n\nSTART DELIVERY\nCONTINUE · CHECKPOINT SAMPLE\nReturn to site"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "drain",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVER THE MODULE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 64.5,
+          "bottom": 327.5,
+          "right": 256,
+          "scroll": false,
+          "text": "TRAFFIC CLEARING\n\nKeep riding. Conversation will follow."
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "service",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 64.5,
+          "bottom": 327.5,
+          "right": 256,
+          "scroll": false,
+          "text": "SERVICE LANE →\n\nOpen gate · approach marker beyond"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l2-neutral",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 64.5,
+          "bottom": 327.5,
+          "right": 256,
+          "scroll": false,
+          "text": "INSPECTION ROUTE\n\nStay beside the recovery vehicle."
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l2-record-1",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 527.4375,
+          "width": 366,
+          "height": 225.5625,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nCARRIER / LOCAL ORDER RECORD\n\nWIPE MODULE\nDETAIN COURIER\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l2-record-2",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 554.625,
+          "width": 366,
+          "height": 198.375,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nCARRIER / LOCAL ORDER RECORD\n\nPOWER SHUTDOWN\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l2-confrontation",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nENTER THE INSPECTION LANE\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 554,
+          "width": 366,
+          "height": 199,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "LOCAL MODULE\nOMEGA\n\nThe carrier's orders: erase the module, then detain its courier.\n\nCONTINUE"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l2-lock",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 64.5,
+          "bottom": 327.5,
+          "right": 256,
+          "scroll": false,
+          "text": "LOCK ACTIVE · EXIT LEFT\n\nSteering escape available · turbo optional"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l2-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 607.609375,
+          "width": 366,
+          "height": 145.390625,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "02 / COMPLETE\nRECOVERY LOCK BROKEN\nRIDE TO THE RELAY"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "abilities-ready",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 502.609375,
+          "width": 366,
+          "height": 250.390625,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nREADY\n↗ TURBO — READY\n↑ JUMP — READY\n◇ BLADES — READY\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "abilities-active",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 502.609375,
+          "width": 366,
+          "height": 250.390625,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nACTIVE\n↗ TURBO — ACTIVE\n↑ JUMP — ACTIVE\n◇ BLADES — ACTIVE\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "abilities-cooldown",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 502.609375,
+          "width": 366,
+          "height": 250.390625,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nCOOLDOWN · 40%\n↗ TURBO — COOLDOWN · 40%\n↑ JUMP — COOLDOWN · 40%\n◇ BLADES — COOLDOWN · 40%\n◈ OVERDRIVE — OPTIONAL · 60% CHARGE\n\nSame familiar controls. Overdrive is never required."
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "abilities-unavailable",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "02 / BETRAYAL\nBREAK THE RECOVERY LOCK\n\nMunicipal intake · Recovery corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 502.609375,
+          "width": 366,
+          "height": 250.390625,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "BIKE SYSTEMS\nUNAVAILABLE\n↗ TURBO — UNAVAILABLE\n↑ JUMP — UNAVAILABLE\n◇ BLADES — UNAVAILABLE\n◈ OVERDRIVE — UNAVAILABLE\n\nSafe cruise. Combat controls dormant."
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l3-range",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 87.5,
+          "bottom": 350.5,
+          "right": 256,
+          "scroll": false,
+          "text": "IN RANGE\n\nRelay A · local preparation only"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l3-linking",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 87.5,
+          "bottom": 350.5,
+          "right": 256,
+          "scroll": false,
+          "text": "LINKING\n\nRelay A · Omega remains contained"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l3-out",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 104,
+          "bottom": 367,
+          "right": 256,
+          "scroll": false,
+          "text": "OUT OF RANGE\n\nLINK INCOMPLETE — FOLLOW SERVICE LOOP"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l3-linked",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 87.5,
+          "bottom": 350.5,
+          "right": 256,
+          "scroll": false,
+          "text": "LINKED\n\nBoth relay points ready · Omega contained"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l3-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 553.609375,
+          "width": 366,
+          "height": 199.390625,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "03 / COMPLETE\nPUBLIC ROUTE READY\n\nBoth relay points are ready. Omega remains inside the module.\n\nTAKE THE RESERVOIR ROAD"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l4-geography",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 64.5,
+          "bottom": 327.5,
+          "right": 256,
+          "scroll": false,
+          "text": "CIVIC RAMP ↑\n\nReservoir above lower road · shared barrier"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l4-record",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 554.625,
+          "width": 366,
+          "height": 198.375,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "EQUIPMENT RECORD\n\nSPILLWAY / LOCAL ORDER RECORD\n\nLOWER ROAD DISCHARGE\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l4-order",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nREACH THE CIVIC ROAD\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 554,
+          "width": 366,
+          "height": 199,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "LOCAL MODULE\nOMEGA\n\nThe spillway shows an order from Vlad. Water is being sent toward the lower road.\n\nCONTINUE"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l4-controller",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nCLEAR THE BUS ROUTE\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 105,
+          "bottom": 368,
+          "right": 256,
+          "scroll": false,
+          "text": "DISABLE THE MARKED CONTROLLER\n\nUse blades · repeat service approach if missed"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l4-open",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nCLEAR THE BUS ROUTE\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 64.5,
+          "bottom": 327.5,
+          "right": 256,
+          "scroll": false,
+          "text": "BARRIER OPEN\n\nShared uphill escape corridor is accessible"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l4-rescue",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 85.5,
+          "bottom": 348.5,
+          "right": 256,
+          "scroll": false,
+          "text": "BUS CONDITION · 3 / 3\n\nIN RANGE · escort corridor to civic ramp"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l4-rescue-out",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 85.5,
+          "bottom": 348.5,
+          "right": 256,
+          "scroll": false,
+          "text": "BUS CONDITION · 2 / 3\n\nOUT OF RANGE · return to escort band"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l4-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 581.21875,
+          "width": 366,
+          "height": 171.78125,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "04 / COMPLETE\nEVACUATION ROUTE CLEARED\nENTER THE CIVIC DISTRICT"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "failure",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "04 / LOCKDOWN\nKEEP THE EXIT CLEAR\n\nReservoir district · Civic ramp"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 470.109375,
+          "width": 366,
+          "height": 282.890625,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "ROUTE INTERRUPTED\nEVACUATION ROUTE LOST\n\nThe bus lost all three condition segments.\n\nRESTART CHECKPOINT\nRESTART LEVEL\nMENU"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "pause",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "03 / PUBLIC ACCESS\nLINK THE PUBLIC RELAY\n\nOld public relay · Local access"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 423.109375,
+          "width": 366,
+          "height": 402.890625,
+          "bottom": 826,
+          "right": 378,
+          "scroll": false,
+          "text": "PAUSED\nLINK THE PUBLIC RELAY\n\nAction and story held.\n\nControls\nRecent communications\nSettings\nRESUME\nRESTART CHECKPOINT\nMENU"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "save-success",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 549.71875,
+          "width": 366,
+          "height": 203.28125,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVERY APPROACH REACHED\n\n✓ Saved\n\nCONTINUE TO INTAKE"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "save-failure",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "01 / DELIVERY\nTAKE THE SERVICE LANE\n\nMunicipal intake · Service road"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 549.71875,
+          "width": 366,
+          "height": 203.28125,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "01 / DELIVERY\nDELIVERY APPROACH REACHED\n\nSession only — progress could not be saved.\n\nCONTINUE TO INTAKE"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l5-section-a",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 87.5,
+          "bottom": 350.5,
+          "right": 256,
+          "scroll": false,
+          "text": "LINKING · SECTION A / 2\n\nSection A 60% · section B not yet available"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l5-between",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 87.5,
+          "bottom": 350.5,
+          "right": 256,
+          "scroll": false,
+          "text": "SECTION A VALIDATED\n\nClear the interception before section B"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l5-section-b",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 87.5,
+          "bottom": 350.5,
+          "right": 256,
+          "scroll": false,
+          "text": "LINKING · SECTION B / 2\n\nSection A validated · clear corridor"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l5-public",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 79.25,
+          "bottom": 247.25,
+          "right": 330,
+          "scroll": false,
+          "text": "05 / RELEASE\nRELEASE OMEGA\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 88.5,
+          "bottom": 351.5,
+          "right": 256,
+          "scroll": false,
+          "text": "OMEGA / PUBLIC ACCESS ACTIVE\n\nRelease committed · protected safe cruise"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 576.5,
+          "width": 366,
+          "height": 176.5,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "MUNICIPAL COMMS\nMAYOR VLAD\n\nJo. You had no right.\n\nCONTINUE"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l5-dawn",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 576.5,
+          "width": 366,
+          "height": 176.5,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "RIDER / JO\nJO\n\nWhere do we start?\n\nCONTINUE"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l5-recovery",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "mission-context",
+          "x": 16,
+          "y": 263,
+          "width": 240,
+          "height": 64.5,
+          "bottom": 327.5,
+          "right": 256,
+          "scroll": false,
+          "text": "RECOVERY ROUTE\n\nProtected travel · limited signals restored"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "id": "l5-complete",
+      "horizontalOverflow": false,
+      "brokenImages": [],
+      "panels": [
+        {
+          "id": "objective",
+          "x": 16,
+          "y": 168,
+          "width": 314,
+          "height": 103,
+          "bottom": 271,
+          "right": 330,
+          "scroll": false,
+          "text": "05 / RELEASE\nFOLLOW THE RECOVERY ROUTE\n\nCivic access · Service corridor"
+        },
+        {
+          "id": "state-panel",
+          "x": 12,
+          "y": 496.71875,
+          "width": 366,
+          "height": 256.28125,
+          "bottom": 753,
+          "right": 378,
+          "scroll": false,
+          "text": "RECOVERY ROUTE COMPLETE\nBASTROP / PUBLIC ACCESS RESTORED\n\nPublic guidance is available. Repairs continue.\n\nCHAPTER REPLAY\nRETURN TO TITLE"
+        },
+        {
+          "id": "touch-controls",
+          "x": 16,
+          "y": 770,
+          "width": 358,
+          "height": 56,
+          "bottom": 826,
+          "right": 374,
+          "scroll": false,
+          "text": "←\n→\nTURBO"
+        }
+      ],
+      "canvas": {
+        "x": 0,
+        "y": 148,
+        "width": 390,
+        "height": 696,
+        "bottom": 844,
+        "right": 390
+      }
+    }
+  ],
+  "sequence": [
+    "EQUIPMENT RECORD\n\nCARRIER / LOCAL ORDER RECORD\n\nWIPE MODULE\nDETAIN COURIER\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD",
+    "EQUIPMENT RECORD\n\nCARRIER / LOCAL ORDER RECORD\n\nPOWER SHUTDOWN\nAUTH: MAYOR VLAD\nACKNOWLEDGE RECORD",
+    "LOCAL MODULE\nOMEGA\n\nThe carrier's orders: erase the module, then detain its courier.\n\nCONTINUE",
+    "RIDER / JO\nJO\n\nVlad. What is this?\n\nCONTINUE",
+    "LOCAL MODULE\nOMEGA\n\nIts records show power shutdowns too. All authorized by you, Mayor.\n\nCONTINUE",
+    "MUNICIPAL COMMS\nMAYOR VLAD\n\nI ordered those shutdowns. Hand over the module, Jo.\n\nCONTINUE",
+    "RIDER / JO\nJO\n\nYou cut our power. Now you're wiping the thing that can help?\n\nCONTINUE",
+    "MUNICIPAL COMMS\nMAYOR VLAD\n\nThis city gets help through me. You were paid to deliver.\n\nCONTINUE",
+    "RIDER / JO\nJO\n\nDelivery's off.\n\nCONTINUE",
+    ""
+  ],
+  "pauseExpanded": {
+    "scrollHeight": 647,
+    "clientHeight": 455,
+    "text": "PAUSED\nLINK THE PUBLIC RELAY\n\nAction and story held.\n\nControls\nSteer\n← / → or touch\nTurbo\nShift\nDialogue\nEnter / Continue\nRecent communications\n\nOMEGA: Two relay points. Keep me close long enough to connect each one.\n\nSettings\n Reduced motion\n Low effects\n Existing sound\nRESUME\nRESTART CHECKPOINT\nMENU"
+  }
+}

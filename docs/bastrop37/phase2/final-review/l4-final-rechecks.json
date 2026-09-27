@@ -1,0 +1,197 @@
+{
+  "timestamp": "2026-09-27T19:17:41.763Z",
+  "checks": [
+    {
+      "width": 1440,
+      "height": 900,
+      "sample": "l4-geography",
+      "context": {
+        "x": 1104,
+        "y": 245,
+        "width": 300,
+        "height": 76
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "sample": "l4-controller",
+      "context": {
+        "x": 1104,
+        "y": 245,
+        "width": 300,
+        "height": 100
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "sample": "l4-rescue",
+      "context": {
+        "x": 1104,
+        "y": 245,
+        "width": 300,
+        "height": 97
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "sample": "l4-open",
+      "context": {
+        "x": 1104,
+        "y": 245,
+        "width": 300,
+        "height": 76
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "sample": "l4-geography",
+      "context": {
+        "x": 944,
+        "y": 245,
+        "width": 300,
+        "height": 76
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "sample": "l4-controller",
+      "context": {
+        "x": 944,
+        "y": 245,
+        "width": 300,
+        "height": 100
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "sample": "l4-rescue",
+      "context": {
+        "x": 944,
+        "y": 245,
+        "width": 300,
+        "height": 97
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "sample": "l4-open",
+      "context": {
+        "x": 944,
+        "y": 245,
+        "width": 300,
+        "height": 76
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "sample": "l4-geography",
+      "context": {
+        "x": 688,
+        "y": 245,
+        "width": 300,
+        "height": 76
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "sample": "l4-controller",
+      "context": {
+        "x": 688,
+        "y": 245,
+        "width": 300,
+        "height": 100
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "sample": "l4-rescue",
+      "context": {
+        "x": 688,
+        "y": 245,
+        "width": 300,
+        "height": 97
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "sample": "l4-open",
+      "context": {
+        "x": 688,
+        "y": 245,
+        "width": 300,
+        "height": 76
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "sample": "l4-geography",
+      "context": {
+        "x": 134,
+        "y": 263,
+        "width": 240,
+        "height": 64.5
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "sample": "l4-controller",
+      "context": {
+        "x": 134,
+        "y": 263,
+        "width": 240,
+        "height": 105
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "sample": "l4-rescue",
+      "context": {
+        "x": 134,
+        "y": 263,
+        "width": 240,
+        "height": 85.5
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "sample": "l4-open",
+      "context": {
+        "x": 134,
+        "y": 263,
+        "width": 240,
+        "height": 64.5
+      },
+      "horizontalOverflow": false
+    }
+  ]
+}

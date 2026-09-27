@@ -1,0 +1,51 @@
+{
+  "lineReset": {
+    "sample": "delivery",
+    "chapter": "01 / DELIVERY",
+    "line": "You have the module?"
+  },
+  "lineAdvance": "It's on the bike. Where am I going?",
+  "abilityReset": {
+    "sample": "delivery",
+    "chapter": "01 / DELIVERY",
+    "state": "↑ TURBO ACTIVE"
+  },
+  "pauseResume": "l3-linking",
+  "finaleSequence": [
+    {
+      "sample": "l5-public",
+      "text": "MUNICIPAL COMMS\nMAYOR VLAD\n\nJo. You had no right.\n\nCONTINUE",
+      "context": "OMEGA / PUBLIC ACCESS ACTIVE\n\nRelease committed · protected safe cruise"
+    },
+    {
+      "sample": "l5-public",
+      "text": "RIDER / JO\nJO\n\nIt's delivered.\n\nCONTINUE",
+      "context": "OMEGA / PUBLIC ACCESS ACTIVE\n\nRelease committed · protected safe cruise"
+    },
+    {
+      "sample": "l5-public",
+      "text": "PUBLIC ACCESS\nOMEGA\n\nPublic access is open.\n\nCONTINUE",
+      "context": "OMEGA / PUBLIC ACCESS ACTIVE\n\nRelease committed · protected safe cruise"
+    },
+    {
+      "sample": "l5-dawn",
+      "text": "RIDER / JO\nJO\n\nWhere do we start?\n\nCONTINUE",
+      "context": "OMEGA / PUBLIC ACCESS ACTIVERelease committed · protected safe cruise"
+    },
+    {
+      "sample": "l5-dawn",
+      "text": "PUBLIC ACCESS\nOMEGA\n\nThe next block. Their water pumps are down.\n\nCONTINUE",
+      "context": "OMEGA / PUBLIC ACCESS ACTIVERelease committed · protected safe cruise"
+    },
+    {
+      "sample": "l5-dawn",
+      "text": "RIDER / JO\nJO\n\nShow me.\n\nCONTINUE",
+      "context": "OMEGA / PUBLIC ACCESS ACTIVERelease committed · protected safe cruise"
+    },
+    {
+      "sample": "l5-recovery",
+      "text": "",
+      "context": "RECOVERY ROUTE\n\nProtected travel · limited signals restored"
+    }
+  ]
+}

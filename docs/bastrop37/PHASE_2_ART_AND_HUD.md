@@ -1,6 +1,6 @@
 # Phase 2 — Art and HUD production
 
-Status: production specification for review. Primary owners: art / asset production and HUD / interaction design. Narrative owns meaning and sequence; engineering owns simulation and renderer behavior. Do not silently change the story or import a new rendering framework while producing assets.
+Status: authorized Phase 2 production; first Delivery visual treatment approved by the user on 2026-09-27. Final bounded package awaits completion review. Primary owners: art / asset production and HUD / interaction design. Narrative owns meaning and sequence; engineering owns simulation and renderer behavior. Do not silently change the story or import a new rendering framework while producing assets.
 
 ## 1. Required context and dependencies
 
@@ -8,7 +8,7 @@ Read [the story bible](../../BASTROP37_STORY.md) and [Phase 1](PHASE_1_NARRATIVE
 
 The game opens after Jo has picked up a module for Mayor Vlad. Level 1 is a credible delivery, Level 2 the betrayal, and Level 5 the public release of Omega. Only three speakers. Inland Bastrop; reservoirs and rivers, never coastlines. Third-person rear chase, existing sprite-based depth, desktop first, mobile preserved. No new audio.
 
-Phase 2 requires explicit user authorization after Phase 1 approval; the current Phase 1 request does not start asset production. Phase 2 produces reviewed assets and isolated HUD mockups, without live gameplay integration.
+Phase 1 and the first Delivery visual package are approved; the user explicitly authorized completing Phase 2. Phase 2 produces reviewed assets and isolated HUD mockups, without live gameplay integration. The first visual gate permits the bounded register and state package below; final Phase 2 completion still requires user approval.
 
 Phase 2 produces one approved Delivery treatment first. Later kits wait until that treatment and the dialogue/gameplay rhythm work. All specifications below are intended starting contracts; asset quality needs visual inspection at intended display size in Phase 2 mockups, followed by in-game verification during authorized Phase 3 integration; dimensions alone are insufficient.
 

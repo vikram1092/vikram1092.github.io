@@ -1,0 +1,314 @@
+[
+  {
+    "id": "CHAR-VLAD",
+    "actualDimensions": [
+      1254,
+      1254
+    ],
+    "match": true
+  },
+  {
+    "id": "CHAR-OMEGA",
+    "actualDimensions": [
+      128.0,
+      128.0
+    ],
+    "match": true
+  },
+  {
+    "id": "ENV-L1-MIDGROUND",
+    "actualDimensions": [
+      1920.0,
+      480.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-SIGNAL",
+    "actualDimensions": [
+      160.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-SERVICE-GATE",
+    "actualDimensions": [
+      800.0,
+      360.0
+    ],
+    "match": true
+  },
+  {
+    "id": "ENV-L1-SKYLINE",
+    "actualDimensions": [
+      1672,
+      941
+    ],
+    "match": true
+  },
+  {
+    "id": "ENV-L1-ROAD",
+    "actualDimensions": [
+      1254,
+      1254
+    ],
+    "match": true
+  },
+  {
+    "id": "CHAR-JO",
+    "actualDimensions": [
+      640,
+      640
+    ],
+    "match": true
+  },
+  {
+    "id": "TRAFFIC-SEDAN",
+    "actualDimensions": [
+      640,
+      640
+    ],
+    "match": true
+  },
+  {
+    "id": "TRAFFIC-COUPE",
+    "actualDimensions": [
+      640,
+      640
+    ],
+    "match": true
+  },
+  {
+    "id": "TRAFFIC-HAULER",
+    "actualDimensions": [
+      640,
+      640
+    ],
+    "match": true
+  },
+  {
+    "id": "ENV-L2-MIDGROUND",
+    "actualDimensions": [
+      1920.0,
+      480.0
+    ],
+    "match": true
+  },
+  {
+    "id": "ENV-L3-MIDGROUND",
+    "actualDimensions": [
+      1920.0,
+      480.0
+    ],
+    "match": true
+  },
+  {
+    "id": "ENV-L4-RESERVOIR",
+    "actualDimensions": [
+      1920.0,
+      480.0
+    ],
+    "match": true
+  },
+  {
+    "id": "ENV-L4-ROUTE",
+    "actualDimensions": [
+      1920.0,
+      480.0
+    ],
+    "match": true
+  },
+  {
+    "id": "ENV-L5-MIDGROUND",
+    "actualDimensions": [
+      1920.0,
+      480.0
+    ],
+    "match": true
+  },
+  {
+    "id": "ENV-L5-DAWN",
+    "actualDimensions": [
+      1920.0,
+      480.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-SIGNAL-RESTORED",
+    "actualDimensions": [
+      160.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-SERVICE-GATE-APPROACH",
+    "actualDimensions": [
+      240.0,
+      360.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-SERVICE-GATE-BLOCKED-CROSSING",
+    "actualDimensions": [
+      800.0,
+      240.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-INTAKE-INACTIVE",
+    "actualDimensions": [
+      800.0,
+      360.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-INTAKE-ACTIVE",
+    "actualDimensions": [
+      800.0,
+      360.0
+    ],
+    "match": true
+  },
+  {
+    "id": "VEH-RECOVERY-INACTIVE",
+    "actualDimensions": [
+      520.0,
+      420.0
+    ],
+    "match": true
+  },
+  {
+    "id": "VEH-RECOVERY-ACTIVE",
+    "actualDimensions": [
+      520.0,
+      420.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-RELAY-DORMANT",
+    "actualDimensions": [
+      240.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-RELAY-CONNECTING",
+    "actualDimensions": [
+      240.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-RELAY-LINKED",
+    "actualDimensions": [
+      240.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-CIVIC-NODE-DORMANT",
+    "actualDimensions": [
+      240.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-CIVIC-NODE-LINKED",
+    "actualDimensions": [
+      240.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-CIVIC-NODE-PUBLIC-ACTIVE",
+    "actualDimensions": [
+      240.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-SPILLWAY-CLOSED",
+    "actualDimensions": [
+      640.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-SPILLWAY-OPEN",
+    "actualDimensions": [
+      640.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-SPILLWAY-WATER-LOW",
+    "actualDimensions": [
+      640.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-SPILLWAY-WATER-HIGH",
+    "actualDimensions": [
+      640.0,
+      400.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-ROADBLOCK-CLOSED",
+    "actualDimensions": [
+      800.0,
+      240.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-ROADBLOCK-OPEN",
+    "actualDimensions": [
+      800.0,
+      240.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-ROADBLOCK-CONTROLLER-ACTIVE",
+    "actualDimensions": [
+      160.0,
+      240.0
+    ],
+    "match": true
+  },
+  {
+    "id": "PROP-ROADBLOCK-CONTROLLER-DISABLED",
+    "actualDimensions": [
+      160.0,
+      240.0
+    ],
+    "match": true
+  },
+  {
+    "id": "VEH-EVAC",
+    "actualDimensions": [
+      1254,
+      1254
+    ],
+    "match": true
+  }
+]

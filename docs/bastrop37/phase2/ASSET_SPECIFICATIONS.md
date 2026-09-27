@@ -1,54 +1,81 @@
-# Delivery asset specifications — first visual review
+# Phase 2 asset specifications
 
-2026-09-27. Phase 2 only. **Pending visual approval.** This package contains standalone art and review-only display metadata, not integrated gameplay. The companion [manifest](asset-manifest.json) does not replace the existing runtime sprite manifest.
+2026-09-27. The first Delivery visual package was **approved by the user on 2026-09-27**. The expanded chapter kits and state variants below are **pending final Phase 2 review**. This package contains standalone art and isolated review metadata, not integrated gameplay. The companion [manifest](asset-manifest.json) never replaces the runtime sprite manifest.
 
-## Audit and reuse decisions
+## Scope and complete register
 
-Visually inspected `city-skyline-v4.png`, `road-loop-v4.png`, `bike-normal-straight.png`, and the three civilian rear frames before choosing reuse. The skyline is an inland nighttime city with no coastal landmark; its large neon towers are busy and somewhat distant from the neighborhood brief. Retain it as a subdued distant plate behind the new low apartment/shop strip. Reduce saturation/contrast in composition, leave the original unchanged, and cover the lower cloud field with street-scale layers. The skyline is actually 1672×941, below the suggested 1920–2560 width; judge desktop scaling in the mockups before commissioning a replacement.
+There are 39 measured image entries: the 11 approved Delivery production/reuse entries plus 28 new candidates (27 code-native SVGs and one transparent bus PNG). Each canonical asset ID resolves through `groups` or an entry. All filenames below are inside `assets/`; brace notation enumerates actual separate files.
 
-The road is 1254×1254, with repeatable asphalt, lane dashes and reflections. Retain it for existing perspective strips, with subdued reflections as needed in composition. No unique hazards are baked into the road. Static inspection does not establish seam quality in motion; test mapping and seams in Phase 3.
+| Canonical ID | Files and states | Source dimensions / anchor |
+|---|---|---|
+| ENV-L1 | Existing skyline/road plus env-l1-midground-v1.svg | 1920×480 midground / bottom center |
+| ENV-L2 | env-l2-midground-v1.svg; reused skyline/road | 1920×480 / bottom center |
+| ENV-L3 | env-l3-midground-v1.svg; reused skyline/road | 1920×480 / bottom center |
+| ENV-L4 | env-l4-reservoir-v1.svg, env-l4-route-v1.svg; reused road/optional subdued skyline | 1920×480 each / bottom center |
+| ENV-L5 | env-l5-midground-v1.svg, env-l5-dawn-v1.svg; reused skyline/road | 1920×480 each / bottom center |
+| PROP-SIGNAL | signal-{dead,restored}-v1.svg | 160×400 / (80,400) |
+| PROP-SERVICE-GATE | gate-open-v1.svg; approach-marker-v1.svg; crossing-blocked-v1.svg | 800×360; 240×360; 800×240 / bottom center |
+| PROP-INTAKE | intake-{inactive,active}-v1.svg | 800×360 / bottom center |
+| VEH-RECOVERY | Existing traffic-hauler.png body plus recovery-{inactive,active}-v1.svg overlay | 520×420 overlay aligned to hauler display crop |
+| PROP-RELAY | relay-{dormant,connecting,linked}-v1.svg | 240×400 / bottom center |
+| PROP-SPILLWAY | spillway-{closed,open}-v1.svg; spillway-water-{low,high}-v1.svg | 640×400 / bottom center |
+| PROP-ROADBLOCK | barrier-{closed,open}-v1.svg; controller-{active,disabled}-v1.svg | 800×240 barrier; 160×240 controller / bottom center |
+| VEH-EVAC | evac-bus-rear-v1.png; one anonymous rear bus | 1254×1254 source; 920×1070 display crop / bottom center |
+| PROP-CIVIC-NODE | civic-node-{dormant,linked,public-active}-v1.svg | 240×400 / bottom center |
+| CHAR-JO | Existing bike-normal-straight.png | Existing full-source center pivot preserved |
+| CHAR-VLAD | vlad-neutral-v1.png; one approved neutral portrait | 1254×1254 / center |
+| CHAR-OMEGA | omega-symbol-v1.svg; one approved identity | 128×128 / center |
 
-The 640×640 scarlet Jo frame has a readable rear silhouette. Retain it without face or outfit changes. Nonzero alpha bounds are `(221,192,206,283)`. Existing traffic is recognizable and sufficient for civilian gaps. Raw traffic images contain stray sheet fragments beyond the main vehicle, especially the sedan's lower edge. The old manifest's `rect` is the **sheet extraction provenance**, not a clean crop within the resulting 640×640 image. Current renderer also finds broad alpha bounds, so these fragments are an existing concern. No runtime fix is claimed.
+Approved Delivery originals, portrait/symbol identity, existing raster assets, runtime code and runtime manifest are unchanged. Optional module presence remains a HUD cargo state, with no new sprite or pickup scene. No additional characters, audio, 3D, enemy art or later mechanical invention is included. Existing drone art remains the engineering reuse target; no replacement is needed.
 
-Review-only source crops, visually checked in [asset-review.png](assets/asset-review.png):
+## Chapter composition and state meaning
 
-| Frame | Source crop x, y, width, height |
+L2 adds freight containers, substation posts and an overhead gantry. Intake begins neutral; the active state adds restrained scan lines, not a hostile accusation before evidence. Draw the recovery overlay on the cropped existing hauler at exactly matching width/height, without independent scaling, rotation or drift. The off-white central municipal equipment panel distinguishes it from civilian haulers; inactive amber and active teal emitter states share geometry. These are overlays, not complete carrier sprites. Evidence wording belongs to separate HUD cards.
+
+L3 adds market awnings and rooftop exchange antennas. Relay states share the same cabinet, antenna and pivot. Dormant is a dash, connecting two local dots, linked a local check. Only the two relay nodes change state: no illumination wave, restored street or public distribution. Omega remains contained.
+
+L4 separates a freshwater reservoir and concrete retaining bank from the rising shared route/civic ramp. The water surface is bounded by inland hills and structures, not an ocean horizon. For the scene, place spillway high beside the bank, discharge below it toward the lower road, bus below the same closed barrier that blocks Jo, and the rising route toward the civic ramp. The route layer is contextual geography; it does not paint the main playable road or determine world coordinates. HUD owns the composed causal view. Closed/open spillway geometry is fixed; low/high water sheets align to the same frame, sit laterally/background only, and never imply fluid simulation. The barrier retracts toward its left post; open state leaves the same central passage clear. Controller is a separate attack target with active square versus disabled cross. Bus identity is anonymous civilian transit, with a large rear window, blank destination panel and tail lamps. It has no speaker, pilot portrait or invented destination.
+
+L5 adds civic colonnades and network service frontage. Civic nodes reuse the relay's visual grammar with wider civic side panels. Linked remains local. Public-active adds a distinct three-branch indication only after the final upload and clear-road release event. Dawn overlay follows that release, before recovery travel; it is a restrained atmosphere wash, not a city repair state. Only selected restored signals/returning lights should appear in the epilogue. Broken pumps still need work. The same Omega symbol persists.
+
+The approach sign has a rightward direction arrow and space for code-rendered route wording; the blocked crossing stays separate from its service bypass. New signal-restored is supplied for L5.05, not Delivery. Gate blank sign face is `(220,61,359,27)`; its center x208–590 must remain traversable. No raster contains narrative text.
+
+## Existing-art audit and display crops
+
+Visually inspected existing skyline, road, scarlet rider and all three rear civilian traffic frames before reuse. Skyline is 1672×941, smaller than suggested production width and neon-heavy; subdue it behind chapter layers. Road is 1254×1254 with repeating asphalt/lane dashes. Neither original was changed. Static review does not prove skyline scaling or road seams in motion.
+
+Raw traffic includes stray sheet fragments, especially beneath sedan. Old sprite-manifest `rect` is sheet extraction provenance, not a clean crop inside each resulting image. Current runtime finds broad alpha bounds; no runtime correction is claimed. These display-only source crops were visually checked without modifying originals:
+
+| Frame | x, y, width, height |
 |---|---|
 | Jo straight | 221, 192, 206, 283 |
 | Sedan | 75, 200, 500, 285 |
 | Coupe | 70, 190, 500, 275 |
-| Hauler | 60, 55, 520, 420 |
+| Hauler / recovery body | 60, 55, 520, 420 |
+| New bus | 165, 90, 920, 1070 |
 
-Use these crops to draw the existing images in the isolated mockup. They do not modify source art, body masks, blade reach, or existing collision pivots. The companion manifest retains existing full-source center pivots for actors; crop-aware display positioning is a separate preview choice requiring integration review. No replacement vehicle was produced, so no in-motion replacement comparison is claimed.
+Existing actor source pivots remain `(0.5,0.5)`. New bus source anchor is bottom center; its **display crop bottom center** is `(625,1160)` in source pixels and should be the mockup ground contact. Source-pivot and crop-ground conventions must be reconciled by engineering, not silently used as interchangeable hitbox origins. Recovery overlay full canvas matches the hauler crop, so align its bottom center with the cropped body, not the original padded PNG.
 
-## Produced minimum kit
+## Display sizes, layers and collision intent
 
-| ID | File | Dimensions | Proposed anchor / layer |
-|---|---|---|---|
-| CHAR-VLAD | assets/vlad-neutral-v1.png | 1254×1254 | Center / final isolated HUD; 56×56 desktop, 46×46 mobile CSS px |
-| CHAR-OMEGA | assets/omega-symbol-v1.svg | 128×128 | Center / final isolated HUD; 56×56 desktop, 46×46 mobile CSS px |
-| ENV-L1-MIDGROUND | assets/env-l1-midground-v1.svg | 1920×480 | Bottom center / behind roadside actors |
-| PROP-SIGNAL | assets/signal-dead-v1.svg | 160×400 | Bottom center `(80,400)` / roadside |
-| PROP-SERVICE-GATE | assets/gate-open-v1.svg | 800×360 | Bottom center `(400,360)` / roadside |
+Final isolated HUD portrait and Omega tiles are 56×56 CSS px desktop, 46×46 mobile, independently reviewed as readable. Original asset contact sheet keeps its larger Vlad64/80 and Omega64 samples. New state sheets inspect environment layers at1050×262, arch at320×144, barriers at320×96, relay/civic/controller figures in120×200 slots, spillways at288×180, recovery at220×178, and bus bodies at90px and180px wide. Figure slots preserve aspect ratio.
 
-`ENV-L1` groups the reused skyline, midground, and reused road in the companion manifest. The midground has a transparent center opening and muted amber/dark windows. Keep it behind road and actor silhouettes. It is one composition layer, not a seamless scrolling tile. HUD worker owns final scene placement and perspective.
+Background/parallax → midground geography/buildings → road surface → roadside props and actor bodies → separate water/scan overlays → HUD. All assets use source-over. No baked additive aura defines a collision edge. Environments and water/scan overlays never collide. Closed barrier/crossing needs an authored blocking footprint, not an alpha-derived wall; open posts stay outside the safe corridor. Controller needs an authored target footprint. Bus follows the authored noncolliding parallel escort path; its condition is separate from body collision. Existing actor body-mask behavior is preserved pending authorized integration.
 
-The signal has three unlit lenses and a local equipment box; it must not appear repaired in Delivery. Only the dead state is supplied. The gate is already open, with a blank off-white sign face at `(220,61,359,27)` for crisp overlay text. Leave its center x208–590 free for the service corridor and place posts outside the traversable lane. Gate size is an art proposal, not an accepted collision footprint. Blocked-crossing dressing and approach wording can be code-native shapes/text in the isolated scene; do not bake narrative lettering into these files. A restored signal and other state variants are deferred.
+World-size intent is relational: buildings are scenery beyond the roadside; gate/arch/barrier span one authored corridor with a readable bypass/clearance; cabinet/controller is roadside scale; recovery retains the current hauler proportions; bus is wider than Jo and stays in its separate parallel route. Manifest sizing uses provisional lane-relative units: Jo0.3 lane body width; civilian0.7; hauler/carrier0.75; bus0.8 on a separate ≥1-lane escort corridor; gate/intake clear opening≥1.2 lanes; barrier blocking span1.2 lanes with≥1 lane open; controller0.12 lane wide; relay/civic cabinet0.2 lane wide; lateral spillway2 lanes. These are visual starting values, not an approved world-unit schema, projection scale or calibrated hitbox. Existing hauler76×66 renderer units are a compatibility reference only. Source pivots, masks, blade reach, fade/disengage paths and near-camera clearance require Phase 3 measurement. State families have identical source dimensions/pivots, with only state geometry/indicators changing. Optional animations are transforms on these fixed layers with static reduced-motion fallbacks; no new animation sheets are required.
 
-Vlad's physical appearance is proposed art, not added canon. The square portrait shows a composed adult in slate civic clothing with a warm neutral expression; no threatening alternate, title embedded in art, or villain cue. Opaque slate backdrop is intentional for the square communication tile; this is not a world sprite requiring transparency. Requested 512×512, built-in generator delivered 1254×1254. Preserved the delivered image unmodified; actual download is 2,048,475 bytes and nominal RGBA decode is 6,290,064 bytes. Phase 3 may consider a smaller derivative after approval.
+## Provenance, actual measurements and reproducibility
 
-Omega is one original vector identity: contained corner brackets, omega-shaped circuit, small center point. Static local/contained state is the asset default. Speaking may use a small opacity pulse or scale within the same brackets in the isolated HUD; reduced motion stays static. No outward propagation, citywide activation, or public release treatment occurs in Delivery. All new bodies/layers use source-over, no additive collision glow.
+Vlad used built-in imagegen once; exact prompt is [vlad-neutral-v1.prompt.txt](assets/vlad-neutral-v1.prompt.txt). Bus used the same already-read imagegen skill and built-in tool once with transparent background; prompt is [evac-bus-rear-v1.prompt.txt](assets/evac-bus-rear-v1.prompt.txt). Generated files were copied into the workspace and preserved unmodified. No CLI/API fallback or resizing was used. Vlad delivered1254 square despite512 request. Bus delivered1254 square despite640 suggestion; alpha range is0–255. Bus alpha>20 bounds are `(173,98)`–`(1082,1153)`; nearly invisible nonzero-alpha pixels outside that body explain the larger measured alpha bounds. The preview crop excludes those margins; no body pixels were removed from the source.
 
-## Provenance and reproducibility
+Bus download is1,285,486 bytes; nominal RGBA decode6,290,064 bytes. The28 new image entries total1,315,238 download bytes and42,072,464 nominal RGBA bytes at source dimensions. All39 entries total9,885,215 download bytes and72,659,536 nominal RGBA bytes. SVG raster figures are estimates at their nominal sizes, not fixed vector memory, and are not a required simultaneous load. GPU/browser copies, mipmaps and overhead are excluded. Engineering should load chapter assets as needed and consider smaller approved raster derivatives; no performance result is implied.
 
-Vlad used the built-in `image_gen` tool under the imagegen skill, one generation. Exact prompt is preserved in [vlad-neutral-v1.prompt.txt](assets/vlad-neutral-v1.prompt.txt). Generator source location is recorded in the companion manifest; the selected PNG is copied into the workspace. No CLI/API fallback, resampling, or additional raster variant was used. Four SVGs are original code-native work based on the approved Delivery brief. Reused PNGs remain at their existing locations, referenced relatively without copying or modification.
+Companion manifest records actual dimensions/bytes/nonzero-alpha bounds, source pivots, display crops/sizes, layers, provenance, collision intent, approval state and canonical groups. Original11 entries are `approved 2026-09-27`; all28 new entries are `pending final phase review`. Reused filenames remain relative references to untouched public assets. Approval covers the first visual treatment, not collision or runtime correctness.
 
-The manifest includes all 11 production/reuse entries, dimensions, actual compressed file bytes, nonzero-alpha bounds, normalized source pivots, states, layers, display sizes, provenance, and pending approval. `rgbaDecodeBytes` is width × height × 4; SVG values estimate nominal rasterization, not fixed vector memory. Browser/GPU duplication, mipmaps and other overhead are excluded. Runtime world units and collision acceptance are explicitly uncalibrated.
+From repo root, `python3 docs/bastrop37/phase2/assets/build-chapter-vectors.py` reproduces only the new27 SVG candidates/register; it never overwrites approved Delivery artwork. `node docs/bastrop37/phase2/assets/measure-assets.mjs` measures all39 images with Chromium and writes the owned companion manifest. It uses data URLs for canvas alpha measurements. Neither script touches runtime files. [chapter-asset-review.html](assets/chapter-asset-review.html) is an isolated contact sheet with a local/public fallback for the reused hauler; the publication script was not changed by content; the coordinating agent owns its expanded chapter-review rewrite support.
 
-From repository root, `node docs/bastrop37/phase2/assets/measure-assets.mjs` remeasures files and writes this companion manifest. The script uses the repository's Playwright dependency and headless Chromium to rasterize SVG/PNG for alpha measurement. The initial file-URL read was blocked by canvas origin rules; the final reproducible script uses in-memory data URLs. No source file is mutated by measurement except the owned companion manifest output.
+## Verification and remaining acceptance
 
-[asset-review.html](assets/asset-review.html) is a standalone contact sheet. Its 1040×800 Chromium capture was visually inspected: Vlad at 64/80 px, Omega at64 px, signal at64×160, gate at400×180, neighborhood at960×240 and cropped actors at up to220 px. SVG XML parses and all manifest paths resolve. The final isolated HUD uses Vlad and Omega at 56×56 CSS px on desktop and 46×46 CSS px on mobile; director-reported independent review found both readable at those sizes. These final HUD sizes differ from the larger contact-sheet samples above. This proves static file rendering only; HUD composition, responsive state captures and text checks are owned by the HUD worker. No live gameplay, traffic drain, road loop, collision, memory profiling, or performance validation occurred.
+Visually inspected all five [chapter sheets](assets/chapter-asset-review.html): [L1 variants](assets/chapter-review-l1.png), [L2](assets/chapter-review-l2.png), [L3](assets/chapter-review-l3.png), [L4](assets/chapter-review-l4.png), [L5](assets/chapter-review-l5.png). Confirmed bus identity at90/180px, overlay/body alignment at220px, local-only relay indicators, distinct controller states, clear barrier retraction, unlit/restored signal distinction, and consistent state silhouettes. Original [asset-review.png](assets/asset-review.png) remains unchanged.
 
-## Acceptance and next steps
-
-Present this first kit with the HUD worker's Delivery ACTION, STORY, and LEVEL COMPLETE mockups at the four required viewports. Review helpful Vlad, contained Omega, legible gap, inland street depth, road reflections, and readable props. Stop for visual approval. Only after Phase 2 approval and explicit Phase 3 authorization should engineering bind source crops, projection scale, pivots and collision exclusions, test in motion, and optimize loading. Do not produce later chapter kits from this first review.
+Manifest measurement succeeds; all39 references/byte counts resolve; all31 SVG files parse; all14 canonical Phase 1 environment/prop/vehicle IDs resolve; every group member exists; approval counts are11 approved/28 pending. HUD worker/director own scene composition and responsive captures. Static review does not establish traffic clearing, relay range, barrier passage, escort combat, final release timing, storage, actual road loops or performance. Next: independent full Phase 2 visual review and user approval; Phase 3 implementation remains separately gated.

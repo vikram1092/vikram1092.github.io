@@ -1,0 +1,218 @@
+[
+  {
+    "id": "ENV-L2-MIDGROUND",
+    "group": "ENV-L2",
+    "file": "assets/env-l2-midground-v1.svg",
+    "state": "midground",
+    "layer": "midground",
+    "intent": "decorative; no collision"
+  },
+  {
+    "id": "ENV-L3-MIDGROUND",
+    "group": "ENV-L3",
+    "file": "assets/env-l3-midground-v1.svg",
+    "state": "midground",
+    "layer": "midground",
+    "intent": "decorative; no collision"
+  },
+  {
+    "id": "ENV-L4-RESERVOIR",
+    "group": "ENV-L4",
+    "file": "assets/env-l4-reservoir-v1.svg",
+    "state": "reservoir",
+    "layer": "distance",
+    "intent": "decorative; no collision"
+  },
+  {
+    "id": "ENV-L4-ROUTE",
+    "group": "ENV-L4",
+    "file": "assets/env-l4-route-v1.svg",
+    "state": "route",
+    "layer": "midground",
+    "intent": "decorative; no collision"
+  },
+  {
+    "id": "ENV-L5-MIDGROUND",
+    "group": "ENV-L5",
+    "file": "assets/env-l5-midground-v1.svg",
+    "state": "midground",
+    "layer": "midground",
+    "intent": "decorative; no collision"
+  },
+  {
+    "id": "ENV-L5-DAWN",
+    "group": "ENV-L5",
+    "file": "assets/env-l5-dawn-v1.svg",
+    "state": "dawn",
+    "layer": "atmosphere",
+    "intent": "decorative; no collision"
+  },
+  {
+    "id": "PROP-SIGNAL-RESTORED",
+    "group": "PROP-SIGNAL",
+    "file": "assets/signal-restored-v1.svg",
+    "state": "restored",
+    "layer": "roadside",
+    "intent": "decorative; no collision"
+  },
+  {
+    "id": "PROP-SERVICE-GATE-APPROACH",
+    "group": "PROP-SERVICE-GATE",
+    "file": "assets/approach-marker-v1.svg",
+    "state": "approach",
+    "layer": "roadside",
+    "intent": "decorative; no collision"
+  },
+  {
+    "id": "PROP-SERVICE-GATE-BLOCKED-CROSSING",
+    "group": "PROP-SERVICE-GATE",
+    "file": "assets/crossing-blocked-v1.svg",
+    "state": "blocked-crossing",
+    "layer": "roadside",
+    "intent": "authored obstruction footprint only; service bypass required"
+  },
+  {
+    "id": "PROP-INTAKE-INACTIVE",
+    "group": "PROP-INTAKE",
+    "file": "assets/intake-inactive-v1.svg",
+    "state": "inactive",
+    "layer": "roadside",
+    "intent": "posts off corridor; scan lines never collide"
+  },
+  {
+    "id": "PROP-INTAKE-ACTIVE",
+    "group": "PROP-INTAKE",
+    "file": "assets/intake-active-v1.svg",
+    "state": "active",
+    "layer": "roadside",
+    "intent": "posts off corridor; scan lines never collide"
+  },
+  {
+    "id": "VEH-RECOVERY-INACTIVE",
+    "group": "VEH-RECOVERY",
+    "file": "assets/recovery-inactive-v1.svg",
+    "state": "inactive",
+    "layer": "actor-overlay",
+    "intent": "overlay excluded from collision; existing hauler body requires later authored footprint"
+  },
+  {
+    "id": "VEH-RECOVERY-ACTIVE",
+    "group": "VEH-RECOVERY",
+    "file": "assets/recovery-active-v1.svg",
+    "state": "active",
+    "layer": "actor-overlay",
+    "intent": "overlay excluded from collision; existing hauler body requires later authored footprint"
+  },
+  {
+    "id": "PROP-RELAY-DORMANT",
+    "group": "PROP-RELAY",
+    "file": "assets/relay-dormant-v1.svg",
+    "state": "dormant",
+    "layer": "roadside",
+    "intent": "roadside geometry; light and link region excluded from collision"
+  },
+  {
+    "id": "PROP-RELAY-CONNECTING",
+    "group": "PROP-RELAY",
+    "file": "assets/relay-connecting-v1.svg",
+    "state": "connecting",
+    "layer": "roadside",
+    "intent": "roadside geometry; light and link region excluded from collision"
+  },
+  {
+    "id": "PROP-RELAY-LINKED",
+    "group": "PROP-RELAY",
+    "file": "assets/relay-linked-v1.svg",
+    "state": "linked",
+    "layer": "roadside",
+    "intent": "roadside geometry; light and link region excluded from collision"
+  },
+  {
+    "id": "PROP-CIVIC-NODE-DORMANT",
+    "group": "PROP-CIVIC-NODE",
+    "file": "assets/civic-node-dormant-v1.svg",
+    "state": "dormant",
+    "layer": "roadside",
+    "intent": "roadside geometry; light and link region excluded from collision"
+  },
+  {
+    "id": "PROP-CIVIC-NODE-LINKED",
+    "group": "PROP-CIVIC-NODE",
+    "file": "assets/civic-node-linked-v1.svg",
+    "state": "linked",
+    "layer": "roadside",
+    "intent": "roadside geometry; light and link region excluded from collision"
+  },
+  {
+    "id": "PROP-CIVIC-NODE-PUBLIC-ACTIVE",
+    "group": "PROP-CIVIC-NODE",
+    "file": "assets/civic-node-public-active-v1.svg",
+    "state": "public-active",
+    "layer": "roadside",
+    "intent": "roadside geometry; light and link region excluded from collision"
+  },
+  {
+    "id": "PROP-SPILLWAY-CLOSED",
+    "group": "PROP-SPILLWAY",
+    "file": "assets/spillway-closed-v1.svg",
+    "state": "closed",
+    "layer": "midground",
+    "intent": "decorative; no collision"
+  },
+  {
+    "id": "PROP-SPILLWAY-OPEN",
+    "group": "PROP-SPILLWAY",
+    "file": "assets/spillway-open-v1.svg",
+    "state": "open",
+    "layer": "midground",
+    "intent": "decorative; no collision"
+  },
+  {
+    "id": "PROP-SPILLWAY-WATER-LOW",
+    "group": "PROP-SPILLWAY",
+    "file": "assets/spillway-water-low-v1.svg",
+    "state": "water-low",
+    "layer": "water-overlay",
+    "intent": "lateral background water only; no collision or fluid simulation"
+  },
+  {
+    "id": "PROP-SPILLWAY-WATER-HIGH",
+    "group": "PROP-SPILLWAY",
+    "file": "assets/spillway-water-high-v1.svg",
+    "state": "water-high",
+    "layer": "water-overlay",
+    "intent": "lateral background water only; no collision or fluid simulation"
+  },
+  {
+    "id": "PROP-ROADBLOCK-CLOSED",
+    "group": "PROP-ROADBLOCK",
+    "file": "assets/barrier-closed-v1.svg",
+    "state": "closed",
+    "layer": "roadside",
+    "intent": "closed arm authored blocking footprint; retracted arm and posts outside safe corridor"
+  },
+  {
+    "id": "PROP-ROADBLOCK-OPEN",
+    "group": "PROP-ROADBLOCK",
+    "file": "assets/barrier-open-v1.svg",
+    "state": "open",
+    "layer": "roadside",
+    "intent": "closed arm authored blocking footprint; retracted arm and posts outside safe corridor"
+  },
+  {
+    "id": "PROP-ROADBLOCK-CONTROLLER-ACTIVE",
+    "group": "PROP-ROADBLOCK",
+    "file": "assets/controller-active-v1.svg",
+    "state": "controller-active",
+    "layer": "roadside",
+    "intent": "separate authored attack target; no hitbox from decorative glow"
+  },
+  {
+    "id": "PROP-ROADBLOCK-CONTROLLER-DISABLED",
+    "group": "PROP-ROADBLOCK",
+    "file": "assets/controller-disabled-v1.svg",
+    "state": "controller-disabled",
+    "layer": "roadside",
+    "intent": "separate authored attack target; no hitbox from decorative glow"
+  }
+]

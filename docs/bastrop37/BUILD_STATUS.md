@@ -1,25 +1,48 @@
 # Bastrop37 build status
 
-Active phase: **Phase 2 — minimum Delivery package ready; stopped for user visual review**. Updated 2026-09-27. Director: Astra/high. Phase 1 approval is recorded; the user reconfirmed “Approved. Start again” and explicitly authorized Phase 2 only. The first Delivery package must receive user visual approval before production expands. Phase 3, including M0/M1 and live HUD integration, remains unauthorized.
+Active phase: **Phase 2 — production and independent review complete; stopped for user completion approval**. Updated 2026-09-27. Director: Astra/high. Phase 1 is approved. User approved the published first Delivery package with “Okay let’s go with it. Anything else to do”, satisfying the first visual gate. The full bounded package is now produced; **final Phase 2 user approval remains pending**. Phase 3 (including M0/M1 and live HUD integration) remains unauthorized.
 
-## Active Phase 2 scope and ownership
+## Scope, ownership and decisions
 
-- Director owns this status and `handoffs/PHASE_2_DIRECTOR.md`; preserves the approved narrative and review gates.
-- `bastrop_content` (configured Sol/medium) owns `phase2/assets/`, companion asset manifest/specifications, and its Phase 2 handoff. Audit and reuse existing skyline, road, Jo, and traffic; produce one neutral Vlad portrait, Omega symbol, and minimal Delivery dressing.
-- `bastrop_hud` (configured Sol/medium) owns isolated `phase2/index.html`, preview styles/script, responsive captures, HUD specifications, and its handoff. No game page or production styles change.
-- `bastrop_reviewer` (configured Sol/high) rotates in after production for independent visual review; owns only its Phase 2 review handoff.
-- First review gate: ACTION, STORY, LEVEL COMPLETE at 1440×900, 1280×720, 1024×768, and 390×844; matched traffic/clear-road comparison; portrait/symbol at HUD size; one companion manifest sample.
-- Decisions: keep files isolated under `docs/bastrop37/phase2/`; never overwrite approved originals or live sprite manifest. New raster art uses the imagegen skill. Existing sprite-based/faked-depth vocabulary remains.
-- Completed first-package assets: one generated neutral Vlad portrait; code-native Omega symbol, neighborhood midground, dead signal, and open service gate. Existing skyline, road, Jo and civilian traffic remain unchanged and are referenced relatively. All art is **pending user visual approval**.
-- Completed isolated HUD: ACTION, STORY, LEVEL COMPLETE and matched-camera traffic/clear-road comparison; all 13 approved Delivery lines selectable; 24 captures across four required viewports; compact `phase2/captures/contact-sheet.png`. Actual portrait/symbol tiles are 56px desktop / 46px mobile, separately documented from larger asset-review samples.
-- Placeholders/deferred states: no missing image references or temporary portrait. Scene values are static illustrative samples; touch steering and traffic exits are not simulated. Service gate is visual dressing, not calibrated traversable geometry. Restored signal, later chapter kits, additional HUD states, performance/load optimization, and final Phase 3 handoff await the user review gate and bounded follow-up.
-- Outstanding: **user visual approval of this first Delivery package**, then authorized bounded Phase 2 follow-up and final handoff. Phase 2 is not complete; later chapter production has not begun.
-- Verification: director inspected source portrait, asset contact sheet, desktop Omega, mobile long Vlad/completion, and final HUD contact sheet. Existing `src/`, `public/`, and `tests/` contain exactly the same 87 files and SHA-256 contents as baseline. `node --check phase2/preview.js` passed; companion manifest has 11 valid references/byte counts. No runtime/performance/save behavior is claimed from isolated mockups.
-- Review corrections: added restrained pavement seams/grit and grounded prop shadows; corrected post-L1.03 objective to TAKE THE SERVICE LANE; raised mobile rider to leave 35.84px above completion card. Captures refreshed after fixes. Independent fresh-context Sol/high review **passes for presenting this first package**, with no unresolved blocker. Both reported defects were independently rechecked; only the user can approve the treatment. See `handoffs/PHASE_2_REVIEW.md`.
+- Director owns this status, phase boundaries, canonical phase-authority notes, and Phase 2 director / Phase 3 art-HUD handoffs.
+- Configured `bastrop_content` (Sol/medium) owns isolated art, manifest, specifications and content handoff; `bastrop_hud` (Sol/medium) owns isolated review page/styles/script, responsive captures, HUD specifications and handoff. Fresh configured `bastrop_reviewer` (Sol/high) owns independent final review/evidence.
+- First Delivery treatment is approved. Completing Phase 2 means the entire bounded asset register and HUD state list; no required later kit was silently deferred to M0/M1. New files remain candidates for final user approval.
+- Preserve sprite-based/faked-depth riding, existing assets and one neutral Vlad / one Omega identity. New raster art used the imagegen skill/tool; code-native layers/states use SVG. No new characters, audio or 3D, and no live gameplay/HUD integration.
+- Root owns user-authorized publication/build-copy maintenance. This publishes isolated review files only; it grants no Phase 3 authorization.
+
+## Completed production
+
+- **39 measured manifest entries**, covering every **14 canonical Phase 1 environment/prop/vehicle IDs** plus character identities. Approval split: 11 approved first-package entries, 28 new final-review candidates (27 SVGs and one transparent rear bus raster). All 31 SVGs parse; generated prompt/provenance and state-family pivots/dimensions are recorded.
+- All five environment treatments, neutral/active intake and recovery carrier composite, dormant/connecting/linked relays, freshwater reservoir/spillway and staged water, closed/open shared barrier with separate active/disabled controller, anonymous civilian bus, dormant/linked/public civic node, dawn/recovery signal, and Delivery approach/blocked-crossing dressing.
+- **37 isolated chapter/HUD samples** cover title, action/drain/story, equipment records, abilities/optional Overdrive, local link states, escort condition/range, failure, pause/settings/log, honest save results, chapter completions, final public activation, dawn dialogue and protected recovery travel. Approved Delivery views remain available.
+- All **50 canonical dialogue lines** are included exactly. Two carrier records receive separate acknowledgment before all seven confrontation lines; release/dawn exchanges retain all three lines each. Restored signals are withheld until subsequent protected recovery travel.
+- Completed [asset specifications](phase2/ASSET_SPECIFICATIONS.md), [HUD behavior/state map](phase2/HUD_SPECIFICATIONS.md), [companion manifest](phase2/asset-manifest.json), [Phase 3 art/HUD handoff](handoffs/PHASE_3_ART_AND_HUD.md), and worker/director handoffs.
+
+## Verification and review
+
+- Reproducible capture/check script: `node docs/bastrop37/phase2/captures/capture-check.mjs` against a repository-root static server; `REVIEW_URL` can select the published preview. **148 state/viewport layouts** (37 × four required sizes) checked; default panels have no horizontal overflow, missing images or page errors. Expanded pause disclosures intentionally scroll to accessible controls.
+- Independent review validates all 39 manifest dimensions, 31 SVGs, exact 50-line canonical copy, equipment/refusal sequence, public/recovery gating and selector reset. Original Delivery long dialogue and completion were rechecked at all four viewports.
+- Director inspected actual new chapter asset sheets and representative desktop/mobile scenes. Final L4 revisions place spillway outside HUD backplates, connect the shared barrier to a broad uphill branch, keep Jo/bus below it, and separate interception labels. Static geometry proposes spatial relationships; no navigability or collision is claimed.
+- Existing `src/`, `public/`, and `tests/` inventory and SHA-256 contents remain exactly **87 unchanged files**. Root's isolated-review publication script change is authorized and outside that protected runtime baseline.
+- Final independent recommendation: **ready for final Phase 2 user approval; no unresolved blocker**. All final L4 clearance/route corrections were independently rechecked. See [PHASE_2_FINAL_REVIEW.md](handoffs/PHASE_2_FINAL_REVIEW.md). Earlier [first-gate review](handoffs/PHASE_2_REVIEW.md) remains historical evidence.
+
+## Placeholders, limits and outstanding work
+
+No missing required image or temporary character placeholder remains. Numeric instruments, meters, save results, selected chapter state and road geometry are illustrative static samples. Controls select review states; they do not simulate riding, checkpoint storage, traffic exits, encounter resolution or public release.
+
+Runtime projection/world scale, alpha-crop/pivot/collision compatibility, blade reach, road seams in motion, actor exits, escort ranges, loading/performance, device coverage and large-text behavior are Phase 3 verification obligations, not missing Phase 2 art. Bus/traffic visible-body crops and original alpha artifacts are explicitly documented. New art remains pending final user acceptance.
+
+**Exact next step:** present the full chapter/state sheets and interactive review page for user Phase 2 completion approval. Stop here. Only after that approval and explicit Phase 3 authorization may M0/M1 implementation begin; later milestones remain separately bounded.
+
+## Full package review links
+
+- [Chapter contact sheet](phase2/captures/full-contact-chapters.png), [HUD state contact sheet](phase2/captures/full-contact-states.png), [all chapter asset states](phase2/assets/chapter-asset-review.html).
+- Isolated review page: <https://vikramramkumar.me/docs/bastrop37/phase2/>; final publication/deployment verification is owned and reported by root after this handoff.
+- [Director handoff](handoffs/PHASE_2_DIRECTOR.md), [content handoff](handoffs/PHASE_2_CONTENT.md), [HUD handoff](handoffs/PHASE_2_HUD.md), [final independent review](handoffs/PHASE_2_FINAL_REVIEW.md), [Phase 3 handoff](handoffs/PHASE_3_ART_AND_HUD.md).
 
 ## First Delivery visual review links
 
-- User authorized pushing the current project and publishing web-accessible review links on 2026-09-27. This is publication authorization only; visual approval and Phase 2 expansion remain pending. The build copies the isolated review into the static site without integrating the HUD into gameplay.
+- User authorized pushing the current project and publishing web-accessible review links on 2026-09-27. The user subsequently approved the first visual package and authorized continuation of the originally requested Phase 2 package; publication remains separate from Phase 3 implementation. The build copies the isolated review into the static site without integrating the HUD into gameplay.
 - Published review target: <https://vikramramkumar.me/docs/bastrop37/phase2/>; deployment verification is recorded in the delivery response.
 - Live isolated preview while local server runs: <http://localhost:4178/docs/bastrop37/phase2/>. Restart from repository root using `python3 -m http.server 4178` if needed.
 - [HUD contact sheet](phase2/captures/contact-sheet.png), [asset review sheet](phase2/assets/asset-review.png), [asset specifications](phase2/ASSET_SPECIFICATIONS.md), [HUD specifications](phase2/HUD_SPECIFICATIONS.md), [companion manifest](phase2/asset-manifest.json).
@@ -78,7 +101,7 @@ Existing deleted prototype plan, editor swap file, old plan, `.codex/`, untracke
 
 ## Phase 2 handoff and exact next steps
 
-1. Phase 1 approval received on 2026-09-27, including the two structural choices. Phase 2 is now explicitly authorized; work is bounded to the first Delivery visual review package. Any later structural change requires revising and reviewing the affected chapter before production.
+1. Historical first-package plan below is fulfilled. Phase 1 and first Delivery visual approval were received; the full Phase 2 package is now at final user-approval gate. Any structural story change still requires narrative review.
 2. Only after explicit Phase 2 authorization, produce the first Delivery treatment: reuse existing Jo/bike/traffic; minimal `ENV-L1`, `PROP-SIGNAL`, `PROP-SERVICE-GATE`; one neutral Vlad portrait; one Omega symbol; optional module detail only if it reads clearly.
 3. Produce isolated ACTION, STORY, and LEVEL COMPLETE HUD mockups at 1440×900, 1280×720, 1024×768, and portrait 390×844. Show full manual-advance dialogue, one objective, the clear road, truthful completion/continue states, and control separation. Use L1.01–05, the exact line IDs, `DELIVERY APPROACH REACHED`, and `CONTINUE TO INTAKE`.
 4. Supply one manifest sample and traffic-versus-cleared-road scene comparison in mockups. Review at intended size, including a plausible helpful Vlad and a readable central road. No live gameplay integration; no later-level asset campaign yet.

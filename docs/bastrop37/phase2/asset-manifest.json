@@ -1,8 +1,8 @@
 {
   "version": 1,
   "kind": "Phase 2 companion manifest; not a runtime manifest",
-  "approval": "pending visual approval",
-  "scope": "Delivery first review only",
+  "approval": "Delivery approved 2026-09-27; new states pending final phase review",
+  "scope": "Full bounded Phase 2 art register; no runtime integration",
   "pathBase": "directory containing this manifest",
   "memoryNote": "RGBA estimate excludes mipmaps, GPU copies and browser overhead; SVG number is rasterization at nominal source size, not fixed vector memory",
   "groups": {
@@ -10,6 +10,80 @@
       "ENV-L1-SKYLINE",
       "ENV-L1-MIDGROUND",
       "ENV-L1-ROAD"
+    ],
+    "CHAR-VLAD": [
+      "CHAR-VLAD"
+    ],
+    "CHAR-OMEGA": [
+      "CHAR-OMEGA"
+    ],
+    "CHAR-JO": [
+      "CHAR-JO"
+    ],
+    "PROP-SIGNAL": [
+      "PROP-SIGNAL",
+      "PROP-SIGNAL-RESTORED"
+    ],
+    "PROP-SERVICE-GATE": [
+      "PROP-SERVICE-GATE",
+      "PROP-SERVICE-GATE-APPROACH",
+      "PROP-SERVICE-GATE-BLOCKED-CROSSING"
+    ],
+    "VEH-EVAC": [
+      "VEH-EVAC"
+    ],
+    "ENV-L2": [
+      "ENV-L1-SKYLINE",
+      "ENV-L1-ROAD",
+      "ENV-L2-MIDGROUND"
+    ],
+    "ENV-L3": [
+      "ENV-L1-SKYLINE",
+      "ENV-L1-ROAD",
+      "ENV-L3-MIDGROUND"
+    ],
+    "ENV-L4": [
+      "ENV-L1-SKYLINE",
+      "ENV-L1-ROAD",
+      "ENV-L4-RESERVOIR",
+      "ENV-L4-ROUTE"
+    ],
+    "ENV-L5": [
+      "ENV-L1-SKYLINE",
+      "ENV-L1-ROAD",
+      "ENV-L5-MIDGROUND",
+      "ENV-L5-DAWN"
+    ],
+    "PROP-INTAKE": [
+      "PROP-INTAKE-INACTIVE",
+      "PROP-INTAKE-ACTIVE"
+    ],
+    "VEH-RECOVERY": [
+      "TRAFFIC-HAULER",
+      "VEH-RECOVERY-INACTIVE",
+      "VEH-RECOVERY-ACTIVE"
+    ],
+    "PROP-RELAY": [
+      "PROP-RELAY-DORMANT",
+      "PROP-RELAY-CONNECTING",
+      "PROP-RELAY-LINKED"
+    ],
+    "PROP-CIVIC-NODE": [
+      "PROP-CIVIC-NODE-DORMANT",
+      "PROP-CIVIC-NODE-LINKED",
+      "PROP-CIVIC-NODE-PUBLIC-ACTIVE"
+    ],
+    "PROP-SPILLWAY": [
+      "PROP-SPILLWAY-CLOSED",
+      "PROP-SPILLWAY-OPEN",
+      "PROP-SPILLWAY-WATER-LOW",
+      "PROP-SPILLWAY-WATER-HIGH"
+    ],
+    "PROP-ROADBLOCK": [
+      "PROP-ROADBLOCK-CLOSED",
+      "PROP-ROADBLOCK-OPEN",
+      "PROP-ROADBLOCK-CONTROLLER-ACTIVE",
+      "PROP-ROADBLOCK-CONTROLLER-DISABLED"
     ]
   },
   "assets": [
@@ -38,13 +112,14 @@
       "blend": "source-over",
       "state": "neutral",
       "intendedDisplay": "56×56 CSS px desktop; 46×46 CSS px mobile (final isolated HUD); contact sheet 64/80 px",
-      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "intendedWorldSize": "HUD only; no world-space size",
       "collision": {
         "enabledInPackage": false,
         "intent": "portrait; no world footprint",
+        "representation": "excluded; scenery/overlay cannot define collision",
         "acceptance": "not tested or approved in gameplay"
       },
-      "approval": "pending visual approval",
+      "approval": "approved 2026-09-27",
       "provenance": {
         "method": "built-in image_gen",
         "promptFile": "assets/vlad-neutral-v1.prompt.txt",
@@ -77,16 +152,17 @@
       "blend": "source-over",
       "state": "contained-idle",
       "intendedDisplay": "56×56 CSS px desktop; 46×46 CSS px mobile (final isolated HUD); contact sheet 64 px",
-      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "intendedWorldSize": "HUD only; no world-space size",
       "collision": {
         "enabledInPackage": false,
         "intent": "local interface; no world footprint",
+        "representation": "excluded; scenery/overlay cannot define collision",
         "acceptance": "not tested or approved in gameplay"
       },
-      "approval": "pending visual approval",
+      "approval": "approved 2026-09-27",
       "provenance": {
         "method": "original code-native SVG",
-        "brief": "Phase 1 Delivery and Phase 2 minimal visual contract; no raster generation"
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
       }
     },
     {
@@ -114,16 +190,17 @@
       "blend": "source-over",
       "state": "dark-neighborhood",
       "intendedDisplay": "viewport width; preserve aspect ratio",
-      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "intendedWorldSize": "Viewport/parallax layer; road texture maps to existing road width; not an obstacle. Phase 3 projection calibration required",
       "collision": {
         "enabledInPackage": false,
         "intent": "scenery only",
+        "representation": "excluded; scenery/overlay cannot define collision",
         "acceptance": "not tested or approved in gameplay"
       },
-      "approval": "pending visual approval",
+      "approval": "approved 2026-09-27",
       "provenance": {
         "method": "original code-native SVG",
-        "brief": "Phase 1 Delivery and Phase 2 minimal visual contract; no raster generation"
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
       }
     },
     {
@@ -151,16 +228,17 @@
       "blend": "source-over",
       "state": "dead",
       "intendedDisplay": "40–100 CSS px wide",
-      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "intendedWorldSize": "Provisional pole height 0.7 lane width, signal head width 0.14 lane; roadside only. Phase 3 calibration required",
       "collision": {
         "enabledInPackage": false,
         "intent": "off-corridor roadside prop",
+        "representation": "excluded; scenery/overlay cannot define collision",
         "acceptance": "not tested or approved in gameplay"
       },
-      "approval": "pending visual approval",
+      "approval": "approved 2026-09-27",
       "provenance": {
         "method": "original code-native SVG",
-        "brief": "Phase 1 Delivery and Phase 2 minimal visual contract; no raster generation"
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
       }
     },
     {
@@ -188,16 +266,17 @@
       "blend": "source-over",
       "state": "open",
       "intendedDisplay": "280–640 CSS px wide",
-      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "intendedWorldSize": "Provisional clear opening at least 1.2 service-lane widths; posts outside corridor, full arch about 1.5 lane widths. Phase 3 calibration required",
       "collision": {
         "enabledInPackage": false,
         "intent": "open center; posts off corridor",
+        "representation": "excluded; scenery/overlay cannot define collision",
         "acceptance": "not tested or approved in gameplay"
       },
-      "approval": "pending visual approval",
+      "approval": "approved 2026-09-27",
       "provenance": {
         "method": "original code-native SVG",
-        "brief": "Phase 1 Delivery and Phase 2 minimal visual contract; no raster generation"
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
       }
     },
     {
@@ -225,13 +304,14 @@
       "blend": "source-over",
       "state": "existing",
       "intendedDisplay": "viewport width",
-      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "intendedWorldSize": "Viewport/parallax layer; road texture maps to existing road width; not an obstacle. Phase 3 projection calibration required",
       "collision": {
         "enabledInPackage": false,
         "intent": "scenery only",
+        "representation": "excluded; scenery/overlay cannot define collision",
         "acceptance": "not tested or approved in gameplay"
       },
-      "approval": "pending visual approval",
+      "approval": "approved 2026-09-27",
       "provenance": {
         "method": "existing repository asset reused by relative reference",
         "note": "No original modified; display crops are new review-only recommendations"
@@ -262,13 +342,14 @@
       "blend": "source-over",
       "state": "existing",
       "intendedDisplay": "perspective strips",
-      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "intendedWorldSize": "Viewport/parallax layer; road texture maps to existing road width; not an obstacle. Phase 3 projection calibration required",
       "collision": {
         "enabledInPackage": false,
         "intent": "texture only",
+        "representation": "excluded; scenery/overlay cannot define collision",
         "acceptance": "not tested or approved in gameplay"
       },
-      "approval": "pending visual approval",
+      "approval": "approved 2026-09-27",
       "provenance": {
         "method": "existing repository asset reused by relative reference",
         "note": "No original modified; display crops are new review-only recommendations"
@@ -304,13 +385,14 @@
       "blend": "source-over",
       "state": "straight",
       "intendedDisplay": "206×283 body source; scale to scene",
-      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "intendedWorldSize": "Preserve current rider render proportions; provisional body width 0.3 lane. No hitbox change; Phase 3 verification required",
       "collision": {
         "enabledInPackage": false,
         "intent": "existing runtime only; no new collision contract",
+        "representation": "preserve existing body mask pending gameplay review",
         "acceptance": "not tested or approved in gameplay"
       },
-      "approval": "pending visual approval",
+      "approval": "approved 2026-09-27",
       "provenance": {
         "method": "existing repository asset reused by relative reference",
         "note": "No original modified; display crops are new review-only recommendations"
@@ -346,13 +428,14 @@
       "blend": "source-over",
       "state": "rear",
       "intendedDisplay": "80–220 CSS px body width by depth",
-      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "intendedWorldSize": "Provisional civilian body width 0.7 lane; preserve existing proportions, no hitbox change. Phase 3 calibration required",
       "collision": {
         "enabledInPackage": false,
         "intent": "civilian; no new collision contract",
+        "representation": "preserve existing body mask pending gameplay review",
         "acceptance": "not tested or approved in gameplay"
       },
-      "approval": "pending visual approval",
+      "approval": "approved 2026-09-27",
       "provenance": {
         "method": "existing repository asset reused by relative reference",
         "note": "No original modified; display crops are new review-only recommendations"
@@ -388,13 +471,14 @@
       "blend": "source-over",
       "state": "rear",
       "intendedDisplay": "80–220 CSS px body width by depth",
-      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "intendedWorldSize": "Provisional civilian body width 0.7 lane; preserve existing proportions, no hitbox change. Phase 3 calibration required",
       "collision": {
         "enabledInPackage": false,
         "intent": "civilian; no new collision contract",
+        "representation": "preserve existing body mask pending gameplay review",
         "acceptance": "not tested or approved in gameplay"
       },
-      "approval": "pending visual approval",
+      "approval": "approved 2026-09-27",
       "provenance": {
         "method": "existing repository asset reused by relative reference",
         "note": "No original modified; display crops are new review-only recommendations"
@@ -430,16 +514,1088 @@
       "blend": "source-over",
       "state": "rear",
       "intendedDisplay": "80–220 CSS px body width by depth",
-      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "intendedWorldSize": "Provisional body width 0.75 lane; preserve existing hauler proportions (76×66 renderer units is compatibility reference only). Overlay exactly co-sized to cropped hauler; Phase 3 calibration required",
       "collision": {
         "enabledInPackage": false,
         "intent": "civilian; no new collision contract",
+        "representation": "preserve existing body mask pending gameplay review",
         "acceptance": "not tested or approved in gameplay"
       },
-      "approval": "pending visual approval",
+      "approval": "approved 2026-09-27",
       "provenance": {
         "method": "existing repository asset reused by relative reference",
         "note": "No original modified; display crops are new review-only recommendations"
+      }
+    },
+    {
+      "id": "ENV-L2-MIDGROUND",
+      "file": "assets/env-l2-midground-v1.svg",
+      "width": 1920,
+      "height": 480,
+      "alphaBounds": {
+        "x": 0,
+        "y": 70,
+        "w": 1920,
+        "h": 410
+      },
+      "rgbaDecodeBytes": 3686400,
+      "bytes": 4920,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "midground",
+      "blend": "source-over",
+      "state": "midground",
+      "intendedDisplay": "viewport width; preserve aspect ratio",
+      "intendedWorldSize": "Viewport/parallax layer; road texture maps to existing road width; not an obstacle. Phase 3 projection calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "decorative; no collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "ENV-L3-MIDGROUND",
+      "file": "assets/env-l3-midground-v1.svg",
+      "width": 1920,
+      "height": 480,
+      "alphaBounds": {
+        "x": 0,
+        "y": 62,
+        "w": 1920,
+        "h": 418
+      },
+      "rgbaDecodeBytes": 3686400,
+      "bytes": 4728,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "midground",
+      "blend": "source-over",
+      "state": "midground",
+      "intendedDisplay": "viewport width; preserve aspect ratio",
+      "intendedWorldSize": "Viewport/parallax layer; road texture maps to existing road width; not an obstacle. Phase 3 projection calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "decorative; no collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "ENV-L4-RESERVOIR",
+      "file": "assets/env-l4-reservoir-v1.svg",
+      "width": 1920,
+      "height": 480,
+      "alphaBounds": {
+        "x": 0,
+        "y": 20,
+        "w": 1920,
+        "h": 460
+      },
+      "rgbaDecodeBytes": 3686400,
+      "bytes": 771,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "distance",
+      "blend": "source-over",
+      "state": "reservoir",
+      "intendedDisplay": "viewport width; preserve aspect ratio",
+      "intendedWorldSize": "Viewport/parallax layer; road texture maps to existing road width; not an obstacle. Phase 3 projection calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "decorative; no collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "ENV-L4-ROUTE",
+      "file": "assets/env-l4-route-v1.svg",
+      "width": 1920,
+      "height": 480,
+      "alphaBounds": {
+        "x": 0,
+        "y": 166,
+        "w": 1920,
+        "h": 314
+      },
+      "rgbaDecodeBytes": 3686400,
+      "bytes": 818,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "midground",
+      "blend": "source-over",
+      "state": "route",
+      "intendedDisplay": "viewport width; preserve aspect ratio",
+      "intendedWorldSize": "Viewport/parallax layer; road texture maps to existing road width; not an obstacle. Phase 3 projection calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "decorative; no collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "ENV-L5-MIDGROUND",
+      "file": "assets/env-l5-midground-v1.svg",
+      "width": 1920,
+      "height": 480,
+      "alphaBounds": {
+        "x": 0,
+        "y": 75,
+        "w": 1920,
+        "h": 405
+      },
+      "rgbaDecodeBytes": 3686400,
+      "bytes": 2926,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "midground",
+      "blend": "source-over",
+      "state": "midground",
+      "intendedDisplay": "viewport width; preserve aspect ratio",
+      "intendedWorldSize": "Viewport/parallax layer; road texture maps to existing road width; not an obstacle. Phase 3 projection calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "decorative; no collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "ENV-L5-DAWN",
+      "file": "assets/env-l5-dawn-v1.svg",
+      "width": 1920,
+      "height": 480,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 480
+      },
+      "rgbaDecodeBytes": 3686400,
+      "bytes": 395,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "atmosphere",
+      "blend": "source-over",
+      "state": "dawn",
+      "intendedDisplay": "viewport width; preserve aspect ratio",
+      "intendedWorldSize": "Viewport/parallax layer; road texture maps to existing road width; not an obstacle. Phase 3 projection calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "decorative; no collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-SIGNAL-RESTORED",
+      "file": "assets/signal-restored-v1.svg",
+      "width": 160,
+      "height": 400,
+      "alphaBounds": {
+        "x": 37,
+        "y": 8,
+        "w": 88,
+        "h": 392
+      },
+      "rgbaDecodeBytes": 256000,
+      "bytes": 863,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "restored",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional pole height 0.7 lane width, signal head width 0.14 lane; roadside only. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "decorative; no collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-SERVICE-GATE-APPROACH",
+      "file": "assets/approach-marker-v1.svg",
+      "width": 240,
+      "height": 360,
+      "alphaBounds": {
+        "x": 14,
+        "y": 22,
+        "w": 212,
+        "h": 338
+      },
+      "rgbaDecodeBytes": 345600,
+      "bytes": 411,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "approach",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional sign width 0.4 lane, height 0.6 lane; roadside only. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "decorative; no collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-SERVICE-GATE-BLOCKED-CROSSING",
+      "file": "assets/crossing-blocked-v1.svg",
+      "width": 800,
+      "height": 240,
+      "alphaBounds": {
+        "x": 0,
+        "y": 110,
+        "w": 790,
+        "h": 130
+      },
+      "rgbaDecodeBytes": 768000,
+      "bytes": 810,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "blocked-crossing",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional blocking span 1.2 lane widths; retracted/open state leaves at least 1 full lane clear. Closed crossing needs separate 1-lane bypass. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "authored obstruction footprint only; service bypass required",
+        "representation": "authored blocking footprint",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-INTAKE-INACTIVE",
+      "file": "assets/intake-inactive-v1.svg",
+      "width": 800,
+      "height": 360,
+      "alphaBounds": {
+        "x": 38,
+        "y": 20,
+        "w": 724,
+        "h": 340
+      },
+      "rgbaDecodeBytes": 1152000,
+      "bytes": 541,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "inactive",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional clear opening at least 1.2 service-lane widths; posts outside corridor, full arch about 1.5 lane widths. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "posts off corridor; scan lines never collide",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-INTAKE-ACTIVE",
+      "file": "assets/intake-active-v1.svg",
+      "width": 800,
+      "height": 360,
+      "alphaBounds": {
+        "x": 38,
+        "y": 20,
+        "w": 724,
+        "h": 340
+      },
+      "rgbaDecodeBytes": 1152000,
+      "bytes": 629,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "active",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional clear opening at least 1.2 service-lane widths; posts outside corridor, full arch about 1.5 lane widths. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "posts off corridor; scan lines never collide",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "VEH-RECOVERY-INACTIVE",
+      "file": "assets/recovery-inactive-v1.svg",
+      "width": 520,
+      "height": 420,
+      "alphaBounds": {
+        "x": 136,
+        "y": 59,
+        "w": 248,
+        "h": 202
+      },
+      "rgbaDecodeBytes": 873600,
+      "bytes": 502,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "actor-overlay",
+      "blend": "source-over",
+      "state": "inactive",
+      "intendedDisplay": "80–220 CSS px wide, co-sized with hauler display crop",
+      "intendedWorldSize": "Provisional body width 0.75 lane; preserve existing hauler proportions (76×66 renderer units is compatibility reference only). Overlay exactly co-sized to cropped hauler; Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "overlay excluded from collision; existing hauler body requires later authored footprint",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "VEH-RECOVERY-ACTIVE",
+      "file": "assets/recovery-active-v1.svg",
+      "width": 520,
+      "height": 420,
+      "alphaBounds": {
+        "x": 136,
+        "y": 59,
+        "w": 248,
+        "h": 202
+      },
+      "rgbaDecodeBytes": 873600,
+      "bytes": 590,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "actor-overlay",
+      "blend": "source-over",
+      "state": "active",
+      "intendedDisplay": "80–220 CSS px wide, co-sized with hauler display crop",
+      "intendedWorldSize": "Provisional body width 0.75 lane; preserve existing hauler proportions (76×66 renderer units is compatibility reference only). Overlay exactly co-sized to cropped hauler; Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "overlay excluded from collision; existing hauler body requires later authored footprint",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-RELAY-DORMANT",
+      "file": "assets/relay-dormant-v1.svg",
+      "width": 240,
+      "height": 400,
+      "alphaBounds": {
+        "x": 13,
+        "y": 19,
+        "w": 214,
+        "h": 381
+      },
+      "rgbaDecodeBytes": 384000,
+      "bytes": 819,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "dormant",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional cabinet width 0.2 lane, height 0.33 lane; set outside drivable lane. Link corridor is separate gameplay geometry. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "roadside geometry; light and link region excluded from collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-RELAY-CONNECTING",
+      "file": "assets/relay-connecting-v1.svg",
+      "width": 240,
+      "height": 400,
+      "alphaBounds": {
+        "x": 13,
+        "y": 19,
+        "w": 214,
+        "h": 381
+      },
+      "rgbaDecodeBytes": 384000,
+      "bytes": 815,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "connecting",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional cabinet width 0.2 lane, height 0.33 lane; set outside drivable lane. Link corridor is separate gameplay geometry. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "roadside geometry; light and link region excluded from collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-RELAY-LINKED",
+      "file": "assets/relay-linked-v1.svg",
+      "width": 240,
+      "height": 400,
+      "alphaBounds": {
+        "x": 13,
+        "y": 19,
+        "w": 214,
+        "h": 381
+      },
+      "rgbaDecodeBytes": 384000,
+      "bytes": 827,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "linked",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional cabinet width 0.2 lane, height 0.33 lane; set outside drivable lane. Link corridor is separate gameplay geometry. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "roadside geometry; light and link region excluded from collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-CIVIC-NODE-DORMANT",
+      "file": "assets/civic-node-dormant-v1.svg",
+      "width": 240,
+      "height": 400,
+      "alphaBounds": {
+        "x": 11,
+        "y": 19,
+        "w": 218,
+        "h": 381
+      },
+      "rgbaDecodeBytes": 384000,
+      "bytes": 958,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "dormant",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional cabinet width 0.2 lane, height 0.33 lane; set outside drivable lane. Link corridor is separate gameplay geometry. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "roadside geometry; light and link region excluded from collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-CIVIC-NODE-LINKED",
+      "file": "assets/civic-node-linked-v1.svg",
+      "width": 240,
+      "height": 400,
+      "alphaBounds": {
+        "x": 11,
+        "y": 19,
+        "w": 218,
+        "h": 381
+      },
+      "rgbaDecodeBytes": 384000,
+      "bytes": 966,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "linked",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional cabinet width 0.2 lane, height 0.33 lane; set outside drivable lane. Link corridor is separate gameplay geometry. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "roadside geometry; light and link region excluded from collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-CIVIC-NODE-PUBLIC-ACTIVE",
+      "file": "assets/civic-node-public-active-v1.svg",
+      "width": 240,
+      "height": 400,
+      "alphaBounds": {
+        "x": 11,
+        "y": 19,
+        "w": 218,
+        "h": 381
+      },
+      "rgbaDecodeBytes": 384000,
+      "bytes": 1077,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "public-active",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional cabinet width 0.2 lane, height 0.33 lane; set outside drivable lane. Link corridor is separate gameplay geometry. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "roadside geometry; light and link region excluded from collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-SPILLWAY-CLOSED",
+      "file": "assets/spillway-closed-v1.svg",
+      "width": 640,
+      "height": 400,
+      "alphaBounds": {
+        "x": 0,
+        "y": 22,
+        "w": 640,
+        "h": 378
+      },
+      "rgbaDecodeBytes": 1024000,
+      "bytes": 1245,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "midground",
+      "blend": "source-over",
+      "state": "closed",
+      "intendedDisplay": "viewport width; preserve aspect ratio",
+      "intendedWorldSize": "Viewport/parallax layer; road texture maps to existing road width; not an obstacle. Phase 3 projection calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "decorative; no collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-SPILLWAY-OPEN",
+      "file": "assets/spillway-open-v1.svg",
+      "width": 640,
+      "height": 400,
+      "alphaBounds": {
+        "x": 0,
+        "y": 22,
+        "w": 640,
+        "h": 378
+      },
+      "rgbaDecodeBytes": 1024000,
+      "bytes": 682,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "midground",
+      "blend": "source-over",
+      "state": "open",
+      "intendedDisplay": "viewport width; preserve aspect ratio",
+      "intendedWorldSize": "Viewport/parallax layer; road texture maps to existing road width; not an obstacle. Phase 3 projection calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "decorative; no collision",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-SPILLWAY-WATER-LOW",
+      "file": "assets/spillway-water-low-v1.svg",
+      "width": 640,
+      "height": 400,
+      "alphaBounds": {
+        "x": 20,
+        "y": 235,
+        "w": 600,
+        "h": 165
+      },
+      "rgbaDecodeBytes": 1024000,
+      "bytes": 617,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "water-overlay",
+      "blend": "source-over",
+      "state": "water-low",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional lateral spillway span 2 lane widths; water co-sized to spillway and outside escape lane. Background depth calibration required in Phase 3",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "lateral background water only; no collision or fluid simulation",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-SPILLWAY-WATER-HIGH",
+      "file": "assets/spillway-water-high-v1.svg",
+      "width": 640,
+      "height": 400,
+      "alphaBounds": {
+        "x": 20,
+        "y": 145,
+        "w": 600,
+        "h": 255
+      },
+      "rgbaDecodeBytes": 1024000,
+      "bytes": 623,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "water-overlay",
+      "blend": "source-over",
+      "state": "water-high",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional lateral spillway span 2 lane widths; water co-sized to spillway and outside escape lane. Background depth calibration required in Phase 3",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "lateral background water only; no collision or fluid simulation",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-ROADBLOCK-CLOSED",
+      "file": "assets/barrier-closed-v1.svg",
+      "width": 800,
+      "height": 240,
+      "alphaBounds": {
+        "x": 20,
+        "y": 142,
+        "w": 760,
+        "h": 98
+      },
+      "rgbaDecodeBytes": 768000,
+      "bytes": 806,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "closed",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional blocking span 1.2 lane widths; retracted/open state leaves at least 1 full lane clear. Closed crossing needs separate 1-lane bypass. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "closed arm authored blocking footprint; retracted arm and posts outside safe corridor",
+        "representation": "authored blocking footprint",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-ROADBLOCK-OPEN",
+      "file": "assets/barrier-open-v1.svg",
+      "width": 800,
+      "height": 240,
+      "alphaBounds": {
+        "x": 20,
+        "y": 142,
+        "w": 760,
+        "h": 98
+      },
+      "rgbaDecodeBytes": 768000,
+      "bytes": 403,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "open",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional blocking span 1.2 lane widths; retracted/open state leaves at least 1 full lane clear. Closed crossing needs separate 1-lane bypass. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "closed arm authored blocking footprint; retracted arm and posts outside safe corridor",
+        "representation": "excluded; scenery/overlay cannot define collision",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-ROADBLOCK-CONTROLLER-ACTIVE",
+      "file": "assets/controller-active-v1.svg",
+      "width": 160,
+      "height": 240,
+      "alphaBounds": {
+        "x": 14,
+        "y": 22,
+        "w": 132,
+        "h": 218
+      },
+      "rgbaDecodeBytes": 153600,
+      "bytes": 463,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "controller-active",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional cabinet width 0.12 lane, height 0.18 lane; safe adjacent attack approach, authored target footprint. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "separate authored attack target; no hitbox from decorative glow",
+        "representation": "authored target footprint, not alpha mask",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "PROP-ROADBLOCK-CONTROLLER-DISABLED",
+      "file": "assets/controller-disabled-v1.svg",
+      "width": 160,
+      "height": 240,
+      "alphaBounds": {
+        "x": 14,
+        "y": 22,
+        "w": 132,
+        "h": 218
+      },
+      "rgbaDecodeBytes": 153600,
+      "bytes": 547,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "controller-disabled",
+      "intendedDisplay": "60–240 CSS px high by depth",
+      "intendedWorldSize": "Provisional cabinet width 0.12 lane, height 0.18 lane; safe adjacent attack approach, authored target footprint. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "separate authored attack target; no hitbox from decorative glow",
+        "representation": "authored target footprint, not alpha mask",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Approved Phase 1 chapter requirements; minimal Phase 2 code-native state variants, no raster generation"
+      }
+    },
+    {
+      "id": "VEH-EVAC",
+      "file": "assets/evac-bus-rear-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "alphaBounds": {
+        "x": 0,
+        "y": 49,
+        "w": 1238,
+        "h": 1205
+      },
+      "rgbaDecodeBytes": 6290064,
+      "bytes": 1285486,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": {
+        "x": 165,
+        "y": 90,
+        "w": 920,
+        "h": 1070
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "actor",
+      "blend": "source-over",
+      "state": "rear",
+      "intendedDisplay": "90–200 CSS px body width by depth",
+      "intendedWorldSize": "Provisional bus body width 0.8 lane, separate parallel escort corridor at least 1 lane wide; noncolliding escort geometry. Phase 3 calibration required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "anonymous civilian bus; authored noncolliding escort path; condition is not body collision",
+        "representation": "authored noncolliding parallel route",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending final phase review",
+      "provenance": {
+        "method": "built-in image_gen",
+        "promptFile": "assets/evac-bus-rear-v1.prompt.txt",
+        "source": "generated_images/01a0e390-a427-77a2-83c0-723de975932d/exec-62f887df-2ba2-4199-b51d-41dd7144d63e.png",
+        "note": "Transparent output preserved without resampling; negligible-alpha distant pixels excluded only by preview display crop"
       }
     }
   ]
