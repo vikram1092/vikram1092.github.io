@@ -1,6 +1,8 @@
 # Phase 3 art and HUD integration handoff
 
-2026-09-27. **Future implementation handoff; not authorization to begin Phase 3.** Phase 1 and the first Delivery visual treatment are approved. The bounded full Phase 2 package now supplies all 14 canonical asset groups through 39 measured entries, plus 37 isolated HUD/state samples; independent final review passes with no unresolved blocker, and user completion approval remains the gate. Runtime mechanics, saves, performance and collision have not been implemented or verified by these isolated previews.
+2026-09-27. **Historical v1 integration inventory; visual baseline rejected and under revision. Not authorization to begin Phase 3.**
+
+The user rejected the expanded art/HUD treatment after the technical review. Do not implement its visual treatment as accepted direction. Phase 2 is reopened for one revised Delivery slice under `phase2/revision-v2/`; this handoff must be refreshed after visual approval. The earlier inventory below is preserved as reference. Phase 1 and the first Delivery visual treatment are approved. The bounded full Phase 2 package now supplies all 14 canonical asset groups through 39 measured entries, plus 37 isolated HUD/state samples; independent final review passes with no unresolved blocker, and user completion approval remains the gate. Runtime mechanics, saves, performance and collision have not been implemented or verified by these isolated previews.
 
 ## Sources and ownership
 

@@ -6,7 +6,7 @@ const destination = new URL('../dist/docs/bastrop37/phase2/', import.meta.url);
 await cp(source, destination, { recursive: true });
 
 // The repository preview includes public/ in paths; Astro serves its contents at /.
-for (const file of ['preview.js', 'assets/asset-review.html', 'assets/chapter-asset-review.html']) {
+for (const file of ['preview.js', 'assets/asset-review.html', 'assets/chapter-asset-review.html', 'revision-v2/preview.js']) {
   const path = new URL(file, destination);
   const content = await readFile(path, 'utf8');
   await writeFile(path, content.replace(/(?:\.\.\/)+public\/bastrop37\//g, '/bastrop37/'));

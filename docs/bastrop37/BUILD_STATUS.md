@@ -1,6 +1,24 @@
 # Bastrop37 build status
 
-Active phase: **Phase 2 — production and independent review complete; stopped for user completion approval**. Updated 2026-09-27. Director: Astra/high. Phase 1 is approved. User approved the published first Delivery package with “Okay let’s go with it. Anything else to do”, satisfying the first visual gate. The full bounded package is now produced; **final Phase 2 user approval remains pending**. Phase 3 (including M0/M1 and live HUD integration) remains unauthorized.
+Active phase: **Phase 2 reopened — revised Delivery treatment ready; stopped for user visual review**. Updated 2026-09-27. The user rejected the expanded chapter visuals/HUD and specifically called the signal, gate and buildings unthematic and boring. The earlier technical/layout pass did **not** establish visual acceptance. Phase 2 completion is not approved. Phase 3 remains unauthorized.
+
+## Current revision: visual quality gate
+
+- Preserve `phase2/` as the published v1 reference; new work is isolated in `phase2/revision-v2/`. Do not overwrite original assets or blanket-label the rejected treatment approved.
+- Scope now: one coherent Delivery treatment plus desktop/mobile action and dialogue, then user review. No chapter-wide propagation until this new treatment is accepted. Existing neutral Vlad and non-human Omega can remain.
+- Director diagnosis from actual references/screenshots: detailed raster rider/city were combined with flat front-elevation SVG buildings/props, weak perspective/material continuity, large empty gray shoulders, and repeated generic rectangular HUD panels. Asset completeness and overflow checks missed this art-direction failure.
+- Working direction: gritty retro-industrial civic streets after rain; worn charcoal steel/concrete, dirty ivory paint, controlled amber lighting, cyan for local technical cues, scarlet bike as focus. Content and HUD agreed material/light/camera before production.
+- Art owner `revision2_content` (configured Sol/medium): three new imagegen raster candidates—framing neighborhood/service architecture, aged dead signal, open municipal service gantry—plus measured/provenance notes. No additional character, audio or 3D assets.
+- HUD owner `phase2_hud` (configured Sol/medium): fresh isolated composition, open bike instrument rails, segmented energy, authored communication strip, responsive captures. Desktop camera horizon42%, larger foreground rider; mobile crops preserve artwork proportions and text/road visibility.
+- New paths: `phase2/revision-v2/index.html`, `assets/delivery-architecture-v2.png`, `assets/signal-dead-v2.png`, `assets/service-gate-open-v2.png`, new captures and notes. Exact generator dimensions/crops remain measured from output.
+- Independent reviewer will assess theme, silhouette, material coherence, perspective, atmosphere and hierarchy first, then layout/copy. Any unresolved visual quality concern must be stated candidly.
+- Completed revision: three selected raster candidates with alpha/provenance/measurements, corrected architecture perspective, grounded projected traffic/gate, straight foreground Jo, new instrument/communication treatment, desktop/mobile ACTION and Vlad/Omega dialogue. Earlier flat geometry and generic HUD are not reused for this revision.
+- Verification: 20 layouts across all four target sizes; 10 exact approved L1 lines; no overflow, missing image or page error; manual/Enter advancement works. Director viewed final1440 desktop and390 mobile action/dialogue; 87 src/public/tests files remain unchanged. These remain static proposals, not gameplay proof.
+- Independent art-quality review: materially stronger gritty material, depth and authored HUD; **no blocker to presenting this one revised treatment**. Fog clipping, actor grounding and mobile labels were corrected and rechecked. Mobile signal/gate fine detail is diminished at small display size, though silhouettes remain identifiable; user must still judge the treatment.
+- Review links: [new preview](phase2/revision-v2/index.html), [contact sheet](phase2/revision-v2/captures/contact-sheet.png), [v1/v2 comparison](phase2/revision-v2/captures/comparison-sheet.png), [art notes](phase2/revision-v2/ART_NOTES.md), [HUD notes](phase2/revision-v2/HUD_NOTES.md), [review handoff](handoffs/PHASE_2_REVISION2_REVIEW.md).
+- Outstanding: **user acceptance of this one revised treatment**. Do not propagate it across chapters or claim Phase 2 complete. Earlier production counts below are historical v1 coverage, not a current completion claim.
+
+## Prior v1 production record — preserved reference, visual acceptance rejected
 
 ## Scope, ownership and decisions
 

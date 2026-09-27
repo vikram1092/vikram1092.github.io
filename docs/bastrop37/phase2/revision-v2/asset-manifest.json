@@ -1,0 +1,179 @@
+{
+  "version": 2,
+  "kind": "Isolated Phase2 revision2 companion manifest; not runtime",
+  "approval": "Unapproved; one Delivery treatment only",
+  "pathBase": "directory containing this manifest",
+  "assets": [
+    {
+      "id": "ENV-L1-ARCHITECTURE-V2",
+      "file": "assets/delivery-architecture-v2.png",
+      "layer": "midground",
+      "state": "delivery-dark",
+      "anchor": {
+        "x": 768,
+        "y": 440,
+        "space": "source pixels; visual vanishing point"
+      },
+      "displayCrop": null,
+      "intendedDisplay": "Viewport framing; retain aspect ratio and align source vanishing point to scene50%X42%Y desktop. Mobile crop/reposition rather than stretching.",
+      "worldIntent": "Decorative frontage outside road; no collision.",
+      "promptFiles": [
+        "assets/delivery-architecture-v2.prompt.txt",
+        "assets/delivery-architecture-v2-edit.prompt.txt"
+      ],
+      "notes": "Target42% horizon; visual measured convergence43%. Initial source retained as delivery-architecture-v2-initial.png, rejected for68%horizon.",
+      "bytes": 2301825,
+      "width": 1536,
+      "height": 1024,
+      "rgbaDecodeBytes": 6291456,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.5247090657552084,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1536,
+        "h": 1024
+      },
+      "bodyAlphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1536,
+        "h": 1013
+      },
+      "provenance": {
+        "method": "built-in image_gen, transparent_background:true",
+        "sourceDirectory": "/Users/vikram/.codex/generated_images/01a0e47a-a942-7141-a040-8fb95c946efe",
+        "sourceFile": "exec-8002d2e1-758a-4d98-9adf-c33aa13d0bb0.png",
+        "processing": "Copied unmodified; no resampling or alpha modification"
+      },
+      "blend": "source-over",
+      "collision": {
+        "enabled": false,
+        "representation": "none in Phase2; authored geometry requires Phase3"
+      },
+      "approval": "unapproved revision2 Delivery candidate"
+    },
+    {
+      "id": "PROP-SIGNAL-DEAD-V2",
+      "file": "assets/signal-dead-v2.png",
+      "layer": "roadside",
+      "state": "dead",
+      "anchor": {
+        "x": 538,
+        "y": 1515,
+        "space": "source pixels; bottom center of foot"
+      },
+      "displayCrop": {
+        "x": 304,
+        "y": 7,
+        "w": 428,
+        "h": 1510
+      },
+      "intendedDisplay": "150–330 CSS pixels body height; preserve aspect ratio.",
+      "worldIntent": "Roadside only; foot excluded from riding corridor; no alpha collision.",
+      "promptFiles": [
+        "assets/signal-dead-v2.prompt.txt"
+      ],
+      "notes": "All lenses unlit; no restored state produced. Modest3/4 perspective.",
+      "bytes": 1548916,
+      "width": 1024,
+      "height": 1536,
+      "rgbaDecodeBytes": 6291456,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.7843379974365234,
+      "alphaBounds": {
+        "x": 65,
+        "y": 0,
+        "w": 947,
+        "h": 1520
+      },
+      "bodyAlphaBounds": {
+        "x": 311,
+        "y": 7,
+        "w": 412,
+        "h": 1510
+      },
+      "provenance": {
+        "method": "built-in image_gen, transparent_background:true",
+        "sourceDirectory": "/Users/vikram/.codex/generated_images/01a0e47a-a942-7141-a040-8fb95c946efe",
+        "sourceFile": "exec-f4de85d4-7c55-4acd-9df4-02b8ef32c58a.png",
+        "processing": "Copied unmodified; no resampling or alpha modification"
+      },
+      "blend": "source-over",
+      "collision": {
+        "enabled": false,
+        "representation": "none in Phase2; authored geometry requires Phase3"
+      },
+      "approval": "unapproved revision2 Delivery candidate"
+    },
+    {
+      "id": "PROP-SERVICE-GATE-OPEN-V2",
+      "file": "assets/service-gate-open-v2.png",
+      "layer": "roadside",
+      "state": "open",
+      "anchor": {
+        "x": 768,
+        "y": 999,
+        "space": "source pixels; between support feet"
+      },
+      "displayCrop": {
+        "x": 20,
+        "y": 8,
+        "w": 1504,
+        "h": 994
+      },
+      "intendedDisplay": "320–660 CSS pixels body width; preserve aspect ratio.",
+      "worldIntent": "Clear opening approx source x450–1260 below crossbeam; keep posts off authored passage. At least1.2 service-lane widths is eventual integration intent, not calibrated.",
+      "promptFiles": [
+        "assets/service-gate-open-v2.prompt.txt"
+      ],
+      "notes": "Blank sign face; upper beam slopes slightly in3/4 view. No lower crossbar.",
+      "bytes": 2153180,
+      "width": 1536,
+      "height": 1024,
+      "rgbaDecodeBytes": 6291456,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.5912240346272787,
+      "alphaBounds": {
+        "x": 20,
+        "y": 1,
+        "w": 1507,
+        "h": 1006
+      },
+      "bodyAlphaBounds": {
+        "x": 22,
+        "y": 8,
+        "w": 1502,
+        "h": 991
+      },
+      "provenance": {
+        "method": "built-in image_gen, transparent_background:true",
+        "sourceDirectory": "/Users/vikram/.codex/generated_images/01a0e47a-a942-7141-a040-8fb95c946efe",
+        "sourceFile": "exec-7aa7508c-c4ac-4ee2-af5b-f496b1729d61.png",
+        "processing": "Copied unmodified; no resampling or alpha modification"
+      },
+      "blend": "source-over",
+      "collision": {
+        "enabled": false,
+        "representation": "none in Phase2; authored geometry requires Phase3"
+      },
+      "approval": "unapproved revision2 Delivery candidate"
+    }
+  ],
+  "reuse": {
+    "skyline": "../../../../public/bastrop37/assets/environment/city-skyline-v4.png",
+    "road": "../../../../public/bastrop37/assets/environment/road-loop-v4.png",
+    "jo": "../../../../public/bastrop37/assets/sprites/bike-normal-straight.png",
+    "vlad": "../assets/vlad-neutral-v1.png"
+  },
+  "memoryNote": "RGBA excludes browser/GPU copies/mipmaps. Originals retained; no runtime integration."
+}

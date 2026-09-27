@@ -1,6 +1,8 @@
-# Phase 2 director handoff — completion review gate
+# Phase 2 director handoff — v1 historical review record
 
-2026-09-27. **Bounded Phase 2 production complete; final user approval pending.** Phase 1 is approved. The user accepted the published Delivery treatment with “Okay let’s go with it. Anything else to do”, so the remaining bounded register/state package was completed. Phase 3 has not begun.
+2026-09-27 update: **User rejected the expanded v1 visual treatment. This technical handoff is preserved history, not visual acceptance.** Current work is the one-slice revision in [PHASE_2_REVISION2_DIRECTOR.md](PHASE_2_REVISION2_DIRECTOR.md). Phase 2 is reopened; Phase 3 remains unauthorized.
+
+Prior delivery record: bounded v1 production was complete and presented for review. Phase 1 is approved. The user accepted the published Delivery treatment with “Okay let’s go with it. Anything else to do”, so the remaining bounded register/state package was completed. Phase 3 has not begun.
 
 ## Completed work and direction
 

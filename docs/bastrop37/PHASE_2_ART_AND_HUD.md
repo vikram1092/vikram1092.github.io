@@ -1,6 +1,6 @@
 # Phase 2 — Art and HUD production
 
-Status: authorized Phase 2 production; first Delivery visual treatment approved by the user on 2026-09-27. Final bounded package awaits completion review. Primary owners: art / asset production and HUD / interaction design. Narrative owns meaning and sequence; engineering owns simulation and renderer behavior. Do not silently change the story or import a new rendering framework while producing assets.
+Status: Phase 2 visual revision reopened after user rejection of the expanded package. One revised Delivery art/HUD treatment is in production; no final visual acceptance or Phase 3 authorization. See BUILD_STATUS.md for the current gate.
 
 ## 1. Required context and dependencies
 

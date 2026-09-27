@@ -1,0 +1,1008 @@
+{
+  "timestamp": "2026-09-27T20:21:55.822Z",
+  "hashes": {
+    "preview.js": "72c7c86219223fdd17c84c0da828ad755807f24d9cacb9ff4b8317226b80688b",
+    "preview.css": "8bf5314e1f8d99b7611d1ddfe6ec14da4e5d2a6e27013d37f895375c017fd36f",
+    "index.html": "064ed75ddb8fd352077d688ff859dfaa9eedae6932aa934f33c4f607f8091875",
+    "asset-manifest.json": "5c2e9c47b8a53b44cd1f4c08ff8db0a8bb6aa8535bb6a0db9e0342eb4c781be6"
+  },
+  "errors": [],
+  "checks": [
+    {
+      "width": 1440,
+      "height": 900,
+      "view": "action",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1440,
+        "height": 830,
+        "bottom": 900,
+        "right": 1440
+      },
+      "comms": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "18px",
+      "bike": {
+        "x": 620,
+        "y": 488.84271844660196,
+        "width": 200,
+        "height": 274.75728155339806,
+        "bottom": 763.6
+      },
+      "commsVisible": false,
+      "text": "",
+      "gateHidden": false,
+      "identityVisible": true
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "view": "vlad",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1440,
+        "height": 830,
+        "bottom": 900,
+        "right": 1440
+      },
+      "comms": {
+        "x": 986,
+        "y": 685,
+        "width": 420,
+        "height": 183,
+        "bottom": 868,
+        "right": 1406
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "18px",
+      "bike": {
+        "x": 620,
+        "y": 488.84271844660196,
+        "width": 200,
+        "height": 274.75728155339806,
+        "bottom": 763.6
+      },
+      "commsVisible": true,
+      "text": "You have the module?",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "view": "vlad",
+      "line": 2,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1440,
+        "height": 830,
+        "bottom": 900,
+        "right": 1440
+      },
+      "comms": {
+        "x": 986,
+        "y": 658,
+        "width": 420,
+        "height": 210,
+        "bottom": 868,
+        "right": 1406
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "18px",
+      "bike": {
+        "x": 620,
+        "y": 488.84271844660196,
+        "width": 200,
+        "height": 274.75728155339806,
+        "bottom": 763.6
+      },
+      "commsVisible": true,
+      "text": "Municipal intake. Take the service road. I'll get you through.",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "view": "omega",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1440,
+        "height": 830,
+        "bottom": 900,
+        "right": 1440
+      },
+      "comms": {
+        "x": 986,
+        "y": 631,
+        "width": 420,
+        "height": 237,
+        "bottom": 868,
+        "right": 1406
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "18px",
+      "bike": {
+        "x": 620,
+        "y": 488.84271844660196,
+        "width": 200,
+        "height": 274.75728155339806,
+        "bottom": 763.6
+      },
+      "commsVisible": true,
+      "text": "The crossing signal reports a blockage. The right service lane is clear.",
+      "speaker": "omega",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "view": "omega",
+      "line": 4,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1440,
+        "height": 830,
+        "bottom": 900,
+        "right": 1440
+      },
+      "comms": {
+        "x": 986,
+        "y": 631,
+        "width": 420,
+        "height": 237,
+        "bottom": 868,
+        "right": 1406
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "18px",
+      "bike": {
+        "x": 620,
+        "y": 488.84271844660196,
+        "width": 200,
+        "height": 274.75728155339806,
+        "bottom": 763.6
+      },
+      "commsVisible": true,
+      "text": "A diagnostic system. It can read the road equipment. Follow the service lane.",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "view": "action",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 91,
+        "width": 390,
+        "height": 753,
+        "bottom": 844,
+        "right": 390
+      },
+      "comms": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "touch": {
+        "x": 16,
+        "y": 778,
+        "width": 358,
+        "height": 52,
+        "bottom": 830,
+        "right": 374
+      },
+      "dialogueFont": "16px",
+      "bike": {
+        "x": 146.25,
+        "y": 453.3958252427185,
+        "width": 97.5,
+        "height": 133.94417475728156,
+        "bottom": 587.34
+      },
+      "commsVisible": false,
+      "text": "",
+      "gateHidden": false,
+      "identityVisible": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "view": "vlad",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 91,
+        "width": 390,
+        "height": 753,
+        "bottom": 844,
+        "right": 390
+      },
+      "comms": {
+        "x": 12,
+        "y": 585,
+        "width": 366,
+        "height": 171,
+        "bottom": 756,
+        "right": 378
+      },
+      "touch": {
+        "x": 16,
+        "y": 778,
+        "width": 358,
+        "height": 52,
+        "bottom": 830,
+        "right": 374
+      },
+      "dialogueFont": "16px",
+      "bike": {
+        "x": 146.25,
+        "y": 287.73582524271853,
+        "width": 97.5,
+        "height": 133.94417475728156,
+        "bottom": 421.68000000000006
+      },
+      "commsVisible": true,
+      "text": "You have the module?",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "view": "vlad",
+      "line": 2,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 91,
+        "width": 390,
+        "height": 753,
+        "bottom": 844,
+        "right": 390
+      },
+      "comms": {
+        "x": 12,
+        "y": 561,
+        "width": 366,
+        "height": 195,
+        "bottom": 756,
+        "right": 378
+      },
+      "touch": {
+        "x": 16,
+        "y": 778,
+        "width": 358,
+        "height": 52,
+        "bottom": 830,
+        "right": 374
+      },
+      "dialogueFont": "16px",
+      "bike": {
+        "x": 146.25,
+        "y": 287.73582524271853,
+        "width": 97.5,
+        "height": 133.94417475728156,
+        "bottom": 421.68000000000006
+      },
+      "commsVisible": true,
+      "text": "Municipal intake. Take the service road. I'll get you through.",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "view": "omega",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 91,
+        "width": 390,
+        "height": 753,
+        "bottom": 844,
+        "right": 390
+      },
+      "comms": {
+        "x": 12,
+        "y": 561,
+        "width": 366,
+        "height": 195,
+        "bottom": 756,
+        "right": 378
+      },
+      "touch": {
+        "x": 16,
+        "y": 778,
+        "width": 358,
+        "height": 52,
+        "bottom": 830,
+        "right": 374
+      },
+      "dialogueFont": "16px",
+      "bike": {
+        "x": 146.25,
+        "y": 287.73582524271853,
+        "width": 97.5,
+        "height": 133.94417475728156,
+        "bottom": 421.68000000000006
+      },
+      "commsVisible": true,
+      "text": "The crossing signal reports a blockage. The right service lane is clear.",
+      "speaker": "omega",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "view": "omega",
+      "line": 4,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 91,
+        "width": 390,
+        "height": 753,
+        "bottom": 844,
+        "right": 390
+      },
+      "comms": {
+        "x": 12,
+        "y": 537,
+        "width": 366,
+        "height": 219,
+        "bottom": 756,
+        "right": 378
+      },
+      "touch": {
+        "x": 16,
+        "y": 778,
+        "width": 358,
+        "height": 52,
+        "bottom": 830,
+        "right": 374
+      },
+      "dialogueFont": "16px",
+      "bike": {
+        "x": 146.25,
+        "y": 287.73582524271853,
+        "width": 97.5,
+        "height": 133.94417475728156,
+        "bottom": 421.68000000000006
+      },
+      "commsVisible": true,
+      "text": "A diagnostic system. It can read the road equipment. Follow the service lane.",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "view": "action",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1280,
+        "height": 650,
+        "bottom": 720,
+        "right": 1280
+      },
+      "comms": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "18px",
+      "bike": {
+        "x": 550.4,
+        "y": 351.8174757281553,
+        "width": 179.20000000000002,
+        "height": 246.1825242718447,
+        "bottom": 598
+      },
+      "commsVisible": false,
+      "text": "",
+      "gateHidden": false,
+      "identityVisible": true
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "view": "vlad",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1280,
+        "height": 650,
+        "bottom": 720,
+        "right": 1280
+      },
+      "comms": {
+        "x": 826,
+        "y": 505,
+        "width": 420,
+        "height": 183,
+        "bottom": 688,
+        "right": 1246
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "18px",
+      "bike": {
+        "x": 550.4,
+        "y": 351.8174757281553,
+        "width": 179.20000000000002,
+        "height": 246.1825242718447,
+        "bottom": 598
+      },
+      "commsVisible": true,
+      "text": "You have the module?",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "view": "vlad",
+      "line": 2,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1280,
+        "height": 650,
+        "bottom": 720,
+        "right": 1280
+      },
+      "comms": {
+        "x": 826,
+        "y": 478,
+        "width": 420,
+        "height": 210,
+        "bottom": 688,
+        "right": 1246
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "18px",
+      "bike": {
+        "x": 550.4,
+        "y": 351.8174757281553,
+        "width": 179.20000000000002,
+        "height": 246.1825242718447,
+        "bottom": 598
+      },
+      "commsVisible": true,
+      "text": "Municipal intake. Take the service road. I'll get you through.",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "view": "omega",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1280,
+        "height": 650,
+        "bottom": 720,
+        "right": 1280
+      },
+      "comms": {
+        "x": 826,
+        "y": 451,
+        "width": 420,
+        "height": 237,
+        "bottom": 688,
+        "right": 1246
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "18px",
+      "bike": {
+        "x": 550.4,
+        "y": 351.8174757281553,
+        "width": 179.20000000000002,
+        "height": 246.1825242718447,
+        "bottom": 598
+      },
+      "commsVisible": true,
+      "text": "The crossing signal reports a blockage. The right service lane is clear.",
+      "speaker": "omega",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "view": "omega",
+      "line": 4,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1280,
+        "height": 650,
+        "bottom": 720,
+        "right": 1280
+      },
+      "comms": {
+        "x": 826,
+        "y": 451,
+        "width": 420,
+        "height": 237,
+        "bottom": 688,
+        "right": 1246
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "18px",
+      "bike": {
+        "x": 550.4,
+        "y": 351.8174757281553,
+        "width": 179.20000000000002,
+        "height": 246.1825242718447,
+        "bottom": 598
+      },
+      "commsVisible": true,
+      "text": "A diagnostic system. It can read the road equipment. Follow the service lane.",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "view": "action",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1024,
+        "height": 698,
+        "bottom": 768,
+        "right": 1024
+      },
+      "comms": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "16px",
+      "bike": {
+        "x": 440.32,
+        "y": 445.2139805825243,
+        "width": 143.36,
+        "height": 196.94601941747575,
+        "bottom": 642.1600000000001
+      },
+      "commsVisible": false,
+      "text": "",
+      "gateHidden": false,
+      "identityVisible": true
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "view": "vlad",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1024,
+        "height": 698,
+        "bottom": 768,
+        "right": 1024
+      },
+      "comms": {
+        "x": 640,
+        "y": 558,
+        "width": 350,
+        "height": 178,
+        "bottom": 736,
+        "right": 990
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "16px",
+      "bike": {
+        "x": 440.32,
+        "y": 445.2139805825243,
+        "width": 143.36,
+        "height": 196.94601941747575,
+        "bottom": 642.1600000000001
+      },
+      "commsVisible": true,
+      "text": "You have the module?",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "view": "vlad",
+      "line": 2,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1024,
+        "height": 698,
+        "bottom": 768,
+        "right": 1024
+      },
+      "comms": {
+        "x": 640,
+        "y": 534,
+        "width": 350,
+        "height": 202,
+        "bottom": 736,
+        "right": 990
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "16px",
+      "bike": {
+        "x": 440.32,
+        "y": 445.2139805825243,
+        "width": 143.36,
+        "height": 196.94601941747575,
+        "bottom": 642.1600000000001
+      },
+      "commsVisible": true,
+      "text": "Municipal intake. Take the service road. I'll get you through.",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "view": "omega",
+      "line": 0,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1024,
+        "height": 698,
+        "bottom": 768,
+        "right": 1024
+      },
+      "comms": {
+        "x": 640,
+        "y": 510,
+        "width": 350,
+        "height": 226,
+        "bottom": 736,
+        "right": 990
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "16px",
+      "bike": {
+        "x": 440.32,
+        "y": 445.2139805825243,
+        "width": 143.36,
+        "height": 196.94601941747575,
+        "bottom": 642.1600000000001
+      },
+      "commsVisible": true,
+      "text": "The crossing signal reports a blockage. The right service lane is clear.",
+      "speaker": "omega",
+      "gateHidden": true,
+      "identityVisible": true
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "view": "omega",
+      "line": 4,
+      "overflow": false,
+      "missing": [],
+      "frame": {
+        "x": 0,
+        "y": 70,
+        "width": 1024,
+        "height": 698,
+        "bottom": 768,
+        "right": 1024
+      },
+      "comms": {
+        "x": 640,
+        "y": 510,
+        "width": 350,
+        "height": 226,
+        "bottom": 736,
+        "right": 990
+      },
+      "touch": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "bottom": 0,
+        "right": 0
+      },
+      "dialogueFont": "16px",
+      "bike": {
+        "x": 440.32,
+        "y": 445.2139805825243,
+        "width": 143.36,
+        "height": 196.94601941747575,
+        "bottom": 642.1600000000001
+      },
+      "commsVisible": true,
+      "text": "A diagnostic system. It can read the road equipment. Follow the service lane.",
+      "speaker": "vlad",
+      "gateHidden": true,
+      "identityVisible": true
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "L1.01-01",
+      "speaker": "vlad",
+      "text": "You have the module?",
+      "identityVisible": true,
+      "exact": true
+    },
+    {
+      "id": "L1.01-02",
+      "speaker": "jo",
+      "text": "It's on the bike. Where am I going?",
+      "identityVisible": false,
+      "exact": true
+    },
+    {
+      "id": "L1.01-03",
+      "speaker": "vlad",
+      "text": "Municipal intake. Take the service road. I'll get you through.",
+      "identityVisible": true,
+      "exact": true
+    },
+    {
+      "id": "L1.01-04",
+      "speaker": "jo",
+      "text": "And this gets the lights back on?",
+      "identityVisible": false,
+      "exact": true
+    },
+    {
+      "id": "L1.01-05",
+      "speaker": "vlad",
+      "text": "That's what it's for. Your payment is ready.",
+      "identityVisible": true,
+      "exact": true
+    },
+    {
+      "id": "L1.03-01",
+      "speaker": "omega",
+      "text": "The crossing signal reports a blockage. The right service lane is clear.",
+      "identityVisible": true,
+      "exact": true
+    },
+    {
+      "id": "L1.03-02",
+      "speaker": "jo",
+      "text": "Who's talking?",
+      "identityVisible": false,
+      "exact": true
+    },
+    {
+      "id": "L1.03-03",
+      "speaker": "omega",
+      "text": "Omega. I'm inside the module you're carrying.",
+      "identityVisible": true,
+      "exact": true
+    },
+    {
+      "id": "L1.03-04",
+      "speaker": "jo",
+      "text": "Mayor? Your package talks.",
+      "identityVisible": false,
+      "exact": true
+    },
+    {
+      "id": "L1.03-05",
+      "speaker": "vlad",
+      "text": "A diagnostic system. It can read the road equipment. Follow the service lane.",
+      "identityVisible": true,
+      "exact": true
+    }
+  ],
+  "keyboardAdvance": true,
+  "keyboardFocus": true,
+  "assetChecks": [
+    {
+      "id": "ENV-L1-ARCHITECTURE-V2",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2301825,
+      "match": true,
+      "promptsExist": true
+    },
+    {
+      "id": "PROP-SIGNAL-DEAD-V2",
+      "width": 1024,
+      "height": 1536,
+      "bytes": 1548916,
+      "match": true,
+      "promptsExist": true
+    },
+    {
+      "id": "PROP-SERVICE-GATE-OPEN-V2",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2153180,
+      "match": true,
+      "promptsExist": true
+    }
+  ]
+}
