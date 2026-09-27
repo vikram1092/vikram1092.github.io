@@ -1,0 +1,9 @@
+Use case: stylized-concept
+Asset type: CHAR-VLAD, one square 512x512 game communication portrait for Bastrop37; first visual-review candidate.
+Primary request: a single adult municipal leader, Mayor Vlad, composed and approachable, believable as a helpful official offering a straightforward delivery job. Head and shoulders, centered, looking toward viewer; broad clear facial shapes readable at 64 CSS pixels.
+Style/medium: hand-painted high-definition retro game portrait, graphic shapes and subtle urban grit, restrained detail, not photorealistic and not anime.
+Subject: middle-aged adult man with short salt-and-pepper hair, natural face, calm attentive eyes, slight relaxed smile; plain slate civic jacket over an off-white shirt, no uniform insignia.
+Scene/backdrop: simple opaque slate background, square crop.
+Lighting/mood: even soft neutral light, approachable, no dramatic shadows.
+Color palette: slate, warm off-white, muted amber accents.
+Constraints: single neutral expression for reuse; exact appearance is an art proposal, not new biography. No lettering, badges, logos, weapons, villain cues, red lighting, glow, extra characters, watermark. Keep face generously framed with hair inside canvas.

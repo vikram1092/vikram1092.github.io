@@ -1,0 +1,1279 @@
+{
+  "errors": [],
+  "dialogueLayouts": [
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 0,
+      "text": "You have the module?",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 630,
+        "w": 420,
+        "h": 242,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 1,
+      "text": "It's on the bike. Where am I going?",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 635.90625,
+        "w": 420,
+        "h": 236.09375,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 2,
+      "text": "Municipal intake. Take the service road. I'll get you through.",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 630,
+        "w": 420,
+        "h": 242,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 3,
+      "text": "And this gets the lights back on?",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 635.90625,
+        "w": 420,
+        "h": 236.09375,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 4,
+      "text": "That's what it's for. Your payment is ready.",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 630,
+        "w": 420,
+        "h": 242,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 5,
+      "text": "The crossing signal reports a blockage. The right service lane is clear.",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 630,
+        "w": 420,
+        "h": 242,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 6,
+      "text": "Who's talking?",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 635.90625,
+        "w": 420,
+        "h": 236.09375,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 7,
+      "text": "Omega. I'm inside the module you're carrying.",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 630,
+        "w": 420,
+        "h": 242,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 8,
+      "text": "Mayor? Your package talks.",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 635.90625,
+        "w": 420,
+        "h": 236.09375,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 9,
+      "text": "A diagnostic system. It can read the road equipment. Follow the service lane.",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 630,
+        "w": 420,
+        "h": 242,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 10,
+      "text": "You're nearly here. Take the inspection lane. I'll have you cleared through.",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 630,
+        "w": 420,
+        "h": 242,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 11,
+      "text": "Then we're done?",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 635.90625,
+        "w": 420,
+        "h": 236.09375,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "line": 12,
+      "text": "Then we're done.",
+      "font": "19px",
+      "comms": {
+        "x": 984,
+        "y": 630,
+        "w": 420,
+        "h": 242,
+        "bottom": 872
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1440,
+        "h": 824,
+        "bottom": 906
+      },
+      "controls": null,
+      "scrollWidth": 1440
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 0,
+      "text": "You have the module?",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 450,
+        "w": 420,
+        "h": 242,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 1,
+      "text": "It's on the bike. Where am I going?",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 455.90625,
+        "w": 420,
+        "h": 236.09375,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 2,
+      "text": "Municipal intake. Take the service road. I'll get you through.",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 450,
+        "w": 420,
+        "h": 242,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 3,
+      "text": "And this gets the lights back on?",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 455.90625,
+        "w": 420,
+        "h": 236.09375,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 4,
+      "text": "That's what it's for. Your payment is ready.",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 450,
+        "w": 420,
+        "h": 242,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 5,
+      "text": "The crossing signal reports a blockage. The right service lane is clear.",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 450,
+        "w": 420,
+        "h": 242,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 6,
+      "text": "Who's talking?",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 455.90625,
+        "w": 420,
+        "h": 236.09375,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 7,
+      "text": "Omega. I'm inside the module you're carrying.",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 450,
+        "w": 420,
+        "h": 242,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 8,
+      "text": "Mayor? Your package talks.",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 455.90625,
+        "w": 420,
+        "h": 236.09375,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 9,
+      "text": "A diagnostic system. It can read the road equipment. Follow the service lane.",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 450,
+        "w": 420,
+        "h": 242,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 10,
+      "text": "You're nearly here. Take the inspection lane. I'll have you cleared through.",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 450,
+        "w": 420,
+        "h": 242,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 11,
+      "text": "Then we're done?",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 455.90625,
+        "w": 420,
+        "h": 236.09375,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "line": 12,
+      "text": "Then we're done.",
+      "font": "19px",
+      "comms": {
+        "x": 824,
+        "y": 450,
+        "w": 420,
+        "h": 242,
+        "bottom": 692
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1280,
+        "h": 644,
+        "bottom": 726
+      },
+      "controls": null,
+      "scrollWidth": 1280
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 0,
+      "text": "You have the module?",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 498,
+        "w": 350,
+        "h": 242,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 1,
+      "text": "It's on the bike. Where am I going?",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 503.90625,
+        "w": 350,
+        "h": 236.09375,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 2,
+      "text": "Municipal intake. Take the service road. I'll get you through.",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 498,
+        "w": 350,
+        "h": 242,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 3,
+      "text": "And this gets the lights back on?",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 503.90625,
+        "w": 350,
+        "h": 236.09375,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 4,
+      "text": "That's what it's for. Your payment is ready.",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 498,
+        "w": 350,
+        "h": 242,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 5,
+      "text": "The crossing signal reports a blockage. The right service lane is clear.",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 498,
+        "w": 350,
+        "h": 242,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 6,
+      "text": "Who's talking?",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 503.90625,
+        "w": 350,
+        "h": 236.09375,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 7,
+      "text": "Omega. I'm inside the module you're carrying.",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 498,
+        "w": 350,
+        "h": 242,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 8,
+      "text": "Mayor? Your package talks.",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 503.90625,
+        "w": 350,
+        "h": 236.09375,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 9,
+      "text": "A diagnostic system. It can read the road equipment. Follow the service lane.",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 479.5,
+        "w": 350,
+        "h": 260.5,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 10,
+      "text": "You're nearly here. Take the inspection lane. I'll have you cleared through.",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 498,
+        "w": 350,
+        "h": 242,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 11,
+      "text": "Then we're done?",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 503.90625,
+        "w": 350,
+        "h": 236.09375,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "line": 12,
+      "text": "Then we're done.",
+      "font": "17px",
+      "comms": {
+        "x": 638,
+        "y": 498,
+        "w": 350,
+        "h": 242,
+        "bottom": 740
+      },
+      "preview": {
+        "x": 0,
+        "y": 82,
+        "w": 1024,
+        "h": 692,
+        "bottom": 774
+      },
+      "controls": null,
+      "scrollWidth": 1024
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 0,
+      "text": "You have the module?",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 1,
+      "text": "It's on the bike. Where am I going?",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 2,
+      "text": "Municipal intake. Take the service road. I'll get you through.",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 3,
+      "text": "And this gets the lights back on?",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 4,
+      "text": "That's what it's for. Your payment is ready.",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 5,
+      "text": "The crossing signal reports a blockage. The right service lane is clear.",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 6,
+      "text": "Who's talking?",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 7,
+      "text": "Omega. I'm inside the module you're carrying.",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 8,
+      "text": "Mayor? Your package talks.",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 9,
+      "text": "A diagnostic system. It can read the road equipment. Follow the service lane.",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 10,
+      "text": "You're nearly here. Take the inspection lane. I'll have you cleared through.",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 11,
+      "text": "Then we're done?",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "line": 12,
+      "text": "Then we're done.",
+      "font": "16px",
+      "comms": {
+        "x": 12,
+        "y": 548.5,
+        "w": 366,
+        "h": 204.5,
+        "bottom": 753
+      },
+      "preview": {
+        "x": 0,
+        "y": 98,
+        "w": 390,
+        "h": 746,
+        "bottom": 844
+      },
+      "controls": {
+        "x": 16,
+        "y": 770,
+        "w": 358,
+        "h": 56,
+        "bottom": 826
+      },
+      "scrollWidth": 390
+    }
+  ]
+}

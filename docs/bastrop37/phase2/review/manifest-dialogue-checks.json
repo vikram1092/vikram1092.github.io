@@ -1,0 +1,157 @@
+{
+  "assets": [
+    {
+      "id": "CHAR-VLAD",
+      "dimensionsMatch": true,
+      "alphaMatch": true,
+      "bytesMatch": true,
+      "rgbaMatch": true,
+      "metadataPresent": true,
+      "promptResolves": true
+    },
+    {
+      "id": "CHAR-OMEGA",
+      "dimensionsMatch": true,
+      "alphaMatch": true,
+      "bytesMatch": true,
+      "rgbaMatch": true,
+      "metadataPresent": true,
+      "promptResolves": true
+    },
+    {
+      "id": "ENV-L1-MIDGROUND",
+      "dimensionsMatch": true,
+      "alphaMatch": true,
+      "bytesMatch": true,
+      "rgbaMatch": true,
+      "metadataPresent": true,
+      "promptResolves": true
+    },
+    {
+      "id": "PROP-SIGNAL",
+      "dimensionsMatch": true,
+      "alphaMatch": true,
+      "bytesMatch": true,
+      "rgbaMatch": true,
+      "metadataPresent": true,
+      "promptResolves": true
+    },
+    {
+      "id": "PROP-SERVICE-GATE",
+      "dimensionsMatch": true,
+      "alphaMatch": true,
+      "bytesMatch": true,
+      "rgbaMatch": true,
+      "metadataPresent": true,
+      "promptResolves": true
+    },
+    {
+      "id": "ENV-L1-SKYLINE",
+      "dimensionsMatch": true,
+      "alphaMatch": true,
+      "bytesMatch": true,
+      "rgbaMatch": true,
+      "metadataPresent": true,
+      "promptResolves": true
+    },
+    {
+      "id": "ENV-L1-ROAD",
+      "dimensionsMatch": true,
+      "alphaMatch": true,
+      "bytesMatch": true,
+      "rgbaMatch": true,
+      "metadataPresent": true,
+      "promptResolves": true
+    },
+    {
+      "id": "CHAR-JO",
+      "dimensionsMatch": true,
+      "alphaMatch": true,
+      "bytesMatch": true,
+      "rgbaMatch": true,
+      "metadataPresent": true,
+      "promptResolves": true
+    },
+    {
+      "id": "TRAFFIC-SEDAN",
+      "dimensionsMatch": true,
+      "alphaMatch": true,
+      "bytesMatch": true,
+      "rgbaMatch": true,
+      "metadataPresent": true,
+      "promptResolves": true
+    },
+    {
+      "id": "TRAFFIC-COUPE",
+      "dimensionsMatch": true,
+      "alphaMatch": true,
+      "bytesMatch": true,
+      "rgbaMatch": true,
+      "metadataPresent": true,
+      "promptResolves": true
+    },
+    {
+      "id": "TRAFFIC-HAULER",
+      "dimensionsMatch": true,
+      "alphaMatch": true,
+      "bytesMatch": true,
+      "rgbaMatch": true,
+      "metadataPresent": true,
+      "promptResolves": true
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "L1.01-01",
+      "exactText": true
+    },
+    {
+      "id": "L1.01-02",
+      "exactText": true
+    },
+    {
+      "id": "L1.01-03",
+      "exactText": true
+    },
+    {
+      "id": "L1.01-04",
+      "exactText": true
+    },
+    {
+      "id": "L1.01-05",
+      "exactText": true
+    },
+    {
+      "id": "L1.03-01",
+      "exactText": true
+    },
+    {
+      "id": "L1.03-02",
+      "exactText": true
+    },
+    {
+      "id": "L1.03-03",
+      "exactText": true
+    },
+    {
+      "id": "L1.03-04",
+      "exactText": true
+    },
+    {
+      "id": "L1.03-05",
+      "exactText": true
+    },
+    {
+      "id": "L1.05-01",
+      "exactText": true
+    },
+    {
+      "id": "L1.05-02",
+      "exactText": true
+    },
+    {
+      "id": "L1.05-03",
+      "exactText": true
+    }
+  ]
+}

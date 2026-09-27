@@ -1,0 +1,247 @@
+{
+  "errors": [],
+  "postOmegaObjective": "TAKE THE SERVICE LANE",
+  "mobileCompletionRiderGapPx": 35.839999999999975,
+  "checks": [
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "mode": "action",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "mode": "complete",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "mode": "compare",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "mode": "action",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "mode": "complete",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "mode": "compare",
+      "overflow": false,
+      "dialogueFont": "19px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1024,
+        768
+      ],
+      "mode": "action",
+      "overflow": false,
+      "dialogueFont": "17px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1024,
+        768
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "17px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1024,
+        768
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "17px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1024,
+        768
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "17px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1024,
+        768
+      ],
+      "mode": "complete",
+      "overflow": false,
+      "dialogueFont": "17px",
+      "images": []
+    },
+    {
+      "viewport": [
+        1024,
+        768
+      ],
+      "mode": "compare",
+      "overflow": false,
+      "dialogueFont": "17px",
+      "images": []
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "mode": "action",
+      "overflow": false,
+      "dialogueFont": "16px",
+      "images": []
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "16px",
+      "images": []
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "16px",
+      "images": []
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "mode": "story",
+      "overflow": false,
+      "dialogueFont": "16px",
+      "images": []
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "mode": "complete",
+      "overflow": false,
+      "dialogueFont": "16px",
+      "images": []
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "mode": "compare",
+      "overflow": false,
+      "dialogueFont": "16px",
+      "images": []
+    }
+  ]
+}

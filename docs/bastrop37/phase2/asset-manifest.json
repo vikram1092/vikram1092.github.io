@@ -1,0 +1,446 @@
+{
+  "version": 1,
+  "kind": "Phase 2 companion manifest; not a runtime manifest",
+  "approval": "pending visual approval",
+  "scope": "Delivery first review only",
+  "pathBase": "directory containing this manifest",
+  "memoryNote": "RGBA estimate excludes mipmaps, GPU copies and browser overhead; SVG number is rasterization at nominal source size, not fixed vector memory",
+  "groups": {
+    "ENV-L1": [
+      "ENV-L1-SKYLINE",
+      "ENV-L1-MIDGROUND",
+      "ENV-L1-ROAD"
+    ]
+  },
+  "assets": [
+    {
+      "id": "CHAR-VLAD",
+      "file": "assets/vlad-neutral-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1254,
+        "h": 1254
+      },
+      "rgbaDecodeBytes": 6290064,
+      "bytes": 2048475,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5,
+        "space": "normalized full source"
+      },
+      "layer": "hud",
+      "blend": "source-over",
+      "state": "neutral",
+      "intendedDisplay": "56×56 CSS px desktop; 46×46 CSS px mobile (final isolated HUD); contact sheet 64/80 px",
+      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "portrait; no world footprint",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending visual approval",
+      "provenance": {
+        "method": "built-in image_gen",
+        "promptFile": "assets/vlad-neutral-v1.prompt.txt",
+        "source": "generated_images/01a0e390-a427-77a2-83c0-723de975932d/exec-bccb898f-5e51-482a-9472-14c08aa6000d.png",
+        "note": "Requested 512 square; actual delivered 1254 square preserved without resampling"
+      }
+    },
+    {
+      "id": "CHAR-OMEGA",
+      "file": "assets/omega-symbol-v1.svg",
+      "width": 128,
+      "height": 128,
+      "alphaBounds": {
+        "x": 21,
+        "y": 13,
+        "w": 86,
+        "h": 102
+      },
+      "rgbaDecodeBytes": 65536,
+      "bytes": 371,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5,
+        "space": "normalized full source"
+      },
+      "layer": "hud",
+      "blend": "source-over",
+      "state": "contained-idle",
+      "intendedDisplay": "56×56 CSS px desktop; 46×46 CSS px mobile (final isolated HUD); contact sheet 64 px",
+      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "local interface; no world footprint",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending visual approval",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Phase 1 Delivery and Phase 2 minimal visual contract; no raster generation"
+      }
+    },
+    {
+      "id": "ENV-L1-MIDGROUND",
+      "file": "assets/env-l1-midground-v1.svg",
+      "width": 1920,
+      "height": 480,
+      "alphaBounds": {
+        "x": 0,
+        "y": 49,
+        "w": 1920,
+        "h": 431
+      },
+      "rgbaDecodeBytes": 3686400,
+      "bytes": 14510,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "midground",
+      "blend": "source-over",
+      "state": "dark-neighborhood",
+      "intendedDisplay": "viewport width; preserve aspect ratio",
+      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "scenery only",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending visual approval",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Phase 1 Delivery and Phase 2 minimal visual contract; no raster generation"
+      }
+    },
+    {
+      "id": "PROP-SIGNAL",
+      "file": "assets/signal-dead-v1.svg",
+      "width": 160,
+      "height": 400,
+      "alphaBounds": {
+        "x": 37,
+        "y": 8,
+        "w": 88,
+        "h": 392
+      },
+      "rgbaDecodeBytes": 256000,
+      "bytes": 737,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "dead",
+      "intendedDisplay": "40–100 CSS px wide",
+      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "off-corridor roadside prop",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending visual approval",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Phase 1 Delivery and Phase 2 minimal visual contract; no raster generation"
+      }
+    },
+    {
+      "id": "PROP-SERVICE-GATE",
+      "file": "assets/gate-open-v1.svg",
+      "width": 800,
+      "height": 360,
+      "alphaBounds": {
+        "x": 13,
+        "y": 39,
+        "w": 775,
+        "h": 321
+      },
+      "rgbaDecodeBytes": 1152000,
+      "bytes": 773,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "roadside",
+      "blend": "source-over",
+      "state": "open",
+      "intendedDisplay": "280–640 CSS px wide",
+      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "open center; posts off corridor",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending visual approval",
+      "provenance": {
+        "method": "original code-native SVG",
+        "brief": "Phase 1 Delivery and Phase 2 minimal visual contract; no raster generation"
+      }
+    },
+    {
+      "id": "ENV-L1-SKYLINE",
+      "file": "../../../public/bastrop37/assets/environment/city-skyline-v4.png",
+      "width": 1672,
+      "height": 941,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1672,
+        "h": 941
+      },
+      "rgbaDecodeBytes": 6293408,
+      "bytes": 2537126,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5,
+        "space": "normalized full source"
+      },
+      "layer": "distance",
+      "blend": "source-over",
+      "state": "existing",
+      "intendedDisplay": "viewport width",
+      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "scenery only",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending visual approval",
+      "provenance": {
+        "method": "existing repository asset reused by relative reference",
+        "note": "No original modified; display crops are new review-only recommendations"
+      }
+    },
+    {
+      "id": "ENV-L1-ROAD",
+      "file": "../../../public/bastrop37/assets/environment/road-loop-v4.png",
+      "width": 1254,
+      "height": 1254,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1254,
+        "h": 1254
+      },
+      "rgbaDecodeBytes": 6290064,
+      "bytes": 3093415,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": null,
+      "pivot": {
+        "x": 0.5,
+        "y": 1,
+        "space": "normalized full source"
+      },
+      "layer": "road",
+      "blend": "source-over",
+      "state": "existing",
+      "intendedDisplay": "perspective strips",
+      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "texture only",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending visual approval",
+      "provenance": {
+        "method": "existing repository asset reused by relative reference",
+        "note": "No original modified; display crops are new review-only recommendations"
+      }
+    },
+    {
+      "id": "CHAR-JO",
+      "file": "../../../public/bastrop37/assets/sprites/bike-normal-straight.png",
+      "width": 640,
+      "height": 640,
+      "alphaBounds": {
+        "x": 221,
+        "y": 192,
+        "w": 206,
+        "h": 283
+      },
+      "rgbaDecodeBytes": 1638400,
+      "bytes": 86704,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": {
+        "x": 221,
+        "y": 192,
+        "w": 206,
+        "h": 283
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5,
+        "space": "normalized full source"
+      },
+      "layer": "actor",
+      "blend": "source-over",
+      "state": "straight",
+      "intendedDisplay": "206×283 body source; scale to scene",
+      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "existing runtime only; no new collision contract",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending visual approval",
+      "provenance": {
+        "method": "existing repository asset reused by relative reference",
+        "note": "No original modified; display crops are new review-only recommendations"
+      }
+    },
+    {
+      "id": "TRAFFIC-SEDAN",
+      "file": "../../../public/bastrop37/assets/sprites/traffic-sedan.png",
+      "width": 640,
+      "height": 640,
+      "alphaBounds": {
+        "x": 79,
+        "y": 93,
+        "w": 497,
+        "h": 483
+      },
+      "rgbaDecodeBytes": 1638400,
+      "bytes": 213477,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": {
+        "x": 75,
+        "y": 200,
+        "w": 500,
+        "h": 285
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5,
+        "space": "normalized full source"
+      },
+      "layer": "actor",
+      "blend": "source-over",
+      "state": "rear",
+      "intendedDisplay": "80–220 CSS px body width by depth",
+      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "civilian; no new collision contract",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending visual approval",
+      "provenance": {
+        "method": "existing repository asset reused by relative reference",
+        "note": "No original modified; display crops are new review-only recommendations"
+      }
+    },
+    {
+      "id": "TRAFFIC-COUPE",
+      "file": "../../../public/bastrop37/assets/sprites/traffic-coupe.png",
+      "width": 640,
+      "height": 640,
+      "alphaBounds": {
+        "x": 64,
+        "y": 64,
+        "w": 512,
+        "h": 512
+      },
+      "rgbaDecodeBytes": 1638400,
+      "bytes": 220969,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": {
+        "x": 70,
+        "y": 190,
+        "w": 500,
+        "h": 275
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5,
+        "space": "normalized full source"
+      },
+      "layer": "actor",
+      "blend": "source-over",
+      "state": "rear",
+      "intendedDisplay": "80–220 CSS px body width by depth",
+      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "civilian; no new collision contract",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending visual approval",
+      "provenance": {
+        "method": "existing repository asset reused by relative reference",
+        "note": "No original modified; display crops are new review-only recommendations"
+      }
+    },
+    {
+      "id": "TRAFFIC-HAULER",
+      "file": "../../../public/bastrop37/assets/sprites/traffic-hauler.png",
+      "width": 640,
+      "height": 640,
+      "alphaBounds": {
+        "x": 64,
+        "y": 64,
+        "w": 512,
+        "h": 512
+      },
+      "rgbaDecodeBytes": 1638400,
+      "bytes": 353420,
+      "alphaThreshold": 0,
+      "alphaMeasurement": "browser rasterization at source dimensions; bounds include all nonzero alpha",
+      "displayCrop": {
+        "x": 60,
+        "y": 55,
+        "w": 520,
+        "h": 420
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5,
+        "space": "normalized full source"
+      },
+      "layer": "actor",
+      "blend": "source-over",
+      "state": "rear",
+      "intendedDisplay": "80–220 CSS px body width by depth",
+      "intendedWorldSize": "not calibrated; Phase 3 projection review required",
+      "collision": {
+        "enabledInPackage": false,
+        "intent": "civilian; no new collision contract",
+        "acceptance": "not tested or approved in gameplay"
+      },
+      "approval": "pending visual approval",
+      "provenance": {
+        "method": "existing repository asset reused by relative reference",
+        "note": "No original modified; display crops are new review-only recommendations"
+      }
+    }
+  ]
+}

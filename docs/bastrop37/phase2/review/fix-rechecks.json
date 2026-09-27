@@ -1,0 +1,16 @@
+{
+  "postOmegaObjective": "TAKE THE SERVICE LANE",
+  "mobileCompletion": {
+    "scene": {
+      "y": 98,
+      "height": 746
+    },
+    "cardTop": 477,
+    "cardBottom": 753,
+    "controlsTop": 770,
+    "bikeBase": 441.16,
+    "bikeClearance": 35.839999999999975
+  },
+  "continueCopy": "End of the Phase 2 Delivery preview. Level 2 and saved progress are not implemented.",
+  "note": "Bike base derived from inspected final preview.js draw rule; confirmed by screenshot. Recheck used isolated server 4180 after 4178 stopped."
+}
