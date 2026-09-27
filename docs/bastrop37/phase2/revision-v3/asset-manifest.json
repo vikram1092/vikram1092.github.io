@@ -1,0 +1,1307 @@
+{
+  "version": 3,
+  "kind": "Phase2 isolated art register; not runtime",
+  "approval": "Delivery revision2 user approved 2026-09-27; all new revision3 bodies/effects pending full review",
+  "pathBase": "directory containing manifest",
+  "canonicalGroups": {
+    "ENV-L1": {
+      "delivery": {
+        "body": "../revision-v2/assets/delivery-architecture-v2.png",
+        "overlays": []
+      }
+    },
+    "PROP-SIGNAL": {
+      "dead": {
+        "body": "../revision-v2/assets/signal-dead-v2.png",
+        "overlays": []
+      },
+      "restored-limited": {
+        "body": "../revision-v2/assets/signal-dead-v2.png",
+        "overlays": [
+          "assets/signal-restored-overlay-v3.svg"
+        ]
+      }
+    },
+    "PROP-SERVICE-GATE": {
+      "open": {
+        "body": "../revision-v2/assets/service-gate-open-v2.png",
+        "overlays": []
+      },
+      "approach-marker": {
+        "body": "../revision-v2/assets/service-gate-open-v2.png",
+        "overlays": [
+          "assets/approach-marker-overlay-v3.svg"
+        ]
+      },
+      "blocked-crossing": {
+        "body": "assets/barrier-closed-v3.png",
+        "overlays": []
+      }
+    },
+    "ENV-L2": {
+      "freight-substation": {
+        "body": "assets/env-l2-v3.png",
+        "overlays": []
+      }
+    },
+    "PROP-INTAKE": {
+      "neutral": {
+        "body": "../revision-v2/assets/service-gate-open-v2.png",
+        "overlays": []
+      },
+      "scan": {
+        "body": "../revision-v2/assets/service-gate-open-v2.png",
+        "overlays": [
+          "assets/intake-scan-overlay-v3.svg"
+        ]
+      }
+    },
+    "VEH-RECOVERY": {
+      "neutral": {
+        "body": "assets/carrier-rear-v3.png",
+        "overlays": []
+      },
+      "active": {
+        "body": "assets/carrier-rear-v3.png",
+        "overlays": [
+          "assets/carrier-active-overlay-v3.svg"
+        ]
+      }
+    },
+    "ENV-L3": {
+      "market-relay": {
+        "body": "assets/env-l3-v3.png",
+        "overlays": []
+      }
+    },
+    "PROP-RELAY": {
+      "dormant": {
+        "body": "assets/relay-node-v3.png",
+        "overlays": []
+      },
+      "connecting": {
+        "body": "assets/relay-node-v3.png",
+        "overlays": [
+          "assets/relay-connecting-overlay-v3.svg"
+        ]
+      },
+      "linked": {
+        "body": "assets/relay-node-v3.png",
+        "overlays": [
+          "assets/relay-linked-overlay-v3.svg"
+        ]
+      }
+    },
+    "ENV-L4": {
+      "reservoir-lower-road-civic-approach": {
+        "body": "assets/env-l4-v3.png",
+        "overlays": []
+      }
+    },
+    "PROP-SPILLWAY": {
+      "closed": {
+        "body": "assets/spillway-closed-v3.png",
+        "overlays": []
+      },
+      "open": {
+        "body": "assets/spillway-open-v3.png",
+        "overlays": []
+      },
+      "water-low": {
+        "body": "assets/spillway-open-v3.png",
+        "overlays": [
+          "assets/spillway-water-low-v3.svg"
+        ]
+      },
+      "water-high": {
+        "body": "assets/spillway-open-v3.png",
+        "overlays": [
+          "assets/spillway-water-high-v3.svg"
+        ]
+      }
+    },
+    "PROP-ROADBLOCK": {
+      "closed": {
+        "body": "assets/barrier-closed-v3.png",
+        "overlays": []
+      },
+      "open": {
+        "body": "assets/barrier-open-v3.png",
+        "overlays": []
+      },
+      "controller-active": {
+        "body": "assets/controller-v3.png",
+        "overlays": [
+          "assets/controller-active-overlay-v3.svg"
+        ]
+      },
+      "controller-disabled": {
+        "body": "assets/controller-v3.png",
+        "overlays": [
+          "assets/controller-disabled-overlay-v3.svg"
+        ]
+      }
+    },
+    "VEH-EVAC": {
+      "neutral": {
+        "body": "../assets/evac-bus-rear-v1.png",
+        "overlays": []
+      }
+    },
+    "ENV-L5": {
+      "civic-night": {
+        "body": "assets/env-l5-v3.png",
+        "overlays": []
+      },
+      "dawn-after-release": {
+        "body": "assets/env-l5-v3.png",
+        "overlays": [
+          "assets/dawn-atmosphere-v3.svg"
+        ]
+      }
+    },
+    "PROP-CIVIC-NODE": {
+      "dormant": {
+        "body": "assets/civic-node-v3.png",
+        "overlays": []
+      },
+      "linked-local": {
+        "body": "assets/civic-node-v3.png",
+        "overlays": [
+          "assets/civic-linked-overlay-v3.svg"
+        ]
+      },
+      "public-active-final-only": {
+        "body": "assets/civic-node-v3.png",
+        "overlays": [
+          "assets/civic-public-overlay-v3.svg"
+        ]
+      }
+    }
+  },
+  "assets": [
+    {
+      "file": "assets/barrier-closed-v3.png",
+      "bytes": 1738560,
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.7190659840901693,
+      "alphaBounds": {
+        "x": 0,
+        "y": 21,
+        "w": 1536,
+        "h": 947
+      },
+      "bodyAlphaBounds": {
+        "x": 1,
+        "y": 258,
+        "w": 1534,
+        "h": 594
+      },
+      "centerRoadAlpha": 0,
+      "id": "BARRIER-CLOSED-V3",
+      "anchor": {
+        "xy": [
+          768,
+          852
+        ],
+        "space": "source pixels",
+        "kind": "ground"
+      },
+      "displayCrop": [
+        0,
+        180,
+        1536,
+        680
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.83203125
+      ],
+      "layer": "roadside",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6291456,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-a3bf6c79-7c28-4db2-b175-a38aa352f4ad.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "file": "assets/barrier-open-v3.png",
+      "bytes": 1351642,
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.8233718872070312,
+      "alphaBounds": {
+        "x": 0,
+        "y": 21,
+        "w": 1536,
+        "h": 1003
+      },
+      "bodyAlphaBounds": {
+        "x": 1,
+        "y": 183,
+        "w": 1535,
+        "h": 669
+      },
+      "centerRoadAlpha": 0,
+      "id": "BARRIER-OPEN-V3",
+      "anchor": {
+        "xy": [
+          768,
+          852
+        ],
+        "space": "source pixels",
+        "kind": "ground"
+      },
+      "displayCrop": [
+        0,
+        180,
+        1536,
+        680
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.83203125
+      ],
+      "layer": "roadside",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6291456,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-20c1fbce-f7b4-45ac-8a61-6ce518eea592.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "file": "assets/carrier-rear-v3.png",
+      "bytes": 2412131,
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.3362286933805443,
+      "alphaBounds": {
+        "x": 0,
+        "y": 40,
+        "w": 1224,
+        "h": 1184
+      },
+      "bodyAlphaBounds": {
+        "x": 33,
+        "y": 96,
+        "w": 1188,
+        "h": 1037
+      },
+      "centerRoadAlpha": 250,
+      "id": "CARRIER-REAR-V3",
+      "anchor": {
+        "xy": [
+          627,
+          1133
+        ],
+        "space": "source pixels",
+        "kind": "ground"
+      },
+      "displayCrop": [
+        30,
+        90,
+        1195,
+        1050
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.9035087719298246
+      ],
+      "layer": "actor",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6290064,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-51c2f818-100b-441e-9600-949e8e3331ad.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "file": "assets/civic-node-v3.png",
+      "bytes": 2972920,
+      "width": 1024,
+      "height": 1536,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.28476206461588544,
+      "alphaBounds": {
+        "x": 0,
+        "y": 20,
+        "w": 1016,
+        "h": 1501
+      },
+      "bodyAlphaBounds": {
+        "x": 13,
+        "y": 23,
+        "w": 999,
+        "h": 1495
+      },
+      "centerRoadAlpha": 253,
+      "id": "CIVIC-NODE-V3",
+      "anchor": {
+        "xy": [
+          512,
+          1515
+        ],
+        "space": "source pixels",
+        "kind": "ground"
+      },
+      "displayCrop": [
+        10,
+        20,
+        1005,
+        1505
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.986328125
+      ],
+      "layer": "roadside",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6291456,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-726e4ce6-e40e-415b-a3d9-d9c279b0d594.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "file": "assets/controller-v3.png",
+      "bytes": 1382404,
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.642358487926355,
+      "alphaBounds": {
+        "x": 0,
+        "y": 15,
+        "w": 1232,
+        "h": 1239
+      },
+      "bodyAlphaBounds": {
+        "x": 281,
+        "y": 23,
+        "w": 667,
+        "h": 1209
+      },
+      "centerRoadAlpha": 252,
+      "id": "CONTROLLER-V3",
+      "anchor": {
+        "xy": [
+          625,
+          1232
+        ],
+        "space": "source pixels",
+        "kind": "ground"
+      },
+      "displayCrop": [
+        275,
+        15,
+        680,
+        1225
+      ],
+      "pivotNormalized": [
+        0.4984051036682616,
+        0.9824561403508771
+      ],
+      "layer": "roadside",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6290064,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-3afe6d01-9054-4079-b741-b19d81d4d3b7.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "file": "assets/env-l2-v3.png",
+      "bytes": 2633356,
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.4518057505289714,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1536,
+        "h": 1007
+      },
+      "bodyAlphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1536,
+        "h": 1006
+      },
+      "centerRoadAlpha": 0,
+      "id": "ENV-L2-V3",
+      "anchor": {
+        "xy": [
+          768,
+          552
+        ],
+        "space": "source pixels",
+        "kind": "vanishing point"
+      },
+      "displayCrop": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5390625
+      ],
+      "layer": "midground",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6291456,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-4aad90b0-21e3-4191-8825-f22f4e787cf3.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "file": "assets/env-l3-v3.png",
+      "bytes": 2519734,
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.5039030710856119,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1536,
+        "h": 1024
+      },
+      "bodyAlphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1536,
+        "h": 1019
+      },
+      "centerRoadAlpha": 0,
+      "id": "ENV-L3-V3",
+      "anchor": {
+        "xy": [
+          768,
+          442
+        ],
+        "space": "source pixels",
+        "kind": "vanishing point"
+      },
+      "displayCrop": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.431640625
+      ],
+      "layer": "midground",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6291456,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-86ddbcf3-c47a-4782-a014-327324519230.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "file": "assets/env-l4-v3.png",
+      "bytes": 2253966,
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.5734526316324869,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1536,
+        "h": 970
+      },
+      "bodyAlphaBounds": {
+        "x": 0,
+        "y": 12,
+        "w": 1536,
+        "h": 856
+      },
+      "centerRoadAlpha": 0,
+      "id": "ENV-L4-V3",
+      "anchor": {
+        "xy": [
+          819,
+          558
+        ],
+        "space": "source pixels",
+        "kind": "vanishing point"
+      },
+      "displayCrop": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "pivotNormalized": [
+        0.533203125,
+        0.544921875
+      ],
+      "layer": "midground",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6291456,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-4d125a30-f1c5-4ff6-b213-5e2c23f6bbec.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "file": "assets/env-l5-v3.png",
+      "bytes": 2451815,
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.491085688273112,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1536,
+        "h": 1024
+      },
+      "bodyAlphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1536,
+        "h": 1010
+      },
+      "centerRoadAlpha": 0,
+      "id": "ENV-L5-V3",
+      "anchor": {
+        "xy": [
+          768,
+          451
+        ],
+        "space": "source pixels",
+        "kind": "vanishing point"
+      },
+      "displayCrop": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.4404296875
+      ],
+      "layer": "midground",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6291456,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-7c45f6be-416a-4f08-aa5c-81e0fd4df1b6.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "file": "assets/relay-node-v3.png",
+      "bytes": 2077039,
+      "width": 1024,
+      "height": 1536,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.623138427734375,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1012,
+        "h": 1536
+      },
+      "bodyAlphaBounds": {
+        "x": 188,
+        "y": 4,
+        "w": 648,
+        "h": 1528
+      },
+      "centerRoadAlpha": 253,
+      "id": "RELAY-NODE-V3",
+      "anchor": {
+        "xy": [
+          512,
+          1525
+        ],
+        "space": "source pixels",
+        "kind": "ground"
+      },
+      "displayCrop": [
+        185,
+        0,
+        655,
+        1536
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.9928385416666666
+      ],
+      "layer": "roadside",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6291456,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-5adbb561-1f37-4feb-b995-08e4b2bdf158.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "file": "assets/spillway-closed-v3.png",
+      "bytes": 3080949,
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.3048235575358073,
+      "alphaBounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1520,
+        "h": 1024
+      },
+      "bodyAlphaBounds": {
+        "x": 43,
+        "y": 5,
+        "w": 1450,
+        "h": 994
+      },
+      "centerRoadAlpha": 253,
+      "id": "SPILLWAY-CLOSED-V3",
+      "anchor": {
+        "xy": [
+          768,
+          998
+        ],
+        "space": "source pixels",
+        "kind": "ground"
+      },
+      "displayCrop": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.974609375
+      ],
+      "layer": "roadside",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6291456,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-f18119f6-6ff4-4840-b5bf-fb7a844ac725.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "file": "assets/spillway-open-v3.png",
+      "bytes": 2558511,
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.4119008382161458,
+      "alphaBounds": {
+        "x": 33,
+        "y": 0,
+        "w": 1471,
+        "h": 1012
+      },
+      "bodyAlphaBounds": {
+        "x": 43,
+        "y": 4,
+        "w": 1451,
+        "h": 995
+      },
+      "centerRoadAlpha": 0,
+      "id": "SPILLWAY-OPEN-V3",
+      "anchor": {
+        "xy": [
+          768,
+          998
+        ],
+        "space": "source pixels",
+        "kind": "ground"
+      },
+      "displayCrop": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.974609375
+      ],
+      "layer": "roadside",
+      "blend": "source-over",
+      "rgbaDecodeBytes": 6291456,
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "built-in image_gen; transparent_background true",
+        "source": "/Users/vikram/.codex/generated_images/01a0e4a6-8a91-7b32-b6ae-aae02230862b/exec-0e5889df-bc89-4985-b86c-9f4ba7771635.png",
+        "processing": "copied unmodified"
+      },
+      "collision": "None in Phase2; later authored geometry, never alpha bounds"
+    },
+    {
+      "id": "INTAKE-SCAN",
+      "file": "assets/intake-scan-overlay-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 258,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.9922281901041666,
+      "rgbaDecodeBytes": 6291456
+    },
+    {
+      "id": "CARRIER-ACTIVE",
+      "file": "assets/carrier-active-overlay-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 404,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.9925965777136767,
+      "rgbaDecodeBytes": 6290064
+    },
+    {
+      "id": "RELAY-CONNECTING",
+      "file": "assets/relay-connecting-overlay-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 318,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1024,
+      "height": 1536,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.9986750284830729,
+      "rgbaDecodeBytes": 6291456
+    },
+    {
+      "id": "RELAY-LINKED",
+      "file": "assets/relay-linked-overlay-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 330,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1024,
+      "height": 1536,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.9980672200520834,
+      "rgbaDecodeBytes": 6291456
+    },
+    {
+      "id": "CIVIC-LINKED",
+      "file": "assets/civic-linked-overlay-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 330,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1024,
+      "height": 1536,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.996063232421875,
+      "rgbaDecodeBytes": 6291456
+    },
+    {
+      "id": "CIVIC-PUBLIC",
+      "file": "assets/civic-public-overlay-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 556,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1024,
+      "height": 1536,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.9929364522298177,
+      "rgbaDecodeBytes": 6291456
+    },
+    {
+      "id": "CONTROLLER-ACTIVE",
+      "file": "assets/controller-active-overlay-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 193,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.9924452279022916,
+      "rgbaDecodeBytes": 6290064
+    },
+    {
+      "id": "CONTROLLER-DISABLED",
+      "file": "assets/controller-disabled-overlay-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 237,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.9949018006812014,
+      "rgbaDecodeBytes": 6290064
+    },
+    {
+      "id": "SIGNAL-RESTORED",
+      "file": "assets/signal-restored-overlay-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 200,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1024,
+      "height": 1536,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.9921868642171224,
+      "rgbaDecodeBytes": 6291456
+    },
+    {
+      "id": "MARKER",
+      "file": "assets/approach-marker-overlay-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 241,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.9959443410237631,
+      "rgbaDecodeBytes": 6291456
+    },
+    {
+      "id": "WATER-LOW",
+      "file": "assets/spillway-water-low-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 1116,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.7216510772705078,
+      "rgbaDecodeBytes": 6291456
+    },
+    {
+      "id": "WATER-HIGH",
+      "file": "assets/spillway-water-high-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 1116,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.72161865234375,
+      "rgbaDecodeBytes": 6291456
+    },
+    {
+      "id": "DAWN",
+      "file": "assets/dawn-atmosphere-v3.svg",
+      "layer": "state-overlay",
+      "blend": "source-over",
+      "approval": "new revision3 candidate; user review pending",
+      "provenance": {
+        "method": "code-native SVG effect; no replacement body"
+      },
+      "bytes": 372,
+      "alignment": "same full source canvas as body; share crop/scale/anchor, no independent transform",
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        71
+      ],
+      "zeroAlphaFraction": 0.013671875,
+      "rgbaDecodeBytes": 6291456
+    }
+  ],
+  "reuse": {
+    "delivery": "../revision-v2/assets/delivery-architecture-v2.png",
+    "signal": "../revision-v2/assets/signal-dead-v2.png",
+    "gate": "../revision-v2/assets/service-gate-open-v2.png",
+    "bus": "../assets/evac-bus-rear-v1.png",
+    "vlad": "../assets/vlad-neutral-v1.png",
+    "omega": "../assets/omega-symbol-v1.svg",
+    "skyline": "../../../../public/bastrop37/assets/environment/city-skyline-v4.png",
+    "road": "../../../../public/bastrop37/assets/environment/road-loop-v4.png",
+    "sedan": "../../../../public/bastrop37/assets/sprites/traffic-sedan.png",
+    "coupe": "../../../../public/bastrop37/assets/sprites/traffic-coupe.png",
+    "hauler": "../../../../public/bastrop37/assets/sprites/traffic-hauler.png",
+    "jo": "../../../../public/bastrop37/assets/sprites/bike-normal-straight.png"
+  },
+  "reuseApproval": {
+    "delivery/signal/gate": "approved revision2 treatment",
+    "original road/rider/traffic/Vlad/Omega": "retained approved direction",
+    "bus": "v1 raster retained for material fit; this composed use pending review"
+  },
+  "stateRules": [
+    "Relay local readiness only; Omega remains contained.",
+    "Civic public-active and dawn only after final release.",
+    "Restored signal limited to epilogue, not Delivery.",
+    "Controller state distinct from barrier geometry.",
+    "Water remains lateral/background, never fluid simulation."
+  ],
+  "specialCrops": {
+    "spillwayInnerGate": [
+      402,
+      360,
+      728,
+      540
+    ],
+    "envL4GateBay": [
+      [
+        420,
+        347
+      ],
+      [
+        551,
+        514
+      ]
+    ],
+    "envL4ApronNearEdge": [
+      [
+        1140,
+        652
+      ],
+      [
+        1536,
+        868
+      ]
+    ],
+    "envL4PortalFloor": [
+      [
+        1230,
+        610
+      ],
+      [
+        1403,
+        648
+      ]
+    ],
+    "busDisplayCrop": [
+      165,
+      90,
+      920,
+      1070
+    ],
+    "busGround": [
+      625,
+      1160
+    ]
+  },
+  "limitations": [
+    "Static art states, not implemented mechanics.",
+    "Barrier fixed feet align but top lamp/upper housing differs by75source pixels; avoid automatic crossfade/tween of whole sprite.",
+    "L4 inner-gate crop must be fitted to the bay; full extra frame causes double framing.",
+    "Camera actual measured vanishing anchors supersede prompt targets.",
+    "Memory excludes browser/GPU copies and mipmaps."
+  ],
+  "reuseMeasurements": {
+    "delivery": {
+      "file": "../revision-v2/assets/delivery-architecture-v2.png",
+      "bytes": 2301825,
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.5247090657552084,
+      "rgbaDecodeBytes": 6291456
+    },
+    "signal": {
+      "file": "../revision-v2/assets/signal-dead-v2.png",
+      "bytes": 1548916,
+      "width": 1024,
+      "height": 1536,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.7843379974365234,
+      "rgbaDecodeBytes": 6291456
+    },
+    "gate": {
+      "file": "../revision-v2/assets/service-gate-open-v2.png",
+      "bytes": 2153180,
+      "width": 1536,
+      "height": 1024,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.5912240346272787,
+      "rgbaDecodeBytes": 6291456
+    },
+    "bus": {
+      "file": "../assets/evac-bus-rear-v1.png",
+      "bytes": 1285486,
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.4502764995713875,
+      "rgbaDecodeBytes": 6290064
+    },
+    "vlad": {
+      "file": "../assets/vlad-neutral-v1.png",
+      "bytes": 2048475,
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [
+        255,
+        255
+      ],
+      "zeroAlphaFraction": 0,
+      "rgbaDecodeBytes": 6290064
+    },
+    "omega": {
+      "file": "../assets/omega-symbol-v1.svg",
+      "bytes": 371,
+      "width": 128,
+      "height": 128,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.86932373046875,
+      "rgbaDecodeBytes": 65536
+    },
+    "skyline": {
+      "file": "../../../../public/bastrop37/assets/environment/city-skyline-v4.png",
+      "bytes": 2537126,
+      "width": 1672,
+      "height": 941,
+      "alphaRange": [
+        255,
+        255
+      ],
+      "zeroAlphaFraction": 0,
+      "rgbaDecodeBytes": 6293408
+    },
+    "road": {
+      "file": "../../../../public/bastrop37/assets/environment/road-loop-v4.png",
+      "bytes": 3093415,
+      "width": 1254,
+      "height": 1254,
+      "alphaRange": [
+        255,
+        255
+      ],
+      "zeroAlphaFraction": 0,
+      "rgbaDecodeBytes": 6290064
+    },
+    "sedan": {
+      "file": "../../../../public/bastrop37/assets/sprites/traffic-sedan.png",
+      "bytes": 213477,
+      "width": 640,
+      "height": 640,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.7609326171875,
+      "rgbaDecodeBytes": 1638400
+    },
+    "coupe": {
+      "file": "../../../../public/bastrop37/assets/sprites/traffic-coupe.png",
+      "bytes": 220969,
+      "width": 640,
+      "height": 640,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.7729296875,
+      "rgbaDecodeBytes": 1638400
+    },
+    "hauler": {
+      "file": "../../../../public/bastrop37/assets/sprites/traffic-hauler.png",
+      "bytes": 353420,
+      "width": 640,
+      "height": 640,
+      "alphaRange": [
+        0,
+        254
+      ],
+      "zeroAlphaFraction": 0.58221923828125,
+      "rgbaDecodeBytes": 1638400
+    },
+    "jo": {
+      "file": "../../../../public/bastrop37/assets/sprites/bike-normal-straight.png",
+      "bytes": 86704,
+      "width": 640,
+      "height": 640,
+      "alphaRange": [
+        0,
+        255
+      ],
+      "zeroAlphaFraction": 0.9083984375,
+      "rgbaDecodeBytes": 1638400
+    }
+  }
+}

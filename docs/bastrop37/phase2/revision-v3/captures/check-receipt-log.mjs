@@ -1,0 +1,8 @@
+import{chromium}from'@playwright/test';import assert from'node:assert/strict';import fs from'node:fs';
+const b=await chromium.launch(),p=await b.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(process.env.REVIEW_URL||'http://localhost:4178/docs/bastrop37/phase2/revision-v3/');await p.waitForFunction(()=>window.previewReady);
+const records=[['l2-record-1','WIPE MODULE\nDETAIN COURIER\nAUTH: MAYOR VLAD'],['l2-record-2','POWER SHUTDOWN\nAUTH: MAYOR VLAD'],['l4-record','LOWER ROAD DISCHARGE\nAUTH: MAYOR VLAD']];
+await p.evaluate(()=>window.renderReviewSample('l2-record-1'));await p.evaluate(()=>window.renderReviewSample('pause'));assert(!(await p.locator('.log').textContent()).includes('WIPE MODULE'));
+for(const[id]of records){await p.evaluate(id=>window.renderReviewSample(id),id);await p.locator('#system-strip button').click()}
+await p.evaluate(()=>window.renderReviewSample('l2-record-1'));await p.locator('#system-strip button').click();await p.evaluate(()=>window.renderReviewSample('pause'));await p.getByText('Recent communications',{exact:true}).click();
+const logged=await p.locator('.log p').allTextContents();assert.equal(logged.length,3);for(const[id,text]of records)assert(logged.some(l=>l.includes('EQUIPMENT RECORD · '+id.toUpperCase())&&l.includes(text)));assert.equal(errors.length,0);
+fs.writeFileSync('docs/bastrop37/phase2/revision-v3/captures/receipt-log-check.json',JSON.stringify({errors,acknowledgedRecords:logged,unacknowledgedNotLogged:true,deduplicated:true},null,2));console.log('PASS: all three acknowledged records retained with identity/text, no extra speaker; unacknowledged excluded and repeat deduplicated.');await b.close();

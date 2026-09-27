@@ -1,8 +1,25 @@
 # Bastrop37 build status
 
-Active phase: **Phase 2 reopened — revised Delivery treatment ready; stopped for user visual review**. Updated 2026-09-27. The user rejected the expanded chapter visuals/HUD and specifically called the signal, gate and buildings unthematic and boring. The earlier technical/layout pass did **not** establish visual acceptance. Phase 2 completion is not approved. Phase 3 remains unauthorized.
+Active phase: **Phase 2 — full revised package complete and independently reviewed; stopped for final user approval**. Updated 2026-09-27. User reviewed the revised Delivery slice and said **“Yeah much better”**. This accepts its visual direction and permits completion of the original bounded Phase 2 package. Full revised Phase 2 completion remains pending user approval; Phase 3 is unauthorized.
 
-## Current revision: visual quality gate
+## Current revision v3
+
+- Preserve rejected v1 and accepted-direction v2 as versioned references. Produce the full revised package under `phase2/revision-v3/`; no original asset or live runtime edits.
+- Scope: all 14 canonical environment/prop/vehicle groups and required HUD states, all 50 approved dialogue lines, asset metadata/provenance, specifications and Phase 3 handoff. M0/M1 cannot substitute for completing the Phase 2 register.
+- Agreed art contract: four distinct alpha environment flank layers (intake, old relays, inland reservoir, civic core); detailed raster carrier/relay/civic/controller bases; shared mechanical closed/open spillway and barrier variants. Reuse the v2 Delivery architecture/gate/signal, original Jo/traffic/drone and existing raster bus. Scan/link/lens/light states use restrained overlays on detailed bodies.
+- Maintain v2 worn charcoal steel/concrete, dirty ivory municipal paint, amber utility lighting and restrained cyan technology. Preserve shared vanishing point, whole-body road grounding, open instrument rails and authored communication strips. Rejected flat v1 scene bodies/cards are not final art.
+- Content owns assets/manifest/ART_NOTES; HUD owns isolated preview/captures/HUD_NOTES; director owns authority/status/ART_DIRECTION and final Phase 3 handoff. Fresh configured reviewer judges thematic quality and actual scene composition before technical coverage.
+- Completed v3 production:12 selected raster bodies,13 source-aligned SVG effects,14canonical asset groups /30states /43resolving references;50isolated HUD samples and all50exact dialogue lines. Measured metadata, prompts/provenance, asset/HUD notes, and refreshed Phase3 integration handoff are present. v1/v2 sources are preserved.
+- Director inspected all four new environment sources and actual-size desktop/mobile L2/L3/L4 compositions plus full chapter sheet. Corrections grounded gantry/node feet, replaced the floating L4 code ramp with a real raster portal/apron, fitted gate leaves into its embedded frame, and repaired alpha regression. Material/identity match the accepted v2 direction.
+- Verification:200layouts across four target sizes and100exact-line checks, required evidence and final-release/recovery sequence checks, no reported page errors/missing images/overflow/default panel scrolling. All87 protected src/public/tests files remain exactly unchanged by SHA-256. New raster download27,433,027bytes /nominalRGBA75,494,688bytes; runtime loading/performance remains unverified.
+- Independent thematic/technical review passed: no unresolved blocker to final user review. Reviewer confirmed coherent chapter art and independently matched all50lines to Phase1. Two medium findings were fixed and independently rechecked: all three acknowledged equipment receipts now persist in the session log, and L2 reading suppresses the approach gate/cue while keeping the carrier visibly separated from mobile Jo. Affected captures/contact sheets were refreshed. See [revision3 review](handoffs/PHASE_2_REVISION3_REVIEW.md).
+- Outstanding: **final user Phase2completion approval**. Package is frozen for root publication/presentation. Static geometry and numeric meters remain proposals, not validated gameplay. Barrier static ground feet align but upper housing/lamp differs about75sourcepixels; animated transition needs Phase3 reconciliation.
+- Current review artifacts: [preview](phase2/revision-v3/index.html), [chapter sheet](phase2/revision-v3/captures/contact-chapters.png), [HUD state sheet](phase2/revision-v3/captures/contact-states.png), [art specifications](phase2/revision-v3/ART_NOTES.md), [HUD state map](phase2/revision-v3/HUD_NOTES.md), [manifest](phase2/revision-v3/asset-manifest.json).
+- Root owns authorized publication and will add `revision-v3/preview.js` to public path rewriting. Publication is isolated review only.
+
+Historical revision v2 status at presentation: **revised Delivery treatment ready for visual review**. Updated 2026-09-27. The user rejected the expanded chapter visuals/HUD and specifically called the signal, gate and buildings unthematic and boring. The earlier technical/layout pass did **not** establish visual acceptance. Phase 2 completion is not approved. Phase 3 remains unauthorized.
+
+## Revision v2 historical gate — user accepted direction
 
 - Preserve `phase2/` as the published v1 reference; new work is isolated in `phase2/revision-v2/`. Do not overwrite original assets or blanket-label the rejected treatment approved.
 - Scope now: one coherent Delivery treatment plus desktop/mobile action and dialogue, then user review. No chapter-wide propagation until this new treatment is accepted. Existing neutral Vlad and non-human Omega can remain.
@@ -17,6 +34,7 @@ Active phase: **Phase 2 reopened — revised Delivery treatment ready; stopped f
 - Independent art-quality review: materially stronger gritty material, depth and authored HUD; **no blocker to presenting this one revised treatment**. Fog clipping, actor grounding and mobile labels were corrected and rechecked. Mobile signal/gate fine detail is diminished at small display size, though silhouettes remain identifiable; user must still judge the treatment.
 - Review links: [new preview](phase2/revision-v2/index.html), [contact sheet](phase2/revision-v2/captures/contact-sheet.png), [v1/v2 comparison](phase2/revision-v2/captures/comparison-sheet.png), [art notes](phase2/revision-v2/ART_NOTES.md), [HUD notes](phase2/revision-v2/HUD_NOTES.md), [review handoff](handoffs/PHASE_2_REVISION2_REVIEW.md).
 - Outstanding: **user acceptance of this one revised treatment**. Do not propagate it across chapters or claim Phase 2 complete. Earlier production counts below are historical v1 coverage, not a current completion claim.
+
 
 ## Prior v1 production record — preserved reference, visual acceptance rejected
 

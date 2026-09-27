@@ -1,6 +1,6 @@
 # Phase 2 — Art and HUD production
 
-Status: Phase 2 visual revision reopened after user rejection of the expanded package. One revised Delivery art/HUD treatment is in production; no final visual acceptance or Phase 3 authorization. See BUILD_STATUS.md for the current gate.
+Status: revised Delivery v2 visual direction accepted by the user (“Yeah much better”); full bounded Phase 2 revision-v3 package is produced and independently reviewed with no unresolved blocker. Stopped for final Phase 2 completion approval; Phase 3 authorization remains outstanding. See BUILD_STATUS.md for the current gate.
 
 ## 1. Required context and dependencies
 

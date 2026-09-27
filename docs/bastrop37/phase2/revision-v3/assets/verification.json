@@ -1,0 +1,37 @@
+{
+  "canonicalGroups": 14,
+  "explicitStates": 30,
+  "referenceCount": 43,
+  "missing": [],
+  "newRasterBytes": 27433027,
+  "newRasterRgbaBytes": 75494688,
+  "environmentAlpha": [
+    {
+      "file": "assets/env-l2-v3.png",
+      "centerRoadAlpha": 0,
+      "zeroAlphaFraction": 0.4518057505289714
+    },
+    {
+      "file": "assets/env-l3-v3.png",
+      "centerRoadAlpha": 0,
+      "zeroAlphaFraction": 0.5039030710856119
+    },
+    {
+      "file": "assets/env-l4-v3.png",
+      "centerRoadAlpha": 0,
+      "zeroAlphaFraction": 0.5734526316324869
+    },
+    {
+      "file": "assets/env-l5-v3.png",
+      "centerRoadAlpha": 0,
+      "zeroAlphaFraction": 0.491085688273112
+    }
+  ],
+  "notValidated": [
+    "runtime integration",
+    "collision",
+    "motion",
+    "mechanics",
+    "performance"
+  ]
+}

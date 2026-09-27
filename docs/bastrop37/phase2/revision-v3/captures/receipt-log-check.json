@@ -1,0 +1,10 @@
+{
+  "errors": [],
+  "acknowledgedRecords": [
+    "EQUIPMENT RECORD · L2-RECORD-1 WIPE MODULE\nDETAIN COURIER\nAUTH: MAYOR VLAD",
+    "EQUIPMENT RECORD · L2-RECORD-2 POWER SHUTDOWN\nAUTH: MAYOR VLAD",
+    "EQUIPMENT RECORD · L4-RECORD LOWER ROAD DISCHARGE\nAUTH: MAYOR VLAD"
+  ],
+  "unacknowledgedNotLogged": true,
+  "deduplicated": true
+}

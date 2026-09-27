@@ -1,0 +1,290 @@
+[
+  {
+    "file": "barrier-closed-v3.png",
+    "bytes": 1738560,
+    "width": 1536,
+    "height": 1024,
+    "alphaRange": [
+      0,
+      254
+    ],
+    "zeroAlphaFraction": 0.7190659840901693,
+    "alphaBounds": {
+      "x": 0,
+      "y": 21,
+      "w": 1536,
+      "h": 947
+    },
+    "bodyAlphaBounds": {
+      "x": 1,
+      "y": 258,
+      "w": 1534,
+      "h": 594
+    },
+    "centerRoadAlpha": 0
+  },
+  {
+    "file": "barrier-open-v3.png",
+    "bytes": 1351642,
+    "width": 1536,
+    "height": 1024,
+    "alphaRange": [
+      0,
+      254
+    ],
+    "zeroAlphaFraction": 0.8233718872070312,
+    "alphaBounds": {
+      "x": 0,
+      "y": 21,
+      "w": 1536,
+      "h": 1003
+    },
+    "bodyAlphaBounds": {
+      "x": 1,
+      "y": 183,
+      "w": 1535,
+      "h": 669
+    },
+    "centerRoadAlpha": 0
+  },
+  {
+    "file": "carrier-rear-v3.png",
+    "bytes": 2412131,
+    "width": 1254,
+    "height": 1254,
+    "alphaRange": [
+      0,
+      255
+    ],
+    "zeroAlphaFraction": 0.3362286933805443,
+    "alphaBounds": {
+      "x": 0,
+      "y": 40,
+      "w": 1224,
+      "h": 1184
+    },
+    "bodyAlphaBounds": {
+      "x": 33,
+      "y": 96,
+      "w": 1188,
+      "h": 1037
+    },
+    "centerRoadAlpha": 250
+  },
+  {
+    "file": "civic-node-v3.png",
+    "bytes": 2972920,
+    "width": 1024,
+    "height": 1536,
+    "alphaRange": [
+      0,
+      254
+    ],
+    "zeroAlphaFraction": 0.28476206461588544,
+    "alphaBounds": {
+      "x": 0,
+      "y": 20,
+      "w": 1016,
+      "h": 1501
+    },
+    "bodyAlphaBounds": {
+      "x": 13,
+      "y": 23,
+      "w": 999,
+      "h": 1495
+    },
+    "centerRoadAlpha": 253
+  },
+  {
+    "file": "controller-v3.png",
+    "bytes": 1382404,
+    "width": 1254,
+    "height": 1254,
+    "alphaRange": [
+      0,
+      255
+    ],
+    "zeroAlphaFraction": 0.642358487926355,
+    "alphaBounds": {
+      "x": 0,
+      "y": 15,
+      "w": 1232,
+      "h": 1239
+    },
+    "bodyAlphaBounds": {
+      "x": 281,
+      "y": 23,
+      "w": 667,
+      "h": 1209
+    },
+    "centerRoadAlpha": 252
+  },
+  {
+    "file": "env-l2-v3.png",
+    "bytes": 2633356,
+    "width": 1536,
+    "height": 1024,
+    "alphaRange": [
+      0,
+      254
+    ],
+    "zeroAlphaFraction": 0.4518057505289714,
+    "alphaBounds": {
+      "x": 0,
+      "y": 0,
+      "w": 1536,
+      "h": 1007
+    },
+    "bodyAlphaBounds": {
+      "x": 0,
+      "y": 0,
+      "w": 1536,
+      "h": 1006
+    },
+    "centerRoadAlpha": 0
+  },
+  {
+    "file": "env-l3-v3.png",
+    "bytes": 2519734,
+    "width": 1536,
+    "height": 1024,
+    "alphaRange": [
+      0,
+      254
+    ],
+    "zeroAlphaFraction": 0.5039030710856119,
+    "alphaBounds": {
+      "x": 0,
+      "y": 0,
+      "w": 1536,
+      "h": 1024
+    },
+    "bodyAlphaBounds": {
+      "x": 0,
+      "y": 0,
+      "w": 1536,
+      "h": 1019
+    },
+    "centerRoadAlpha": 0
+  },
+  {
+    "file": "env-l4-v3.png",
+    "bytes": 2253966,
+    "width": 1536,
+    "height": 1024,
+    "alphaRange": [
+      0,
+      254
+    ],
+    "zeroAlphaFraction": 0.5734526316324869,
+    "alphaBounds": {
+      "x": 0,
+      "y": 0,
+      "w": 1536,
+      "h": 970
+    },
+    "bodyAlphaBounds": {
+      "x": 0,
+      "y": 12,
+      "w": 1536,
+      "h": 856
+    },
+    "centerRoadAlpha": 0
+  },
+  {
+    "file": "env-l5-v3.png",
+    "bytes": 2451815,
+    "width": 1536,
+    "height": 1024,
+    "alphaRange": [
+      0,
+      254
+    ],
+    "zeroAlphaFraction": 0.491085688273112,
+    "alphaBounds": {
+      "x": 0,
+      "y": 0,
+      "w": 1536,
+      "h": 1024
+    },
+    "bodyAlphaBounds": {
+      "x": 0,
+      "y": 0,
+      "w": 1536,
+      "h": 1010
+    },
+    "centerRoadAlpha": 0
+  },
+  {
+    "file": "relay-node-v3.png",
+    "bytes": 2077039,
+    "width": 1024,
+    "height": 1536,
+    "alphaRange": [
+      0,
+      254
+    ],
+    "zeroAlphaFraction": 0.623138427734375,
+    "alphaBounds": {
+      "x": 0,
+      "y": 0,
+      "w": 1012,
+      "h": 1536
+    },
+    "bodyAlphaBounds": {
+      "x": 188,
+      "y": 4,
+      "w": 648,
+      "h": 1528
+    },
+    "centerRoadAlpha": 253
+  },
+  {
+    "file": "spillway-closed-v3.png",
+    "bytes": 3080949,
+    "width": 1536,
+    "height": 1024,
+    "alphaRange": [
+      0,
+      254
+    ],
+    "zeroAlphaFraction": 0.3048235575358073,
+    "alphaBounds": {
+      "x": 0,
+      "y": 0,
+      "w": 1520,
+      "h": 1024
+    },
+    "bodyAlphaBounds": {
+      "x": 43,
+      "y": 5,
+      "w": 1450,
+      "h": 994
+    },
+    "centerRoadAlpha": 253
+  },
+  {
+    "file": "spillway-open-v3.png",
+    "bytes": 2558511,
+    "width": 1536,
+    "height": 1024,
+    "alphaRange": [
+      0,
+      254
+    ],
+    "zeroAlphaFraction": 0.4119008382161458,
+    "alphaBounds": {
+      "x": 33,
+      "y": 0,
+      "w": 1471,
+      "h": 1012
+    },
+    "bodyAlphaBounds": {
+      "x": 43,
+      "y": 4,
+      "w": 1451,
+      "h": 995
+    },
+    "centerRoadAlpha": 0
+  }
+]

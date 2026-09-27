@@ -1,0 +1,22 @@
+{
+  "canonicalExactLines": 50,
+  "errors": [],
+  "acknowledgedReceiptLog": "No acknowledged transmissions in this preview session.",
+  "canonicalGroups": 14,
+  "states": 30,
+  "references": 43,
+  "rasterMeasurements": [
+    "assets/barrier-closed-v3.png",
+    "assets/barrier-open-v3.png",
+    "assets/carrier-rear-v3.png",
+    "assets/civic-node-v3.png",
+    "assets/controller-v3.png",
+    "assets/env-l2-v3.png",
+    "assets/env-l3-v3.png",
+    "assets/env-l4-v3.png",
+    "assets/env-l5-v3.png",
+    "assets/relay-node-v3.png",
+    "assets/spillway-closed-v3.png",
+    "assets/spillway-open-v3.png"
+  ]
+}
