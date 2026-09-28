@@ -1,0 +1,170 @@
+[
+  {
+    "name": "desktop1440",
+    "result": {
+      "comms": {
+        "x": 936,
+        "y": 683,
+        "w": 470,
+        "h": 185,
+        "font": "16px"
+      },
+      "advance": {
+        "x": 936,
+        "y": 683,
+        "w": 470,
+        "h": 185,
+        "font": "16px"
+      },
+      "dialogue": {
+        "x": 1063,
+        "y": 765,
+        "w": 318,
+        "h": 25,
+        "font": "18px"
+      },
+      "portrait": {
+        "x": 963,
+        "y": 740,
+        "w": 66,
+        "h": 69,
+        "font": "8px"
+      },
+      "riderBottom": "756.0",
+      "touchY": 0,
+      "scrollWidth": 1440,
+      "viewport": 1440,
+      "describedby": "speaker dialogue-text",
+      "nestedControls": 0,
+      "topTarget": "advance",
+      "bottomTarget": "advance"
+    },
+    "errors": []
+  },
+  {
+    "name": "desktop1280",
+    "result": {
+      "comms": {
+        "x": 776,
+        "y": 503,
+        "w": 470,
+        "h": 185,
+        "font": "16px"
+      },
+      "advance": {
+        "x": 776,
+        "y": 503,
+        "w": 470,
+        "h": 185,
+        "font": "16px"
+      },
+      "dialogue": {
+        "x": 903,
+        "y": 585,
+        "w": 318,
+        "h": 25,
+        "font": "18px"
+      },
+      "portrait": {
+        "x": 803,
+        "y": 560,
+        "w": 66,
+        "h": 69,
+        "font": "8px"
+      },
+      "riderBottom": "604.8",
+      "touchY": 0,
+      "scrollWidth": 1280,
+      "viewport": 1280,
+      "describedby": "speaker dialogue-text",
+      "nestedControls": 0,
+      "topTarget": "advance",
+      "bottomTarget": "advance"
+    },
+    "errors": []
+  },
+  {
+    "name": "tablet1024",
+    "result": {
+      "comms": {
+        "x": 590,
+        "y": 551,
+        "w": 400,
+        "h": 185,
+        "font": "16px"
+      },
+      "advance": {
+        "x": 590,
+        "y": 551,
+        "w": 400,
+        "h": 185,
+        "font": "16px"
+      },
+      "dialogue": {
+        "x": 717,
+        "y": 633,
+        "w": 248,
+        "h": 25,
+        "font": "16px"
+      },
+      "portrait": {
+        "x": 617,
+        "y": 608,
+        "w": 66,
+        "h": 69,
+        "font": "8px"
+      },
+      "riderBottom": "645.1",
+      "touchY": 0,
+      "scrollWidth": 1024,
+      "viewport": 1024,
+      "describedby": "speaker dialogue-text",
+      "nestedControls": 0,
+      "topTarget": "advance",
+      "bottomTarget": "advance"
+    },
+    "errors": []
+  },
+  {
+    "name": "mobile390",
+    "result": {
+      "comms": {
+        "x": 12,
+        "y": 600,
+        "w": 366,
+        "h": 157,
+        "font": "16px"
+      },
+      "advance": {
+        "x": 12,
+        "y": 600,
+        "w": 366,
+        "h": 157,
+        "font": "16px"
+      },
+      "dialogue": {
+        "x": 106,
+        "y": 669,
+        "w": 254,
+        "h": 25,
+        "font": "16px"
+      },
+      "portrait": {
+        "x": 33.5,
+        "y": 649,
+        "w": 49,
+        "h": 55,
+        "font": "7px"
+      },
+      "riderBottom": "506.4",
+      "touchY": 774,
+      "scrollWidth": 390,
+      "viewport": 390,
+      "describedby": "speaker dialogue-text",
+      "nestedControls": 0,
+      "topTarget": "advance",
+      "bottomTarget": "advance"
+    },
+    "errors": []
+  }
+]

@@ -174,3 +174,67 @@ body:has(.garage){background:#090d19}
 .garage .asset p{color:#97a5b9;font-size:12px;line-height:1.7}
 .garage .asset a{font:10px monospace;color:#79edd6}
 @media(max-width:700px){.garage{padding:18px 14px}.garage .mast{font-size:8px;letter-spacing:.5px}.garage .gallery{grid-template-columns:1fr}.garage .asset .sprite-stage{height:260px}}
+
+/* Revision 1: one tactile bike receiver surface for every spoken line. */
+#bastrop-game .comms{--accent:#d3ae76;width:470px;max-width:calc(100% - 68px);filter:drop-shadow(0 11px 15px #02090bdc);clip-path:polygon(0 0,calc(100% - 19px) 0,100% 19px,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%)}
+#bastrop-game .comms[data-speaker=omega]{--accent:#88d7c9}
+#bastrop-game .comms[data-speaker=jo]{--accent:#e0d0ae}
+#bastrop-game .comms:has(.comms-trigger:focus-visible){filter:drop-shadow(0 0 4px #9ce8d7) drop-shadow(0 11px 15px #02090bdc)}
+#bastrop-game .comms-trigger{display:block;width:100%;padding:3px;border:0;color:#f3efe2;text-align:left;background:linear-gradient(135deg,#aab0a0 0,#4d5b59 7%,#15252c 23%,#1c3338 72%,#87918a 100%);clip-path:polygon(0 0,calc(100% - 19px) 0,100% 19px,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%);box-shadow:inset 0 1px #eee5c57a,inset 0 -2px #070f14}
+#bastrop-game .comms-trigger:focus-visible{outline:3px solid #b6ffe8;outline-offset:-4px}
+#bastrop-game .comms-trigger:hover .comms-action,#bastrop-game .comms-trigger:focus-visible .comms-action{background:#23414a}
+#bastrop-game .comms-trigger:active{filter:brightness(1.18)}
+#bastrop-game .comms-rail{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;min-height:27px;padding:5px 24px 5px 11px;background:repeating-linear-gradient(100deg,#edce97 0 14px,#d6b780 14px 15px,#e3c48e 15px 31px);clip-path:none;font:700 9px 'Courier New',monospace;letter-spacing:1.2px;color:#1c292d}
+#bastrop-game .channel-number{font:700 9px 'Courier New',monospace;letter-spacing:.5px;padding-right:9px;border-right:1px solid #6d6657}
+#bastrop-game .signal-status{display:flex;align-items:center;gap:5px;font:700 8px 'Courier New',monospace;letter-spacing:.6px}
+#bastrop-game .signal-status i{display:block;width:5px;height:5px;border-radius:50%;background:#204a3f;box-shadow:0 0 0 2px #1c292d33}
+#bastrop-game .comms[data-speaker=omega] .comms-rail{background:repeating-linear-gradient(100deg,#a7dcd0 0 14px,#88c8bc 14px 15px,#9ed8ca 15px 31px)}
+#bastrop-game .comms[data-speaker=jo] .comms-rail{background:repeating-linear-gradient(100deg,#e8d6ad 0 14px,#d7c49b 14px 15px,#e2d0a6 15px 31px)}
+#bastrop-game .comms-body{position:relative;display:grid;grid-template-columns:86px minmax(0,1fr);gap:13px;min-height:135px;padding:10px 11px 8px 9px;background:linear-gradient(108deg,#65716b 0,#2c4146 4%,#14242c 21%,#101e29 69%,#263c40 100%);border-left:5px solid #a6aaa0;border-right:2px solid #667974;box-shadow:inset 0 3px 0 #d2d0b869,inset 0 -3px 0 #09191e,0 2px 0 #07151a}
+#bastrop-game .comms-body::before{content:'';position:absolute;left:3px;top:9px;bottom:9px;width:3px;background:repeating-linear-gradient(180deg,var(--accent) 0 8px,#172930 8px 12px);box-shadow:2px 0 0 #08181d;pointer-events:none}
+#bastrop-game .comms-body::after{content:'';position:absolute;right:4px;top:8px;bottom:8px;width:3px;background:linear-gradient(#a8b5a0,#263a3e 12%,#1b3036 88%,#91a098);box-shadow:-2px 0 #06171c;pointer-events:none}
+#bastrop-game .comms-identity{display:flex;flex-direction:column;align-items:center;width:86px;padding:0;gap:4px}
+#bastrop-game .comms-identity[hidden]{display:none}
+#bastrop-game .portrait-dock{position:relative;display:block;width:84px;height:91px;padding:7px 7px 11px;background:linear-gradient(145deg,#bec2ad 0,#63736d 8%,#1a3036 17%,#0b1e25 77%,#79867a 100%);border:2px solid #aeb2a0;box-shadow:inset 0 0 0 3px #101d22,0 3px 0 #07161b,0 5px 7px #000b;clip-path:polygon(0 0,100% 0,100% calc(100% - 11px),calc(100% - 11px) 100%,0 100%)}
+#bastrop-game .portrait-dock::before{content:'';position:absolute;z-index:1;left:3px;right:13px;top:3px;height:3px;background:linear-gradient(90deg,#f4dcac77,transparent 70%);pointer-events:none}
+#bastrop-game .portrait-dock::after{content:'●  ◈';position:absolute;right:5px;bottom:1px;font:7px 'Courier New',monospace;letter-spacing:3px;color:#e2c699;text-shadow:0 1px #000}
+#bastrop-game .comms-identity img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 30%;border:1px solid #b3b7a5;filter:saturate(.74) contrast(1.07)}
+#bastrop-game .comms[data-speaker=omega] .comms-identity img{padding:8px;background:#0c2329;border:1px solid #7dcabf;object-fit:contain;filter:none}
+#bastrop-game .comms-identity>span:last-child{font:8px 'Courier New',monospace;letter-spacing:1px;color:var(--accent);margin:0;align-self:flex-start;padding-left:2px}
+#bastrop-game .transmission{display:flex;flex-direction:column;min-width:0;min-height:0;padding:6px 8px 0 10px;background:linear-gradient(140deg,#091820 0,#132630 68%,#0b1c24 100%);border:1px solid #4e6869;border-top-color:#718988;box-shadow:inset 0 2px 8px #01090ac7,2px 2px 0 #62736b66;clip-path:polygon(0 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%)}
+#bastrop-game .speaker-line{display:flex;justify-content:space-between;align-items:end;gap:8px;padding-bottom:4px;border-bottom:1px solid #738e8966}
+#bastrop-game .speaker-line #speaker{font:italic 22px/1 Impact,'Arial Narrow',Arial,sans-serif;letter-spacing:1.2px;color:#f6f0db;text-shadow:1px 2px #0a1820}
+#bastrop-game .speaker-line #dialogue-count{font:9px 'Courier New',monospace;color:#d1ded6;white-space:nowrap}
+#bastrop-game #dialogue-text{display:block;font:18px/1.38 'Manrope Variable',Arial,sans-serif;color:#f5f3eb;margin:8px 0 9px;min-height:25px;text-wrap:pretty}
+#bastrop-game .comms-action{display:flex;align-items:center;gap:9px;min-height:32px;margin:0 -8px 0 -10px;padding:5px 9px 4px 10px;border-top:1px solid #a6bcb173;background:linear-gradient(90deg,#193b42,#10242d);color:var(--accent);font:700 10px 'Courier New',monospace;letter-spacing:1px}
+#bastrop-game .action-cue{flex:1}
+#bastrop-game .action-arrow{font:23px/1 Impact,sans-serif;color:#e3c895}
+#bastrop-game .comms[data-speaker=omega] .action-arrow{color:#a9e9dc}
+#bastrop-game .advance-key{color:#d5e2d9;font:9px 'Courier New',monospace;white-space:nowrap}
+#bastrop-game .advance-tap{display:none}
+#bastrop-game .comms-tail{display:flex;align-items:center;gap:8px;margin:0;padding:3px 10px 3px 13px;min-height:17px;background:linear-gradient(90deg,#203039,#0f1d26);font:8px 'Courier New',monospace;letter-spacing:1.4px;color:#b9d0c8}
+#bastrop-game .tail-track{flex:1;height:3px;background:repeating-linear-gradient(90deg,var(--accent) 0 13px,#182a31 13px 17px);opacity:.65}
+#bastrop-game .tail-bolt{font-size:9px;color:#dfc18c}
+#bastrop-game .comms[data-speaker=jo] .comms-body{grid-template-columns:1fr;padding-left:20px}
+#bastrop-game .comms[data-speaker=jo] .speaker-line #speaker{color:#f5d4b8}
+@media(max-width:1100px){#bastrop-game .comms{width:400px}#bastrop-game #dialogue-text{font-size:16px}}
+@media(max-width:600px){
+  #bastrop-game .comms{left:12px;right:12px;bottom:87px;width:auto;max-width:none}
+  #bastrop-game .comms-trigger{padding:2px}
+  #bastrop-game .comms-rail{min-height:25px;padding:4px 21px 4px 8px;gap:6px;font-size:8px;letter-spacing:.55px}
+  #bastrop-game .channel-number{font-size:8px;padding-right:6px}
+  #bastrop-game .signal-status{font-size:7px}
+  #bastrop-game .comms-body{grid-template-columns:64px minmax(0,1fr);gap:8px;min-height:0;padding:7px 7px 5px 7px}
+  #bastrop-game .comms-identity{width:64px;gap:3px}
+  #bastrop-game .portrait-dock{width:63px;height:73px;padding:5px 5px 9px}
+  #bastrop-game .transmission{padding:4px 6px 0 7px}
+  #bastrop-game .comms-identity>span:last-child{font-size:7px;letter-spacing:.35px}
+  #bastrop-game .speaker-line #speaker{font-size:18px}
+  #bastrop-game .speaker-line #dialogue-count{font-size:8px}
+  #bastrop-game #dialogue-text{font-size:16px;line-height:1.4;margin:7px 0 7px}
+  #bastrop-game .comms-action{min-height:32px;margin:0 -6px 0 -7px;padding:4px 7px;font-size:8px;letter-spacing:.35px}
+  #bastrop-game .action-arrow{font-size:20px}
+  #bastrop-game .advance-key{display:none}
+  #bastrop-game .advance-tap{display:inline;font:8px 'Courier New',monospace;white-space:nowrap;color:#d8e5dc}
+  #bastrop-game .comms-tail{min-height:15px;padding:2px 8px 2px 10px;font-size:7px}
+}

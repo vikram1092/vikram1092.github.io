@@ -43,6 +43,7 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
   const segments = [...energySegments.querySelectorAll<HTMLElement>('i')];
   const turboState = requireElement<HTMLElement>('#turbo-state');
   const comms = requireElement<HTMLElement>('#comms');
+  const commsIdentity = requireElement<HTMLElement>('#comms-identity');
   const portrait = requireElement<HTMLImageElement>('#portrait');
   const identityCode = requireElement<HTMLElement>('#identity-code');
   const channel = requireElement<HTMLElement>('#channel');
@@ -141,7 +142,7 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
         setText(dialogueText, line.text);
         setText(dialogueCount, `${String(view.dialogueIndex + 1).padStart(2, '0')} / ${String(view.dialogueCount).padStart(2, '0')}`);
         setText(channel, line.speaker === 'vlad' ? 'MUNICIPAL CHANNEL' : line.speaker === 'omega' ? 'MODULE CHANNEL' : 'RIDER CHANNEL');
-        show(portrait.parentElement as HTMLElement, line.speaker !== 'jo');
+        show(commsIdentity, line.speaker !== 'jo');
         if (line.speaker === 'vlad') {
           if (portrait.src !== new URL(DELIVERY_ASSETS.vladNeutral, location.href).href) portrait.src = DELIVERY_ASSETS.vladNeutral;
           portrait.alt = 'Neutral portrait of Mayor Vlad';

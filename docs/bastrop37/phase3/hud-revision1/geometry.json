@@ -1,0 +1,130 @@
+[
+  {
+    "width": 1440,
+    "height": 900,
+    "long": {
+      "line": "Municipal intake. Take the service road. I'll get you through.",
+      "fontSize": "18px",
+      "comms": {
+        "top": 664.34375,
+        "bottom": 868,
+        "left": 936,
+        "right": 1406
+      },
+      "touch": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0
+      },
+      "touchDisplay": "none",
+      "horizontalOverflow": false
+    },
+    "complete": {
+      "state": "complete",
+      "headline": "DELIVERY APPROACH REACHED",
+      "message": "Delivery approach reached. Level 1 complete.",
+      "saveNote": "SAVED / DELIVERY APPROACH",
+      "continueLabel": "CONTINUE TO INTAKE",
+      "horizontalOverflow": false
+    },
+    "errors": []
+  },
+  {
+    "width": 1280,
+    "height": 720,
+    "long": {
+      "line": "Municipal intake. Take the service road. I'll get you through.",
+      "fontSize": "18px",
+      "comms": {
+        "top": 484.34375,
+        "bottom": 688,
+        "left": 776,
+        "right": 1246
+      },
+      "touch": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0
+      },
+      "touchDisplay": "none",
+      "horizontalOverflow": false
+    },
+    "complete": {
+      "state": "complete",
+      "headline": "DELIVERY APPROACH REACHED",
+      "message": "Delivery approach reached. Level 1 complete.",
+      "saveNote": "SAVED / DELIVERY APPROACH",
+      "continueLabel": "CONTINUE TO INTAKE",
+      "horizontalOverflow": false
+    },
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "height": 768,
+    "long": {
+      "line": "Municipal intake. Take the service road. I'll get you through.",
+      "fontSize": "16px",
+      "comms": {
+        "top": 537.84375,
+        "bottom": 736,
+        "left": 590,
+        "right": 990
+      },
+      "touch": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0
+      },
+      "touchDisplay": "none",
+      "horizontalOverflow": false
+    },
+    "complete": {
+      "state": "complete",
+      "headline": "DELIVERY APPROACH REACHED",
+      "message": "Delivery approach reached. Level 1 complete.",
+      "saveNote": "SAVED / DELIVERY APPROACH",
+      "continueLabel": "CONTINUE TO INTAKE",
+      "horizontalOverflow": false
+    },
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "long": {
+      "line": "Municipal intake. Take the service road. I'll get you through.",
+      "fontSize": "16px",
+      "comms": {
+        "top": 580.21875,
+        "bottom": 757,
+        "left": 12,
+        "right": 378
+      },
+      "touch": {
+        "top": 774,
+        "bottom": 832,
+        "left": 12,
+        "right": 378
+      },
+      "touchDisplay": "flex",
+      "horizontalOverflow": false,
+      "serviceLine": "A diagnostic system. It can read the road equipment. Follow the service lane.",
+      "serviceCardTop": 557.828125,
+      "riderBottom": 506.4,
+      "riderClearance": 51.42812500000002
+    },
+    "complete": {
+      "state": "complete",
+      "headline": "DELIVERY APPROACH REACHED",
+      "message": "Delivery approach reached. Level 1 complete.",
+      "saveNote": "SAVED / DELIVERY APPROACH",
+      "continueLabel": "CONTINUE TO INTAKE",
+      "horizontalOverflow": false
+    },
+    "errors": []
+  }
+]
