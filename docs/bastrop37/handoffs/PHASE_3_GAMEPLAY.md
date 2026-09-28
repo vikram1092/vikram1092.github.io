@@ -1,0 +1,37 @@
+# Phase 3 M0/M1 gameplay handoff
+
+2026-09-27. Scope: approved Phase 3 M0 and the Level 1 Delivery playable slice (M1). No Level 2–5 campaign implementation or publishing is claimed.
+
+## Implemented in owned files
+
+- `src/scripts/bastrop37.ts`: replaced the prototype's universal timer, sea-wall ending and hostile opening with the approved L1.01–05 mission. Kept the sprite-projected road, steering, turbo, slide, jump, blade, sound compatibility and opaque-mask/swept vehicle collision. Added HUD view derivation and action binding through the shared `createHud(actions)` interface; the HUD owner edits the page, styles and `hud.ts`.
+- `src/scripts/bastrop37/delivery.ts`: deterministic beat and mode transitions. Mission route progress stops for manual story/resolve reading while road texture and safe riding continue. L1.02 has two civilian gap pairs and a dead signal, then actual DRAIN; L1.03 advances to the service objective; L1.04 requires passage through the open right gate and a later approach marker. A missed gate takes a neutral 650-unit repeat approach after the previous gate has gone behind Jo. The left closed barrier body causes contact/retry; center/outer bypass lanes reach the loop. L1.05 closes only after all three exact lines are acknowledged.
+- `src/scripts/bastrop37/save.ts`: one versioned localStorage record for each safe checkpoint, exact canonical line/flag validation, atomic serialized writes, session progress on storage failure, and deliberate saved-progress reset. Incompatible records remain recoverable through a fresh start; no mid-collision position is saved.
+- `docs/bastrop37/handoffs/PHASE_3_GAMEPLAY.md`: this handoff.
+
+## Concrete route and checkpoint contract
+
+Opening has five manual lines and no hazard. `CP-L1-ACTION` starts after L1.01 acknowledgment with grounded Jo, full energy, clear inputs and the authored traffic layout. Gap event planes are route 650 and 1450; dead signal is 2150. Two gap pairs start in lanes 1/3 at z590/650 and lanes 0/2 at z1280/1370. A separate lane-1 civilian starts at z2050 so the last actor remains visible at signal/DRAIN entry and exits naturally. No procedural spawns or drone attacks occur in campaign M1.
+
+`CP-L1-SERVICE` starts after all five L1.03 lines. The open gantry plane is route 900; its traversable corridor is world x370–445. The approved closed-barrier raster dresses x152–258; contact there retries. Missing the open corridor elsewhere leads to a visible repeat loop. The municipal approach marker is route 1640 and requires the gate flag. DRAIN waits for all existing traffic to leave offscreen and for the crossed marker to move behind camera before L1.05 begins. `CP-L1-COMPLETE` is saved only after gate, marker, clear road and all three closure lines; the completed slice retains harmless road scroll and an explicit CONTINUE TO INTAKE action. Intake is deliberately unavailable in M1, and attempting it retains completion with a recoverable error/menu.
+
+The L1.03 objective change to TAKE THE SERVICE LANE remains through L1.05. Transient riding cues are now passed through the HUD view while playing; save and load status remains a separate menu message. A failed checkpoint write includes SESSION ONLY in the immediate action cue, and later pause/completion labels derive from the actual storage result.
+
+The playable scene loads the selected v2 Delivery architecture, dead signal and open service gantry plus the selected v3 closed barrier, neutral Vlad and contained Omega identities. The original skyline is layered behind the transparent architecture. Canvas logical height follows its displayed aspect ratio; desktop projection zoom is 1.6 and the horizon matches the approved architecture convergence (.42 desktop/.32 portrait). Portrait story cruise positions Jo above the dialogue card. Collision remains based on the same projected sprite/body masks used for rendering.
+
+Final portrait framing correction: `storyBaseRatio()` caps portrait STORY/RESOLVE road grounding at 60% of the displayed canvas and lowers it further when the rendered `#comms` card starts higher. It reserves 24 CSS pixels above the measured card top. HUD rendering and this bound calculation happen before canvas drawing, so a longer line moves Jo's projected ground point in the same frame; ACTION projection and collision geometry are unchanged. `#game[data-rider-bottom]` exposes the ground sprite's bottom in viewport CSS pixels for a direct card-clearance assertion.
+
+Roadside props now fade over the final 80 world units of approach and are fully transparent by z −12. This replaces a rejected downward translation, which carried the service-gantry beam across Jo's silhouette in reviewer frames. Prop positions remain projected on the same world plane; mission gates and collision are unchanged. The final gantry frames require reviewer recheck after the new build.
+
+The read-only `#game` dataset exposes state, mode, beat, dialogue ID/index, mission route, visual distance, traffic count/JSON actor positions and IDs, checkpoint, gate/approach flags and service-loop count, alongside existing riding and collision fields. The local-only `/bastrop37/?fixture=mechanics` surface runs the retained civilian/drone/blade/jump mechanics on localhost or 127.0.0.1 without mission advancement or campaign saves; it is outside the player campaign.
+
+## Verification and remaining work
+
+`npm run check` after the near-camera fade correction: 0 errors, 0 warnings, 0 hints. Director's pre-change baseline: 17 browser tests passed and Astro check passed. Director reports the updated desktop opening capture has a correctly scaled rider and restored skyline. The M1 suite passed 20/20 browser scenarios before the final visual corrections. The affected portrait checks then passed 2/2, including long-line rider/card clearance and touch-only complete/save/reload; director visually confirmed the refreshed long Omega capture shows the full rider above the card. The service-gantry exit correction is built for final independent visual recheck. Do not claim gantry visual acceptance until that recheck finishes. No runtime performance measurement has been made.
+
+Exact next steps: director finishes the M1 browser matrix and captures, sends any concrete failure for gameplay repair, then independent reviewer checks slow reading, visible drain, service collision/loop, truthful save failure and end-of-slice completion. Apply only confirmed M1 defects in owned source, rerun affected checks, and update this handoff with final evidence. Present the completed slice for user review before any M2 work.
+
+
+## Director final acceptance addendum — 2026-09-27
+
+After this worker completed, the director accepted M0/M1 for user playtest. Final build has zero Astro diagnostics; final four-size captures have no page errors or horizontal overflow. Short headless Chromium samples on Apple M4/16GB averaged about60fps for reading and live traffic (p95 16.7–16.8ms); no physical-mobile performance claim. Independent reviewer confirmed mobile rider clearance and, in 16 sequential gantry frames, continuous camera fade without hard pop or beam/rider intersection. No material review issue remains open. See `PHASE_3_REVIEW.md`, `PHASE_3_DIRECTOR.md` and `../phase3/live-measurements.json` for evidence. The user's later request authorized pushing and publishing the verified slice. Stop at M1; user playtest is next. This addendum supersedes earlier pending acceptance/measurement notes above.

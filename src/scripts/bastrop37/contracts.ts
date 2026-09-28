@@ -3,7 +3,8 @@ export type Speaker = 'jo' | 'vlad' | 'omega';
 export type BeatMode = 'story' | 'action' | 'drain' | 'resolve';
 export type DialogueLine = { id: string; speaker: Speaker; text: string };
 export type HudView = {
-  state: 'ready' | 'playing' | 'paused' | 'crashed' | 'complete' | 'error';
+  state: 'loading' | 'ready' | 'playing' | 'paused' | 'crashed' | 'complete' | 'error';
+  readyToStart?: boolean;
   mode: BeatMode;
   beatId: string;
   objective: string;

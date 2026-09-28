@@ -1,5 +1,7 @@
 # Bastrop37 — Agent operating plan
 
+Current authority (2026-09-27): the user confirmed **“I approved it all”**, approving the full revised Phase 2 package, and authorized **Phase 3 M0/M1 only**. After M1 was verified, the user authorized pushing and publishing this slice. Stop after M1; no M2–M5.
+
 Authorized configuration: Astra manages; Sol implements and reviews; Luna handles bounded mechanical work when useful. This document records the user's selected team, not a request to maximize agent count or reasoning effort.
 
 ## Director and working context
@@ -9,9 +11,11 @@ Authorized configuration: Astra manages; Sol implements and reviews; Luna handle
 - Work in the existing website checkout. A separate chat provides separate conversational context, not filesystem isolation.
 - Read `BASTROP37_STORY.md` and all three phase documents before assigning work.
 - Preserve unrelated changes. At setup, the original `BASTROP37_PLAN.md` was deleted in the working tree, `BASTROP37_PLAN_OLD.md` and `.BASTROP37_PLAN.md.swp` were untracked, and the new story/docs were untracked. Treat these as user work; do not restore, remove, or bulk-stage them. Do not open or modify the editor swap file.
-- The old prototype's automatic commit/push instruction is historical. Do not deploy as part of this setup or first slice.
+- The old prototype's automatic commit/push instruction is historical. The user's later request explicitly authorized publishing the verified M1 slice; no M2–M5 work is included.
 
-## Active scope and phase gates
+## Historical scope and phase gates
+
+The phase assignments and gates below are retained as historical project context. The current authority block at the top of this file supersedes them.
 
 The 2026-09-27 user request authorizes **Phase 1 narrative and encounters only**: revise all five levels in documentation, consult gameplay for read-only feasibility and content for continuity, independently review the revised documents, and stop for user approval. No production assets, runtime edits, or M0/M1 work are authorized by this request.
 

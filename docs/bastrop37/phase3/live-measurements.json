@@ -1,0 +1,161 @@
+{
+  "date": "2026-09-27T23:54:46.368Z",
+  "browser": "153.0.8010.12",
+  "hardware": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M4",
+    "memory": 17179869184
+  },
+  "caveat": "Headless Chromium local measurements; no physical mobile-device or human-play performance claim.",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "frames": 175,
+      "meanMs": 16.666285714285685,
+      "p95Ms": 16.700000000000273,
+      "approximateFps": 60.00137145991919,
+      "jsHeapBytes": 10000000,
+      "loadedResourceBytes": 23565185,
+      "state": "playing",
+      "route": "0.0",
+      "line": "You have the module?",
+      "horizontalOverflow": false,
+      "logicalCanvas": {
+        "width": 1280,
+        "height": 800
+      },
+      "actionMeasured": {
+        "frames": 175,
+        "meanMs": 16.66628571428571,
+        "p95Ms": 16.700000000000728,
+        "approximateFps": 60.0013714599191,
+        "jsHeapBytes": 10000000,
+        "loadedResourceBytes": 23565185,
+        "state": "playing",
+        "route": "772.7",
+        "line": "You have the module?",
+        "horizontalOverflow": false,
+        "logicalCanvas": {
+          "width": 1280,
+          "height": 800
+        }
+      },
+      "failureState": "crashed",
+      "completionState": "complete",
+      "errors": []
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "frames": 175,
+      "meanMs": 16.66571428571426,
+      "p95Ms": 16.700000000000273,
+      "approximateFps": 60.00342876735823,
+      "jsHeapBytes": 10000000,
+      "loadedResourceBytes": 23565185,
+      "state": "playing",
+      "route": "0.0",
+      "line": "You have the module?",
+      "horizontalOverflow": false,
+      "logicalCanvas": {
+        "width": 1280,
+        "height": 720
+      },
+      "actionMeasured": {
+        "frames": 175,
+        "meanMs": 16.665714285714284,
+        "p95Ms": 16.799999999999272,
+        "approximateFps": 60.003428767358145,
+        "jsHeapBytes": 10000000,
+        "loadedResourceBytes": 23565185,
+        "state": "playing",
+        "route": "772.7",
+        "line": "You have the module?",
+        "horizontalOverflow": false,
+        "logicalCanvas": {
+          "width": 1280,
+          "height": 720
+        }
+      },
+      "failureState": "crashed",
+      "completionState": "complete",
+      "errors": []
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "frames": 175,
+      "meanMs": 16.6662857142857,
+      "p95Ms": 16.799999999999955,
+      "approximateFps": 60.001371459919135,
+      "jsHeapBytes": 10000000,
+      "loadedResourceBytes": 23565185,
+      "state": "playing",
+      "route": "0.0",
+      "line": "You have the module?",
+      "horizontalOverflow": false,
+      "logicalCanvas": {
+        "width": 1024,
+        "height": 768
+      },
+      "actionMeasured": {
+        "frames": 175,
+        "meanMs": 16.666285714285717,
+        "p95Ms": 16.700000000000728,
+        "approximateFps": 60.00137145991907,
+        "jsHeapBytes": 10000000,
+        "loadedResourceBytes": 23565185,
+        "state": "playing",
+        "route": "772.7",
+        "line": "You have the module?",
+        "horizontalOverflow": false,
+        "logicalCanvas": {
+          "width": 1024,
+          "height": 768
+        }
+      },
+      "failureState": "crashed",
+      "completionState": "complete",
+      "errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "frames": 175,
+      "meanMs": 16.666285714285674,
+      "p95Ms": 16.700000000000273,
+      "approximateFps": 60.00137145991923,
+      "jsHeapBytes": 10000000,
+      "loadedResourceBytes": 23565185,
+      "state": "playing",
+      "route": "0.0",
+      "line": "You have the module?",
+      "horizontalOverflow": false,
+      "logicalCanvas": {
+        "width": 390,
+        "height": 844
+      },
+      "actionMeasured": {
+        "frames": 175,
+        "meanMs": 16.666285714285713,
+        "p95Ms": 16.799999999999272,
+        "approximateFps": 60.001371459919085,
+        "jsHeapBytes": 10000000,
+        "loadedResourceBytes": 23565185,
+        "state": "playing",
+        "route": "772.7",
+        "line": "You have the module?",
+        "horizontalOverflow": false,
+        "logicalCanvas": {
+          "width": 390,
+          "height": 844
+        }
+      },
+      "failureState": "crashed",
+      "completionState": "complete",
+      "errors": []
+    }
+  ]
+}

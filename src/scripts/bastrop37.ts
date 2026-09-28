@@ -1,8 +1,14 @@
-// BASTROP37 step 6: a timed city-to-sea-wall escape with a reactive night soundtrack.
+// BASTROP37 Delivery: authored beats over the existing projected sprite road.
 // X and Z are shared road-space units; projected opaque bodies decide visible contact.
+import { createHud } from './bastrop37/hud';
+import { DeliveryMission, SERVICE_CORRIDOR, type DeliveryEvent } from './bastrop37/delivery';
+import { DELIVERY_ASSETS, DELIVERY_ASSET_METADATA } from './bastrop37/delivery-content';
+import { clearDeliverySave, deliverySave, readDeliverySave, writeDeliverySave, type DeliveryCheckpoint, type DeliverySave } from './bastrop37/save';
+import type { HudView } from './bastrop37/contracts';
 type DronePhase = 'approach' | 'flank' | 'signal' | 'lunge' | 'recover';
 type DroneOutcome = 'none' | 'slice' | 'boost' | 'jump' | 'miss';
 type Car = {
+  id: string;
   x: number; z: number; w: number; h: number; kind: 'coupe' | 'sedan' | 'hauler' | 'drone';
   velocity: number; passed: boolean; phase?: DronePhase; phaseTime?: number;
   side?: -1 | 1; attackX?: number; outcome?: DroneOutcome; attackPasses?: number;
@@ -13,14 +19,14 @@ type Fragment = { sprite: string; x: number; z: number; lift: number; vx: number
 type EffectBurst = { sprite: string; x: number; z: number; lift: number; life: number; duration: number; width: number };
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
 export function mountGame() {
+  // Local-only mechanic regression surface. It never advances or writes campaign state.
+  const mechanicsFixture = ['localhost','127.0.0.1'].includes(location.hostname) &&
+    new URLSearchParams(location.search).get('fixture') === 'mechanics';
   const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
   const ctx = canvas.getContext('2d');
   const start = document.querySelector<HTMLButtonElement>('#start')!;
   if (!ctx) { start.textContent = 'CANVAS UNAVAILABLE'; return; }
   const c = ctx;
-  const el = (id: string) => document.getElementById(id)!;
-  const overlay = el('overlay');
-  const pauseButton = document.querySelector<HTMLButtonElement>('#pause')!;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const keys = new Set<string>();
   const images: Record<string, HTMLImageElement> = {};
@@ -34,32 +40,53 @@ export function mountGame() {
   const bladeExtension = 3;
 
   let W = 640, H = 360, renderScale = 0;
+  let roadBaseRatio = .84;
+  const storyBaseRatio = () => {
+    if (W >= H) return .84;
+    const card = document.querySelector<HTMLElement>('#comms');
+    if (!card || card.hidden) return .60;
+    const canvasBox = canvas.getBoundingClientRect();
+    if (canvasBox.height <= 0) return .60;
+    // The rider sprite ends at its projected road point. Keep that point above
+    // the actual card top, including when a longer line enlarges the card.
+    return clamp((card.getBoundingClientRect().top - canvasBox.top - 24) / canvasBox.height, .48, .60);
+  };
   const left = 128, right = 512;
   const bounds: Record<string, {x:number;y:number;w:number;h:number}> = {};
-  const horizon = () => H * .28 + (reduced ? 0 : cameraPitch);
+  const horizon = () => H * (W < H ? .32 : .42) + (reduced ? 0 : cameraPitch);
   function project(wx:number, z:number) {
     // Close chase: enlarge the whole road-space view, tracking the rider laterally.
     const scale = 65 / (65 + Math.max(-53,z));
-    const zoom = (W < H ? 3 : 2.2) * (1 - (reduced ? 0 : turboView * .07));
+    const zoom = (W < H ? 3 : 1.6) * (1 - (reduced ? 0 : turboView * .07));
     const unit = Math.min(W * .9, 520) / (right-left) * zoom;
-    return {x:W/2+(wx-cameraX)*unit*scale, y:horizon()+(H*.84-horizon())*scale, scale:unit*scale};
+    return {x:W/2+(wx-cameraX)*unit*scale, y:horizon()+(H*roadBaseRatio-horizon())*scale, scale:unit*scale};
   }
-  type GameState = 'ready' | 'intro' | 'playing' | 'paused' | 'crashed' | 'escaped' | 'timeout';
-  let state: GameState = 'ready';
+  type GameState = HudView['state'];
+  let state: GameState = 'loading';
+  let mission = new DeliveryMission();
+  let checkpoint: DeliveryCheckpoint | null = null;
+  let sessionSave: DeliverySave | null = null;
+  const initialSave = readDeliverySave();
+  let hasSave = initialSave.kind === 'valid';
+  let saveStatus: HudView['saveStatus'] = initialSave.kind === 'invalid' ? 'invalid' : hasSave ? 'saved' : 'none';
+  let statusMessage = initialSave.kind === 'invalid' ? 'Saved progress is incompatible. Start a safe new ride.' : '';
+  let assetLoadFailed = false;
+  let ignoreStoredSave = false;
+  let serviceLoops = 0;
+  let fixtureDroneSpawned = false;
   let x = 320, vx = 0, angle = 0;
   let charge = 1, boost = 0, speed = 260, distance = 0, calls = 0, elapsed = 0;
   let sliding = false, spawn = 0, offset = 0, last = 0, feedbackTime = 0;
+  let feedbackText = '';
   let traffic: Car[] = [], particles: Particle[] = [], fragments: Fragment[] = [], effects: EffectBurst[] = [];
+  let vehicleSerial = 0;
   let frames = 0;
   let cameraX = 320, cameraPitch = 0, turboView = 0;
   let height = 0, verticalSpeed = 0, jumpWindup = 0, jumpCooldown = 0;
   let landing = 0, blades = 0, slices = 0, droneDodges = 0, laneChanges = 0;
   let droneOutcome: DroneOutcome = 'none';
-  let introDroneSpawned = false;
-  const timeLimit = 90;
-  const finishDistance = 6000;
   let score = 0;
-  let introTimer = 0, musicStep = 0, musicClock = 0, bladesAudible = false;
+  let musicStep = 0, musicClock = 0, bladesAudible = false;
   let muted = false;
   try { muted = localStorage.getItem('bastrop37-muted') === 'true'; } catch {}
   type AudioRig = { ctx:AudioContext; master:GainNode; music:GainNode; engine:GainNode; blade:GainNode; fx:GainNode; motor:OscillatorNode; whine:OscillatorNode; bladeOsc:OscillatorNode };
@@ -69,7 +96,8 @@ export function mountGame() {
   const actionKeys = ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space','ShiftLeft','ControlLeft','AltLeft'];
   function size() {
     const portrait = canvas.clientWidth / canvas.clientHeight < 1;
-    const nw = portrait ? 360 : 640, nh = portrait ? 450 : 360;
+    const nw = portrait ? 360 : 640;
+    const nh = Math.round(nw * canvas.clientHeight / Math.max(1, canvas.clientWidth));
     // Preserve the game's logical coordinate system while rendering enough
     // backing pixels for the actual display size and Retina-class screens.
     const cssScale=canvas.clientWidth>0?canvas.clientWidth/nw:1;
@@ -119,7 +147,7 @@ export function mountGame() {
     const now=audio.ctx.currentTime,active=state==='playing';
     audio.master.gain.setTargetAtTime(muted?0:.18,now,.025);
     audio.engine.gain.setTargetAtTime(active?.1:.0001,now,.08);
-    audio.music.gain.setTargetAtTime(active?.075:state==='intro'?.035:.0001,now,.18);
+    audio.music.gain.setTargetAtTime(active?.075:.0001,now,.18);
     audio.blade.gain.setTargetAtTime(active&&blades>.08?.045+.035*blades:.0001,now,.025);
     audio.motor.frequency.setTargetAtTime(43+speed*.12+(boost>0?24:0),now,.045);
     audio.whine.frequency.setTargetAtTime(92+speed*.31+(boost>0?80:0),now,.04);
@@ -141,79 +169,172 @@ export function mountGame() {
     muted=!muted;try{localStorage.setItem('bastrop37-muted',String(muted));}catch{}
     updateMuteButton();if(!muted)initAudio();syncAudio();
   });
-  function setMessage(text: string, seconds = 1) { el('feedback').textContent = text; feedbackTime = seconds; }
+  function setMessage(text: string, seconds = 1) { feedbackText = text; feedbackTime = seconds; }
   function clearInput() { keys.clear(); pressed.clear(); sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
-  function reset() {
-    clearTimeout(introTimer);el('transmission').hidden=true;el('briefing').hidden=false;overlay.classList.remove('transmitting');
-    el('hint').textContent='ARROWS / WASD · SPACE SLIDE · SHIFT TURBO · CMD/CTRL BLADES · OPT/ALT JUMP';
-    clearInput(); x = 320; vx = angle = charge = boost = distance = calls = elapsed = offset = score = 0;
-    charge = 1; speed = 260; spawn = 7.5; particles = []; fragments = []; effects = [];
+  function resetPhysical() {
+    clearInput(); x = 320; vx = angle = boost = distance = calls = elapsed = offset = score = 0;
+    charge = 1; speed = 260; spawn = Infinity; particles = []; fragments = []; effects = [];
     cameraX = 320; cameraPitch = turboView = height = verticalSpeed = jumpWindup = jumpCooldown = landing = blades = slices = droneDodges = laneChanges = 0;
-    droneOutcome = 'none'; introDroneSpawned = false;
-    traffic = [makeVehicle(1, 430, 'coupe'), makeVehicle(3, 730, 'hauler'), makeVehicle(0, 850, 'sedan')];
-    state = 'playing'; overlay.hidden = true; pauseButton.disabled = false; pauseButton.textContent = 'Ⅱ PAUSE';
-    musicClock=0;musicStep=0;syncAudio();setMessage('SHIFT: TURBO · CMD/CTRL: BLADES · OPT/ALT: JUMP', 3); canvas.focus({preventScroll:true});
+    droneOutcome = 'none';
+    traffic = []; vehicleSerial = 0; musicClock = musicStep = 0; fixtureDroneSpawned = false;
+    feedbackText = ''; feedbackTime = 0;
+    roadBaseRatio = mission.mode === 'story' ? storyBaseRatio() : .84;
   }
-  function beginIntro() {
-    initAudio();state='intro';overlay.classList.add('transmitting');el('briefing').hidden=true;el('transmission').hidden=false;
-    start.textContent='SKIP TRANSMISSION →';el('hint').textContent='CLICK TO CUT THE SIGNAL AND RIDE';pauseButton.disabled=true;
-    sound('signal');syncAudio();introTimer=window.setTimeout(reset,reduced?1200:4200);
+  function spawnActionTraffic() {
+    // Two authored, readable traffic pairs. Every pair leaves multiple lanes open.
+    traffic = mission.beat === 'L1.02'
+      ? [makeVehicle(1, 590, 'coupe'), makeVehicle(3, 650, 'sedan'),
+         makeVehicle(0, 1280, 'hauler'), makeVehicle(2, 1370, 'coupe'),
+         makeVehicle(1, 2050, 'sedan')]
+      : [makeVehicle(0, 640, 'sedan')];
+    traffic.forEach(car => { car.changed = true; car.changeZ = -1; });
+  }
+  function saveCheckpoint(next: DeliveryCheckpoint) {
+    checkpoint = next;
+    sessionSave = deliverySave(next, mission.log);
+    const durable = writeDeliverySave(sessionSave);
+    if (durable) ignoreStoredSave = false;
+    saveStatus = durable ? 'saved' : 'session';
+    hasSave = true;
+    statusMessage = durable ? 'Progress saved.' : 'Progress continues this session, but storage is unavailable.';
+  }
+  function beginNewGame(resetSaved = false) {
+    const cleared = resetSaved ? clearDeliverySave() : true;
+    if (resetSaved) ignoreStoredSave = !cleared;
+    initAudio(); resetPhysical(); mission = new DeliveryMission(); checkpoint = null; sessionSave = null;
+    if (mechanicsFixture) {
+      mission = new DeliveryMission('CP-L1-ACTION');
+      traffic = [makeVehicle(1,430,'coupe'),makeVehicle(3,730,'hauler'),makeVehicle(0,850,'sedan')];
+      statusMessage = 'Local riding and drone mechanics fixture.';
+      state = 'playing'; roadBaseRatio = .84; syncAudio(); canvas.focus({ preventScroll: true }); return;
+    }
+    roadBaseRatio = storyBaseRatio();
+    const prior = ignoreStoredSave ? { kind: 'none' as const } : readDeliverySave();
+    hasSave = prior.kind === 'valid';
+    saveStatus = prior.kind === 'valid' ? 'saved' : prior.kind === 'invalid' ? 'invalid' : 'none';
+    statusMessage = cleared ? '' : 'Storage could not clear the prior ride. This new run is held in this session until a checkpoint can be saved.';
+    serviceLoops = 0; state = 'playing';
+    syncAudio(); setMessage('MODULE SECURED · MAYOR VLAD INBOUND', 3); canvas.focus({ preventScroll: true });
+  }
+  function restoreCheckpoint(save: DeliverySave) {
+    resetPhysical(); mission = new DeliveryMission(save.checkpoint, save.log);
+    roadBaseRatio = mission.mode === 'action' ? .84 : storyBaseRatio();
+    checkpoint = save.checkpoint; sessionSave = save; serviceLoops = 0;
+    if (mission.mode === 'action') spawnActionTraffic();
+    state = save.checkpoint === 'CP-L1-COMPLETE' ? 'complete' : 'playing';
+    statusMessage = state === 'complete' ? 'Delivery approach reached. Level 1 complete.' : 'Safe checkpoint restored.';
+    syncAudio(); canvas.focus({ preventScroll: true });
+  }
+  function startGame() {
+    if (state !== 'ready' || assetLoadFailed) return;
+    beginNewGame();
+  }
+  function continueGame() {
+    if (assetLoadFailed) { state = 'error'; statusMessage = 'A required Delivery asset is missing. Retry loading before continuing.'; return; }
+    if (state === 'ready') {
+      if (sessionSave) { restoreCheckpoint(sessionSave); return; }
+      const found = ignoreStoredSave ? { kind: 'none' as const } : readDeliverySave();
+      if (found.kind === 'valid') { restoreCheckpoint(found.save); hasSave = true; saveStatus = 'saved'; }
+      else { state = 'error'; saveStatus = found.kind === 'invalid' ? 'invalid' : 'none'; statusMessage = 'No compatible safe checkpoint is available. Start a new Delivery ride.'; }
+      return;
+    }
+    if (state === 'complete' || state === 'error') {
+      state = 'error';
+      statusMessage = 'Level 1 is complete. The intake chapter is not in this playable slice yet.';
+      syncAudio();
+    }
+  }
+  function newGame() {
+    beginNewGame(true);
   }
   function pause() {
     if (state !== 'playing') return;
-    state = 'paused'; clearInput(); overlay.hidden = false;
-    el('overline').textContent = 'CIRCUIT ON HOLD'; el('headline').textContent = 'TAKE A BREATH.';
-    el('message').textContent = 'Your ride is right where you left it.'; start.textContent = 'RESUME RIDE →';
-    pauseButton.textContent = '▶ RESUME'; syncAudio();
+    state = 'paused'; clearInput(); syncAudio();
   }
-  function resume() { state = 'playing'; clearInput(); overlay.hidden = true; pauseButton.textContent = 'Ⅱ PAUSE'; syncAudio(); canvas.focus({preventScroll:true}); }
+  function resume() { if (state !== 'paused') return; state = 'playing'; clearInput(); syncAudio(); canvas.focus({preventScroll:true}); }
   function crash() {
     burst('impactSparks',x,0,bikeLift(),74,.55);
     burst('debris',x,0,bikeLift(),62,.75);
-    state = 'crashed'; clearInput(); charge = boost = 0; overlay.hidden = false;
-    el('overline').textContent = 'CONTACT / CIRCUIT RESET'; el('headline').textContent = 'ONE MORE RUN.';
-    el('message').textContent = `${Math.floor(distance)} m ridden · ${formatScore(score)} points · ${calls} close calls.`;
-    start.textContent = 'RIDE AGAIN →'; pauseButton.disabled = true;
+    state = 'crashed'; clearInput(); charge = boost = 0;
+    statusMessage = 'Contact. Retry from the last safe checkpoint.';
     sound('impact');syncAudio();setMessage('CONTACT — R TO RETRY', 5);
   }
-  function formatScore(value:number) { return Math.max(0,Math.floor(value)).toString().padStart(6,'0'); }
-  function endRun(result:'escaped'|'timeout') {
-    if(state!=='playing')return;
-    state=result; clearInput(); boost=0; overlay.hidden=false; pauseButton.disabled=true;
-    if(result==='escaped') {
-      const bonus=Math.ceil(Math.max(0,timeLimit-elapsed))*100;
-      score+=bonus;
-      el('overline').textContent='SEA WALL / GATE CLEARED'; el('headline').innerHTML='ESCAPE<br/><em>COMPLETE.</em>';
-      el('message').textContent=`${formatScore(score)} points · ${Math.max(0,timeLimit-elapsed).toFixed(1)} seconds left · ${slices} drones cut.`;
-      start.textContent='RIDE AGAIN →'; sound('success');setMessage(`EXTRACTED / +${bonus} TIME BONUS`,5);
-    } else {
-      el('overline').textContent='SEA WALL / GATE SEALED'; el('headline').innerHTML='TIME<br/><em>EXPIRED.</em>';
-      el('message').textContent=`${Math.floor(distance)} of ${finishDistance} m · ${formatScore(score)} points. The route is still warm.`;
-      start.textContent='RETRY ESCAPE →'; sound('timeout');setMessage('GATE SEALED — R TO RETRY',5);
+  function retry() {
+    if (state === 'error') {
+      if (assetLoadFailed) { loadAssets(); return; }
+      if (checkpoint === 'CP-L1-COMPLETE') { state = 'complete'; statusMessage = 'Delivery approach reached. Level 1 complete.'; return; }
     }
-    syncAudio();
+    if (state !== 'crashed' && state !== 'paused') return;
+    if (sessionSave) restoreCheckpoint(sessionSave);
+    else beginNewGame();
   }
-  start.addEventListener('click', () => state === 'ready' ? beginIntro() : state === 'paused' ? resume() : reset());
-  pauseButton.addEventListener('click', () => state === 'paused' ? resume() : pause());
+  function menu() {
+    if (state === 'loading') return;
+    if (assetLoadFailed) { state = 'error'; statusMessage = 'Required Delivery art is unavailable. Retry loading to recover.'; return; }
+    state = 'ready'; clearInput(); syncAudio();
+  }
+  function onMissionEvents(events: DeliveryEvent[]) {
+    for (const event of events) {
+      if (event === 'checkpoint-action') { spawnActionTraffic(); saveCheckpoint('CP-L1-ACTION'); setMessage(saveStatus === 'session' ? 'SESSION ONLY — STORAGE UNAVAILABLE · STEER THROUGH THE GAP' : 'STEER THROUGH THE GAP', 4); }
+      if (event === 'checkpoint-service') { spawnActionTraffic(); saveCheckpoint('CP-L1-SERVICE'); setMessage(saveStatus === 'session' ? 'SESSION ONLY — STORAGE UNAVAILABLE · OPEN RIGHT SERVICE LANE' : 'OPEN RIGHT SERVICE LANE', 4); }
+      if (event === 'gap-one') setMessage('FIRST GAP CLEAR · SHIFT FOR TURBO', 3);
+      if (event === 'gap-two') setMessage('SECOND GAP CLEAR · DEAD SIGNAL AHEAD', 3);
+      if (event === 'signal') setMessage('DEAD SIGNAL · CROSSING BLOCKED', 2);
+      if (event === 'gate') setMessage('SERVICE GATE CROSSED', 2);
+      if (event === 'gate-missed') { serviceLoops++; setMessage('SERVICE LOOP · FOLLOW THE REPEAT APPROACH', 4); }
+      if (event === 'barrier-contact') { crash(); return; }
+      if (event === 'loop-return') setMessage('OPEN SERVICE GATE AHEAD', 3);
+      if (event === 'approach') setMessage('DELIVERY APPROACH MARKER REACHED', 3);
+      if (event === 'drain-complete') { clearInput(); setMessage('ROAD CLEAR · ADVANCE TO READ', 3); }
+      if (event === 'level-complete') {
+        clearInput(); saveCheckpoint('CP-L1-COMPLETE'); state = 'complete';
+        sound('success'); syncAudio(); setMessage('DELIVERY APPROACH REACHED', 5);
+      }
+    }
+  }
+  function advance() {
+    if (state !== 'playing' || (mission.mode !== 'story' && mission.mode !== 'resolve')) return;
+    clearInput(); onMissionEvents(mission.advance());
+  }
+  const actions = { start: startGame, continue: continueGame, newGame, advance, pause, resume, retry, menu };
+  const hud = createHud(actions);
   const aliases: Record<string,string> = {
     KeyA:'ArrowLeft', KeyD:'ArrowRight', KeyW:'ArrowUp', KeyS:'ArrowDown',
-    ShiftRight:'ShiftLeft', ControlRight:'ControlLeft', MetaLeft:'ControlLeft', MetaRight:'ControlLeft', AltRight:'AltLeft',
+    ShiftRight:'ShiftLeft', ControlRight:'ControlLeft', MetaLeft:'ControlLeft', MetaRight:'ControlLeft', AltRight:'AltLeft', KeyJ:'ControlLeft', KeyK:'AltLeft',
   };
   addEventListener('keydown', e => {
+    if (e.repeat && (e.code === 'Enter' || e.code === 'Space') && (e.target as HTMLElement)?.closest('#bastrop-game')) {
+      e.preventDefault(); return;
+    }
     // Keep keyboard activation and navigation working on page controls.
     if ((e.target as HTMLElement)?.tagName === 'BUTTON' || (e.target as HTMLElement)?.tagName === 'A') return;
     const key = aliases[e.code] || e.code;
-    if (actionKeys.includes(key)) { e.preventDefault(); if (state === 'playing' && !e.repeat) press(key); }
+    if (actionKeys.includes(key)) {
+      e.preventDefault();
+      if (state === 'playing' && mission.mode === 'action' && !e.repeat) press(key);
+      else if (state === 'playing' && (key === 'ArrowLeft' || key === 'ArrowRight' || key === 'ArrowUp' || key === 'ArrowDown') && !e.repeat) press(key);
+    }
     if (e.repeat) return;
-    if (e.code === 'KeyP' || e.code === 'Escape') state === 'paused' ? resume() : pause();
-    if (e.code === 'KeyR' && start.disabled === false) reset();
+    if (e.code === 'Enter' && (e.target as HTMLElement)?.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      if (state === 'ready') actions.start();
+      else if (state === 'complete' || state === 'error') actions.continue();
+      else actions.advance();
+    }
+    if (e.code === 'KeyP' || e.code === 'Escape') state === 'paused' ? actions.resume() : actions.pause();
+    if (e.code === 'KeyR' && state === 'crashed') actions.retry();
     if (e.code === 'KeyM') muteButton.click();
   });
   addEventListener('keyup', e => keys.delete(aliases[e.code] || e.code));
   addEventListener('blur', pause);
   document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
   document.querySelectorAll<HTMLButtonElement>('[data-key]').forEach(button => {
-    button.addEventListener('pointerdown', e => { e.preventDefault(); if(state!=='playing')return; button.setPointerCapture(e.pointerId); press(button.dataset.key!); button.classList.add('held'); });
+    button.addEventListener('pointerdown', e => {
+      e.preventDefault(); if(state!=='playing')return;
+      const key = button.dataset.key!;
+      if (mission.mode !== 'action' && !['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(key)) return;
+      button.setPointerCapture(e.pointerId); press(key); button.classList.add('held');
+    });
     const release = () => { keys.delete(button.dataset.key!); button.classList.remove('held'); };
     button.addEventListener('pointerup', release); button.addEventListener('pointercancel', release); button.addEventListener('lostpointercapture', release);
   });
@@ -403,16 +524,19 @@ export function mountGame() {
     const oldX=x;
     elapsed += dt; feedbackTime -= dt;
     syncAudio(dt);
-    if(elapsed>=timeLimit) { endRun('timeout'); return; }
+    const action = mission.mode === 'action';
+    const safeCruise = mission.mode === 'story' || mission.mode === 'resolve';
+    if (safeCruise && W < H) roadBaseRatio = storyBaseRatio();
+    else roadBaseRatio += ((safeCruise ? storyBaseRatio() : .84)-roadBaseRatio)*(1-Math.exp(-3*dt));
     const input = Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
     boost = Math.max(0, boost-dt);
     jumpCooldown = Math.max(0,jumpCooldown-dt);
     landing = Math.max(0,landing-dt);
-    if(pressed.has('ShiftLeft')) {
+    if(action && pressed.has('ShiftLeft')) {
       if(boost===0 && charge>=.4) { charge-=.4; boost=1.15; sparks(18,'#ffe575'); sound('turbo');setMessage('TURBO / TAKE THE GAP',1.15); }
       else if(boost===0) setMessage('TURBO RECHARGING',.8);
     }
-    if(pressed.has('AltLeft') && height===0 && jumpWindup===0 && jumpCooldown===0) {
+    if(action && pressed.has('AltLeft') && height===0 && jumpWindup===0 && jumpCooldown===0) {
       jumpWindup=.12; jumpCooldown=1.25; sound('jump');setMessage('SPRING LOADED',.12);
     }
     pressed.clear();
@@ -424,12 +548,14 @@ export function mountGame() {
       verticalSpeed-=380*dt; height+=verticalSpeed*dt;
       if(height<=0) { height=verticalSpeed=0; landing=.42; burst('landingRing',x,0,0,72,.5); sparks(20,'#8fffea'); sound('land');setMessage('TOUCHDOWN',.5); }
     }
-    blades += ((keys.has('ControlLeft')?1:0)-blades)*(1-Math.exp(-25*dt));
-    sliding = keys.has('Space') && height===0 && boost===0;
+    blades += ((action && keys.has('ControlLeft')?1:0)-blades)*(1-Math.exp(-25*dt));
+    sliding = action && keys.has('Space') && height===0 && boost===0;
     // Slide is a deliberate lateral reposition, with countersteer and strong release grip.
     if(boost===0) charge=clamp(charge+dt*(sliding&&input ? .3 : .10),0,1);
     // Faster road motion and closing speed, while keeping ability timers in real time.
-    const target = sliding ? 200 : boost>0 ? 470 : keys.has('ArrowDown') ? 155 : keys.has('ArrowUp') ? 320 : 260;
+    const target = safeCruise ? keys.has('ArrowDown') ? 205 : keys.has('ArrowUp') ? 255 : 230
+      : mission.mode === 'drain' ? 230
+      : sliding ? 200 : boost>0 ? 470 : keys.has('ArrowDown') ? 155 : keys.has('ArrowUp') ? 320 : 260;
     speed += (target-speed)*(1-Math.exp(-(boost>0?7:4)*dt));
     vx += (input*(sliding?230:180)*(height>0?.8:1)-vx)*(1-Math.exp(-(sliding?10:20)*dt));
     x = clamp(x+vx*dt,left+22,right-22);
@@ -444,26 +570,10 @@ export function mountGame() {
     if(sliding && Math.random()<.65) sparks(1,'#8fffea');
     if(boost>0) sparks(2,'#ffe575');
     spawn -= dt;
-    // An authored first encounter follows the traffic-only opening; later drones
-    // join the procedural pressure curve and eventually overlap with traffic.
-    if(!introDroneSpawned&&elapsed>=6.2) {
-      introDroneSpawned=true;
-      // Open a fair answer window before the authored lunge.
-      traffic=traffic.filter(car=>car.kind==='drone'||car.z< -90||car.z>700);
-      const nearLane=x<320?3:1;
-      traffic.push(makeVehicle(nearLane,420,'drone'),makeVehicle(4-nearLane,610,'drone'));
-    }
-    const runProgress=distance/finishDistance;
-    if(spawn<=0) {
-      const lane = Math.floor(Math.random()*5);
-      const progress=runProgress;
-      const droneChance=progress<.24?0:progress<.6?.16:.25;
-      const roll=Math.random();
-      const maxDrones=progress<.6?2:3;
-      const kind = activeDrones().length<maxDrones&&roll<droneChance ? 'drone' : roll<droneChance+.2 ? 'hauler' : Math.random()<.48 ? 'sedan' : 'coupe';
-      // One vehicle per wave leaves four lanes open; all enter at the far plane.
-      traffic.push(makeVehicle(lane, 950, kind));
-      spawn = (progress<.24?1.2:progress<.6?1.05:.86)+Math.random()*.28;
+    // Delivery traffic is deterministic and finite. No vehicle may appear after DRAIN begins.
+    if (mechanicsFixture && !fixtureDroneSpawned && elapsed >= 2.5) {
+      fixtureDroneSpawned = true;
+      traffic.push(makeVehicle(2,540,'drone'));
     }
     const bw = 26 + (sliding ? 8 : 0), bh = 24;
     for(const car of traffic) {
@@ -517,12 +627,12 @@ export function mountGame() {
     particles=particles.filter(p=>p.life>0).slice(-180);
     for(const p of particles) {p.life-=dt;p.x+=p.vx*dt;p.y+=(p.vy+speed*.4)*dt;}
     score=Math.max(score,distance*8+calls*350+slices*1200+droneDodges*700);
-    if(distance>=finishDistance) { endRun('escaped'); return; }
-    if(feedbackTime<=0) el('feedback').textContent=height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'SHIFT: TURBO · CMD/CTRL: BLADES · OPT/ALT: JUMP';
+    if(state==='playing' && !mechanicsFixture) onMissionEvents(mission.tick(dt,speed*dt,x,traffic.length===0));
+    if(feedbackTime<=0) feedbackText=safeCruise?'SAFE CRUISE · ENTER TO ADVANCE':mission.mode==='drain'?'TRAFFIC CLEARING':height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'STEER · SHIFT TURBO · SPACE SLIDE';
   }
   function makeVehicle(lane:number,z:number,kind:string):Car {
     const vehicle=kind as Car['kind'];
-    return {x:left+(lane+.5)*(right-left)/5,z,w:vehicle==='hauler'?76:vehicle==='drone'?48:64,
+    return {id:`delivery-vehicle-${++vehicleSerial}`,x:left+(lane+.5)*(right-left)/5,z,w:vehicle==='hauler'?76:vehicle==='drone'?48:64,
       h:vehicle==='hauler'?62:vehicle==='drone'?28:43,kind:vehicle,velocity:vehicle==='hauler'?22:38,passed:false,
       lane,targetLane:lane,turn:0,changeZ:720,changed:lane===2||(Math.floor(z)+lane*7+vehicle.length)%3!==0,
       ...(vehicle==='drone'?{phase:'approach' as DronePhase,phaseTime:0,side:(lane<=2?-1:1) as -1|1,attackX:320,outcome:'none' as DroneOutcome,attackPasses:0}:{})};
@@ -573,28 +683,59 @@ export function mountGame() {
     const progress=1-effect.life/effect.duration;
     drawEffect(effect.sprite,effect.x,effect.z,effect.width,effect.lift,Math.sin(Math.PI*progress),.78+progress*.45);
   }
-  function drawSeaWall() {
-    const z=(finishDistance-distance)*3.6;
-    if(z>2600||z< -55)return;
-    const gateHalf=66, wallLeft=project(left-70,z), wallRight=project(right+70,z);
-    const gateL=project(320-gateHalf,z), gateR=project(320+gateHalf,z);
-    const topY=Math.min(gateL.y,gateR.y)-190*gateL.scale;
-    c.fillStyle='#091522';
-    c.fillRect(wallLeft.x,topY,Math.max(0,gateL.x-wallLeft.x),wallLeft.y-topY);
-    c.fillRect(gateR.x,topY,Math.max(0,wallRight.x-gateR.x),wallRight.y-topY);
-    c.strokeStyle='#77e5df';c.lineWidth=Math.max(1,3*gateL.scale);
-    c.beginPath();c.moveTo(gateL.x,gateL.y);c.lineTo(gateL.x,topY);c.lineTo(gateR.x,topY);c.lineTo(gateR.x,gateR.y);c.stroke();
-    c.fillStyle='#ff5d70';c.font=`${Math.max(5,10*gateL.scale)}px monospace`;c.textAlign='center';
-    c.fillText('SEA WALL 37 / EXTRACTION', (gateL.x+gateR.x)/2, topY+16*gateL.scale);
-    c.textAlign='start';
+  function drawRoadProp(name: 'signalDead' | 'serviceGateOpen' | 'crossingBlocked', wx:number,z:number,worldWidth:number) {
+    if(z>1500||z<=-12)return;
+    const img=images[name], meta=DELIVERY_ASSET_METADATA[name];
+    if(!img)return;
+    const crop=meta.displayCrop??[0,0,img.width,img.height];
+    const [sx,sy,sw,sh]=crop;
+    // Fade near the camera before an overhead beam can cross the rider. The
+    // plane still has its real world position for route and collision checks.
+    const alpha=clamp((z+12)/92,0,1);
+    const p=project(wx,z), scale=worldWidth/sw*p.scale;
+    const [anchorX,anchorY]=meta.anchor;
+    const y=p.y-(anchorY-sy)*scale;
+    if(y>=H||y+sh*scale<=0)return;
+    c.save();c.globalAlpha*=alpha;
+    c.drawImage(img,sx,sy,sw,sh,p.x-(anchorX-sx)*scale,y,sw*scale,sh*scale);
+    c.restore();
+  }
+  function drawRouteBand(z:number,label:string) {
+    if(z>1200||z< -60)return;
+    const far=project(SERVICE_CORRIDOR.minX,z+150), farR=project(SERVICE_CORRIDOR.maxX,z+150);
+    const near=project(SERVICE_CORRIDOR.minX,z), nearR=project(SERVICE_CORRIDOR.maxX,z);
+    c.fillStyle='#55e9df28';c.strokeStyle='#72e5dbaa';c.lineWidth=Math.max(1,2*near.scale);
+    c.beginPath();c.moveTo(far.x,far.y);c.lineTo(farR.x,farR.y);c.lineTo(nearR.x,nearR.y);c.lineTo(near.x,near.y);c.closePath();c.fill();c.stroke();
+    c.fillStyle='#e6fff9';c.textAlign='center';c.font=`700 ${Math.max(8,10*near.scale)}px monospace`;
+    c.fillText(label,(near.x+nearR.x)/2,near.y-10*near.scale);c.textAlign='start';
+  }
+  function drawDeliveryProps() {
+    const signal=mission.landmark('signal');
+    if(signal!==null) drawRoadProp('signalDead',left+18,signal,30);
+    const gate=mission.landmark('gate');
+    if(gate!==null) {
+      drawRouteBand(gate,'SERVICE');
+      drawRoadProp('crossingBlocked',205,gate,105);
+      drawRoadProp('serviceGateOpen',400,gate,138);
+    }
+    const approach=mission.landmark('approach');
+    if(approach!==null) drawRouteBand(approach,'INTAKE APPROACH');
   }
   function drawCity() {
-    const img=images.city;
+    c.fillStyle='#08101b';c.fillRect(0,0,W,H);
+    const skyline=images.city;
+    if(skyline) {
+      const skyScale=Math.max(W/skyline.width,H*.64/skyline.height);
+      const skyW=skyline.width*skyScale,skyH=skyline.height*skyScale;
+      c.drawImage(skyline,(W-skyW)/2-(cameraX-320)*.02,(H-skyH)/2,skyW,skyH);
+    }
+    const img=images.architecture;
     if(!img)return;
-    const scale=Math.max(W/img.width,H/img.height)*1.055;
+    const scale=Math.max(W/img.width,H*.65/img.height)*1.03;
     const dw=img.width*scale,dh=img.height*scale;
     const parallax=-(cameraX-320)*.035;
-    c.drawImage(img,(W-dw)/2+parallax,(H-dh)/2,dw,dh);
+    const anchorY=DELIVERY_ASSET_METADATA.architecture.anchor[1];
+    c.drawImage(img,(W-dw)/2+parallax,H*(W<H?.32:.42)-anchorY*scale,dw,dh);
   }
   function mirroredRow(value:number,length:number) {
     const cycle=length*2,wrapped=((value%cycle)+cycle)%cycle;
@@ -603,8 +744,8 @@ export function mountGame() {
   function drawRoad() {
     const img=images.road;
     if(!img)return;
-    const hy=horizon(),base=H*.84;
-    const zoom=(W<H?3:2.2)*(1-(reduced?0:turboView*.07));
+    const hy=horizon(),base=H*roadBaseRatio;
+    const zoom=(W<H?3:1.6)*(1-(reduced?0:turboView*.07));
     const unit=Math.min(W*.9,520)/(right-left)*zoom;
     // Warp the orthographic road texture one horizontal slice at a time. Its
     // baked five-lane markings now move with the asphalt as a single layer.
@@ -629,11 +770,24 @@ export function mountGame() {
     c.fillStyle=vignette;c.fillRect(0,0,W,H);
   }
   function render() {
+    const view: HudView = {
+      state, readyToStart: state !== 'loading', mode: mission.mode, beatId: mission.beat,
+      objective: mission.objective, routeCue: mission.routeCue,
+      speed: Math.round(speed), energy: charge,
+      turbo: mission.mode !== 'action' ? 'unavailable' : boost > 0 ? 'active' : charge >= .4 ? 'ready' : 'charging',
+      dialogue: mission.dialogue, dialogueIndex: mission.dialogueIndex,
+      dialogueCount: mission.dialogueCount, log: mission.log,
+      hasSave, saveStatus, message: state === 'playing' ? feedbackText : statusMessage,
+    };
+    hud.render(view);
+    if (state === 'playing' && W < H && (mission.mode === 'story' || mission.mode === 'resolve')) {
+      roadBaseRatio = storyBaseRatio();
+    }
     c.imageSmoothingEnabled=true;
     drawCity();
     drawRoad();
     drawVignette();
-    drawSeaWall();
+    drawDeliveryProps();
     for(const car of traffic) if(car.kind==='drone') drawTelegraph(car);
     for(const car of traffic) if(car.kind==='drone'&&car.phase!=='lunge')
       drawEffect('hoverThrust',car.x,car.z,car.w*.9,hoverLift(car)-8,.5+.18*Math.sin(elapsed*18));
@@ -660,27 +814,26 @@ export function mountGame() {
     for(const fragment of [...fragments].sort((a,b)=>b.z-a.z))drawFragment(fragment);
     for(const effect of [...effects].filter(effect=>effect.sprite!=='landingRing').sort((a,b)=>b.z-a.z))drawBurst(effect);
     if(!reduced&&boost>0){c.strokeStyle='#ffe57b55';for(let i=0;i<8;i++){const px=(i*137)%W;c.beginPath();c.moveTo(px,H);c.lineTo(W/2+(px-W/2)*.8,H*.8);c.stroke();}}
-    const remaining=Math.max(0,timeLimit-elapsed),minutes=Math.floor(remaining/60),seconds=remaining-minutes*60;
-    el('timer').textContent=`0${minutes}:${seconds.toFixed(1).padStart(4,'0')}`;
-    el('timer').classList.toggle('urgent',remaining<=15);
-    el('score').textContent=formatScore(score);
-    el('sector').textContent=distance<finishDistance*.24?'CITY EXIT / TRAFFIC':distance<finishDistance*.6?'UNDERPASS / DRONES':distance<finishDistance-700?'PURSUIT / COMBINED':'SEA WALL / FINAL';
-    el('speed').textContent=Math.round(speed).toString();el('near').textContent=calls.toString();
-    el('charge-value').textContent=Math.round(charge*100)+'%';el('charge-bar').style.width=charge*100+'%';
     // Small observable state is useful for regression tests and tuning controls.
-    const drones=activeDrones(),drone=activeDrone();canvas.dataset.audio=audio?'ready':'locked';canvas.dataset.muted=String(muted);canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.dronePhases=drones.map(item=>item.phase).join(',');canvas.dataset.droneCount=String(drones.length);canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.dronePasses=String(drone?.attackPasses||0);canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.time=remaining.toFixed(1);canvas.dataset.score=String(Math.floor(score));canvas.dataset.sector=el('sector').textContent||'';
+    const drones=activeDrones(),drone=activeDrone();canvas.dataset.audio=audio?'ready':'locked';canvas.dataset.muted=String(muted);canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.dronePhases=drones.map(item=>item.phase).join(',');canvas.dataset.droneCount=String(drones.length);canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.dronePasses=String(drone?.attackPasses||0);canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.mode=mission.mode;canvas.dataset.beat=mission.beat;canvas.dataset.dialogueId=mission.dialogue?.id??'';canvas.dataset.dialogueIndex=String(mission.dialogueIndex);canvas.dataset.route=mission.route.toFixed(1);canvas.dataset.visualDistance=distance.toFixed(1);canvas.dataset.trafficCount=String(traffic.length);canvas.dataset.traffic=JSON.stringify(traffic.map(car=>({id:car.id,x:+car.x.toFixed(1),z:+car.z.toFixed(1),kind:car.kind,lane:car.lane})));canvas.dataset.checkpoint=checkpoint??'';canvas.dataset.gatePassed=String(mission.gates.serviceGate);canvas.dataset.approachPassed=String(mission.gates.approach);canvas.dataset.serviceLoops=String(serviceLoops);canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.score=String(Math.floor(score));
+    const canvasBox = canvas.getBoundingClientRect();
+    canvas.dataset.riderBottom = (canvasBox.top + project(x,0).y * canvasBox.height / H).toFixed(1);
   }
-  function frame(now:number){const dt=Math.min((now-last)/1000,1/30);last=now;if(state==='playing')update(dt);if(state==='playing'||frames++%3===0)render();requestAnimationFrame(frame);}
+  function frame(now:number){
+    const dt=Math.min((now-last)/1000,1/30);last=now;
+    if(state==='playing')update(dt);
+    if(state==='complete') { offset+=speed*dt*2.2; distance+=speed*dt/3.6; }
+    if(state==='playing'||state==='complete'||frames++%3===0)render();
+    requestAnimationFrame(frame);
+  }
   const assets:Record<string,string>={bike:'bike-normal-straight',bikeBlades:'bike-blades-straight',bikeBladesLeft:'bike-blades-left-15',bikeBladesRight:'bike-blades-right-15',bikeBladesLeft35:'bike-blades-left-35',bikeBladesRight35:'bike-blades-right-35',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-slide-left',slideRight:'bike-slide-right',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',coupeLeft:'traffic-coupe-right',coupeRight:'traffic-coupe-left',sedan:'traffic-sedan',sedanLeft:'traffic-sedan-left',sedanRight:'traffic-sedan-right',hauler:'traffic-hauler',haulerLeft:'traffic-hauler-right',haulerRight:'traffic-hauler-left',drone:'drone-hover',droneFlankLeft:'drone-flank-left',droneFlankRight:'drone-flank-right',droneWarning:'drone-attack-warning',droneLunge:'drone-lunge',droneFragmentLeft:'drone-fragment-left',droneFragmentRight:'drone-fragment-right',droneCore:'drone-core',cyanTrail:'effects-cyan-trail',yellowTurbo:'effects-yellow-turbo',hoverThrust:'effects-hover-thrust',bladeEffect:'effects-blades',cutSparks:'effects-cut-sparks',impactSparks:'effects-impact-sparks',landingRing:'effects-landing-ring',debris:'effects-debris'};
-  const cityReady=new Promise<void>((resolve,reject)=>{
-    const img=new Image();img.onload=()=>{images.city=img;resolve();};img.onerror=reject;
-    img.src='/bastrop37/assets/environment/city-skyline-v4.png';
-  });
-  const roadReady=new Promise<void>((resolve,reject)=>{
-    const img=new Image();img.onload=()=>{images.road=img;resolve();};img.onerror=reject;
-    img.src='/bastrop37/assets/environment/road-loop-v4.png';
-  });
-  Promise.all([cityReady,roadReady,...Object.entries(assets).map(([name,file])=>new Promise<void>((resolve,reject)=>{
+  function loadImage(name: string, url: string) {
+    return new Promise<void>((resolve,reject)=>{
+      const img=new Image();img.onload=()=>{images[name]=img;resolve();};img.onerror=reject;img.src=url;
+    });
+  }
+  function loadSprite(name:string,file:string) {
+    return new Promise<void>((resolve,reject)=>{
     const img=new Image();img.onload=()=>{
       images[name]=img;
       // Remove transparent padding at draw time, leaving source art untouched.
@@ -714,7 +867,25 @@ export function mountGame() {
 
       resolve();
     };img.onerror=reject;img.src=`/bastrop37/assets/sprites/${file}.png`;
-  }))])
-    .then(()=>{size();start.disabled=false;start.textContent='START RIDING →';requestAnimationFrame(frame);})
-    .catch(()=>{el('message').textContent='A sprite could not load. Refresh to try again.';start.textContent='ASSET LOAD FAILED';});
+    });
+  }
+  function loadAssets() {
+    state = 'loading'; assetLoadFailed = false; statusMessage = 'Loading Delivery art and riding sprites.';
+    void Promise.all([
+      loadImage('city','/bastrop37/assets/environment/city-skyline-v4.png'),
+      loadImage('architecture',DELIVERY_ASSETS.architecture),
+      loadImage('signalDead',DELIVERY_ASSETS.signalDead),
+      loadImage('serviceGateOpen',DELIVERY_ASSETS.serviceGateOpen),
+      loadImage('crossingBlocked',DELIVERY_ASSETS.crossingBlocked),
+      loadImage('vladNeutral',DELIVERY_ASSETS.vladNeutral),
+      loadImage('omegaSymbol',DELIVERY_ASSETS.omegaSymbol),
+      loadImage('road','/bastrop37/assets/environment/road-loop-v4.png'),
+      ...Object.entries(assets).map(([name,file])=>loadSprite(name,file)),
+    ]).then(()=>{
+      size(); state = 'ready'; statusMessage = saveStatus === 'invalid' ? 'Saved progress is incompatible. Start a safe new ride.' : '';
+    }).catch(()=>{
+      assetLoadFailed = true; state = 'error'; statusMessage = 'A required Delivery asset could not load. Retry loading or return to the menu.';
+    });
+  }
+  size(); requestAnimationFrame(frame); loadAssets();
 }

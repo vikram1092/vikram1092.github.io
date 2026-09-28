@@ -1,5 +1,7 @@
 # Phase 2 — Art and HUD production
 
+Current authority (2026-09-27): the user confirmed **“I approved it all”**, approving the full revised Phase 2 package, and authorized **Phase 3 M0/M1 only**. After M1 was verified, the user authorized pushing and publishing this slice. Stop after M1; no M2–M5.
+
 Status: revised Delivery v2 visual direction accepted by the user (“Yeah much better”); full bounded Phase 2 revision-v3 package is produced and independently reviewed with no unresolved blocker. Stopped for final Phase 2 completion approval; Phase 3 authorization remains outstanding. See BUILD_STATUS.md for the current gate.
 
 ## 1. Required context and dependencies

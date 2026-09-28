@@ -1,6 +1,8 @@
 # Phase 3 — Implementation and validation
 
-Status: future engineering handoff for review. Phase 3, including M0/M1, starts only after Phase 1 and Phase 2 approval and explicit implementation authorization. The current request authorizes Phase 2 art/HUD production only; implementation remains gated. Primary owners: gameplay engineering, UI integration, and QA. Narrative and art approve fidelity to their reviewed material; the director resolves scope changes.
+Current authority (2026-09-27): the user confirmed **“I approved it all”**, approving the full revised Phase 2 package, and authorized **Phase 3 M0/M1 only**. After M1 was verified, the user authorized pushing and publishing this slice. Stop after M1; no M2–M5.
+
+Historical pre-authorization status: future engineering handoff for review. Phase 3, including M0/M1, starts only after Phase 1 and Phase 2 approval and explicit implementation authorization. The current request authorizes Phase 2 art/HUD production only; implementation remains gated. Primary owners: gameplay engineering, UI integration, and QA. Narrative and art approve fidelity to their reviewed material; the director resolves scope changes.
 
 ## 1. Context, authority, and non-goals
 
