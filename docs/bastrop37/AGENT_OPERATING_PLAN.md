@@ -1,5 +1,6 @@
 # Bastrop37 — Agent operating plan
 
+Current authority update (2026-09-28): the user accepted M1 and requested continuing Phase3; root confirmed **M2 only**, stopping at its second review gate. M3–M5 and M2 publication require later authorization. Prior authority notes are historical.
 Current authority (2026-09-27): the user confirmed **“I approved it all”**, approving the full revised Phase 2 package, and authorized **Phase 3 M0/M1 only**. After M1 was verified, the user authorized pushing and publishing this slice. Stop after M1; no M2–M5.
 
 Authorized configuration: Astra manages; Sol implements and reviews; Luna handles bounded mechanical work when useful. This document records the user's selected team, not a request to maximize agent count or reasoning effort.

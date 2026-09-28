@@ -3,7 +3,10 @@
 import { createHud } from './bastrop37/hud';
 import { DeliveryMission, SERVICE_CORRIDOR, type DeliveryEvent } from './bastrop37/delivery';
 import { DELIVERY_ASSETS, DELIVERY_ASSET_METADATA } from './bastrop37/delivery-content';
-import { clearDeliverySave, deliverySave, readDeliverySave, writeDeliverySave, type DeliveryCheckpoint, type DeliverySave } from './bastrop37/save';
+import { BETRAYAL_ASSETS, BETRAYAL_ASSET_METADATA } from './bastrop37/betrayal-content';
+import { BetrayalMission, SCAN_CORRIDOR, LOCK_CORRIDOR, type BetrayalEvent } from './bastrop37/betrayal';
+import { OverdriveMeter } from './bastrop37/overdrive';
+import { betrayalSave, clearDeliverySave, deliverySave, readDeliverySave, writeDeliverySave, type BetrayalCheckpoint, type CampaignSave, type DeliveryCheckpoint } from './bastrop37/save';
 import type { HudView } from './bastrop37/contracts';
 type DronePhase = 'approach' | 'flank' | 'signal' | 'lunge' | 'recover';
 type DroneOutcome = 'none' | 'slice' | 'boost' | 'jump' | 'miss';
@@ -13,6 +16,8 @@ type Car = {
   velocity: number; passed: boolean; phase?: DronePhase; phaseTime?: number;
   side?: -1 | 1; attackX?: number; outcome?: DroneOutcome; attackPasses?: number;
   lane: number; targetLane: number; turn: -1 | 0 | 1; changeZ: number; changed: boolean;
+  disengaging?: boolean;
+  retreatDirection?: -1 | 1;
 };
 type Particle = { x: number; y: number; vx: number; vy: number; life: number; color: string };
 type Fragment = { sprite: string; x: number; z: number; lift: number; vx: number; vz: number; vy: number; rotation: number; spin: number; life: number; width: number };
@@ -22,6 +27,8 @@ export function mountGame() {
   // Local-only mechanic regression surface. It never advances or writes campaign state.
   const mechanicsFixture = ['localhost','127.0.0.1'].includes(location.hostname) &&
     new URLSearchParams(location.search).get('fixture') === 'mechanics';
+  const m2Fixture = ['localhost','127.0.0.1'].includes(location.hostname) &&
+    new URLSearchParams(location.search).get('fixture') === 'm2';
   const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
   const ctx = canvas.getContext('2d');
   const start = document.querySelector<HTMLButtonElement>('#start')!;
@@ -63,17 +70,25 @@ export function mountGame() {
   }
   type GameState = HudView['state'];
   let state: GameState = 'loading';
-  let mission = new DeliveryMission();
-  let checkpoint: DeliveryCheckpoint | null = null;
-  let sessionSave: DeliverySave | null = null;
+  let mission: DeliveryMission | BetrayalMission = new DeliveryMission();
+  let checkpoint: DeliveryCheckpoint | BetrayalCheckpoint | null = null;
+  let sessionSave: CampaignSave | null = null;
   const initialSave = readDeliverySave();
   let hasSave = initialSave.kind === 'valid';
   let saveStatus: HudView['saveStatus'] = initialSave.kind === 'invalid' ? 'invalid' : hasSave ? 'saved' : 'none';
   let statusMessage = initialSave.kind === 'invalid' ? 'Saved progress is incompatible. Start a safe new ride.' : '';
   let assetLoadFailed = false;
+  let betrayalAssetsReady = false;
+  let loadingBetrayal = false;
   let ignoreStoredSave = false;
   let serviceLoops = 0;
   let fixtureDroneSpawned = false;
+  let overdrive = new OverdriveMeter();
+  let l2DroneSpawned = false;
+  let carrierZ = 720;
+  let carrierActive = false;
+  let scanPulse = 0;
+  const isBetrayal = () => mission instanceof BetrayalMission;
   let x = 320, vx = 0, angle = 0;
   let charge = 1, boost = 0, speed = 260, distance = 0, calls = 0, elapsed = 0;
   let sliding = false, spawn = 0, offset = 0, last = 0, feedbackTime = 0;
@@ -177,10 +192,18 @@ export function mountGame() {
     cameraX = 320; cameraPitch = turboView = height = verticalSpeed = jumpWindup = jumpCooldown = landing = blades = slices = droneDodges = laneChanges = 0;
     droneOutcome = 'none';
     traffic = []; vehicleSerial = 0; musicClock = musicStep = 0; fixtureDroneSpawned = false;
+    overdrive = new OverdriveMeter(); l2DroneSpawned = false; carrierZ = 720; carrierActive = false; scanPulse = 0;
     feedbackText = ''; feedbackTime = 0;
     roadBaseRatio = mission.mode === 'story' ? storyBaseRatio() : .84;
   }
   function spawnActionTraffic() {
+    if (isBetrayal()) {
+      traffic = mission.beat === 'L2.02'
+        ? [makeVehicle(0, 520, 'sedan'), makeVehicle(4, 760, 'coupe')]
+        : [];
+      traffic.forEach(car => { car.changed = true; car.changeZ = -1; });
+      return;
+    }
     // Two authored, readable traffic pairs. Every pair leaves multiple lanes open.
     traffic = mission.beat === 'L1.02'
       ? [makeVehicle(1, 590, 'coupe'), makeVehicle(3, 650, 'sedan'),
@@ -189,9 +212,13 @@ export function mountGame() {
       : [makeVehicle(0, 640, 'sedan')];
     traffic.forEach(car => { car.changed = true; car.changeZ = -1; });
   }
-  function saveCheckpoint(next: DeliveryCheckpoint) {
+  function saveCheckpoint(next: DeliveryCheckpoint | BetrayalCheckpoint) {
+    // Local mechanics fixtures must never create either durable or resumable campaign progress.
+    if (mechanicsFixture || m2Fixture) return;
     checkpoint = next;
-    sessionSave = deliverySave(next, mission.log);
+    sessionSave = isBetrayal() && next.startsWith('CP-L2-')
+      ? betrayalSave(next as BetrayalCheckpoint, mission.log, (mission as BetrayalMission).records, (mission as BetrayalMission).history)
+      : deliverySave(next as DeliveryCheckpoint, mission.log);
     const durable = writeDeliverySave(sessionSave);
     if (durable) ignoreStoredSave = false;
     saveStatus = durable ? 'saved' : 'session';
@@ -201,12 +228,22 @@ export function mountGame() {
   function beginNewGame(resetSaved = false) {
     const cleared = resetSaved ? clearDeliverySave() : true;
     if (resetSaved) ignoreStoredSave = !cleared;
-    initAudio(); resetPhysical(); mission = new DeliveryMission(); checkpoint = null; sessionSave = null;
+    initAudio(); mission = new DeliveryMission(); resetPhysical(); checkpoint = null; sessionSave = null;
     if (mechanicsFixture) {
       mission = new DeliveryMission('CP-L1-ACTION');
       traffic = [makeVehicle(1,430,'coupe'),makeVehicle(3,730,'hauler'),makeVehicle(0,850,'sedan')];
       statusMessage = 'Local riding and drone mechanics fixture.';
       state = 'playing'; roadBaseRatio = .84; syncAudio(); canvas.focus({ preventScroll: true }); return;
+    }
+    if (m2Fixture) {
+      state = 'loading'; statusMessage = 'Loading local M2 mechanics fixture.';
+      void loadBetrayalAssets().then(ok => {
+        if (!ok) { state = 'error'; statusMessage = 'M2 fixture art unavailable.'; return; }
+        mission = new BetrayalMission('CP-L2-ESCAPE'); resetPhysical();
+        overdrive = new OverdriveMeter(100); charge = 0; carrierActive = true; carrierZ = 320;
+        state = 'playing'; roadBaseRatio = .84; syncAudio(); canvas.focus({ preventScroll: true });
+      });
+      return;
     }
     roadBaseRatio = storyBaseRatio();
     const prior = ignoreStoredSave ? { kind: 'none' as const } : readDeliverySave();
@@ -216,31 +253,77 @@ export function mountGame() {
     serviceLoops = 0; state = 'playing';
     syncAudio(); setMessage('MODULE SECURED · MAYOR VLAD INBOUND', 3); canvas.focus({ preventScroll: true });
   }
-  function restoreCheckpoint(save: DeliverySave) {
-    resetPhysical(); mission = new DeliveryMission(save.checkpoint, save.log);
+  function restoreCheckpoint(save: CampaignSave) {
+    mission = save.checkpoint.startsWith('CP-L2-')
+      ? new BetrayalMission(save.checkpoint as BetrayalCheckpoint, save.log, 'records' in save ? save.records : [], 'history' in save ? save.history : [])
+      : new DeliveryMission(save.checkpoint as DeliveryCheckpoint, save.log);
+    resetPhysical();
     roadBaseRatio = mission.mode === 'action' ? .84 : storyBaseRatio();
     checkpoint = save.checkpoint; sessionSave = save; serviceLoops = 0;
     if (mission.mode === 'action') spawnActionTraffic();
-    state = save.checkpoint === 'CP-L1-COMPLETE' ? 'complete' : 'playing';
-    statusMessage = state === 'complete' ? 'Delivery approach reached. Level 1 complete.' : 'Safe checkpoint restored.';
+    if (isBetrayal()) { carrierActive = save.checkpoint !== 'CP-L2-SCAN'; carrierZ = save.checkpoint === 'CP-L2-SCAN' ? 720 : save.checkpoint === 'CP-L2-COMPLETE' ? 1600 : 350; }
+    state = save.checkpoint.endsWith('COMPLETE') ? 'complete' : 'playing';
+    statusMessage = state === 'complete' ? (isBetrayal() ? 'Recovery lock broken. Level 2 complete.' : 'Delivery approach reached. Level 1 complete.') : 'Safe checkpoint restored.';
     syncAudio(); canvas.focus({ preventScroll: true });
   }
   function startGame() {
     if (state !== 'ready' || assetLoadFailed) return;
     beginNewGame();
   }
+  async function loadBetrayalAssets(): Promise<boolean> {
+    if (betrayalAssetsReady) return true;
+    if (loadingBetrayal) return false;
+    loadingBetrayal = true;
+    const required = Object.entries(BETRAYAL_ASSETS);
+    try {
+      await Promise.all(required.map(([name, url]) => loadImage(name === 'architecture' ? 'betrayalArchitecture' : name, url)));
+      betrayalAssetsReady = true;
+      return true;
+    } catch { return false; }
+    finally { loadingBetrayal = false; }
+  }
+  function enterBetrayal(previousLog: typeof mission.log) {
+    mission = new BetrayalMission(undefined, previousLog, [], [...previousLog]);
+    resetPhysical(); checkpoint = 'CP-L1-COMPLETE';
+    carrierZ = 720; carrierActive = false;
+    state = 'playing'; statusMessage = '';
+    setMessage('INSPECTION LANE · MAYOR VLAD CONNECTED', 3);
+    syncAudio(); canvas.focus({ preventScroll: true });
+  }
   function continueGame() {
     if (assetLoadFailed) { state = 'error'; statusMessage = 'A required Delivery asset is missing. Retry loading before continuing.'; return; }
     if (state === 'ready') {
-      if (sessionSave) { restoreCheckpoint(sessionSave); return; }
+      if (sessionSave) {
+        if (sessionSave.checkpoint.startsWith('CP-L2-') && !betrayalAssetsReady) {
+          state = 'loading'; statusMessage = 'Loading Betrayal art.';
+          void loadBetrayalAssets().then(ok => { if (ok) restoreCheckpoint(sessionSave!); else { state = 'error'; statusMessage = 'Betrayal art could not load. Retry Load or Menu.'; } });
+          return;
+        }
+        restoreCheckpoint(sessionSave); return;
+      }
       const found = ignoreStoredSave ? { kind: 'none' as const } : readDeliverySave();
-      if (found.kind === 'valid') { restoreCheckpoint(found.save); hasSave = true; saveStatus = 'saved'; }
+      if (found.kind === 'valid') {
+        if (found.save.checkpoint.startsWith('CP-L2-') && !betrayalAssetsReady) {
+          state = 'loading'; statusMessage = 'Loading Betrayal art.';
+          void loadBetrayalAssets().then(ok => { if (ok) { restoreCheckpoint(found.save); hasSave = true; saveStatus = 'saved'; } else { state = 'error'; statusMessage = 'Betrayal art could not load. Retry Load or Menu.'; } });
+          return;
+        }
+        restoreCheckpoint(found.save); hasSave = true; saveStatus = 'saved';
+      }
       else { state = 'error'; saveStatus = found.kind === 'invalid' ? 'invalid' : 'none'; statusMessage = 'No compatible safe checkpoint is available. Start a new Delivery ride.'; }
       return;
     }
+    if (state === 'complete' && checkpoint === 'CP-L1-COMPLETE') {
+      state = 'loading'; statusMessage = 'Loading municipal intake.'; clearInput();
+      const l1Log = [...mission.log];
+      void loadBetrayalAssets().then(ok => {
+        if (ok) enterBetrayal(l1Log);
+        else { state = 'error'; statusMessage = 'Betrayal art could not load. Delivery completion is saved. Retry Load or Menu.'; syncAudio(); }
+      });
+      return;
+    }
     if (state === 'complete' || state === 'error') {
-      state = 'error';
-      statusMessage = 'Level 1 is complete. The intake chapter is not in this playable slice yet.';
+      state = 'error'; statusMessage = isBetrayal() ? 'Level 2 is complete. The relay chapter is not in this milestone yet.' : 'Retry loading the intake chapter.';
       syncAudio();
     }
   }
@@ -262,7 +345,13 @@ export function mountGame() {
   function retry() {
     if (state === 'error') {
       if (assetLoadFailed) { loadAssets(); return; }
-      if (checkpoint === 'CP-L1-COMPLETE') { state = 'complete'; statusMessage = 'Delivery approach reached. Level 1 complete.'; return; }
+      if (checkpoint === 'CP-L1-COMPLETE') {
+        state = 'complete'; statusMessage = 'Delivery approach reached. Level 1 complete.';
+        continueGame(); return;
+      }
+      if (sessionSave?.checkpoint.startsWith('CP-L2-')) {
+        state = 'ready'; continueGame(); return;
+      }
     }
     if (state !== 'crashed' && state !== 'paused') return;
     if (sessionSave) restoreCheckpoint(sessionSave);
@@ -292,9 +381,38 @@ export function mountGame() {
       }
     }
   }
+  function onBetrayalEvents(events: BetrayalEvent[]) {
+    for (const event of events) {
+      if (event === 'checkpoint-scan') { spawnActionTraffic(); saveCheckpoint('CP-L2-SCAN'); setMessage('NEUTRAL CARRIER · ENTER THE WIDE SCAN ZONE', 4); }
+      if (event === 'scan-missed') setMessage('SCAN MISSED · SERVICE LOOP AHEAD', 3);
+      if (event === 'loop-return') { carrierZ = 720; setMessage('CARRIER SCAN AHEAD', 3); }
+      if (event === 'scan') { carrierActive = true; scanPulse = 1.4; setMessage('RECOVERY SCAN · HOLD THE ROAD CLEAR', 3); }
+      if (event === 'revelation') { clearInput(); setMessage('EQUIPMENT RECORDS · ACKNOWLEDGE EACH', 3); }
+      if (event === 'checkpoint-escape') {
+        clearInput(); carrierActive = true; carrierZ = 320;
+        saveCheckpoint('CP-L2-ESCAPE'); setMessage('BREAK THE LOCK · STEER OUTSIDE THE MARKED ZONE', 4);
+      }
+      if (event === 'lock-broken') setMessage('LOCK BROKEN · CLEAR THE PURSUIT EXIT', 3);
+      if (event === 'exit') {
+        traffic.filter(car => car.kind === 'drone').forEach(car => {
+          car.disengaging = true; car.retreatDirection = car.z < 0 ? -1 : 1;
+          car.side = car.x < x ? -1 : 1; car.phase = 'recover';
+        });
+        setMessage('PURSUIT DISENGAGING', 3);
+      }
+      if (event === 'closure') { clearInput(); carrierActive = false; setMessage('ROAD CLEAR · READ OMEGA', 3); }
+      if (event === 'level-complete') {
+        clearInput(); saveCheckpoint('CP-L2-COMPLETE'); state = 'complete';
+        sound('success'); syncAudio(); setMessage('RECOVERY LOCK BROKEN', 5);
+      }
+    }
+  }
   function advance() {
     if (state !== 'playing' || (mission.mode !== 'story' && mission.mode !== 'resolve')) return;
-    clearInput(); onMissionEvents(mission.advance());
+    clearInput();
+    if (mission instanceof BetrayalMission) onBetrayalEvents(mission.advance());
+    else onMissionEvents(mission.advance());
+    if (state === 'playing' && String(mission.mode) === 'action') canvas.focus({ preventScroll: true });
   }
   const actions = { start: startGame, continue: continueGame, newGame, advance, pause, resume, retry, menu };
   const hud = createHud(actions);
@@ -306,6 +424,13 @@ export function mountGame() {
     if (e.repeat && (e.code === 'Enter' || e.code === 'Space') && (e.target as HTMLElement)?.closest('#bastrop-game')) {
       e.preventDefault(); return;
     }
+    if (e.code === 'KeyP' || e.code === 'Escape') {
+      if (state === 'playing' || state === 'paused') {
+        e.preventDefault(); if (!e.repeat) state === 'paused' ? actions.resume() : actions.pause();
+      }
+      return;
+    }
+    if (e.code === 'KeyR' && state === 'crashed') { e.preventDefault(); if (!e.repeat) actions.retry(); return; }
     // Keep keyboard activation and navigation working on page controls.
     if ((e.target as HTMLElement)?.tagName === 'BUTTON' || (e.target as HTMLElement)?.tagName === 'A') return;
     const key = aliases[e.code] || e.code;
@@ -321,8 +446,6 @@ export function mountGame() {
       else if (state === 'complete' || state === 'error') actions.continue();
       else actions.advance();
     }
-    if (e.code === 'KeyP' || e.code === 'Escape') state === 'paused' ? actions.resume() : actions.pause();
-    if (e.code === 'KeyR' && state === 'crashed') actions.retry();
     if (e.code === 'KeyM') muteButton.click();
   });
   addEventListener('keyup', e => keys.delete(aliases[e.code] || e.code));
@@ -448,6 +571,7 @@ export function mountGame() {
     car.side=car.x<x?-1:1; spawn=Math.max(spawn,.7);
     if(outcome==='slice') {
       slices++; splitDrone(car); car.passed=true; car.z=-100;
+      if (isBetrayal()) overdrive.award('drone-kill', car.id);
       sound('slice');setMessage('DRONE SLICED / CLEAN CUT',1.15);
     } else if(outcome==='boost') {
       droneDodges++; setMessage('DRONE OUTRUN / TURBO',1.15);
@@ -464,6 +588,12 @@ export function mountGame() {
   }
   function updateDrone(car:Car,dt:number,oldX:number) {
     const oldZ=car.z;
+    if (car.disengaging) {
+      if (Math.abs(car.z) < 90 && bodyContact(car, car.z, oldX)) { crash(); return; }
+      car.x += ((car.side === -1 ? left + 22 : right - 22) - car.x) * (1 - Math.exp(-4 * dt));
+      car.z += (car.retreatDirection ?? 1) * 460 * dt;
+      return;
+    }
     if(car.phase==='approach') {
       moveDroneAroundTraffic(car,car.x,car.z-Math.min(115,Math.max(70,speed-car.velocity))*dt,4.5,dt);
       if(car.z<=610) {
@@ -495,7 +625,12 @@ export function mountGame() {
       const retreatX=clamp(x+(car.side||1)*130,left+28,right-28);
       moveDroneAroundTraffic(car,retreatX,car.z+(255-car.z)*(1-Math.exp(-2.7*dt)),3.6,dt);
       if(car.phaseTime===0) {
-        if((car.attackPasses||0)>=3) { car.passed=true; car.z=-100; }
+        if((car.attackPasses||0)>=3) {
+          if (isBetrayal()) {
+            car.disengaging = true; car.retreatDirection = car.z < 0 ? -1 : 1;
+            car.side = car.x < x ? -1 : 1;
+          } else { car.passed=true; car.z=-100; }
+        }
         else {
           car.phase='flank'; car.phaseTime=1.15; car.side=car.side===-1?1:-1;
           car.attackX=x; car.outcome='none';
@@ -530,10 +665,14 @@ export function mountGame() {
     else roadBaseRatio += ((safeCruise ? storyBaseRatio() : .84)-roadBaseRatio)*(1-Math.exp(-3*dt));
     const input = Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
     boost = Math.max(0, boost-dt);
+    overdrive.tick(dt);
     jumpCooldown = Math.max(0,jumpCooldown-dt);
     landing = Math.max(0,landing-dt);
     if(action && pressed.has('ShiftLeft')) {
-      if(boost===0 && charge>=.4) { charge-=.4; boost=1.15; sparks(18,'#ffe575'); sound('turbo');setMessage('TURBO / TAKE THE GAP',1.15); }
+      if (boost === 0 && isBetrayal() && overdrive.activate()) {
+        boost = 1.5; sparks(25,'#ffe575'); sound('turbo'); setMessage('OVERDRIVE / 1.5 SECOND BURST', 1.5);
+      }
+      else if(boost===0 && charge>=.4) { charge-=.4; boost=1.15; sparks(18,'#ffe575'); sound('turbo');setMessage('TURBO / TAKE THE GAP',1.15); }
       else if(boost===0) setMessage('TURBO RECHARGING',.8);
     }
     if(action && pressed.has('AltLeft') && height===0 && jumpWindup===0 && jumpCooldown===0) {
@@ -555,7 +694,7 @@ export function mountGame() {
     // Faster road motion and closing speed, while keeping ability timers in real time.
     const target = safeCruise ? keys.has('ArrowDown') ? 205 : keys.has('ArrowUp') ? 255 : 230
       : mission.mode === 'drain' ? 230
-      : sliding ? 200 : boost>0 ? 470 : keys.has('ArrowDown') ? 155 : keys.has('ArrowUp') ? 320 : 260;
+      : sliding ? 200 : overdrive.active > 0 ? 540 : boost>0 ? 470 : keys.has('ArrowDown') ? 155 : keys.has('ArrowUp') ? 320 : 260;
     speed += (target-speed)*(1-Math.exp(-(boost>0?7:4)*dt));
     vx += (input*(sliding?230:180)*(height>0?.8:1)-vx)*(1-Math.exp(-(sliding?10:20)*dt));
     x = clamp(x+vx*dt,left+22,right-22);
@@ -574,6 +713,19 @@ export function mountGame() {
     if (mechanicsFixture && !fixtureDroneSpawned && elapsed >= 2.5) {
       fixtureDroneSpawned = true;
       traffic.push(makeVehicle(2,540,'drone'));
+    }
+    if (mission instanceof BetrayalMission) {
+      scanPulse = Math.max(0, scanPulse - dt);
+      if (mission.beat === 'L2.02') {
+        if (mission.mode === 'action' && mission.loop) carrierZ -= Math.max(180, speed - 30) * dt;
+        else if (mission.mode === 'action') carrierZ = clamp(720 - mission.route, -50, 720);
+        else carrierZ += (250 - carrierZ) * (1 - Math.exp(-2.5 * dt));
+      }
+      if (mission.beat === 'L2.03' && mission.mode === 'action' && !l2DroneSpawned && mission.reaction === 0) {
+        l2DroneSpawned = true; traffic.push(makeVehicle(2, 540, 'drone'));
+        setMessage('MUNICIPAL DRONE · BLADES OR STEER CLEAR', 2);
+      }
+      if (mission.beat === 'L2.03' && mission.mode === 'drain') carrierZ += 460 * dt;
     }
     const bw = 26 + (sliding ? 8 : 0), bh = 24;
     for(const car of traffic) {
@@ -613,10 +765,14 @@ export function mountGame() {
       if(!car.passed && car.z < -reach) {
         car.passed=true;
         const gap = dx-(bw+car.w)/2;
-        if(gap>=0 && gap<17) { calls++; charge=clamp(charge+.3,0,1); sparks(10,'#ffd5a3'); sound('close');setMessage('CLOSE CALL / +30 ENERGY',1.2); }
+        if(gap>=0 && gap<17) {
+          calls++; charge=clamp(charge+.3,0,1);
+          if (isBetrayal()) overdrive.award('near-pass', car.id);
+          sparks(10,'#ffd5a3'); sound('close');setMessage(isBetrayal() ? 'CLOSE CALL / +30 ENERGY · +10 OVERDRIVE' : 'CLOSE CALL / +30 ENERGY',1.2);
+        }
       }
     }
-    traffic=traffic.filter(car=>car.z>-65);
+    traffic=traffic.filter(car=>car.z>-65 && (!car.disengaging || car.z<1500));
     for(const f of fragments) {
       f.life-=dt; f.x+=f.vx*dt; f.z-=(speed-f.vz)*dt;
       f.lift=Math.max(0,f.lift+f.vy*dt); f.vy-=150*dt; f.rotation+=f.spin*dt;
@@ -627,7 +783,10 @@ export function mountGame() {
     particles=particles.filter(p=>p.life>0).slice(-180);
     for(const p of particles) {p.life-=dt;p.x+=p.vx*dt;p.y+=(p.vy+speed*.4)*dt;}
     score=Math.max(score,distance*8+calls*350+slices*1200+droneDodges*700);
-    if(state==='playing' && !mechanicsFixture) onMissionEvents(mission.tick(dt,speed*dt,x,traffic.length===0));
+    if(state==='playing' && !mechanicsFixture) {
+      if (mission instanceof BetrayalMission) onBetrayalEvents(mission.tick(dt,speed*dt,x,traffic.length===0 && (mission.beat !== 'L2.03' || carrierZ >= 1500)));
+      else onMissionEvents(mission.tick(dt,speed*dt,x,traffic.length===0));
+    }
     if(feedbackTime<=0) feedbackText=safeCruise?'SAFE CRUISE · ENTER TO ADVANCE':mission.mode==='drain'?'TRAFFIC CLEARING':height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'STEER · SHIFT TURBO · SPACE SLIDE';
   }
   function makeVehicle(lane:number,z:number,kind:string):Car {
@@ -700,16 +859,17 @@ export function mountGame() {
     c.drawImage(img,sx,sy,sw,sh,p.x-(anchorX-sx)*scale,y,sw*scale,sh*scale);
     c.restore();
   }
-  function drawRouteBand(z:number,label:string) {
+  function drawRouteBand(z:number,label:string,minX:number=SERVICE_CORRIDOR.minX,maxX:number=SERVICE_CORRIDOR.maxX,tint='#55e9df28') {
     if(z>1200||z< -60)return;
-    const far=project(SERVICE_CORRIDOR.minX,z+150), farR=project(SERVICE_CORRIDOR.maxX,z+150);
-    const near=project(SERVICE_CORRIDOR.minX,z), nearR=project(SERVICE_CORRIDOR.maxX,z);
-    c.fillStyle='#55e9df28';c.strokeStyle='#72e5dbaa';c.lineWidth=Math.max(1,2*near.scale);
+    const far=project(minX,z+150), farR=project(maxX,z+150);
+    const near=project(minX,z), nearR=project(maxX,z);
+    c.fillStyle=tint;c.strokeStyle='#72e5dbaa';c.lineWidth=Math.max(1,2*near.scale);
     c.beginPath();c.moveTo(far.x,far.y);c.lineTo(farR.x,farR.y);c.lineTo(nearR.x,nearR.y);c.lineTo(near.x,near.y);c.closePath();c.fill();c.stroke();
     c.fillStyle='#e6fff9';c.textAlign='center';c.font=`700 ${Math.max(8,10*near.scale)}px monospace`;
     c.fillText(label,(near.x+nearR.x)/2,near.y-10*near.scale);c.textAlign='start';
   }
   function drawDeliveryProps() {
+    if (!(mission instanceof DeliveryMission)) return;
     const signal=mission.landmark('signal');
     if(signal!==null) drawRoadProp('signalDead',left+18,signal,30);
     const gate=mission.landmark('gate');
@@ -721,6 +881,37 @@ export function mountGame() {
     const approach=mission.landmark('approach');
     if(approach!==null) drawRouteBand(approach,'INTAKE APPROACH');
   }
+  function drawCarrierImage(name: 'carrier' | 'carrierActive', wx: number, z: number, width: number) {
+    if (z > 1500 || z < -35) return;
+    const img = images[name], meta = BETRAYAL_ASSET_METADATA[name];
+    if (!img) return;
+    const [sx, sy, sw, sh] = meta.displayCrop ?? [0, 0, img.width, img.height];
+    const [ax, ay] = meta.anchor;
+    const p = project(wx, z), scale = width / sw * p.scale;
+    c.save(); c.globalAlpha *= clamp((z + 35) / 100, 0, 1) * clamp((1500 - z) / 400, 0, 1);
+    c.drawImage(img, sx, sy, sw, sh, p.x - (ax - sx) * scale, p.y - (ay - sy) * scale, sw * scale, sh * scale);
+    c.restore();
+  }
+  function drawBetrayalProps() {
+    if (!(mission instanceof BetrayalMission)) return;
+    const scan = mission.landmark('scan');
+    if (scan !== null) drawRouteBand(scan, 'SCAN ZONE', SCAN_CORRIDOR.minX, SCAN_CORRIDOR.maxX);
+    if (mission.beat === 'L2.03' && mission.mode === 'action' && !mission.lockBroken) {
+      drawRouteBand(430, 'RECOVERY LOCK', LOCK_CORRIDOR.minX, LOCK_CORRIDOR.maxX, '#ff465342');
+      drawRouteBand(120, 'MOVE OUTSIDE', LOCK_CORRIDOR.minX, LOCK_CORRIDOR.maxX, '#ff46532e');
+    }
+    const exit = mission.landmark('exit');
+    if (exit !== null) drawRouteBand(exit, 'PURSUIT EXIT', 190, 450);
+    if (carrierZ < 1500) {
+      drawCarrierImage('carrier', 468, carrierZ, 112);
+      if (carrierActive) drawCarrierImage('carrierActive', 468, carrierZ, 112);
+      if (scanPulse > 0) {
+        const p = project(468, carrierZ), rider = project(x, 0);
+        c.save(); c.globalAlpha = clamp(scanPulse / 1.4, 0, 1) * .75; c.strokeStyle = '#61ecf2'; c.lineWidth = 3;
+        c.setLineDash([8, 7]); c.beginPath(); c.moveTo(p.x, p.y - 45 * p.scale); c.lineTo(rider.x, rider.y - 30 * rider.scale); c.stroke(); c.restore();
+      }
+    }
+  }
   function drawCity() {
     c.fillStyle='#08101b';c.fillRect(0,0,W,H);
     const skyline=images.city;
@@ -729,13 +920,18 @@ export function mountGame() {
       const skyW=skyline.width*skyScale,skyH=skyline.height*skyScale;
       c.drawImage(skyline,(W-skyW)/2-(cameraX-320)*.02,(H-skyH)/2,skyW,skyH);
     }
-    const img=images.architecture;
+    const img=images[isBetrayal() ? 'betrayalArchitecture' : 'architecture'];
     if(!img)return;
     const scale=Math.max(W/img.width,H*.65/img.height)*1.03;
     const dw=img.width*scale,dh=img.height*scale;
     const parallax=-(cameraX-320)*.035;
-    const anchorY=DELIVERY_ASSET_METADATA.architecture.anchor[1];
+    const anchorY=isBetrayal() ? BETRAYAL_ASSET_METADATA.architecture.anchor[1] : DELIVERY_ASSET_METADATA.architecture.anchor[1];
     c.drawImage(img,(W-dw)/2+parallax,H*(W<H?.32:.42)-anchorY*scale,dw,dh);
+    if (isBetrayal() && carrierActive && images.intakeScan) {
+      c.save(); c.globalAlpha = .38 + .08 * Math.sin(elapsed * 7);
+      c.drawImage(images.intakeScan,(W-dw)/2+parallax,H*(W<H?.32:.42)-anchorY*scale,dw,dh);
+      c.restore();
+    }
   }
   function mirroredRow(value:number,length:number) {
     const cycle=length*2,wrapped=((value%cycle)+cycle)%cycle;
@@ -770,13 +966,27 @@ export function mountGame() {
     c.fillStyle=vignette;c.fillRect(0,0,W,H);
   }
   function render() {
+    const betrayal = mission instanceof BetrayalMission ? mission : null;
     const view: HudView = {
       state, readyToStart: state !== 'loading', mode: mission.mode, beatId: mission.beat,
+      chapterId: betrayal ? 'L2' : 'L1', chapterLabel: betrayal ? 'BETRAYAL' : 'DELIVERY',
+      completionTitle: betrayal ? 'RECOVERY LOCK BROKEN' : 'DELIVERY APPROACH REACHED',
+      continueLabel: betrayal ? 'RIDE TO THE RELAY' : 'CONTINUE TO INTAKE',
+      completionSaveLabel: betrayal ? 'SAVED / RECOVERY LOCK BROKEN' : 'SAVED / DELIVERY APPROACH',
+      retryLabel: state === 'error' && checkpoint === 'CP-L1-COMPLETE' ? 'RETRY LOAD' : 'RETRY CHECKPOINT',
       objective: mission.objective, routeCue: mission.routeCue,
       speed: Math.round(speed), energy: charge,
-      turbo: mission.mode !== 'action' ? 'unavailable' : boost > 0 ? 'active' : charge >= .4 ? 'ready' : 'charging',
+      turbo: mission.mode !== 'action' ? 'unavailable' : boost > 0 && overdrive.active === 0 ? 'active' : charge >= .4 ? 'ready' : 'charging',
       dialogue: mission.dialogue, dialogueIndex: mission.dialogueIndex,
       dialogueCount: mission.dialogueCount, log: mission.log,
+      record: betrayal?.record ?? null, recordIndex: betrayal?.recordIndex ?? 0, recordCount: betrayal ? 2 : 0,
+      records: betrayal?.records, history: betrayal?.history,
+      abilities: {
+        blades: { state: mission.mode === 'action' ? blades > .65 ? 'active' : 'ready' : 'unavailable', binding: 'J / CTRL' },
+        jump: { state: mission.mode !== 'action' ? 'unavailable' : height > 0 ? 'active' : jumpCooldown > 0 ? 'cooldown' : 'ready', binding: 'K / ALT', cooldown: jumpCooldown },
+      },
+      overdrive: betrayal ? { value: overdrive.value, ready: overdrive.ready, active: overdrive.active > 0 } : undefined,
+      missionMeter: betrayal?.beat === 'L2.03' && !betrayal.lockBroken ? { label: 'RECOVERY LOCK', value: Math.min(1, betrayal.lockOutside / 1.5), detail: 'STEER OUTSIDE · HOLD 1.5S' } : undefined,
       hasSave, saveStatus, message: state === 'playing' ? feedbackText : statusMessage,
     };
     hud.render(view);
@@ -787,10 +997,12 @@ export function mountGame() {
     drawCity();
     drawRoad();
     drawVignette();
-    drawDeliveryProps();
+    if (betrayal) drawBetrayalProps(); else drawDeliveryProps();
     for(const car of traffic) if(car.kind==='drone') drawTelegraph(car);
-    for(const car of traffic) if(car.kind==='drone'&&car.phase!=='lunge')
-      drawEffect('hoverThrust',car.x,car.z,car.w*.9,hoverLift(car)-8,.5+.18*Math.sin(elapsed*18));
+    for(const car of traffic) if(car.kind==='drone'&&car.phase!=='lunge') {
+      const fade = car.disengaging ? car.retreatDirection === -1 ? clamp((car.z + 65) / 53, 0, 1) : clamp((1500 - car.z) / 400, 0, 1) : 1;
+      drawEffect('hoverThrust',car.x,car.z,car.w*.9,hoverLift(car)-8,(.5+.18*Math.sin(elapsed*18))*fade);
+    }
     const drawBike=()=>{
       const lift=bikeLift();
       // Effects are road-layer art: render them behind the bike, centered on its exhaust/axle.
@@ -808,14 +1020,19 @@ export function mountGame() {
       // Lift the sprite independently of its road-plane shadow; preserve its aspect ratio.
       const hover = hoverLift(car);
 
+      c.save();
+      if (car.disengaging) c.globalAlpha *= car.retreatDirection === -1
+        ? clamp((car.z + 65) / 53, 0, 1) : clamp((1500 - car.z) / 400, 0, 1);
       sprite(vehicleSprite(car),car.x,car.z,car.w,car.kind==='hauler'?66:car.kind==='drone'?38:31,hover);
+      c.restore();
     }
     if(!bikeDrawn)drawBike();
     for(const fragment of [...fragments].sort((a,b)=>b.z-a.z))drawFragment(fragment);
     for(const effect of [...effects].filter(effect=>effect.sprite!=='landingRing').sort((a,b)=>b.z-a.z))drawBurst(effect);
     if(!reduced&&boost>0){c.strokeStyle='#ffe57b55';for(let i=0;i<8;i++){const px=(i*137)%W;c.beginPath();c.moveTo(px,H);c.lineTo(W/2+(px-W/2)*.8,H*.8);c.stroke();}}
     // Small observable state is useful for regression tests and tuning controls.
-    const drones=activeDrones(),drone=activeDrone();canvas.dataset.audio=audio?'ready':'locked';canvas.dataset.muted=String(muted);canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.dronePhases=drones.map(item=>item.phase).join(',');canvas.dataset.droneCount=String(drones.length);canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.dronePasses=String(drone?.attackPasses||0);canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.mode=mission.mode;canvas.dataset.beat=mission.beat;canvas.dataset.dialogueId=mission.dialogue?.id??'';canvas.dataset.dialogueIndex=String(mission.dialogueIndex);canvas.dataset.route=mission.route.toFixed(1);canvas.dataset.visualDistance=distance.toFixed(1);canvas.dataset.trafficCount=String(traffic.length);canvas.dataset.traffic=JSON.stringify(traffic.map(car=>({id:car.id,x:+car.x.toFixed(1),z:+car.z.toFixed(1),kind:car.kind,lane:car.lane})));canvas.dataset.checkpoint=checkpoint??'';canvas.dataset.gatePassed=String(mission.gates.serviceGate);canvas.dataset.approachPassed=String(mission.gates.approach);canvas.dataset.serviceLoops=String(serviceLoops);canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.score=String(Math.floor(score));
+    const drones=activeDrones(),drone=activeDrone();canvas.dataset.audio=audio?'ready':'locked';canvas.dataset.muted=String(muted);canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.dronePhases=drones.map(item=>item.phase).join(',');canvas.dataset.droneCount=String(drones.length);canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.dronePasses=String(drone?.attackPasses||0);canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.mode=mission.mode;canvas.dataset.beat=mission.beat;canvas.dataset.dialogueId=mission.dialogue?.id??'';canvas.dataset.dialogueIndex=String(mission.dialogueIndex);canvas.dataset.route=mission.route.toFixed(1);canvas.dataset.visualDistance=distance.toFixed(1);canvas.dataset.trafficCount=String(traffic.length);canvas.dataset.traffic=JSON.stringify(traffic.map(car=>({id:car.id,x:+car.x.toFixed(1),z:+car.z.toFixed(1),kind:car.kind,lane:car.lane})));canvas.dataset.checkpoint=checkpoint??'';canvas.dataset.gatePassed=String(mission instanceof DeliveryMission && mission.gates.serviceGate);canvas.dataset.approachPassed=String(mission instanceof DeliveryMission && mission.gates.approach);canvas.dataset.serviceLoops=String(serviceLoops);canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.score=String(Math.floor(score));
+    canvas.dataset.chapter=betrayal?'L2':'L1';canvas.dataset.recordId=betrayal?.record?.id??'';canvas.dataset.recordIndex=String(betrayal?.recordIndex??0);canvas.dataset.recordCount=String(betrayal?.records.length??0);canvas.dataset.betrayalKnown=String(betrayal?.betrayalKnown??false);canvas.dataset.lockOutside=(betrayal?.lockOutside??0).toFixed(2);canvas.dataset.lockBroken=String(betrayal?.lockBroken??false);canvas.dataset.carrierZ=carrierZ.toFixed(1);canvas.dataset.carrierActive=String(carrierActive);canvas.dataset.overdrive=String(overdrive.value);canvas.dataset.overdriveActive=String(overdrive.active>0);
     const canvasBox = canvas.getBoundingClientRect();
     canvas.dataset.riderBottom = (canvasBox.top + project(x,0).y * canvasBox.height / H).toFixed(1);
   }

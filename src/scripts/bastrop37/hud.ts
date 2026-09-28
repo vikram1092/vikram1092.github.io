@@ -1,5 +1,5 @@
 import { DELIVERY_ASSETS } from './delivery-content';
-import type { DialogueLine, HudActions, HudView, Speaker } from './contracts';
+import type { TransmissionEntry, HudActions, HudView, Speaker } from './contracts';
 
 const speakerName: Record<Speaker, string> = {
   jo: 'JO',
@@ -23,7 +23,7 @@ function show(element: HTMLElement, visible: boolean): void {
 
 function saveLabel(view: HudView): string {
   switch (view.saveStatus) {
-    case 'saved': return view.state === 'complete' ? 'SAVED / DELIVERY APPROACH' : 'SAVED CHECKPOINT';
+    case 'saved': return view.state === 'complete' ? (view.completionSaveLabel || 'SAVED / DELIVERY APPROACH') : 'SAVED CHECKPOINT';
     case 'session': return 'SESSION ONLY — PROGRESS COULD NOT BE SAVED';
     case 'invalid': return 'SAVED RIDE UNAVAILABLE — START A NEW DELIVERY';
     default: return '';
@@ -71,6 +71,19 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
   const feedback = requireElement<HTMLElement>('#feedback');
   const advance = requireElement<HTMLButtonElement>('#advance');
 
+  const chapterNumber = requireElement<HTMLElement>('.chapter-number');
+  const chapterBrand = requireElement<HTMLElement>('.brand small');
+  const chapterMicro = requireElement<HTMLElement>('.mission .micro');
+  const combat = requireElement<HTMLElement>('#combat-status');
+  const blades = requireElement<HTMLElement>('#blades-state');
+  const jump = requireElement<HTMLElement>('#jump-state');
+  const overdrive = requireElement<HTMLElement>('#overdrive-state');
+  const overdriveMeter = requireElement<HTMLMeterElement>('#overdrive-meter');
+  const lock = requireElement<HTMLElement>('#mission-meter');
+  const lockLabel = requireElement<HTMLElement>('#mission-meter-label');
+  const lockDetail = requireElement<HTMLElement>('#mission-meter-detail');
+  const lockMeter = requireElement<HTMLMeterElement>('#mission-meter-value');
+
   let confirmingReset = false;
   let lastLogKey = '';
   let previousState: HudView['state'] | null = null;
@@ -99,25 +112,34 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
     newGame.focus();
   });
 
-  function renderLog(lines: DialogueLine[]): void {
-    const key = lines.map(line => `${line.id}:${line.speaker}:${line.text}`).join('|');
+  function renderLog(entries: TransmissionEntry[]): void {
+    const key = JSON.stringify(entries);
     if (key === lastLogKey) return;
     lastLogKey = key;
     logList.replaceChildren();
-    for (const line of lines) {
+    for (const entry of entries) {
       const item = document.createElement('li');
       const name = document.createElement('strong');
-      name.textContent = `${speakerName[line.speaker]} / `;
-      item.append(name, document.createTextNode(line.text));
+      const isRecord = 'lines' in entry;
+      name.textContent = isRecord ? `${entry.title} / ${entry.source}: ` : `${speakerName[entry.speaker]} / `;
+      item.append(name, document.createTextNode(isRecord ? entry.lines.join(' · ') : entry.text));
+      if (isRecord) item.dataset.kind = 'record';
       logList.append(item);
     }
-    setText(logCount, String(lines.length));
+    setText(logCount, String(entries.length));
   }
 
   return {
     render(view: HudView): void {
       root.dataset.state = view.state;
       root.dataset.mode = view.mode;
+      const chapterLabel = view.chapterLabel || 'DELIVERY';
+      const chapterNo = view.chapterId === 'L2' ? '02' : '01';
+      setText(chapterNumber, chapterNo);
+      setText(chapterBrand, `${chapterNo} / ${chapterLabel}`);
+      setText(chapterMicro, `${chapterLabel} / BASTROP`);
+      setText(continueChapter, view.continueLabel || 'CONTINUE TO INTAKE');
+      setText(retry, view.retryLabel || (view.chapterId === 'L2' ? 'RETRY CHECKPOINT' : 'RETRY DELIVERY'));
       setText(objective, view.objective);
       setText(routeCue, view.routeCue);
       setText(speed, String(Math.max(0, Math.round(view.speed))).padStart(3, '0'));
@@ -131,11 +153,45 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
       const turbo = view.mode === 'action' ? view.turbo : 'unavailable';
       setText(turboState, `↗ TURBO / ${turbo.toUpperCase()}`);
 
+      const action = view.state === 'playing' && view.mode === 'action';
+      show(combat, action && view.chapterId === 'L2' && !!view.abilities);
+      if (view.abilities) {
+        for (const [element, label, ability] of [[blades, 'BLADES', view.abilities.blades], [jump, 'JUMP', view.abilities.jump]] as const) {
+          setText(element, `${label} · ${ability.binding} / ${ability.state.toUpperCase()}${ability.state === 'cooldown' && ability.cooldown ? ` ${ability.cooldown.toFixed(1)}s` : ''}`);
+          element.dataset.state = ability.state;
+          element.title = ability.binding;
+        }
+      }
+      const od = view.overdrive;
+      show(overdrive, !!od);
+      show(overdriveMeter, !!od);
+      if (od) {
+        const charge = Math.max(0, Math.min(100, Math.round(od.value)));
+        setText(overdrive, od.active ? 'OVERDRIVE / ACTIVE' : od.ready ? 'OVERDRIVE / READY · NEXT TURBO' : `OVERDRIVE / ${charge}%`);
+        overdriveMeter.value = charge;
+        combat.dataset.overdrive = od.active ? 'active' : od.ready ? 'ready' : 'charging';
+      }
+      show(lock, action && !!view.missionMeter);
+      if (view.missionMeter) {
+        setText(lockLabel, view.missionMeter.label);
+        setText(lockDetail, view.missionMeter.detail);
+        lockMeter.value = Math.max(0, Math.min(1, view.missionMeter.value));
+      }
+
       const canPause = view.state === 'playing';
       pause.disabled = !canPause;
       const reading = view.mode === 'story' || view.mode === 'resolve';
-      show(comms, canPause && reading && !!view.dialogue);
-      if (canPause && reading && view.dialogue) {
+      show(comms, canPause && reading && !!(view.dialogue || view.record));
+      advance.setAttribute('aria-label', view.record ? 'Acknowledge equipment record' : 'Continue dialogue');
+      if (canPause && reading && view.record) {
+        const record = view.record;
+        comms.dataset.speaker = 'system';
+        setText(speaker, record.title);
+        setText(dialogueText, record.lines.join('\n'));
+        setText(channel, record.source);
+        setText(dialogueCount, `${String((view.recordIndex || 0) + 1).padStart(2, '0')} / ${String(view.recordCount || 2).padStart(2, '0')}`);
+        show(commsIdentity, false);
+      } else if (canPause && reading && view.dialogue) {
         const line = view.dialogue;
         comms.dataset.speaker = line.speaker;
         setText(speaker, speakerName[line.speaker]);
@@ -175,31 +231,32 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
       show(saveNote, !!saveText && (view.state === 'ready' || view.state === 'paused' || view.state === 'complete'));
       setText(saveNote, saveText);
       saveNote.classList.toggle('session', view.saveStatus === 'session' || view.saveStatus === 'invalid');
-      renderLog(view.log);
-      show(logDetails, view.state === 'paused' && view.log.length > 0);
+      const history = view.history || view.log;
+      renderLog(history);
+      show(logDetails, view.state === 'paused' && history.length > 0);
 
       if (view.state === 'loading') {
         setText(overline, 'DELIVERY / BASTROP');
         setText(headline, 'BASTROP37');
         setText(message, view.message || 'Preparing the road. Jo already has the module.');
       } else if (view.state === 'ready') {
-        setText(overline, '01 / DELIVERY');
+        setText(overline, `${chapterNo} / ${chapterLabel}`);
         setText(headline, 'BASTROP37');
         setText(message, view.message || 'Jo has the module. Mayor Vlad is waiting at municipal intake.');
       } else if (view.state === 'paused') {
         setText(overline, 'RIDE PAUSED');
-        setText(headline, 'DELIVERY ON HOLD');
+        setText(headline, `${chapterLabel} ON HOLD`);
         setText(message, view.message || view.objective);
       } else if (view.state === 'crashed') {
         setText(overline, 'RIDE INTERRUPTED');
         setText(headline, 'TRY THE ROAD AGAIN');
-        setText(message, view.message || 'Restart Delivery from the last safe point.');
+        setText(message, view.message || 'Restart the ride from the last safe point.');
       } else if (view.state === 'complete') {
-        setText(overline, '01 / DELIVERY');
-        setText(headline, 'DELIVERY APPROACH REACHED');
+        setText(overline, `${chapterNo} / ${chapterLabel}`);
+        setText(headline, view.completionTitle || 'DELIVERY APPROACH REACHED');
         setText(message, view.message || 'Jo reached municipal intake. This playable slice ends here.');
       } else if (view.state === 'error') {
-        setText(overline, 'DELIVERY UNAVAILABLE');
+        setText(overline, `${chapterLabel} UNAVAILABLE`);
         setText(headline, 'ROAD CLOSED');
         setText(message, view.message || 'The ride could not load. Refresh to try again.');
       }

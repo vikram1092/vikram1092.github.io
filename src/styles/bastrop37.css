@@ -238,3 +238,26 @@ body:has(.garage){background:#090d19}
   #bastrop-game .advance-tap{display:inline;font:8px 'Courier New',monospace;white-space:nowrap;color:#d8e5dc}
   #bastrop-game .comms-tail{min-height:15px;padding:2px 8px 2px 10px;font-size:7px}
 }
+
+/* M2: equipment receipts and derived combat instruments share the bike's receiver. */
+#bastrop-game .comms[data-speaker=system]{--accent:#cbd1b1}
+#bastrop-game .comms[data-speaker=system] .comms-body{grid-template-columns:1fr;padding-left:20px}
+#bastrop-game .comms[data-speaker=system] #dialogue-text{white-space:pre-line;font-family:'Courier New',monospace;line-height:1.6;letter-spacing:.4px}
+#bastrop-game .comms[data-speaker=system] #speaker{font-size:20px;letter-spacing:1px}
+#bastrop-game .combat-status{position:absolute;z-index:2;right:34px;bottom:34px;width:240px;display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;padding:12px 14px;background:linear-gradient(120deg,#193039ee,#0b1c26ed);border-left:3px solid #94beb0;border-top:1px solid #8a9d92;box-shadow:inset 0 -3px #08161c;font:10px/1.4 'Courier New',monospace;color:#cddbd0}
+#bastrop-game .combat-status strong{grid-column:1/-1;font:10px/1.4 'Courier New',monospace;color:#debf86;letter-spacing:.5px}
+#bastrop-game .combat-status[data-overdrive=ready] strong,#bastrop-game .combat-status[data-overdrive=active] strong{color:#a2f1da}
+#bastrop-game meter{appearance:none;display:block;width:100%;height:6px;border:0;background:#455751;accent-color:#9bdac8}
+#bastrop-game meter::-webkit-meter-bar{height:6px;border:0;border-radius:0;background:#455751}
+#bastrop-game meter::-webkit-meter-optimum-value{background:#9bdac8}
+#bastrop-game #overdrive-meter{grid-column:1/-1}
+#bastrop-game .mission-meter{position:absolute;z-index:2;left:50%;top:155px;transform:translateX(-50%);width:260px;padding:9px 12px;background:#142830ed;border-left:3px solid #e1bc81;display:grid;gap:6px;color:#e5d7b4;font:10px/1.4 'Courier New',monospace}
+#bastrop-game .mission-meter strong{letter-spacing:1px}
+#bastrop-game .mission-meter span{color:#d0dfd8}
+#bastrop-game #dialogue-log li[data-kind=record]{padding-left:8px;border-left:2px solid #a5bdaf}
+@media(max-width:600px){
+ #bastrop-game .combat-status{right:14px;bottom:95px;width:173px;gap:6px 8px;padding:8px 9px;font-size:9px}
+ #bastrop-game .combat-status strong{font-size:9px;letter-spacing:0}
+ #bastrop-game .mission-meter{top:161px;width:224px;padding:7px 10px;font-size:9px}
+ #bastrop-game .comms[data-speaker=system] #speaker{font-size:18px}
+}

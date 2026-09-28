@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { writeFileSync } from 'node:fs';
+import { reveal, ack, escape } from './helpers/betrayal';
 
 const capture = 'docs/bastrop37/phase3/captures';
 test.beforeEach(async ({ page }) => { await page.clock.install(); });
@@ -88,8 +89,8 @@ test('riding, slide energy, deliberate turbo, pause and checkpoint retry preserv
   await expect(page.locator('#comms')).toBeHidden();
 });
 
-test('fresh full Delivery traverses traffic, drains naturally, saves and stops before Intake', async ({ page }) => {
-  test.setTimeout(180000);
+test('fresh full Delivery traverses traffic, saves and continues to Intake', async ({ page }) => {
+  test.setTimeout(300000);
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await page.addInitScript(() => {
     const audit = { drainWithActors: false, removals: [] as number[] };
@@ -139,8 +140,21 @@ test('fresh full Delivery traverses traffic, drains naturally, saves and stops b
   await page.reload(); await page.locator('#continue-save').click();
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'complete');
   await page.locator('#continue-chapter').click();
-  expect(await page.locator('#game').getAttribute('data-beat')).not.toMatch(/^L2/);
+  await expect(page.locator('#game')).toHaveAttribute('data-beat', 'L2.01');
+  await expect(page.locator('#dialogue-text')).toHaveText("Stay beside the recovery vehicle. It'll take the module from there.");
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('bastrop37-campaign-v1')!).completedLevels)).toEqual(['L1']);
+  await reveal(page);
+  await expect(page.locator('#dialogue-text')).toContainText('WIPE MODULE');
+  await ack(page,9);
+  await expect(page.locator('#game')).toHaveAttribute('data-betrayal-known','true');
+  await escape(page);
+  await ack(page,4);
+  await expect(page.locator('#headline')).toHaveText('RECOVERY LOCK BROKEN');
+  const finalSave = await page.evaluate(() => JSON.parse(localStorage.getItem('bastrop37-campaign-v1')!));
+  expect(finalSave.checkpoint).toBe('CP-L2-COMPLETE');
+  expect(finalSave.completedLevels).toEqual(['L1','L2']);
+  expect(finalSave.flags.omegaReleased).toBe(false);
+  writeFileSync('docs/bastrop37/phase3/m2/earned-completion-save.json',JSON.stringify(finalSave,null,2));
   expect(errors).toEqual([]);
 });
 
@@ -278,7 +292,7 @@ test('focused dialogue button ignores native repeated Enter', async ({ page }) =
 test.describe('mobile full Delivery', () => {
   test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   test('touch-only Delivery reaches a saved ending and can continue after reload', async ({ page, context }) => {
-    test.setTimeout(180000);
+    test.setTimeout(300000);
     await start(page);
     const touch = await context.newCDPSession(page);
     async function steer(target: number) {

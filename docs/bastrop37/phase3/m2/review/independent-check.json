@@ -1,0 +1,27 @@
+{
+  "result": "pass",
+  "findings": [
+    {
+      "viewport": "1440x900",
+      "touch": false,
+      "records": [
+        "EQUIPMENT RECORD / RECOVERY CARRIER: WIPE MODULE · DETAIN COURIER · AUTH: MAYOR VLAD",
+        "EQUIPMENT RECORD / RECOVERY CARRIER: POWER SHUTDOWN · AUTH: MAYOR VLAD"
+      ],
+      "savedCheckpoint": "CP-L2-ESCAPE",
+      "complete": true,
+      "errors": []
+    },
+    {
+      "viewport": "390x844",
+      "touch": true,
+      "records": [
+        "EQUIPMENT RECORD / RECOVERY CARRIER: WIPE MODULE · DETAIN COURIER · AUTH: MAYOR VLAD",
+        "EQUIPMENT RECORD / RECOVERY CARRIER: POWER SHUTDOWN · AUTH: MAYOR VLAD"
+      ],
+      "savedCheckpoint": "CP-L2-ESCAPE",
+      "complete": true,
+      "errors": []
+    }
+  ]
+}
