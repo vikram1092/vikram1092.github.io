@@ -41,4 +41,6 @@ The approved 13 lines contain 93 words. Ordinary action travel is roughly 15 sec
 
 The local preview remains at <http://127.0.0.1:4321/bastrop37/> (`node scripts/preview-test.mjs`, serving the built `dist`). Start Delivery; Enter/Continue advances dialogue, arrow/WASD steers, Shift turbos, Space slides, Alt/K jumps, Control/J opens blades. Mobile buttons support simultaneous inputs. Pause offers controls/log and checkpoint retry. Finish the service approach, reload and choose Continue Saved Ride to verify the saved ending. Continue to Intake intentionally stops at the M1 boundary.
 
-**Next action:** push and publish the verified M1 slice as the user requested, then present the public Delivery link for playtest. Fix reported M1 defects within the accepted scope; do not implement M2–M5.
+**Publication complete:** commit `5709eaa` was pushed to `master`; GitHub Pages workflow [36361131703](https://github.com/vikram1092/vikram1092.github.io/actions/runs/36361131703) succeeded, and <https://vikramramkumar.me/bastrop37/> served the new Delivery page.
+
+**Next action:** present the public Delivery link for user playtest. Fix reported M1 defects within the accepted scope; do not implement M2–M5.
