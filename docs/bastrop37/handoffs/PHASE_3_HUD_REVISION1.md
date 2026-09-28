@@ -20,7 +20,7 @@
 
 ## Director final acceptance addendum
 
-Fresh independent review accepted this final revision for user playtest with no material finding. It independently verified four live layouts and long lines, equal native-button/card bounds, desktop/mobile card-region taps advancing exactly once, and reduced-motion transition0s. Director's eight final browser regressions and build pass. This supersedes pending-review language above. Root now owns authorized commit/push/publication and public verification; the director/workers stop at this M1 revision. No screen-reader or physical-device run is claimed.
+Fresh independent review accepted this final revision for user playtest with no material finding. It independently verified four live layouts and long lines, equal native-button/card bounds, desktop/mobile card-region taps advancing exactly once, and reduced-motion transition0s. Director's eight final browser regressions and build pass. This supersedes pending-review language above. Root published commit `480a7dc` at <https://vikramramkumar.me/bastrop37/>; the director/workers stop at this M1 revision. No screen-reader or physical-device run is claimed.
 
 
-Exact playtest step after root publishes: open <https://vikramramkumar.me/bastrop37/>, start a new Delivery if the previous ending is saved, and tap/click the speaker card's frame, portrait, text or footer to advance one line. Enter/Space also work. Check the Omega/Vlad long exchange while riding, then finish/reload to retain the Delivery ending. Stop at M1.
+Exact playtest step: open <https://vikramramkumar.me/bastrop37/>, start a new Delivery if the previous ending is saved, and tap/click the speaker card's frame, portrait, text or footer to advance one line. Enter/Space also work. Check the Omega/Vlad long exchange while riding, then finish/reload to retain the Delivery ending. Stop at M1.

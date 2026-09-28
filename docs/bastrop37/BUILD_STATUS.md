@@ -1,6 +1,6 @@
 # Bastrop37 build status
 
-Active phase: **Phase 3 — M0/M1 verified; dialogue HUD revision 1 accepted for publication**. Updated 2026-09-27. Phase 1 is approved. The user explicitly confirmed **“I approved it all”**, approving the full revised Phase 2 package. Phase 3 **M0 and M1 only** was authorized, then stopped for the playable Delivery review. After verification, the user authorized pushing and publishing this slice. M2–M5 remain unauthorized. Historical approval requests below are superseded by this recorded approval.
+Active phase: **Phase 3 — M0/M1 verified; dialogue HUD revision 1 published for user playtest**. Updated 2026-09-27. Phase 1 is approved. The user explicitly confirmed **“I approved it all”**, approving the full revised Phase 2 package. Phase 3 **M0 and M1 only** was authorized, then stopped for the playable Delivery review. After verification, the user authorized pushing and publishing this slice. M2–M5 remain unauthorized. Historical approval requests below are superseded by this recorded approval.
 
 ## M1 playtest follow-up — dialogue HUD revision 1
 
@@ -13,7 +13,8 @@ The user found the playable slice promising and requested a more distinctive spe
 - Implemented: layered receiver chassis, raised speaker dock and recessed full-text display. Whole-card native activation includes the visible outer rim; accessible description includes speaker and words. Final build has zero Astro diagnostics.
 - Verified: **8/8 targeted browser checks in 2.1 minutes**, including full desktop/mobile Delivery/save/reload, whole-card region activation exactly once, outer-rim taps, keyboard repeats, slow reading/pause and outside touch steering. Four-size captures have no page errors/overflow; long mobile dialogue has 51.4px rider clearance and 17px D-pad separation. Evidence: [revision director handoff](handoffs/PHASE_3_HUD_REVISION1_DIRECTOR.md), [HUD handoff](handoffs/PHASE_3_HUD_REVISION1.md), [captures/geometry](phase3/hud-revision1/geometry.json).
 - Independent final review **accepted** the revised receiver for user playtest: all four layouts/long lines clear, whole visible rim matches native-button bounds, and independent desktop/mobile taps advance exactly once. No material finding remains. [Revision review](handoffs/PHASE_3_HUD_REVISION1_REVIEW.md).
-- **Next:** root commits/pushes/publishes this accepted bounded revision under the existing user authorization, then verifies the public page. User playtest: start a new Delivery and activate the speaker card at its frame, portrait, words or footer; each should acknowledge one line. Director/workers performed no publication. Stop at M1. The earlier evidence below describes the baseline slice.
+- **Published:** root pushed commit `480a7dc` to `master`; GitHub Pages workflow [36374652606](https://github.com/vikram1092/vikram1092.github.io/actions/runs/36374652606) succeeded. <https://vikramramkumar.me/bastrop37/> returned the revised `comms-trigger` card and “TAP ANYWHERE TO CONTINUE” cue.
+- **Next:** user playtest: start a new Delivery and activate the speaker card at its frame, portrait, words or footer; each should acknowledge one line. Stop at M1. The earlier evidence below describes the baseline slice.
 
 ## Phase 3 current execution
 

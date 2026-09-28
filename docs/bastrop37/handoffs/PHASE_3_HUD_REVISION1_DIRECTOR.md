@@ -1,6 +1,6 @@
 # M1 dialogue HUD revision 1 — director integration handoff
 
-**Accepted:** director and fresh independent reviewer find no remaining material issue; ready for root publication and user playtest.
+**Accepted and published:** director and fresh independent reviewer find no remaining material issue; ready for user playtest.
 
 2026-09-27. User playtest feedback requested a more distinctive speaking HUD related to the scene assets and activation anywhere on that card. This is a bounded M1 follow-up. Root owns the previously authorized publication flow after acceptance. No M2–M5, gameplay, story or save expansion occurred.
 
@@ -21,9 +21,9 @@ The initial candidate improved the frame but remained too close to the former fl
 
 ## Acceptance and exact next steps
 
-Director and fresh independent reviewer accept the source behavior and revised presentation. Reviewer independently inspected all four live layouts and long-line captures; measured identical card/native-button bounds; tapped portrait, text, header, tail and edge exactly once into L1.02 on desktop/mobile; and checked reduced-motion transition 0s. No material finding remains. BUILD_STATUS and worker handoffs are current. Return to root for the authorized commit/push/publication. No child agent has committed, pushed or deployed. Local preview: <http://127.0.0.1:4321/bastrop37/>. Public URL remains the prior slice until root publishes.
+Director and fresh independent reviewer accept the source behavior and revised presentation. Reviewer independently inspected all four live layouts and long-line captures; measured identical card/native-button bounds; tapped portrait, text, header, tail and edge exactly once into L1.02 on desktop/mobile; and checked reduced-motion transition 0s. No material finding remains. Root pushed commit `480a7dc`; GitHub Pages workflow [36374652606](https://github.com/vikram1092/vikram1092.github.io/actions/runs/36374652606) succeeded and the public page served the revised card. No child agent committed, pushed or deployed. Local preview: <http://127.0.0.1:4321/bastrop37/>.
 
 Physical mobile-device and assistive-technology testing are not claimed; Chromium desktop/mobile input and accessibility semantics are verified. Human artistic preference remains the user's playtest judgment. Stop at this M1 revision after handoff.
 
 
-Exact playtest step after root publishes: open <https://vikramramkumar.me/bastrop37/>, start a new Delivery if the previous ending is saved, and tap/click the speaker card's frame, portrait, text or footer to advance one line. Enter/Space also work. Check the Omega/Vlad long exchange while riding, then finish/reload to retain the Delivery ending. Stop at M1.
+Exact playtest step: open <https://vikramramkumar.me/bastrop37/>, start a new Delivery if the previous ending is saved, and tap/click the speaker card's frame, portrait, text or footer to advance one line. Enter/Space also work. Check the Omega/Vlad long exchange while riding, then finish/reload to retain the Delivery ending. Stop at M1.
