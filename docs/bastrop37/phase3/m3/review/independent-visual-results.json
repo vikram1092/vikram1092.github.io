@@ -1,0 +1,175 @@
+[
+  {
+    "width": 1440,
+    "height": 900,
+    "state": "playing",
+    "beat": "L3.02",
+    "linkState": "linking",
+    "seconds": "0.703",
+    "target": "A",
+    "x": "320.0",
+    "riderBottom": "756.0",
+    "scrollWidth": 1440,
+    "meter": {
+      "hidden": false,
+      "text": "RELAY A CONNECTION\nRELAY A · LINKING\nLINKING · STAY GROUNDED",
+      "rect": {
+        "x": 590,
+        "y": 155,
+        "width": 260,
+        "height": 64
+      }
+    },
+    "canvas": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 900
+    },
+    "dpad": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "left": 0
+    },
+    "linkedA": {
+      "state": "playing",
+      "beat": "L3.03",
+      "relayA": "true",
+      "dronePhase": "none"
+    },
+    "errors": []
+  },
+  {
+    "width": 1280,
+    "height": 720,
+    "state": "playing",
+    "beat": "L3.02",
+    "linkState": "linking",
+    "seconds": "0.754",
+    "target": "A",
+    "x": "320.0",
+    "riderBottom": "604.8",
+    "scrollWidth": 1280,
+    "meter": {
+      "hidden": false,
+      "text": "RELAY A CONNECTION\nRELAY A · LINKING\nLINKING · STAY GROUNDED",
+      "rect": {
+        "x": 510,
+        "y": 155,
+        "width": 260,
+        "height": 64
+      }
+    },
+    "canvas": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 720
+    },
+    "dpad": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "left": 0
+    },
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "height": 768,
+    "state": "playing",
+    "beat": "L3.02",
+    "linkState": "linking",
+    "seconds": "0.768",
+    "target": "A",
+    "x": "320.0",
+    "riderBottom": "645.1",
+    "scrollWidth": 1024,
+    "meter": {
+      "hidden": false,
+      "text": "RELAY A CONNECTION\nRELAY A · LINKING\nLINKING · STAY GROUNDED",
+      "rect": {
+        "x": 382,
+        "y": 155,
+        "width": 260,
+        "height": 64
+      }
+    },
+    "canvas": {
+      "x": 0,
+      "y": 0,
+      "width": 1024,
+      "height": 768
+    },
+    "dpad": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "left": 0
+    },
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "state": "playing",
+    "beat": "L3.02",
+    "linkState": "linking",
+    "seconds": "0.701",
+    "target": "A",
+    "x": "320.0",
+    "riderBottom": "708.8",
+    "scrollWidth": 390,
+    "meter": {
+      "hidden": false,
+      "text": "RELAY A CONNECTION\nRELAY A · LINKING\nLINKING · STAY GROUNDED",
+      "rect": {
+        "x": 66,
+        "y": 156,
+        "width": 258,
+        "height": 57.1875
+      }
+    },
+    "canvas": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 844
+    },
+    "dpad": {
+      "x": 12,
+      "y": 767,
+      "width": 135,
+      "height": 65,
+      "top": 767,
+      "right": 147,
+      "bottom": 832,
+      "left": 12
+    },
+    "linkedA": {
+      "state": "playing",
+      "beat": "L3.03",
+      "relayA": "true",
+      "dronePhase": "none"
+    },
+    "touchSteer": {
+      "before": 320,
+      "after": 376.4,
+      "state": "playing"
+    },
+    "errors": []
+  }
+]

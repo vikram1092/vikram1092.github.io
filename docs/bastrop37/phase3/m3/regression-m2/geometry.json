@@ -1,0 +1,69 @@
+[
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "card": {
+      "x": 936,
+      "y": 629.609375,
+      "width": 470,
+      "height": 238.390625
+    },
+    "overflow": false
+  },
+  {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "card": {
+      "x": 776,
+      "y": 449.609375,
+      "width": 470,
+      "height": 238.390625
+    },
+    "overflow": false
+  },
+  {
+    "viewport": {
+      "width": 1024,
+      "height": 768
+    },
+    "card": {
+      "x": 590,
+      "y": 507.21875,
+      "width": 400,
+      "height": 228.78125
+    },
+    "overflow": false
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "card": {
+      "x": 12,
+      "y": 548.21875,
+      "width": 366,
+      "height": 208.78125
+    },
+    "overflow": false
+  },
+  {
+    "longLineCard": {
+      "x": 12,
+      "y": 557.828125,
+      "width": 366,
+      "height": 199.171875
+    },
+    "riderBottom": 506.4,
+    "controls": {
+      "x": 12,
+      "y": 774,
+      "width": 135,
+      "height": 58
+    }
+  }
+]

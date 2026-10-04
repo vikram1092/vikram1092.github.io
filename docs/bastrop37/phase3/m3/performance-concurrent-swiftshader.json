@@ -1,0 +1,318 @@
+{
+  "date": "2026-10-01T22:04:01.643Z",
+  "machine": "Apple M4",
+  "memoryBytes": 17179869184,
+  "browser": "153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "softwareRenderer": "ANGLE SwiftShader",
+  "story": {
+    "frames": 90,
+    "meanMs": 94.07000000000001,
+    "p95Ms": 150,
+    "estimatedFps": 10.63038163070054
+  },
+  "earlyRelayAction": {
+    "frames": 90,
+    "meanMs": 81.29222222222224,
+    "p95Ms": 116.59999999999854,
+    "estimatedFps": 12.301299837349477
+  },
+  "resourceBytes": 33247215,
+  "resources": [
+    {
+      "name": "/_astro/manrope.3kz-p_VZ.css",
+      "encodedBytes": 5142,
+      "decodedBytes": 5142
+    },
+    {
+      "name": "/_astro/bastrop37.GIeOt3vL.css",
+      "encodedBytes": 27199,
+      "decodedBytes": 27199
+    },
+    {
+      "name": "/_astro/index.astro_astro_type_script_index_0_lang.CBVQNoJK.js",
+      "encodedBytes": 69438,
+      "decodedBytes": 69438
+    },
+    {
+      "name": "/_astro/manrope-latin-wght-normal.DHIcAJRg.woff2",
+      "encodedBytes": 24836,
+      "decodedBytes": 24836
+    },
+    {
+      "name": "/bastrop37/assets/delivery/signal-dead-v2.png",
+      "encodedBytes": 1548916,
+      "decodedBytes": 1548916
+    },
+    {
+      "name": "/bastrop37/assets/environment/city-skyline-v4.png",
+      "encodedBytes": 2537126,
+      "decodedBytes": 2537126
+    },
+    {
+      "name": "/bastrop37/assets/delivery/delivery-architecture-v2.png",
+      "encodedBytes": 2301825,
+      "decodedBytes": 2301825
+    },
+    {
+      "name": "/bastrop37/assets/delivery/barrier-closed-v3.png",
+      "encodedBytes": 1738560,
+      "decodedBytes": 1738560
+    },
+    {
+      "name": "/bastrop37/assets/delivery/omega-symbol-v1.svg",
+      "encodedBytes": 371,
+      "decodedBytes": 371
+    },
+    {
+      "name": "/bastrop37/assets/delivery/service-gate-open-v2.png",
+      "encodedBytes": 2153180,
+      "decodedBytes": 2153180
+    },
+    {
+      "name": "/bastrop37/assets/delivery/vlad-neutral-v1.png",
+      "encodedBytes": 2048475,
+      "decodedBytes": 2048475
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-normal-straight.png",
+      "encodedBytes": 86704,
+      "decodedBytes": 86704
+    },
+    {
+      "name": "/bastrop37/assets/environment/road-loop-v4.png",
+      "encodedBytes": 3093415,
+      "decodedBytes": 3093415
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-blades-straight.png",
+      "encodedBytes": 98317,
+      "decodedBytes": 98317
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-blades-left-15.png",
+      "encodedBytes": 130184,
+      "decodedBytes": 130184
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-blades-left-35.png",
+      "encodedBytes": 127198,
+      "decodedBytes": 127198
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-blades-right-15.png",
+      "encodedBytes": 110810,
+      "decodedBytes": 110810
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-blades-right-35.png",
+      "encodedBytes": 129183,
+      "decodedBytes": 129183
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-normal-left-15.png",
+      "encodedBytes": 124175,
+      "decodedBytes": 124175
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-normal-right-15.png",
+      "encodedBytes": 104466,
+      "decodedBytes": 104466
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-slide-left.png",
+      "encodedBytes": 175752,
+      "decodedBytes": 175752
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-slide-right.png",
+      "encodedBytes": 181811,
+      "decodedBytes": 181811
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-jump-straight.png",
+      "encodedBytes": 99432,
+      "decodedBytes": 99432
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-jump-right-15.png",
+      "encodedBytes": 107442,
+      "decodedBytes": 107442
+    },
+    {
+      "name": "/bastrop37/assets/sprites/bike-jump-left-15.png",
+      "encodedBytes": 127614,
+      "decodedBytes": 127614
+    },
+    {
+      "name": "/bastrop37/assets/sprites/traffic-coupe.png",
+      "encodedBytes": 220969,
+      "decodedBytes": 220969
+    },
+    {
+      "name": "/bastrop37/assets/sprites/traffic-coupe-right.png",
+      "encodedBytes": 260473,
+      "decodedBytes": 260473
+    },
+    {
+      "name": "/bastrop37/assets/sprites/traffic-coupe-left.png",
+      "encodedBytes": 261369,
+      "decodedBytes": 261369
+    },
+    {
+      "name": "/bastrop37/assets/sprites/traffic-sedan.png",
+      "encodedBytes": 213477,
+      "decodedBytes": 213477
+    },
+    {
+      "name": "/bastrop37/assets/sprites/traffic-sedan-left.png",
+      "encodedBytes": 219954,
+      "decodedBytes": 219954
+    },
+    {
+      "name": "/bastrop37/assets/sprites/traffic-hauler.png",
+      "encodedBytes": 353420,
+      "decodedBytes": 353420
+    },
+    {
+      "name": "/bastrop37/assets/sprites/traffic-sedan-right.png",
+      "encodedBytes": 216788,
+      "decodedBytes": 216788
+    },
+    {
+      "name": "/bastrop37/assets/sprites/traffic-hauler-right.png",
+      "encodedBytes": 406868,
+      "decodedBytes": 406868
+    },
+    {
+      "name": "/bastrop37/assets/sprites/traffic-hauler-left.png",
+      "encodedBytes": 384229,
+      "decodedBytes": 384229
+    },
+    {
+      "name": "/bastrop37/assets/sprites/drone-hover.png",
+      "encodedBytes": 266798,
+      "decodedBytes": 266798
+    },
+    {
+      "name": "/bastrop37/assets/sprites/drone-flank-left.png",
+      "encodedBytes": 238231,
+      "decodedBytes": 238231
+    },
+    {
+      "name": "/bastrop37/assets/sprites/drone-flank-right.png",
+      "encodedBytes": 194199,
+      "decodedBytes": 194199
+    },
+    {
+      "name": "/bastrop37/assets/sprites/drone-attack-warning.png",
+      "encodedBytes": 262554,
+      "decodedBytes": 262554
+    },
+    {
+      "name": "/bastrop37/assets/sprites/drone-fragment-left.png",
+      "encodedBytes": 229970,
+      "decodedBytes": 229970
+    },
+    {
+      "name": "/bastrop37/assets/sprites/drone-fragment-right.png",
+      "encodedBytes": 217719,
+      "decodedBytes": 217719
+    },
+    {
+      "name": "/bastrop37/assets/sprites/drone-core.png",
+      "encodedBytes": 186224,
+      "decodedBytes": 186224
+    },
+    {
+      "name": "/bastrop37/assets/sprites/drone-lunge.png",
+      "encodedBytes": 285874,
+      "decodedBytes": 285874
+    },
+    {
+      "name": "/bastrop37/assets/sprites/effects-cyan-trail.png",
+      "encodedBytes": 227006,
+      "decodedBytes": 227006
+    },
+    {
+      "name": "/bastrop37/assets/sprites/effects-yellow-turbo.png",
+      "encodedBytes": 293980,
+      "decodedBytes": 293980
+    },
+    {
+      "name": "/bastrop37/assets/sprites/effects-hover-thrust.png",
+      "encodedBytes": 282954,
+      "decodedBytes": 282954
+    },
+    {
+      "name": "/bastrop37/assets/sprites/effects-blades.png",
+      "encodedBytes": 261572,
+      "decodedBytes": 261572
+    },
+    {
+      "name": "/bastrop37/assets/sprites/effects-cut-sparks.png",
+      "encodedBytes": 246442,
+      "decodedBytes": 246442
+    },
+    {
+      "name": "/bastrop37/assets/sprites/effects-debris.png",
+      "encodedBytes": 196584,
+      "decodedBytes": 196584
+    },
+    {
+      "name": "/bastrop37/assets/sprites/effects-impact-sparks.png",
+      "encodedBytes": 307805,
+      "decodedBytes": 307805
+    },
+    {
+      "name": "/bastrop37/assets/sprites/effects-landing-ring.png",
+      "encodedBytes": 216615,
+      "decodedBytes": 216615
+    },
+    {
+      "name": "/bastrop37/assets/betrayal/intake-scan-overlay-v3.svg",
+      "encodedBytes": 258,
+      "decodedBytes": 258
+    },
+    {
+      "name": "/bastrop37/assets/betrayal/carrier-active-overlay-v3.svg",
+      "encodedBytes": 404,
+      "decodedBytes": 404
+    },
+    {
+      "name": "/bastrop37/assets/betrayal/carrier-rear-v3.png",
+      "encodedBytes": 2412131,
+      "decodedBytes": 2412131
+    },
+    {
+      "name": "/bastrop37/assets/betrayal/env-l2-v3.png",
+      "encodedBytes": 2633356,
+      "decodedBytes": 2633356
+    },
+    {
+      "name": "/bastrop37/assets/public-access/env-l3-v3.png",
+      "encodedBytes": 2519734,
+      "decodedBytes": 2519734
+    },
+    {
+      "name": "/bastrop37/assets/public-access/relay-connecting-overlay-v3.svg",
+      "encodedBytes": 318,
+      "decodedBytes": 318
+    },
+    {
+      "name": "/bastrop37/assets/public-access/relay-linked-overlay-v3.svg",
+      "encodedBytes": 330,
+      "decodedBytes": 330
+    },
+    {
+      "name": "/bastrop37/assets/public-access/relay-node-v3.png",
+      "encodedBytes": 2077039,
+      "decodedBytes": 2077039
+    }
+  ],
+  "errors": [],
+  "limits": "Two short 90-frame samples under concurrent browser validation on local desktop; not sustained performance, physical mobile, cross-browser or human pacing evidence."
+}

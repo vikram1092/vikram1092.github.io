@@ -254,10 +254,19 @@ body:has(.garage){background:#090d19}
 #bastrop-game .mission-meter{position:absolute;z-index:2;left:50%;top:155px;transform:translateX(-50%);width:260px;padding:9px 12px;background:#142830ed;border-left:3px solid #e1bc81;display:grid;gap:6px;color:#e5d7b4;font:10px/1.4 'Courier New',monospace}
 #bastrop-game .mission-meter strong{letter-spacing:1px}
 #bastrop-game .mission-meter span{color:#d0dfd8}
+#bastrop-game .mission-meter .meter-heading{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+#bastrop-game .mission-meter #connection-status{color:#b6eadb;text-align:right;white-space:nowrap;font-size:9px;letter-spacing:.2px}
+#bastrop-game .mission-meter[data-connection]{min-width:260px}
+#bastrop-game .mission-meter[data-connection=in-range],#bastrop-game .mission-meter[data-connection=linking],#bastrop-game .mission-meter[data-connection=linked]{border-left-color:#8ad4c6}
+#bastrop-game .mission-meter[data-connection=out-of-range]{border-left-color:#e1bc81}
+#bastrop-game .mission-meter[data-connection=out-of-range] #connection-status{color:#f0d6a6}
+#bastrop-game .mission-meter[data-connection=linked] #connection-status{color:#b9f2d3}
 #bastrop-game #dialogue-log li[data-kind=record]{padding-left:8px;border-left:2px solid #a5bdaf}
 @media(max-width:600px){
  #bastrop-game .combat-status{right:14px;bottom:95px;width:173px;gap:6px 8px;padding:8px 9px;font-size:9px}
  #bastrop-game .combat-status strong{font-size:9px;letter-spacing:0}
  #bastrop-game .mission-meter{top:161px;width:224px;padding:7px 10px;font-size:9px}
+ #bastrop-game .mission-meter[data-connection]{min-width:0;width:min(258px,calc(100% - 32px));top:156px}
+ #bastrop-game .mission-meter #connection-status{font-size:8px}
  #bastrop-game .comms[data-speaker=system] #speaker{font-size:18px}
 }

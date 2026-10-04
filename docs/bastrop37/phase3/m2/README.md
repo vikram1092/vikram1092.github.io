@@ -1,6 +1,8 @@
-# M2 local playtest evidence
+# M2 published playtest and retained validation evidence
 
-Phase 3 M2 only. Production is built locally at `http://127.0.0.1:4321/bastrop37/`; M2 has not been pushed or deployed.
+Historical M2 approval snapshot: authorization statements below describe the M2 approval/status request. Subsequent authority is recorded in [BUILD_STATUS](../../BUILD_STATUS.md); its later M3 authorization supersedes the pending-M3 gate recorded here. This update does not change that newer authority or concurrent M3 work.
+
+2026-10-01 approval update: the user said **“Looks good thus far, I approve. update statuses so another agent can pick it up.”** M2 passed its second review gate and is approved and published. The implementation commit is `209ab59923848af955094579194279cd9ec8662b`; the public version is <https://vikramramkumar.me/bastrop37/?v=209ab59>. The approval-only follow-up changes documentation, with no new gameplay tests, build, or deployment claimed. M3–M5 remain unauthorized. Historical browser evidence below was collected against the local production build; it is not a claim of a new public-runtime test.
 
 ## Playtest route
 
@@ -18,6 +20,6 @@ After the road clears, read all four closure lines. **RECOVERY LOCK BROKEN** is 
 - `earned-completion-save.json`: earned by the passing fresh continuous L1–L2 browser run; it is not a fabricated progress fixture.
 - `review/`: fresh independent review evidence, owned by the reviewer.
 
-All 36 automated cases have passing results across the full run/targeted reruns; exact run counts are recorded in BUILD_STATUS and the director handoff. Retained independent desktop/mobile evidence passes; the reviewer disconnected during prose handoff. The director-authored review record transparently records that limitation and accepts M2 for user playtest. Browser device emulation is not physical-phone performance evidence. No M3–M5 or publication is authorized here.
+All 36 automated cases have passing results across the full run/targeted reruns; exact run counts are recorded in BUILD_STATUS and the director handoff. Retained independent desktop/mobile evidence passes; the reviewer disconnected during prose handoff. The director-authored review record transparently records that limitation; the user subsequently approved M2. Browser device emulation is not physical-phone performance evidence. The exploratory optional L2 jump attempt crashed, while required steering/blade routes passed; a successful L2 jump is not claimed. Subjective pacing remains a human-playtest consideration. M3 — Public connection is next and requires separate authorization. No new implementation or publication is authorized by this status update.
 
 Overdrive playtest limitation: a fresh M2 encounter can award at most55 points (20 from its two unique civilian near-passes and35 from its one drone). It therefore cannot naturally reach 100. Full-charge activation is verified only in the localhost fixture. No farming, extra traffic encounter or required Overdrive gate was added. Root explicitly accepted this as a prototype/playtest limitation.

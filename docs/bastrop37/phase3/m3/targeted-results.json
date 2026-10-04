@@ -1,0 +1,157 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node@22/22.23.1/bin/node",
+      "/Users/vikram/Developer/website/node_modules/.bin/playwright",
+      "test",
+      "tests/public-access.spec.ts",
+      "-g",
+      "failed relay asset|actual interception crash",
+      "--reporter=line,json"
+    ],
+    "configFile": "/Users/vikram/Developer/website/playwright.config.ts",
+    "rootDir": "/Users/vikram/Developer/website/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/vikram/Developer/website/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/vikram/Developer/website/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node scripts/preview-test.mjs",
+      "url": "http://127.0.0.1:4321",
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "public-access.spec.ts",
+      "file": "public-access.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "failed relay asset preserves completed M2 and Retry Load recovers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5574,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T22:01:38.017Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d98f41d3eec6958cda09-dcbc934248eee6d23273",
+          "file": "public-access.spec.ts",
+          "line": 36,
+          "column": 1
+        },
+        {
+          "title": "actual interception crash retries after A; blades finish B and blocked storage keeps truthful session progress",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 69750,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T22:01:43.689Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d98f41d3eec6958cda09-1b2e9d362a2a9a8f9691",
+          "file": "public-access.spec.ts",
+          "line": 106,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-01T22:01:37.750Z",
+    "duration": 75728.088,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

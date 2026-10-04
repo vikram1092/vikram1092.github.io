@@ -1,0 +1,101 @@
+{
+  "assignment": "Phase 3 M3 mechanical verification",
+  "checkedAt": "2026-10-01",
+  "scope": "Read-only checks of approved L3 dialogue, selected source asset copies, metadata, paths, and L3 public asset inventory. No runtime/build/test behavior assessed.",
+  "results": {
+    "approvedDialogue": {
+      "status": "pass",
+      "expectedLineCount": 7,
+      "checkedLineCount": 7,
+      "ids": [
+        "L3.01-01", "L3.01-02", "L3.01-03",
+        "L3.04-01", "L3.04-02", "L3.04-03", "L3.04-04"
+      ],
+      "speakers": ["Omega", "Jo", "Vlad"],
+      "allTextAndSpeakersMatchPhase1": true,
+      "actionBeatsL3_02_L3_03HaveNoDialogue": true
+    },
+    "selectedAssets": {
+      "status": "pass",
+      "expectedAssetCount": 4,
+      "verifiedAssetCount": 4,
+      "totalBytes": 4597421,
+      "files": [
+        {
+          "name": "env-l3-v3.png",
+          "source": "docs/bastrop37/phase2/revision-v3/assets/env-l3-v3.png",
+          "public": "public/bastrop37/assets/public-access/env-l3-v3.png",
+          "bytes": 2519734,
+          "dimensions": [1536, 1024],
+          "sha256": "fa92b58791e5899207957e5a756ecbe68353e232a83b02dc8f0cd546ec459556",
+          "copyHashMatches": true,
+          "manifestMetadataMatches": true,
+          "runtimeMetadataMatches": true,
+          "anchor": [768, 442],
+          "displayCrop": [0, 0, 1536, 1024],
+          "layer": "midground"
+        },
+        {
+          "name": "relay-node-v3.png",
+          "source": "docs/bastrop37/phase2/revision-v3/assets/relay-node-v3.png",
+          "public": "public/bastrop37/assets/public-access/relay-node-v3.png",
+          "bytes": 2077039,
+          "dimensions": [1024, 1536],
+          "sha256": "0b4f42da8dfe27bbb1a0a335bb844fc619cea25681fa0626c20672049ae86e99",
+          "copyHashMatches": true,
+          "manifestMetadataMatches": true,
+          "runtimeMetadataMatches": true,
+          "anchor": [512, 1525],
+          "displayCrop": [185, 0, 655, 1536],
+          "layer": "roadside"
+        },
+        {
+          "name": "relay-connecting-overlay-v3.svg",
+          "source": "docs/bastrop37/phase2/revision-v3/assets/relay-connecting-overlay-v3.svg",
+          "public": "public/bastrop37/assets/public-access/relay-connecting-overlay-v3.svg",
+          "bytes": 318,
+          "dimensions": [1024, 1536],
+          "sha256": "20e0ce01e644df8fa18ce920acb20a551f263866724c80876dff9ce30b33a981",
+          "copyHashMatches": true,
+          "runtimeMetadataMatches": true,
+          "anchor": [512, 1525],
+          "displayCrop": [185, 0, 655, 1536],
+          "layer": "state-overlay",
+          "sameCanvasAsRelayBody": true
+        },
+        {
+          "name": "relay-linked-overlay-v3.svg",
+          "source": "docs/bastrop37/phase2/revision-v3/assets/relay-linked-overlay-v3.svg",
+          "public": "public/bastrop37/assets/public-access/relay-linked-overlay-v3.svg",
+          "bytes": 330,
+          "dimensions": [1024, 1536],
+          "sha256": "0f7c63c9cce05374f5cb8c924236962b878c3b13d1bb162ba618b94a8601621a",
+          "copyHashMatches": true,
+          "runtimeMetadataMatches": true,
+          "anchor": [512, 1525],
+          "displayCrop": [185, 0, 655, 1536],
+          "layer": "state-overlay",
+          "sameCanvasAsRelayBody": true
+        }
+      ],
+      "runtimeUrlsResolve": true,
+      "publicDirectoryContainsOnlyExpectedL3Assets": true,
+      "laterChapterAssetsIntroducedInPublicAccessDirectory": false
+    }
+  },
+  "discrepancies": [],
+  "limitations": [
+    "Verification is file/data-level only; it does not establish rendered projection or overlay alignment in motion.",
+    "No builds, tests, or browser checks were run by this mechanical check."
+  ],
+  "evidenceCommands": [
+    "sed -n '159,205p' docs/bastrop37/PHASE_1_NARRATIVE_AND_ENCOUNTERS.md",
+    "sed -n '1,90p' src/scripts/bastrop37/public-access-content.ts",
+    "cat docs/bastrop37/phase2/revision-v3/assets/build-register.py",
+    "cat docs/bastrop37/phase2/revision-v3/assets/measurements.json",
+    "shasum -a 256 docs/bastrop37/phase2/revision-v3/assets/{env-l3-v3.png,relay-node-v3.png,relay-connecting-overlay-v3.svg,relay-linked-overlay-v3.svg} public/bastrop37/assets/public-access/*",
+    "file docs/bastrop37/phase2/revision-v3/assets/{env-l3-v3.png,relay-node-v3.png,relay-connecting-overlay-v3.svg,relay-linked-overlay-v3.svg} public/bastrop37/assets/public-access/*",
+    "wc -c docs/bastrop37/phase2/revision-v3/assets/{env-l3-v3.png,relay-node-v3.png,relay-connecting-overlay-v3.svg,relay-linked-overlay-v3.svg} public/bastrop37/assets/public-access/*",
+    "find public/bastrop37/assets/public-access -maxdepth 1 -type f -print"
+  ]
+}

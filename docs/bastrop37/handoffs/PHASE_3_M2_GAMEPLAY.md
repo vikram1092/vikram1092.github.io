@@ -1,6 +1,10 @@
 # Phase 3 M2 gameplay handoff
 
-2026-09-28. Scope: authorized Delivery-to-Betrayal M2 only. Gameplay source is implemented locally; director-owned browser suite and independent review remain the acceptance gate. No push, deploy, or M3 work.
+Historical M2 approval snapshot: authorization statements below describe the M2 approval/status request. Subsequent authority is recorded in [BUILD_STATUS](../BUILD_STATUS.md); its later M3 authorization supersedes the pending-M3 gate recorded here. This update does not change that newer authority or concurrent M3 work.
+
+2026-09-28 implementation record, updated 2026-10-01 after user approval. Scope: Delivery-to-Betrayal M2 only.
+
+2026-10-01 approval update: the user said **“Looks good thus far, I approve. update statuses so another agent can pick it up.”** M2 passed its second review gate and is approved and published. The implementation commit is `209ab59923848af955094579194279cd9ec8662b`; the public version is <https://vikramramkumar.me/bastrop37/?v=209ab59>. The approval-only follow-up changes documentation, with no new gameplay tests, build, or deployment claimed. M3–M5 remain unauthorized.
 
 ## Implemented in owned files
 
@@ -22,14 +26,14 @@ Content-owned `betrayal-content.ts` and director-owned `contracts.ts`/HUD files 
 - Viewed actual desktop 1440×900 and mobile 390×844 L2 opening captures in `/tmp/`; rider, neutral carrier, route and whole-card dialogue remained readable with card clearance. These are local inspection only; director owns retained screenshots and layout evidence.
 - Native whole-card final acknowledgments now transfer focus to the canvas only when STORY enters ACTION. Browser checks confirmed ArrowRight steered immediately after the L1 opening and L2 refusal with no canvas click. P pauses and Escape resumes even while the whole-card button holds focus.
 
-The director's source audit requested a natural final exit at the far camera edge. Disengaging drones and carrier now fade continuously over their last 400 world units ahead (or to z−65 behind for a rearward drone) before removal. A retreating drone still checks body contact if it begins beside Jo; retreat never crosses Jo's depth plane from behind. This final fade change has an Astro check, but needs the director's sequential browser frames for visual acceptance.
+The director's source audit requested a natural final exit at the far camera edge. Disengaging drones and carrier now fade continuously over their last 400 world units ahead (or to z−65 behind for a rearward drone) before removal. A retreating drone still checks body contact if it begins beside Jo; retreat never crosses Jo's depth plane from behind. The subsequent director matrix and independent review verified the final integration; the final acceptance record below supersedes this worker-stage verification.
 
-## Remaining acceptance and exact next steps
+## Acceptance and exact next steps
 
-Director runs/repairs the M2 browser matrix on a fresh build, including continuous L1–L2, record order/log, slow reading, scan miss loop, attack and steering routes, true crash retry, offscreen drain, missing asset retry, storage failure, mobile simultaneous input, and Overdrive fixture/model behavior. Independent reviewer checks actual desktop/mobile scene and HUD. Apply only concrete defects in the owned gameplay files, then rerun affected checks. Present M2 for user review; do not advance to M3.
+The director completed the M2 browser matrix and independent desktop/mobile results pass. The user approved the published slice. Preserve canonical version-1 saves, CP-L2-SCAN/ESCAPE/COMPLETE, ordered records/history, natural actor departure and fixture save isolation. Await separate M3 authorization before implementing the public relay chapter, then agree interfaces and exclusive file ownership. No runtime changes are requested by this approval update.
 
 Overdrive playtest limitation: a fresh M2 encounter can award at most55points (20 from its two unique civilian near-passes and35 from its one drone). It therefore cannot naturally reach100. Full-charge activation is verified only in the localhost fixture. No farming, extra traffic encounter or required Overdrive gate was added. Root explicitly accepted this as a prototype/playtest limitation.
 
 ## Final integration acceptance
 
-Director completed the full matrix and targeted corrections: all 36 cases have passing results across the recorded runs. Final audit adds explicit local-fixture save isolation, a carrier-clear gate at its zero-alpha distance, and visible M2 departure after three defended attacks. Retained independent desktop/mobile results pass; reviewer disconnection and evidence-based director acceptance are recorded transparently in PHASE_3_M2_REVIEW.md. M2 is ready for user playtest. Stop before M3; no push/deploy.
+Director completed the full matrix and targeted corrections: all 36 cases have passing results across the recorded runs. Final audit adds explicit local-fixture save isolation, a carrier-clear gate at its zero-alpha distance, and visible M2 departure after three defended attacks. Retained independent desktop/mobile results pass; reviewer disconnection and evidence-based director acceptance are recorded transparently in PHASE_3_M2_REVIEW.md. M2 is user-approved and published. The next milestone is M3 — Public connection, gated on further authorization. The full 34-case run passed 33; the corrected test-only Retry/Pause timing case plus isolated fixture passed 2/2; the added three-defended-attacks departure case passed 1/1, accounting for all 36 passing cases across runs. The optional exploratory L2 jump attempt crashed and is not a verified escape alternative; required steering/blade routes passed. Physical-phone performance and subjective pacing remain unmeasured. See [director handoff](PHASE_3_M2_DIRECTOR.md) and [review record](PHASE_3_M2_REVIEW.md).

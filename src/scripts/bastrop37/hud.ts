@@ -83,6 +83,7 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
   const lockLabel = requireElement<HTMLElement>('#mission-meter-label');
   const lockDetail = requireElement<HTMLElement>('#mission-meter-detail');
   const lockMeter = requireElement<HTMLMeterElement>('#mission-meter-value');
+  const connectionStatus = requireElement<HTMLElement>('#connection-status');
 
   let confirmingReset = false;
   let lastLogKey = '';
@@ -134,12 +135,12 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
       root.dataset.state = view.state;
       root.dataset.mode = view.mode;
       const chapterLabel = view.chapterLabel || 'DELIVERY';
-      const chapterNo = view.chapterId === 'L2' ? '02' : '01';
+      const chapterNo = view.chapterId === 'L3' ? '03' : view.chapterId === 'L2' ? '02' : '01';
       setText(chapterNumber, chapterNo);
       setText(chapterBrand, `${chapterNo} / ${chapterLabel}`);
       setText(chapterMicro, `${chapterLabel} / BASTROP`);
       setText(continueChapter, view.continueLabel || 'CONTINUE TO INTAKE');
-      setText(retry, view.retryLabel || (view.chapterId === 'L2' ? 'RETRY CHECKPOINT' : 'RETRY DELIVERY'));
+      setText(retry, view.retryLabel || (view.chapterId === 'L1' ? 'RETRY DELIVERY' : 'RETRY CHECKPOINT'));
       setText(objective, view.objective);
       setText(routeCue, view.routeCue);
       setText(speed, String(Math.max(0, Math.round(view.speed))).padStart(3, '0'));
@@ -154,7 +155,7 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
       setText(turboState, `↗ TURBO / ${turbo.toUpperCase()}`);
 
       const action = view.state === 'playing' && view.mode === 'action';
-      show(combat, action && view.chapterId === 'L2' && !!view.abilities);
+      show(combat, action && (view.chapterId === 'L2' || view.chapterId === 'L3') && !!view.abilities);
       if (view.abilities) {
         for (const [element, label, ability] of [[blades, 'BLADES', view.abilities.blades], [jump, 'JUMP', view.abilities.jump]] as const) {
           setText(element, `${label} · ${ability.binding} / ${ability.state.toUpperCase()}${ability.state === 'cooldown' && ability.cooldown ? ` ${ability.cooldown.toFixed(1)}s` : ''}`);
@@ -176,6 +177,20 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
         setText(lockLabel, view.missionMeter.label);
         setText(lockDetail, view.missionMeter.detail);
         lockMeter.value = Math.max(0, Math.min(1, view.missionMeter.value));
+        lockMeter.setAttribute('aria-label', view.missionMeter.label);
+      }
+      const connection = action && view.chapterId === 'L3' ? view.connection : undefined;
+      show(connectionStatus, !!connection);
+      if (connection) lock.dataset.connection = connection.state;
+      else delete lock.dataset.connection;
+      if (connection) {
+        const stateLabel = {
+          'in-range': 'IN RANGE',
+          linking: 'LINKING',
+          'out-of-range': 'OUT OF RANGE',
+          linked: 'LINKED',
+        }[connection.state];
+        setText(connectionStatus, `RELAY ${connection.relay} · ${stateLabel}`);
       }
 
       const canPause = view.state === 'playing';
@@ -226,7 +241,7 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
       show(menu, view.state === 'paused' || view.state === 'crashed' || view.state === 'complete' || view.state === 'error');
       show(continueChapter, view.state === 'complete');
       start.disabled = view.state !== 'ready' || view.readyToStart === false;
-      setText(start, view.state === 'loading' ? 'LOADING DELIVERY…' : view.state === 'error' ? 'DELIVERY UNAVAILABLE' : 'START DELIVERY');
+      setText(start, view.state === 'loading' ? `LOADING ${chapterLabel}…` : view.state === 'error' ? `${chapterLabel} UNAVAILABLE` : 'START DELIVERY');
       const saveText = saveLabel(view);
       show(saveNote, !!saveText && (view.state === 'ready' || view.state === 'paused' || view.state === 'complete'));
       setText(saveNote, saveText);
@@ -236,13 +251,13 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
       show(logDetails, view.state === 'paused' && history.length > 0);
 
       if (view.state === 'loading') {
-        setText(overline, 'DELIVERY / BASTROP');
+        setText(overline, `${chapterLabel} / BASTROP`);
         setText(headline, 'BASTROP37');
-        setText(message, view.message || 'Preparing the road. Jo already has the module.');
+        setText(message, view.message || (view.chapterId === 'L3' ? 'Preparing the public relay road.' : 'Preparing the road. Jo already has the module.'));
       } else if (view.state === 'ready') {
         setText(overline, `${chapterNo} / ${chapterLabel}`);
         setText(headline, 'BASTROP37');
-        setText(message, view.message || 'Jo has the module. Mayor Vlad is waiting at municipal intake.');
+        setText(message, view.message || (view.chapterId === 'L3' ? 'Jo is carrying Omega toward the old public relay.' : 'Jo has the module. Mayor Vlad is waiting at municipal intake.'));
       } else if (view.state === 'paused') {
         setText(overline, 'RIDE PAUSED');
         setText(headline, `${chapterLabel} ON HOLD`);
@@ -254,7 +269,7 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
       } else if (view.state === 'complete') {
         setText(overline, `${chapterNo} / ${chapterLabel}`);
         setText(headline, view.completionTitle || 'DELIVERY APPROACH REACHED');
-        setText(message, view.message || 'Jo reached municipal intake. This playable slice ends here.');
+        setText(message, view.message || (view.chapterId === 'L3' ? 'Both local relay points are ready. Omega remains inside the module.' : 'Jo reached municipal intake. This playable slice ends here.'));
       } else if (view.state === 'error') {
         setText(overline, `${chapterLabel} UNAVAILABLE`);
         setText(headline, 'ROAD CLOSED');

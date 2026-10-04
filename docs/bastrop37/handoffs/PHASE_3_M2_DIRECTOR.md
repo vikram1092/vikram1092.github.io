@@ -1,6 +1,10 @@
 # Phase 3 M2 director handoff
 
+Historical M2 approval snapshot: authorization statements below describe the M2 approval/status request. Subsequent authority is recorded in [BUILD_STATUS](../BUILD_STATUS.md); its later M3 authorization supersedes the pending-M3 gate recorded here. This update does not change that newer authority or concurrent M3 work.
+
 2026-10-01. **M2 accepted by the user and published for user playtest.** Implementation and tests complete; retained independent browser evidence passes. Commit `209ab59` is deployed at <https://vikramramkumar.me/bastrop37/?v=209ab59>. No M3–M5 work is authorized.
+
+2026-10-01 approval update: the user said **“Looks good thus far, I approve. update statuses so another agent can pick it up.”** M2 passed its second review gate and is approved and published. The implementation commit is `209ab59923848af955094579194279cd9ec8662b`; the public version is <https://vikramramkumar.me/bastrop37/?v=209ab59>. The approval-only follow-up changes documentation, with no new gameplay tests, build, or deployment claimed. M3–M5 remain unauthorized.
 
 ## Authority and ownership
 
@@ -33,3 +37,7 @@ Real receipt captures at 1440×900,1280×720,1024×768,390×844 have no horizont
 Natural M2 charge caps at 55 (two unique near-passes total 20, one drone 35), so fresh M2 cannot reach 100. Full-charge activation is verified only in the localhost fixture; no farming/new encounter was added. Root accepted this as an explicit optional prototype/playtest limitation. Physical-phone performance and subjective pacing still need human playtest.
 
 Fresh independent browser evidence passes at desktop 1440×900 and touch 390×844. The reviewer stream disconnected after saving its result; root authorized the director to synthesize [the review record](PHASE_3_M2_REVIEW.md) transparently. This is director acceptance based on retained independent results, not an invented reviewer-written verdict. The user then approved M2. No known material defect remains in M2 required paths. The earlier exploratory jump trace crashed and is not claimed as a verified alternative; required steering/blade paths passed. M2 is published at <https://vikramramkumar.me/bastrop37/?v=209ab59>. Continue an existing completed Delivery or earn it fresh, choose CONTINUE TO INTAKE, complete Level 2 and test saved Continue. Stop at RECOVERY LOCK BROKEN and the honest relay boundary. The next gated milestone is M3 — Public connection, covering Level 3 and the reusable link/loop mechanic. M3–M5 require further user authorization.
+
+## Next-agent pickup
+
+Read BUILD_STATUS, the story bible, all three phase specifications, approved art/HUD references, and this milestone’s review and worker handoffs before changing runtime. Ownership above describes completed M2 work; assign fresh exclusive file ownership and agree interfaces before any newly authorized implementation. Preserve version-1 saves, existing assets/evidence and the unrelated swap file. The next gate is explicit authorization for **M3 — Public connection**: Level 3 and the reusable link/loop mechanic, local relay readiness only, with Omega contained. The current status request does not authorize M3 implementation or publication. See the [M3 scope handoff](PHASE_3_M3_DIRECTOR.md) for the subsequent pickup audit; its proposals are not implemented behavior.

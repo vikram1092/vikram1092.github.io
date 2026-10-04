@@ -9,7 +9,7 @@ export type HudView = {
   state: 'loading' | 'ready' | 'playing' | 'paused' | 'crashed' | 'complete' | 'error';
   readyToStart?: boolean;
   mode: BeatMode;
-  chapterId?: 'L1' | 'L2';
+  chapterId?: 'L1' | 'L2' | 'L3';
   chapterLabel?: string;
   completionTitle?: string;
   continueLabel?: string;
@@ -30,6 +30,7 @@ export type HudView = {
   abilities?: { blades: AbilityView; jump: AbilityView };
   overdrive?: { value: number; ready: boolean; active: boolean }; // 0..100, separate from ordinary energy.
   missionMeter?: { label: string; value: number; detail: string }; // 0..1, gameplay-owned progress.
+  connection?: { relay: 'A' | 'B'; state: 'in-range' | 'linking' | 'out-of-range' | 'linked'; progress: number }; // Local readiness only, 0..1; never public release.
   dialogueIndex: number;
   dialogueCount: number;
   log: DialogueLine[];

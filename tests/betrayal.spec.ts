@@ -1,8 +1,9 @@
 import { test,expect,type Page } from '@playwright/test';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 const legacy=JSON.parse(readFileSync('docs/bastrop37/phase3/earned-completion-save.json','utf8'));
 import { ack,reveal,escape } from './helpers/betrayal';
-const capture='docs/bastrop37/phase3/m2';
+const capture='docs/bastrop37/phase3/m3/regression-m2';
+mkdirSync(capture,{recursive:true});
 test.beforeEach(async({page})=>{page.setDefaultTimeout(10000);await page.clock.install();});
 async function intake(page:Page) {
  await page.goto('/bastrop37/');
@@ -52,8 +53,8 @@ test('legacy save enters neutral intake; receipts wait, log chronologically, ref
  await page.reload();await page.locator('#continue-save').click();
  await expect(page.locator('#game')).toHaveAttribute('data-state','complete');
  await page.locator('#continue-chapter').click();
- await expect(page.locator('#message')).toContainText(/M2|slice|relay/i);
- expect(await page.locator('#game').getAttribute('data-beat')).not.toMatch(/^L3/);
+ await expect(page.locator('#game')).toHaveAttribute('data-beat','L3.01');
+ expect((await page.evaluate(()=>JSON.parse(localStorage.getItem('bastrop37-campaign-v1')!))).checkpoint).toBe('CP-L2-COMPLETE');
 });
 
 test('touch intake and long L2 lines fit four layouts; controls stay separate through saved ending',async({page})=>{

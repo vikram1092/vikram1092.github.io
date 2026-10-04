@@ -1,6 +1,10 @@
 # Phase 3 M2 review and acceptance record
 
-2026-09-28. **Independent browser evidence: PASS. Director acceptance: M2 ready for user playtest at the second review gate.** No M3–M5 work, push or deployment is authorized.
+Historical M2 approval snapshot: authorization statements below describe the M2 approval/status request. Subsequent authority is recorded in [BUILD_STATUS](../BUILD_STATUS.md); its later M3 authorization supersedes the pending-M3 gate recorded here. This update does not change that newer authority or concurrent M3 work.
+
+2026-09-28 review retained. **Independent browser evidence: PASS. Director acceptance: M2 ready for user playtest at the second review gate.**
+
+2026-10-01 approval update: the user said **“Looks good thus far, I approve. update statuses so another agent can pick it up.”** M2 passed its second review gate and is approved and published. The implementation commit is `209ab59923848af955094579194279cd9ec8662b`; the public version is <https://vikramramkumar.me/bastrop37/?v=209ab59>. The approval-only follow-up changes documentation, with no new gameplay tests, build, or deployment claimed. M3–M5 remain unauthorized.
 
 ## Provenance and review limit
 
@@ -32,4 +36,4 @@ The browser-earned [completion save](../phase3/m2/earned-completion-save.json) c
 
 Natural M2 Overdrive charge caps at **55**: two unique civilian near-passes total 20 and one drone awards 35. A fresh M2 run cannot naturally reach 100; full-charge activation is verified only in the localhost fixture. No farming, new encounter or required Overdrive gate was added. Root accepted this as an explicit prototype/playtest limitation. Physical-device performance, subjective pacing and the optional jump timing still need human playtest.
 
-No director-known material defect remains within M2's required acceptance paths. **Stop here for user playtest** at http://127.0.0.1:4321/bastrop37/. Continue a completed Delivery or earn it fresh, choose CONTINUE TO INTAKE, finish Level 2, and test saved Continue. The next gated milestone is **M3 — Public connection, covering Level 3 and the reusable link/loop mechanic**; it requires further authorization. Do not start M3–M5, push or deploy.
+No director-known material defect remains within M2's required acceptance paths. The user has approved the published slice at <https://vikramramkumar.me/bastrop37/?v=209ab59>. The repeatable playtest route remains: continue a completed Delivery or earn it fresh, choose CONTINUE TO INTAKE, finish Level 2, and test saved Continue. The next gated milestone is **M3 — Public connection, covering Level 3 and the reusable link/loop mechanic**; it requires separate implementation authorization. This approval/status update does not authorize M3–M5 or a further push/deploy. General user approval does not establish physical-device measurements or verify the optional jump solution.

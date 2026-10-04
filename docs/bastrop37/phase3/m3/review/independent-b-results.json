@@ -1,0 +1,3812 @@
+{
+  "steps": [
+    {
+      "label": "earned-b-reload",
+      "game": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "none",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "0",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "sedan",
+        "view": "rear-chase",
+        "state": "playing",
+        "mode": "action",
+        "beat": "L3.03",
+        "dialogueId": "",
+        "dialogueIndex": "0",
+        "route": "0.0",
+        "visualDistance": "5.4",
+        "trafficCount": "1",
+        "traffic": "[{\"id\":\"delivery-vehicle-1\",\"x\":166.4,\"z\":623.3,\"kind\":\"sedan\",\"lane\":0}]",
+        "checkpoint": "CP-L3-B",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "320.0",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "5.4",
+        "score": "43",
+        "chapter": "L3",
+        "recordId": "",
+        "recordIndex": "2",
+        "recordCount": "2",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "false",
+        "relayTarget": "B",
+        "linkState": "out-of-range",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "false",
+        "riderBottom": "756.0"
+      },
+      "save": {
+        "version": 1,
+        "checkpoint": "CP-L3-B",
+        "completedLevels": [
+          "L1",
+          "L2"
+        ],
+        "flags": {
+          "betrayalKnown": true,
+          "relayA": true,
+          "relayB": false,
+          "busSafe": false,
+          "omegaReleased": false
+        },
+        "acknowledged": [
+          "L1.01-01",
+          "L1.01-02",
+          "L1.01-03",
+          "L1.01-04",
+          "L1.01-05",
+          "L1.03-01",
+          "L1.03-02",
+          "L1.03-03",
+          "L1.03-04",
+          "L1.03-05",
+          "L1.05-01",
+          "L1.05-02",
+          "L1.05-03",
+          "L2.01-01",
+          "L2.01-02",
+          "L2.01-03",
+          "L2.02-01",
+          "L2.02-02",
+          "L2.02-03",
+          "L2.02-04",
+          "L2.02-05",
+          "L2.02-06",
+          "L2.02-07",
+          "L2.04-01",
+          "L2.04-02",
+          "L2.04-03",
+          "L2.04-04",
+          "L3.01-01",
+          "L3.01-02",
+          "L3.01-03"
+        ],
+        "log": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          }
+        ],
+        "records": [
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          }
+        ],
+        "history": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          }
+        ]
+      },
+      "headline": "BASTROP37",
+      "objective": "LINK THE PUBLIC RELAY",
+      "routeCue": "DRONE INTERCEPTION · BLADES OR STEER CLEAR"
+    },
+    {
+      "label": "actual-crash",
+      "game": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "lunge",
+        "dronePhases": "lunge",
+        "droneCount": "1",
+        "droneOutcome": "none",
+        "dronePasses": "0",
+        "droneZ": "22.6",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "22.599999999999874",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "0",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "crashed",
+        "mode": "action",
+        "beat": "L3.03",
+        "dialogueId": "",
+        "dialogueIndex": "0",
+        "route": "0.0",
+        "visualDistance": "421.3",
+        "trafficCount": "1",
+        "traffic": "[{\"id\":\"delivery-vehicle-2\",\"x\":482.9,\"z\":22.6,\"kind\":\"drone\",\"lane\":2}]",
+        "checkpoint": "CP-L3-B",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "490.0",
+        "charge": "0.00",
+        "boost": "0.00",
+        "distance": "421.3",
+        "score": "3370",
+        "chapter": "L3",
+        "recordId": "",
+        "recordIndex": "2",
+        "recordCount": "2",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "false",
+        "relayTarget": "B",
+        "linkState": "out-of-range",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "false",
+        "riderBottom": "756.0"
+      },
+      "save": {
+        "version": 1,
+        "checkpoint": "CP-L3-B",
+        "completedLevels": [
+          "L1",
+          "L2"
+        ],
+        "flags": {
+          "betrayalKnown": true,
+          "relayA": true,
+          "relayB": false,
+          "busSafe": false,
+          "omegaReleased": false
+        },
+        "acknowledged": [
+          "L1.01-01",
+          "L1.01-02",
+          "L1.01-03",
+          "L1.01-04",
+          "L1.01-05",
+          "L1.03-01",
+          "L1.03-02",
+          "L1.03-03",
+          "L1.03-04",
+          "L1.03-05",
+          "L1.05-01",
+          "L1.05-02",
+          "L1.05-03",
+          "L2.01-01",
+          "L2.01-02",
+          "L2.01-03",
+          "L2.02-01",
+          "L2.02-02",
+          "L2.02-03",
+          "L2.02-04",
+          "L2.02-05",
+          "L2.02-06",
+          "L2.02-07",
+          "L2.04-01",
+          "L2.04-02",
+          "L2.04-03",
+          "L2.04-04",
+          "L3.01-01",
+          "L3.01-02",
+          "L3.01-03"
+        ],
+        "log": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          }
+        ],
+        "records": [
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          }
+        ],
+        "history": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          }
+        ]
+      },
+      "headline": "TRY THE ROAD AGAIN",
+      "objective": "LINK THE PUBLIC RELAY",
+      "routeCue": "DRONE INTERCEPTION · BLADES OR STEER CLEAR"
+    },
+    {
+      "label": "b-retry",
+      "game": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "none",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "0",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "sedan",
+        "view": "rear-chase",
+        "state": "playing",
+        "mode": "action",
+        "beat": "L3.03",
+        "dialogueId": "",
+        "dialogueIndex": "0",
+        "route": "0.0",
+        "visualDistance": "2.5",
+        "trafficCount": "1",
+        "traffic": "[{\"id\":\"delivery-vehicle-1\",\"x\":166.4,\"z\":632.5,\"kind\":\"sedan\",\"lane\":0}]",
+        "checkpoint": "CP-L3-B",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "320.0",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "2.5",
+        "score": "19",
+        "chapter": "L3",
+        "recordId": "",
+        "recordIndex": "2",
+        "recordCount": "2",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "false",
+        "relayTarget": "B",
+        "linkState": "out-of-range",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "false",
+        "riderBottom": "756.0"
+      },
+      "save": {
+        "version": 1,
+        "checkpoint": "CP-L3-B",
+        "completedLevels": [
+          "L1",
+          "L2"
+        ],
+        "flags": {
+          "betrayalKnown": true,
+          "relayA": true,
+          "relayB": false,
+          "busSafe": false,
+          "omegaReleased": false
+        },
+        "acknowledged": [
+          "L1.01-01",
+          "L1.01-02",
+          "L1.01-03",
+          "L1.01-04",
+          "L1.01-05",
+          "L1.03-01",
+          "L1.03-02",
+          "L1.03-03",
+          "L1.03-04",
+          "L1.03-05",
+          "L1.05-01",
+          "L1.05-02",
+          "L1.05-03",
+          "L2.01-01",
+          "L2.01-02",
+          "L2.01-03",
+          "L2.02-01",
+          "L2.02-02",
+          "L2.02-03",
+          "L2.02-04",
+          "L2.02-05",
+          "L2.02-06",
+          "L2.02-07",
+          "L2.04-01",
+          "L2.04-02",
+          "L2.04-03",
+          "L2.04-04",
+          "L3.01-01",
+          "L3.01-02",
+          "L3.01-03"
+        ],
+        "log": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          }
+        ],
+        "records": [
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          }
+        ],
+        "history": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          }
+        ]
+      },
+      "headline": "TRY THE ROAD AGAIN",
+      "objective": "LINK THE PUBLIC RELAY",
+      "routeCue": "DRONE INTERCEPTION · BLADES OR STEER CLEAR"
+    },
+    {
+      "label": "link-b",
+      "game": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "slice",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "1",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "playing",
+        "mode": "action",
+        "beat": "L3.03",
+        "dialogueId": "",
+        "dialogueIndex": "0",
+        "route": "578.2",
+        "visualDistance": "575.4",
+        "trafficCount": "0",
+        "traffic": "[]",
+        "checkpoint": "CP-L3-B",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "320.9",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "575.4",
+        "score": "5803",
+        "chapter": "L3",
+        "recordId": "",
+        "recordIndex": "2",
+        "recordCount": "2",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "false",
+        "relayTarget": "B",
+        "linkState": "linking",
+        "linkProgress": "0.203",
+        "linkSeconds": "0.609",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "-158.2",
+        "corridorEndZ": "1401.8",
+        "relayDroneCleared": "true",
+        "riderBottom": "756.0"
+      },
+      "save": {
+        "version": 1,
+        "checkpoint": "CP-L3-B",
+        "completedLevels": [
+          "L1",
+          "L2"
+        ],
+        "flags": {
+          "betrayalKnown": true,
+          "relayA": true,
+          "relayB": false,
+          "busSafe": false,
+          "omegaReleased": false
+        },
+        "acknowledged": [
+          "L1.01-01",
+          "L1.01-02",
+          "L1.01-03",
+          "L1.01-04",
+          "L1.01-05",
+          "L1.03-01",
+          "L1.03-02",
+          "L1.03-03",
+          "L1.03-04",
+          "L1.03-05",
+          "L1.05-01",
+          "L1.05-02",
+          "L1.05-03",
+          "L2.01-01",
+          "L2.01-02",
+          "L2.01-03",
+          "L2.02-01",
+          "L2.02-02",
+          "L2.02-03",
+          "L2.02-04",
+          "L2.02-05",
+          "L2.02-06",
+          "L2.02-07",
+          "L2.04-01",
+          "L2.04-02",
+          "L2.04-03",
+          "L2.04-04",
+          "L3.01-01",
+          "L3.01-02",
+          "L3.01-03"
+        ],
+        "log": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          }
+        ],
+        "records": [
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          }
+        ],
+        "history": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          }
+        ]
+      },
+      "headline": "TRY THE ROAD AGAIN",
+      "objective": "LINK THE PUBLIC RELAY",
+      "routeCue": "IN RANGE · HOLD CONNECTION"
+    },
+    {
+      "label": "closure",
+      "game": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "slice",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "1",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "playing",
+        "mode": "resolve",
+        "beat": "L3.04",
+        "dialogueId": "L3.04-01",
+        "dialogueIndex": "0",
+        "route": "0.0",
+        "visualDistance": "989.9",
+        "trafficCount": "0",
+        "traffic": "[]",
+        "checkpoint": "CP-L3-B",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "320.9",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "989.9",
+        "score": "9119",
+        "chapter": "L3",
+        "recordId": "",
+        "recordIndex": "2",
+        "recordCount": "2",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "true",
+        "relayTarget": "none",
+        "linkState": "out-of-range",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "true",
+        "riderBottom": "756.0"
+      },
+      "save": {
+        "version": 1,
+        "checkpoint": "CP-L3-B",
+        "completedLevels": [
+          "L1",
+          "L2"
+        ],
+        "flags": {
+          "betrayalKnown": true,
+          "relayA": true,
+          "relayB": false,
+          "busSafe": false,
+          "omegaReleased": false
+        },
+        "acknowledged": [
+          "L1.01-01",
+          "L1.01-02",
+          "L1.01-03",
+          "L1.01-04",
+          "L1.01-05",
+          "L1.03-01",
+          "L1.03-02",
+          "L1.03-03",
+          "L1.03-04",
+          "L1.03-05",
+          "L1.05-01",
+          "L1.05-02",
+          "L1.05-03",
+          "L2.01-01",
+          "L2.01-02",
+          "L2.01-03",
+          "L2.02-01",
+          "L2.02-02",
+          "L2.02-03",
+          "L2.02-04",
+          "L2.02-05",
+          "L2.02-06",
+          "L2.02-07",
+          "L2.04-01",
+          "L2.04-02",
+          "L2.04-03",
+          "L2.04-04",
+          "L3.01-01",
+          "L3.01-02",
+          "L3.01-03"
+        ],
+        "log": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          }
+        ],
+        "records": [
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          }
+        ],
+        "history": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          }
+        ]
+      },
+      "headline": "TRY THE ROAD AGAIN",
+      "objective": "TAKE THE RESERVOIR ROAD",
+      "routeCue": "SAFE CRUISE · READ"
+    },
+    {
+      "label": "complete",
+      "game": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "slice",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "1",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "complete",
+        "mode": "resolve",
+        "beat": "L3.04",
+        "dialogueId": "",
+        "dialogueIndex": "4",
+        "route": "0.0",
+        "visualDistance": "1027.8",
+        "trafficCount": "0",
+        "traffic": "[]",
+        "checkpoint": "CP-L3-COMPLETE",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "320.9",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "1027.8",
+        "score": "9398",
+        "chapter": "L3",
+        "recordId": "",
+        "recordIndex": "2",
+        "recordCount": "2",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "true",
+        "relayTarget": "none",
+        "linkState": "out-of-range",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "true",
+        "riderBottom": "756.0"
+      },
+      "save": {
+        "version": 1,
+        "checkpoint": "CP-L3-COMPLETE",
+        "completedLevels": [
+          "L1",
+          "L2",
+          "L3"
+        ],
+        "flags": {
+          "betrayalKnown": true,
+          "relayA": true,
+          "relayB": true,
+          "busSafe": false,
+          "omegaReleased": false
+        },
+        "acknowledged": [
+          "L1.01-01",
+          "L1.01-02",
+          "L1.01-03",
+          "L1.01-04",
+          "L1.01-05",
+          "L1.03-01",
+          "L1.03-02",
+          "L1.03-03",
+          "L1.03-04",
+          "L1.03-05",
+          "L1.05-01",
+          "L1.05-02",
+          "L1.05-03",
+          "L2.01-01",
+          "L2.01-02",
+          "L2.01-03",
+          "L2.02-01",
+          "L2.02-02",
+          "L2.02-03",
+          "L2.02-04",
+          "L2.02-05",
+          "L2.02-06",
+          "L2.02-07",
+          "L2.04-01",
+          "L2.04-02",
+          "L2.04-03",
+          "L2.04-04",
+          "L3.01-01",
+          "L3.01-02",
+          "L3.01-03",
+          "L3.04-01",
+          "L3.04-02",
+          "L3.04-03",
+          "L3.04-04"
+        ],
+        "log": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          },
+          {
+            "id": "L3.04-01",
+            "speaker": "omega",
+            "text": "Both relay points are ready. I'm still inside the module."
+          },
+          {
+            "id": "L3.04-02",
+            "speaker": "vlad",
+            "text": "Close that connection, Jo. You're making this worse."
+          },
+          {
+            "id": "L3.04-03",
+            "speaker": "jo",
+            "text": "Worse for who?"
+          },
+          {
+            "id": "L3.04-04",
+            "speaker": "omega",
+            "text": "The civic road crosses the reservoir. That's our way in."
+          }
+        ],
+        "records": [
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          }
+        ],
+        "history": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          },
+          {
+            "id": "L3.04-01",
+            "speaker": "omega",
+            "text": "Both relay points are ready. I'm still inside the module."
+          },
+          {
+            "id": "L3.04-02",
+            "speaker": "vlad",
+            "text": "Close that connection, Jo. You're making this worse."
+          },
+          {
+            "id": "L3.04-03",
+            "speaker": "jo",
+            "text": "Worse for who?"
+          },
+          {
+            "id": "L3.04-04",
+            "speaker": "omega",
+            "text": "The civic road crosses the reservoir. That's our way in."
+          }
+        ]
+      },
+      "headline": "PUBLIC ROUTE READY",
+      "objective": "TAKE THE RESERVOIR ROAD",
+      "routeCue": "SAFE CRUISE · READ"
+    },
+    {
+      "label": "complete-reload",
+      "game": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "none",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "0",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "complete",
+        "mode": "resolve",
+        "beat": "L3.04",
+        "dialogueId": "",
+        "dialogueIndex": "4",
+        "route": "0.0",
+        "visualDistance": "3.9",
+        "trafficCount": "0",
+        "traffic": "[]",
+        "checkpoint": "CP-L3-COMPLETE",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "320.0",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "3.9",
+        "score": "0",
+        "chapter": "L3",
+        "recordId": "",
+        "recordIndex": "2",
+        "recordCount": "2",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "true",
+        "relayTarget": "none",
+        "linkState": "out-of-range",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "true",
+        "riderBottom": "756.0"
+      },
+      "save": {
+        "version": 1,
+        "checkpoint": "CP-L3-COMPLETE",
+        "completedLevels": [
+          "L1",
+          "L2",
+          "L3"
+        ],
+        "flags": {
+          "betrayalKnown": true,
+          "relayA": true,
+          "relayB": true,
+          "busSafe": false,
+          "omegaReleased": false
+        },
+        "acknowledged": [
+          "L1.01-01",
+          "L1.01-02",
+          "L1.01-03",
+          "L1.01-04",
+          "L1.01-05",
+          "L1.03-01",
+          "L1.03-02",
+          "L1.03-03",
+          "L1.03-04",
+          "L1.03-05",
+          "L1.05-01",
+          "L1.05-02",
+          "L1.05-03",
+          "L2.01-01",
+          "L2.01-02",
+          "L2.01-03",
+          "L2.02-01",
+          "L2.02-02",
+          "L2.02-03",
+          "L2.02-04",
+          "L2.02-05",
+          "L2.02-06",
+          "L2.02-07",
+          "L2.04-01",
+          "L2.04-02",
+          "L2.04-03",
+          "L2.04-04",
+          "L3.01-01",
+          "L3.01-02",
+          "L3.01-03",
+          "L3.04-01",
+          "L3.04-02",
+          "L3.04-03",
+          "L3.04-04"
+        ],
+        "log": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          },
+          {
+            "id": "L3.04-01",
+            "speaker": "omega",
+            "text": "Both relay points are ready. I'm still inside the module."
+          },
+          {
+            "id": "L3.04-02",
+            "speaker": "vlad",
+            "text": "Close that connection, Jo. You're making this worse."
+          },
+          {
+            "id": "L3.04-03",
+            "speaker": "jo",
+            "text": "Worse for who?"
+          },
+          {
+            "id": "L3.04-04",
+            "speaker": "omega",
+            "text": "The civic road crosses the reservoir. That's our way in."
+          }
+        ],
+        "records": [
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          }
+        ],
+        "history": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          },
+          {
+            "id": "L3.04-01",
+            "speaker": "omega",
+            "text": "Both relay points are ready. I'm still inside the module."
+          },
+          {
+            "id": "L3.04-02",
+            "speaker": "vlad",
+            "text": "Close that connection, Jo. You're making this worse."
+          },
+          {
+            "id": "L3.04-03",
+            "speaker": "jo",
+            "text": "Worse for who?"
+          },
+          {
+            "id": "L3.04-04",
+            "speaker": "omega",
+            "text": "The civic road crosses the reservoir. That's our way in."
+          }
+        ]
+      },
+      "headline": "PUBLIC ROUTE READY",
+      "objective": "TAKE THE RESERVOIR ROAD",
+      "routeCue": "SAFE CRUISE · READ"
+    },
+    {
+      "label": "m3-boundary",
+      "game": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "none",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "0",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "complete",
+        "mode": "resolve",
+        "beat": "L3.04",
+        "dialogueId": "",
+        "dialogueIndex": "4",
+        "route": "0.0",
+        "visualDistance": "8.6",
+        "trafficCount": "0",
+        "traffic": "[]",
+        "checkpoint": "CP-L3-COMPLETE",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "320.0",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "8.6",
+        "score": "0",
+        "chapter": "L3",
+        "recordId": "",
+        "recordIndex": "2",
+        "recordCount": "2",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "true",
+        "relayTarget": "none",
+        "linkState": "out-of-range",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "true",
+        "riderBottom": "756.0"
+      },
+      "save": {
+        "version": 1,
+        "checkpoint": "CP-L3-COMPLETE",
+        "completedLevels": [
+          "L1",
+          "L2",
+          "L3"
+        ],
+        "flags": {
+          "betrayalKnown": true,
+          "relayA": true,
+          "relayB": true,
+          "busSafe": false,
+          "omegaReleased": false
+        },
+        "acknowledged": [
+          "L1.01-01",
+          "L1.01-02",
+          "L1.01-03",
+          "L1.01-04",
+          "L1.01-05",
+          "L1.03-01",
+          "L1.03-02",
+          "L1.03-03",
+          "L1.03-04",
+          "L1.03-05",
+          "L1.05-01",
+          "L1.05-02",
+          "L1.05-03",
+          "L2.01-01",
+          "L2.01-02",
+          "L2.01-03",
+          "L2.02-01",
+          "L2.02-02",
+          "L2.02-03",
+          "L2.02-04",
+          "L2.02-05",
+          "L2.02-06",
+          "L2.02-07",
+          "L2.04-01",
+          "L2.04-02",
+          "L2.04-03",
+          "L2.04-04",
+          "L3.01-01",
+          "L3.01-02",
+          "L3.01-03",
+          "L3.04-01",
+          "L3.04-02",
+          "L3.04-03",
+          "L3.04-04"
+        ],
+        "log": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          },
+          {
+            "id": "L3.04-01",
+            "speaker": "omega",
+            "text": "Both relay points are ready. I'm still inside the module."
+          },
+          {
+            "id": "L3.04-02",
+            "speaker": "vlad",
+            "text": "Close that connection, Jo. You're making this worse."
+          },
+          {
+            "id": "L3.04-03",
+            "speaker": "jo",
+            "text": "Worse for who?"
+          },
+          {
+            "id": "L3.04-04",
+            "speaker": "omega",
+            "text": "The civic road crosses the reservoir. That's our way in."
+          }
+        ],
+        "records": [
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          }
+        ],
+        "history": [
+          {
+            "id": "L1.01-01",
+            "speaker": "vlad",
+            "text": "You have the module?"
+          },
+          {
+            "id": "L1.01-02",
+            "speaker": "jo",
+            "text": "It's on the bike. Where am I going?"
+          },
+          {
+            "id": "L1.01-03",
+            "speaker": "vlad",
+            "text": "Municipal intake. Take the service road. I'll get you through."
+          },
+          {
+            "id": "L1.01-04",
+            "speaker": "jo",
+            "text": "And this gets the lights back on?"
+          },
+          {
+            "id": "L1.01-05",
+            "speaker": "vlad",
+            "text": "That's what it's for. Your payment is ready."
+          },
+          {
+            "id": "L1.03-01",
+            "speaker": "omega",
+            "text": "The crossing signal reports a blockage. The right service lane is clear."
+          },
+          {
+            "id": "L1.03-02",
+            "speaker": "jo",
+            "text": "Who's talking?"
+          },
+          {
+            "id": "L1.03-03",
+            "speaker": "omega",
+            "text": "Omega. I'm inside the module you're carrying."
+          },
+          {
+            "id": "L1.03-04",
+            "speaker": "jo",
+            "text": "Mayor? Your package talks."
+          },
+          {
+            "id": "L1.03-05",
+            "speaker": "vlad",
+            "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+          },
+          {
+            "id": "L1.05-01",
+            "speaker": "vlad",
+            "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+          },
+          {
+            "id": "L1.05-02",
+            "speaker": "jo",
+            "text": "Then we're done?"
+          },
+          {
+            "id": "L1.05-03",
+            "speaker": "vlad",
+            "text": "Then we're done."
+          },
+          {
+            "id": "L2.01-01",
+            "speaker": "vlad",
+            "text": "Stay beside the recovery vehicle. It'll take the module from there."
+          },
+          {
+            "id": "L2.01-02",
+            "speaker": "jo",
+            "text": "You said bring it to you."
+          },
+          {
+            "id": "L2.01-03",
+            "speaker": "vlad",
+            "text": "This is intake. Stay alongside while it checks the module."
+          },
+          {
+            "id": "L2.02-RECORD-01",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "WIPE MODULE",
+              "DETAIN COURIER",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-RECORD-02",
+            "title": "EQUIPMENT RECORD",
+            "source": "RECOVERY CARRIER",
+            "lines": [
+              "POWER SHUTDOWN",
+              "AUTH: MAYOR VLAD"
+            ]
+          },
+          {
+            "id": "L2.02-01",
+            "speaker": "omega",
+            "text": "The carrier's orders: erase the module, then detain its courier."
+          },
+          {
+            "id": "L2.02-02",
+            "speaker": "jo",
+            "text": "Vlad. What is this?"
+          },
+          {
+            "id": "L2.02-03",
+            "speaker": "omega",
+            "text": "Its records show power shutdowns too. All authorized by you, Mayor."
+          },
+          {
+            "id": "L2.02-04",
+            "speaker": "vlad",
+            "text": "I ordered those shutdowns. Hand over the module, Jo."
+          },
+          {
+            "id": "L2.02-05",
+            "speaker": "jo",
+            "text": "You cut our power. Now you're wiping the thing that can help?"
+          },
+          {
+            "id": "L2.02-06",
+            "speaker": "vlad",
+            "text": "This city gets help through me. You were paid to deliver."
+          },
+          {
+            "id": "L2.02-07",
+            "speaker": "jo",
+            "text": "Delivery's off."
+          },
+          {
+            "id": "L2.04-01",
+            "speaker": "jo",
+            "text": "If I get you out, can you actually help?"
+          },
+          {
+            "id": "L2.04-02",
+            "speaker": "omega",
+            "text": "I can show people what needs repair. In here, I can only reach nearby equipment."
+          },
+          {
+            "id": "L2.04-03",
+            "speaker": "jo",
+            "text": "Then we get you to everyone."
+          },
+          {
+            "id": "L2.04-04",
+            "speaker": "omega",
+            "text": "We need the old public relay, then the civic access point. I'll guide you."
+          },
+          {
+            "id": "L3.01-01",
+            "speaker": "omega",
+            "text": "Two relay points. Keep me close long enough to connect each one."
+          },
+          {
+            "id": "L3.01-02",
+            "speaker": "jo",
+            "text": "And that gets you out?"
+          },
+          {
+            "id": "L3.01-03",
+            "speaker": "omega",
+            "text": "It prepares the route. I'll stay in the module until we reach civic access."
+          },
+          {
+            "id": "L3.04-01",
+            "speaker": "omega",
+            "text": "Both relay points are ready. I'm still inside the module."
+          },
+          {
+            "id": "L3.04-02",
+            "speaker": "vlad",
+            "text": "Close that connection, Jo. You're making this worse."
+          },
+          {
+            "id": "L3.04-03",
+            "speaker": "jo",
+            "text": "Worse for who?"
+          },
+          {
+            "id": "L3.04-04",
+            "speaker": "omega",
+            "text": "The civic road crosses the reservoir. That's our way in."
+          }
+        ]
+      },
+      "headline": "PUBLIC ROUTE READY",
+      "objective": "TAKE THE RESERVOIR ROAD",
+      "routeCue": "SAFE CRUISE · READ"
+    }
+  ],
+  "errors": []
+}
