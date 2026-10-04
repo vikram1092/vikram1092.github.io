@@ -1,6 +1,6 @@
 # Phase 3 M3 director scope and pickup handoff
 
-Current integration note (2026-10-04): the user subsequently authorized all remaining levels and publication. This milestone is preserved in the locally accepted complete five-level campaign; all81distinct scenarios have passing evidence across the final full/focused runs. Earlier scope/publication gates below are historical. See PHASE_3_CAMPAIGN_REPORT.md for current acceptance, actual counts, limits and final publication pickup.
+Current integration note (2026-10-04): the user subsequently authorized all remaining levels and publication. This milestone is preserved in the locally accepted complete five-level campaign; all 81 distinct scenarios have passing evidence across the final full/focused runs. Earlier scope/publication gates below are historical. See PHASE_3_CAMPAIGN_REPORT.md for current acceptance, actual counts, limits and final publication pickup.
 
 2026-10-01. **M3 explicitly authorized by “Yes begin M3”; implemented and verified locally, awaiting user acceptance.** No M3 commit, push or deployment. M4/M5 remain unauthorized. The initial documentation-only audit below is historical; the execution record here supersedes its pending implementation gate.
 
@@ -94,3 +94,7 @@ Documentation-only audit files: BUILD_STATUS.md, AGENT_OPERATING_PLAN.md, PHASE_
 The initial audit requested M3 authorization; the user subsequently answered **“Yes begin M3.”** That gate is fulfilled. The implementation/validation gate is now fulfilled by the final execution record above.
 
 Implementation and verification are complete; stop at verified M3. User acceptance is now required; a separate explicit publication approval after acceptance is required before any push/deploy. M4/M5 remain gated.
+
+## Director publication record — 2026-10-04
+
+Integrated campaign runtime `61427a0` is pushed to master and published by successful Pages run `37219765790`. Public runtime bytes match the tested local build; fresh opening, earned completion reload and L5 replay smoke passed with zero page/request errors and unchanged durable save. Full details and limits are in PHASE_3_CAMPAIGN_REPORT.md and BUILD_STATUS.md. No further worker action is queued. This publication addendum does not expand the worker’s independent verification claims above.

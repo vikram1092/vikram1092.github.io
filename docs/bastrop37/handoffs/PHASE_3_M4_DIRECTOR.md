@@ -1,6 +1,6 @@
 # M4 final acceptance — 2026-10-04
 
-Current integration note (2026-10-04): the user subsequently authorized all remaining levels and publication. This milestone is preserved in the locally accepted complete five-level campaign; all81distinct scenarios have passing evidence across the final full/focused runs. Earlier scope/publication gates below are historical. See PHASE_3_CAMPAIGN_REPORT.md for current acceptance, actual counts, limits and final publication pickup.
+Current integration note (2026-10-04): the user subsequently authorized all remaining levels and publication. This milestone is preserved in the locally accepted complete five-level campaign; all 81 distinct scenarios have passing evidence across the final full/focused runs. Earlier scope/publication gates below are historical. See PHASE_3_CAMPAIGN_REPORT.md for current acceptance, actual counts, limits and final publication pickup.
 
 **Accepted by the director for the authorized full-campaign integration.** The repaired build passed independent browser/visual review and all 15 affected tests in 480.170 seconds, zero failures/skips/flaky results. Build/check passed 24 files with zero diagnostics. The initial 15/15 behavior run and failed visual candidate are retained below as history; the final repaired evidence is under phase3/m4/repair/ and phase3/m4/review/repair/.
 
@@ -36,7 +36,7 @@ L4.02 repeat actual blade binding and safe marked controller pass; controller hi
 
 L4.03 marked escort band, reachable bus in spatially separate parallel lane; stop progress when Jo leaves. Three condition segments. New telegraph/recovery per attack; accessible marked intercept lane retargets that pass to Jo, resolved by existing evasion/blades. Missing draw-off/cut costs one segment. Out-of-range allows at most already signalled bus strike, then no new bus attack until return. Zero or Jo crash retries escort fullcondition. Bus safety latch suppresses future harm; Jo ramp independently required and repeatable. Natural clear-road drain.
 
-L4.04 four exact lines; CP-L4-COMPLETE, EVACUATION ROUTE CLEARED / ENTER THE CIVIC DISTRICT. Expected total41spoken,3records,44history; betrayal/relayA/B/busSafe true, omegaReleased false. M5 integration may subsequently enable this Continue, but M4 review establishes contained boundary first.
+L4.04 four exact lines; CP-L4-COMPLETE, EVACUATION ROUTE CLEARED / ENTER THE CIVIC DISTRICT. Expected total41spoken,3 records,44history; betrayal/relayA/B/busSafe true, omegaReleased false. M5 integration may subsequently enable this Continue, but M4 review establishes contained boundary first.
 
 Verify controller miss/hit/retraction, empty-energy blade feasibility, reward exclusions, escort range and bus position, telegraph/draw-off/evasion and blade alternatives, bus damage once/zero/failure, outside-range suppression, safety-first/ramp-first combinations, all checkpoints/reload/old/corrupt saves, asset retry/storage limits, mobile controls/wholecard/four-size visuals, natural exits. Use source/world geometry and actual browser captures, not screenshots alone for behavior. Preserve all historical release evidence.
 
@@ -91,3 +91,7 @@ Independent repaired visual update: the reviewer confirms grounded branch/bus/po
 ## Repaired behavior matrix complete
 
 Repaired candidate passed all 15 cases in 480.170 seconds: 8 model and 7 browser, zero failed, skipped or flaky. Evidence is repair/results.json. Whole-card reading, controller miss/retraction, real blade escort, three-hit loss and retry, outside-range suppression, actual Jo collision, steering alternative, blocked storage, asset recovery, all four story sizes and touch-only completion passed. Independent final behavior/report remains the only acceptance item outstanding. The longer wall time versus the initial run is not a measured performance claim; both ran alongside independent browser work.
+
+## Director publication record — 2026-10-04
+
+Integrated campaign runtime `61427a0` is pushed to master and published by successful Pages run `37219765790`. Public runtime bytes match the tested local build; fresh opening, earned completion reload and L5 replay smoke passed with zero page/request errors and unchanged durable save. Full details and limits are in PHASE_3_CAMPAIGN_REPORT.md and BUILD_STATUS.md. No further worker action is queued. This publication addendum does not expand the worker’s independent verification claims above.

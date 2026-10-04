@@ -1,6 +1,6 @@
 # Bastrop37 — completed campaign report
 
-2026-10-04. **All five approved levels are implemented and locally accepted after independent review. Publication is authorized and pending the final commit/push and public verification.** No further level or phase is queued.
+2026-10-04. **All five approved levels are implemented, independently reviewed and published.** No further level or phase is queued.
 
 ## Delivered
 
@@ -44,6 +44,14 @@ The real-clock network audit loaded all five chapter openings via ordinary repla
 - Storage blocking truthfully limits persistence to the current session. No claim of durable saving when storage fails.
 - No extra level, cast, audio work or 3D migration was introduced. The unrelated `.BASTROP37_PLAN.md.swp` remains untouched.
 
-## Release and pickup
+## Verified publication — 2026-10-04
 
-M3 is local commit `7d46d88`; M4 is `f5a8a2c`. M5 final commit, normal master push, Pages workflow and public byte-comparison/smoke verification are next and already authorized. Preserve historical release records and initial failed-review evidence. After successful public verification, record exact revision/workflow/URL, commit the publication record, verify the final remote/deployment and stop. No additional implementation milestone remains.
+The complete approved five-level campaign is published. Runtime commit **`61427a0bab550d5f4ba41971c281460a85fb9848`** on `master` includes M3 `7d46d88`, M4 `f5a8a2c` and M5. The remote matched that commit, and [Pages run 37219765790](https://github.com/vikram1092/vikram1092.github.io/actions/runs/37219765790) completed successfully at 17:16:42 UTC.
+
+[Play the completed campaign](https://vikramramkumar.me/bastrop37/?v=61427a0bab550d5f4ba41971c281460a85fb9848). The public page returned HTTP 200. Its 116,771-byte runtime script `/_astro/index.astro_astro_type_script_index_0_lang.DoT1bky8.js` matched the locally tested build byte for byte (SHA-256 `f94cf179462a30dea4a630b0e6f9f2c39ad95472953aefd325fa56b6989da26d`). An isolated public browser verified the fresh L1 opening, reloaded the separately earned completed campaign, opened L5 replay with contained scene state, preserved the durable completed save and reported zero page/request errors. This was a public smoke, not a second complete public playthrough. Evidence: `phase3/m5/public/verification.json`, `deployment-runtime.json` and three screenshots.
+
+This follow-up publication record changes documentation/evidence only; the verified runtime remains `61427a0`. No additional level, phase, push approval or implementation work is outstanding. The requested work stops after the publication-record push and final remote/deployment check. For human playtest, choose **CONTINUE SAVED RIDE** to resume compatible progress or **START NEW DELIVERY** and explicitly confirm to start over. Completed saves expose all five chapter replay buttons.
+
+## Final pickup boundary
+
+No implementation milestone remains. Preserve the accepted story/art, saves, whole-card dialogue, evidence history, all historical release records and the untouched swap file. Any future task starts from this complete published campaign and the user’s specific playtest feedback. Do not automatically add levels, audio, cast, engine work or recurring monitoring. Physical-device and human pacing validation remain the stated playtest limits.
