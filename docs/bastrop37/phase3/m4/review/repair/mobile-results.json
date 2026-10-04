@@ -1,0 +1,39 @@
+[
+  {
+    "label": "steer+blades",
+    "before": {
+      "x": "320.0",
+      "blades": "0.00",
+      "route": "17.8"
+    },
+    "after": {
+      "x": "393.9",
+      "blades": "0.48",
+      "route": "163.1",
+      "controllerState": "active"
+    },
+    "errors": [],
+    "scrollWidth": 390
+  },
+  {
+    "label": "failure-retry",
+    "start": {
+      "state": "playing",
+      "x": "364.7",
+      "busCondition": "3"
+    },
+    "failure": {
+      "state": "crashed",
+      "busCondition": "0",
+      "beat": "L4.03"
+    },
+    "retry": {
+      "state": "playing",
+      "busCondition": "3",
+      "beat": "L4.03",
+      "checkpoint": "CP-L4-ESCORT"
+    },
+    "errors": [],
+    "scrollWidth": 390
+  }
+]

@@ -1,0 +1,84 @@
+{
+  "assignment": "Phase 3 M4 bounded mechanical verification",
+  "checkedAt": "2026-10-04",
+  "scope": "Approved L4 content, record ordering, selected source/public file identity, source geometry and public asset inventory. No runtime approval is inferred.",
+  "dialogue": {
+    "status": "pass",
+    "checked": 7,
+    "ids": ["L4.01-01", "L4.01-02", "L4.01-03", "L4.04-01", "L4.04-02", "L4.04-03", "L4.04-04"],
+    "speakersInOrder": ["Vlad", "Omega", "Jo", "Omega", "Jo", "Omega", "Jo"],
+    "exactPhase1TextMatch": true,
+    "onlyApprovedSpeakers": true,
+    "L4_02_and_L4_03_have_no_dialogue": true
+  },
+  "equipmentRecord": {
+    "status": "pass",
+    "id": "L4.01-RECORD-01",
+    "title": "LOWER ROAD DISCHARGE",
+    "source": "SPILLWAY",
+    "lines": ["LOWER ROAD DISCHARGE", "AUTH: MAYOR VLAD"],
+    "approvedSequence": "After L4.01-01 and before L4.01-02",
+    "runtimeInsertionSequence": "LOCKDOWN_MISSION.record is available at beat L4.01/dialogueIndex 1; advance() adds the record to records/history before adding L4.01-02",
+    "matchesAssignedContentHandoff": true,
+    "matchesPhase1RecordCopy": true
+  },
+  "assets": {
+    "status": "pass",
+    "expectedCount": 11,
+    "publicCount": 11,
+    "publicDirectoryExactlyExpected": true,
+    "unexpectedOrAbandonedPublicVariants": [],
+    "totalBytes": 13654180,
+    "allRuntimePathsResolve": true,
+    "allPublicCopiesByteIdenticalToListedSource": true,
+    "items": [
+      {"file":"env-l4-v3.png","source":"docs/bastrop37/phase2/revision-v3/assets/env-l4-v3.png","bytes":2253966,"sha256":"899494a329d6304eb1e21f89cf4d9793e78800ee88b736cdf381836260830c88","dimensions":[1536,1024],"runtimeId":"ENV-L4-V3","anchor":[819,558],"anchorKind":"vanishing point","crop":[0,0,1536,1024],"layer":"midground","sourceSizeAndGeometryMatch":true},
+      {"file":"spillway-closed-v3.png","source":"docs/bastrop37/phase2/revision-v3/assets/spillway-closed-v3.png","bytes":3080949,"sha256":"c39c8d11e13dfe052ce41ddb911375de6f00d15c87151b4da54ed0343ce24e46","dimensions":[1536,1024],"runtimeId":"SPILLWAY-CLOSED-V3","anchor":[768,998],"anchorKind":"ground","crop":[0,0,1536,1024],"layer":"roadside","sourceSizeAndGeometryMatch":true},
+      {"file":"spillway-open-v3.png","source":"docs/bastrop37/phase2/revision-v3/assets/spillway-open-v3.png","bytes":2558511,"sha256":"69e4a2c3933d1cb4ec06b3165874c23a8da62576bb8276e17f985c64bbf28278","dimensions":[1536,1024],"runtimeId":"SPILLWAY-OPEN-V3","anchor":[768,998],"anchorKind":"ground","crop":[0,0,1536,1024],"layer":"roadside","sourceSizeAndGeometryMatch":true},
+      {"file":"spillway-water-low-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/spillway-water-low-v3.svg","bytes":1116,"sha256":"410b02b3ed9a81149cf8d6ce40b73120e8bb7d21c4f2c5fe9f3a20a2c019a1d9","dimensions":[1536,1024],"runtimeId":"WATER-LOW","anchor":[768,998],"crop":[0,0,1536,1024],"layer":"state-overlay","sourceCanvasAndRuntimeGeometryMatch":true},
+      {"file":"spillway-water-high-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/spillway-water-high-v3.svg","bytes":1116,"sha256":"d41a26fc18b85d862e8e856e9e39f4a8b6c35c0e0fde7f5e341fb52df72b1517","dimensions":[1536,1024],"runtimeId":"WATER-HIGH","anchor":[768,998],"crop":[0,0,1536,1024],"layer":"state-overlay","sourceCanvasAndRuntimeGeometryMatch":true},
+      {"file":"barrier-closed-v3.png","source":"docs/bastrop37/phase2/revision-v3/assets/barrier-closed-v3.png","bytes":1738560,"sha256":"6eb8360b0e43a1655b47c578f5f9908079309aac4645f943da72fb7e3ec1a046","dimensions":[1536,1024],"runtimeId":"BARRIER-CLOSED-V3","anchor":[768,852],"anchorKind":"ground","crop":[0,180,1536,680],"layer":"roadside","sourceSizeAndGeometryMatch":true},
+      {"file":"barrier-open-v3.png","source":"docs/bastrop37/phase2/revision-v3/assets/barrier-open-v3.png","bytes":1351642,"sha256":"1b246669ba4de4c933a562ba0a897935f0173253e3da52f27f24830da72192e9","dimensions":[1536,1024],"runtimeId":"BARRIER-OPEN-V3","anchor":[768,852],"anchorKind":"ground","crop":[0,180,1536,680],"layer":"roadside","sourceSizeAndGeometryMatch":true},
+      {"file":"controller-v3.png","source":"docs/bastrop37/phase2/revision-v3/assets/controller-v3.png","bytes":1382404,"sha256":"8b3d02e36e9d63850c05164035c2fee3471e77cf70ad302332778c6913ee1c21","dimensions":[1254,1254],"runtimeId":"CONTROLLER-V3","anchor":[625,1232],"anchorKind":"ground","crop":[275,15,680,1225],"layer":"roadside","sourceSizeAndGeometryMatch":true},
+      {"file":"controller-active-overlay-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/controller-active-overlay-v3.svg","bytes":193,"sha256":"5849b9a10c4de9f8fa36fb5ff8257b3171889ae2ee8de4916a8c5eed5b6b7410","dimensions":[1254,1254],"runtimeId":"CONTROLLER-ACTIVE","anchor":[625,1232],"crop":[275,15,680,1225],"layer":"state-overlay","sourceCanvasAndRuntimeGeometryMatch":true},
+      {"file":"controller-disabled-overlay-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/controller-disabled-overlay-v3.svg","bytes":237,"sha256":"9f8025461d9bd675c762420b52c9339478231a00cf4f49ca99debace75452a53","dimensions":[1254,1254],"runtimeId":"CONTROLLER-DISABLED","anchor":[625,1232],"crop":[275,15,680,1225],"layer":"state-overlay","sourceCanvasAndRuntimeGeometryMatch":true},
+      {"file":"evac-bus-rear-v1.png","source":"docs/bastrop37/phase2/assets/evac-bus-rear-v1.png","bytes":1285486,"sha256":"0b0404cf9f3949c4aa9a6fdcb5646de3bd4e3d5fdae942a03f3d2f3b52d66f44","dimensions":[1254,1254],"runtimeId":"VEH-EVAC","anchor":[625,1160],"anchorKind":"ground","crop":[165,90,920,1070],"layer":"actor","sourceSizeAndGeometryMatch":true}
+    ],
+    "placementGuides": {
+      "status": "pass",
+      "spillwayInnerGateCrop": [402,360,728,540],
+      "environmentGateBay": [[420,347],[551,514]],
+      "environmentApronNearEdge": [[1140,652],[1536,868]],
+      "environmentPortalFloor": [[1230,610],[1403,648]],
+      "busDisplayCrop": [165,90,920,1070],
+      "busGround": [625,1160],
+      "runtimeMatchesRevision3Register": true
+    }
+  },
+  "discrepancies": [],
+  "limitations": [
+    "File paths, hashes, dimensions, source metadata and declared placement coordinates were checked. Actual rendered placement, motion, collision and integrated mission behavior were not evaluated.",
+    "No builds, browser sessions or tests were run."
+  ],
+  "evidenceSources": [
+    "BASTROP37_STORY.md",
+    "docs/bastrop37/PHASE_1_NARRATIVE_AND_ENCOUNTERS.md (Level 4)",
+    "docs/bastrop37/handoffs/PHASE_3_M4_CONTENT.md",
+    "src/scripts/bastrop37/lockdown-content.ts",
+    "src/scripts/bastrop37/lockdown.ts",
+    "docs/bastrop37/phase2/revision-v3/asset-manifest.json",
+    "docs/bastrop37/phase2/revision-v3/assets/measurements.json",
+    "docs/bastrop37/phase2/asset-manifest.json (reused VEH-EVAC source)",
+    "src/scripts/bastrop37/lockdown-content.ts (runtime URL/geometry/placement declarations)",
+    "public/bastrop37/assets/lockdown/ (11-file inventory)"
+  ],
+  "reproducibleChecks": [
+    "python3 -m json.tool docs/bastrop37/phase3/m4/mechanical-check.json",
+    "python3: compare SHA-256 and byte lengths for the eleven source/destination pairs in assets.items",
+    "python3: read PNG IHDR width/height and SVG width/height/viewBox for all eleven source files",
+    "find public/bastrop37/assets/lockdown -maxdepth 1 -type f -print | sort",
+    "sed -n '192,235p' docs/bastrop37/PHASE_1_NARRATIVE_AND_ENCOUNTERS.md",
+    "sed -n '1,150p' src/scripts/bastrop37/lockdown-content.ts",
+    "sed -n '55,100p' src/scripts/bastrop37/lockdown.ts"
+  ]
+}

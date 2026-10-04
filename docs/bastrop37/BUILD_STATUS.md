@@ -1,6 +1,16 @@
 # Bastrop37 build status
 
-Active phase: **Phase 3 — M3 Public connection verified locally, awaiting user acceptance**. Updated 2026-10-01. Phases 1 and 2 are approved; M0/M1 and the revised speaking HUD were verified/published. The user explicitly approved M2 after playtest review. M2 is complete, pushed as commit `209ab59`, and live at <https://vikramramkumar.me/bastrop37/?v=209ab59>. The user subsequently explicitly authorized M3 (“Yes begin M3”); stop at its verified boundary for acceptance. M4/M5 and publication remain gated.
+Active phase: **Phase 3 — remaining campaign M4/M5 implementation, review and publication authorized**. Updated 2026-10-04. The user explicitly approved all remaining levels and requested a completed campaign, push, then stop. Phases 1/2 and M0–M2 remain accepted; M3 passed 48/48 and independent review and is committed locally as `7d46d88`. The normal Pages deployment on the final master push is approved. Public version remains M2 until that push/deployment succeeds.
+
+## M4/M5 execution — authorized 2026-10-04
+
+- Exact remaining scope: M4 Inland rescue (Level4), then M5 Release and campaign integration (Level5/recovery/replay). Five levels total. No new narrative, cast, audio, 3D migration or additional level.
+- M4 is implemented and accepted by the director after independent browser/visual PASS. The repaired candidate passed **15/15** cases (8 model, 7 browser) in **480.170 seconds**, zero failed/skipped/flaky; check/build passed 24 files with zero diagnostics. Initial behavior also passed 15/15, but its material visual findings required and received a repair.
+- M4 includes the ordered spillway receipt, safe required blade controller/miss loop, visible shared barrier opening, grounded uphill bus escort with three condition segments/draw-off, separate bus safety and Jo ramp, retry/save/mobile support and contained ending. Earned completion: **41 spoken lines, 3 records, 44 chronological entries; L1–L4 complete; busSafe=true, omegaReleased=false**.
+- Independent review confirms corrected shared uphill road/bus/portal and opaque spillway at all four sizes, controller and escort paths, ramp-first, save/reload, mobile failure/retry and simultaneous steering/blades, with no page errors or overflow. One low consequence service-loop floor label can overlap the closed barrier during the miss transition; safe bypass works. Physical-device/sustained performance and human pacing remain limits.
+- M5 is next without another approval gate: sequential controller/defender, two distinct five-second links with one interception between, immediate safe release persistence, protected dawn/recovery, completed campaign and separate chapter replay. Content and mechanical checks are complete (9 exact lines, 7 exact new assets, 14 resolving references); gameplay/HUD interfaces are agreed. Runtime production starts after the local M4 commit.
+- Preserve approved behavior, saves, whole-card receiver, historical evidence/public records and unread swap. Final full campaign/regression tests, fresh independent review and isolated performance must finish before publication. The user explicitly approved commit/push and normal Pages deployment. Public version remains M2 until the final push/deployment.
+- Evidence and exact pickup: [M4 director](handoffs/PHASE_3_M4_DIRECTOR.md), [M4 independent review](handoffs/PHASE_3_M4_REVIEW.md), and [M5 director plan](handoffs/PHASE_3_M5_DIRECTOR.md).
 
 ## M3 execution — authorized 2026-10-01
 

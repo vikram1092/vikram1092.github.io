@@ -1,5 +1,8 @@
 # Phase 3 — Implementation and validation
 
+Current authority (2026-10-04): the user explicitly approved all remaining stages and said to finish all levels, push and stop. Phase 3 M4 and M5, full campaign integration/review, commit/push and the normal GitHub Pages deployment are authorized. Complete the approved five-level campaign sequentially; no further milestone/publication permission is needed. Director owns orchestration and single-writer delegation. Earlier M3-only/acceptance/publication gates below are historical and superseded for this request.
+
+
 Current authority (2026-10-01): the user explicitly said **“Yes begin M3.”** Phase 3 M3 implementation and validation are authorized through PUBLIC ROUTE READY, with Omega contained. M3 is now implemented and verified locally: 48/48 tests and independent review passed; see BUILD_STATUS and the M3 director/review handoffs for actual evidence and limitations. Stopped for user M3 acceptance. M4/M5 remain unauthorized; push/deploy require explicit publication approval after M3 acceptance. Director owns orchestration and single-writer delegation. Earlier audit/authority notes below are historical.
 
 Historical pickup authority (2026-10-01, before M3 authorization): M2 was accepted by the user and published as `209ab59`; `939066d` records that approval. The current request authorizes a director-led pickup audit and M3 scope determination only. **M3–M5 remain unauthorized.** Ask for explicit M3 implementation/validation authorization; then stop at verified M3 for user acceptance. Push/deploy additionally require explicit publication approval after M3 acceptance. See [M3 scope handoff](handoffs/PHASE_3_M3_DIRECTOR.md). All prior authority notes below are historical.

@@ -5,10 +5,13 @@ import { DeliveryMission, SERVICE_CORRIDOR, type DeliveryEvent } from './bastrop
 import { DELIVERY_ASSETS, DELIVERY_ASSET_METADATA } from './bastrop37/delivery-content';
 import { BETRAYAL_ASSETS, BETRAYAL_ASSET_METADATA } from './bastrop37/betrayal-content';
 import { PUBLIC_ACCESS_ASSETS, PUBLIC_ACCESS_ASSET_METADATA } from './bastrop37/public-access-content';
+import { LOCKDOWN_ASSETS, LOCKDOWN_ASSET_METADATA, LOCKDOWN_PLACEMENT_GUIDES } from './bastrop37/lockdown-content';
 import { BetrayalMission, SCAN_CORRIDOR, LOCK_CORRIDOR, type BetrayalEvent } from './bastrop37/betrayal';
 import { PublicAccessMission, type PublicAccessEvent } from './bastrop37/public-access';
+import { LockdownMission, BUS_WORLD_X, BUS_PROGRESS_GOAL, INTERCEPT_MIN_X, INTERCEPT_MAX_X, RAMP_MIN_X, RAMP_MAX_X, type LockdownEvent } from './bastrop37/lockdown';
+import { CONTROLLER_X } from './bastrop37/controller';
 import { OverdriveMeter } from './bastrop37/overdrive';
-import { betrayalSave, clearDeliverySave, deliverySave, publicAccessSave, readDeliverySave, writeDeliverySave, type BetrayalCheckpoint, type CampaignSave, type DeliveryCheckpoint, type PublicAccessCheckpoint } from './bastrop37/save';
+import { betrayalSave, clearDeliverySave, deliverySave, publicAccessSave, lockdownSave, readDeliverySave, writeDeliverySave, type BetrayalCheckpoint, type CampaignSave, type DeliveryCheckpoint, type PublicAccessCheckpoint, type LockdownCheckpoint } from './bastrop37/save';
 import type { HudView } from './bastrop37/contracts';
 type DronePhase = 'approach' | 'flank' | 'signal' | 'lunge' | 'recover';
 type DroneOutcome = 'none' | 'slice' | 'boost' | 'jump' | 'miss';
@@ -63,17 +66,22 @@ export function mountGame() {
   const left = 128, right = 512;
   const bounds: Record<string, {x:number;y:number;w:number;h:number}> = {};
   const horizon = () => H * (W < H ? .32 : .42) + (reduced ? 0 : cameraPitch);
+  function lockdownCurve(z: number): number {
+    if (!(mission instanceof LockdownMission)) return 0;
+    const t = clamp(z / 780, 0, 1);
+    return (W < H ? 100 : 180) * t * (2 - t);
+  }
   function project(wx:number, z:number) {
     // Close chase: enlarge the whole road-space view, tracking the rider laterally.
     const scale = 65 / (65 + Math.max(-53,z));
-    const zoom = (W < H ? 3 : 1.6) * (1 - (reduced ? 0 : turboView * .07));
+    const zoom = (W < H ? mission instanceof LockdownMission ? 2 : 3 : 1.6) * (1 - (reduced ? 0 : turboView * .07));
     const unit = Math.min(W * .9, 520) / (right-left) * zoom;
-    return {x:W/2+(wx-cameraX)*unit*scale, y:horizon()+(H*roadBaseRatio-horizon())*scale, scale:unit*scale};
+    return {x:W/2+(wx-cameraX)*unit*scale+lockdownCurve(z), y:horizon()+(H*roadBaseRatio-horizon())*scale, scale:unit*scale};
   }
   type GameState = HudView['state'];
   let state: GameState = 'loading';
-  let mission: DeliveryMission | BetrayalMission | PublicAccessMission = new DeliveryMission();
-  let checkpoint: DeliveryCheckpoint | BetrayalCheckpoint | PublicAccessCheckpoint | null = null;
+  let mission: DeliveryMission | BetrayalMission | PublicAccessMission | LockdownMission = new DeliveryMission();
+  let checkpoint: DeliveryCheckpoint | BetrayalCheckpoint | PublicAccessCheckpoint | LockdownCheckpoint | null = null;
   let sessionSave: CampaignSave | null = null;
   const initialSave = readDeliverySave();
   let hasSave = initialSave.kind === 'valid';
@@ -84,6 +92,8 @@ export function mountGame() {
   let loadingBetrayal = false;
   let publicAccessAssetsReady = false;
   let loadingPublicAccess = false;
+  let lockdownAssetsReady = false;
+  let loadingLockdown = false;
   let ignoreStoredSave = false;
   let serviceLoops = 0;
   let fixtureDroneSpawned = false;
@@ -94,6 +104,7 @@ export function mountGame() {
   let scanPulse = 0;
   const isBetrayal = () => mission instanceof BetrayalMission;
   const isPublicAccess = () => mission instanceof PublicAccessMission;
+  const isLockdown = () => mission instanceof LockdownMission;
   let x = 320, vx = 0, angle = 0;
   let charge = 1, boost = 0, speed = 260, distance = 0, calls = 0, elapsed = 0;
   let sliding = false, spawn = 0, offset = 0, last = 0, feedbackTime = 0;
@@ -202,6 +213,7 @@ export function mountGame() {
     roadBaseRatio = mission.mode === 'story' ? storyBaseRatio() : .84;
   }
   function spawnActionTraffic() {
+    if (isLockdown()) { traffic = []; return; }
     if (isBetrayal()) {
       traffic = mission.beat === 'L2.02'
         ? [makeVehicle(0, 520, 'sedan'), makeVehicle(4, 760, 'coupe')]
@@ -217,11 +229,13 @@ export function mountGame() {
       : [makeVehicle(0, 640, 'sedan')];
     traffic.forEach(car => { car.changed = true; car.changeZ = -1; });
   }
-  function saveCheckpoint(next: DeliveryCheckpoint | BetrayalCheckpoint | PublicAccessCheckpoint) {
+  function saveCheckpoint(next: DeliveryCheckpoint | BetrayalCheckpoint | PublicAccessCheckpoint | LockdownCheckpoint) {
     // Local mechanics fixtures must never create either durable or resumable campaign progress.
     if (mechanicsFixture || m2Fixture) return;
     checkpoint = next;
-    sessionSave = isPublicAccess() && next.startsWith('CP-L3-')
+    sessionSave = isLockdown() && next.startsWith('CP-L4-')
+      ? lockdownSave(next as LockdownCheckpoint, mission.log, (mission as LockdownMission).records, (mission as LockdownMission).history)
+      : isPublicAccess() && next.startsWith('CP-L3-')
       ? publicAccessSave(next as PublicAccessCheckpoint, mission.log, (mission as PublicAccessMission).records, (mission as PublicAccessMission).history)
       : isBetrayal() && next.startsWith('CP-L2-')
       ? betrayalSave(next as BetrayalCheckpoint, mission.log, (mission as BetrayalMission).records, (mission as BetrayalMission).history)
@@ -261,7 +275,9 @@ export function mountGame() {
     syncAudio(); setMessage('MODULE SECURED · MAYOR VLAD INBOUND', 3); canvas.focus({ preventScroll: true });
   }
   function restoreCheckpoint(save: CampaignSave) {
-    mission = save.checkpoint.startsWith('CP-L3-')
+    mission = save.checkpoint.startsWith('CP-L4-')
+      ? new LockdownMission(save.checkpoint as LockdownCheckpoint, save.log, 'records' in save ? save.records : [], 'history' in save ? save.history : [])
+      : save.checkpoint.startsWith('CP-L3-')
       ? new PublicAccessMission(save.checkpoint as PublicAccessCheckpoint, save.log, 'records' in save ? save.records : [], 'history' in save ? save.history : [])
       : save.checkpoint.startsWith('CP-L2-')
       ? new BetrayalMission(save.checkpoint as BetrayalCheckpoint, save.log, 'records' in save ? save.records : [], 'history' in save ? save.history : [])
@@ -272,7 +288,7 @@ export function mountGame() {
     if (mission.mode === 'action') spawnActionTraffic();
     if (isBetrayal()) { carrierActive = save.checkpoint !== 'CP-L2-SCAN'; carrierZ = save.checkpoint === 'CP-L2-SCAN' ? 720 : save.checkpoint === 'CP-L2-COMPLETE' ? 1600 : 350; }
     state = save.checkpoint.endsWith('COMPLETE') ? 'complete' : 'playing';
-    statusMessage = state === 'complete' ? (isPublicAccess() ? 'Public route ready. Level 3 complete.' : isBetrayal() ? 'Recovery lock broken. Level 2 complete.' : 'Delivery approach reached. Level 1 complete.') : 'Safe checkpoint restored.';
+    statusMessage = state === 'complete' ? (isLockdown() ? 'Evacuation route cleared. Level 4 complete.' : isPublicAccess() ? 'Public route ready. Level 3 complete.' : isBetrayal() ? 'Recovery lock broken. Level 2 complete.' : 'Delivery approach reached. Level 1 complete.') : 'Safe checkpoint restored.';
     syncAudio(); canvas.focus({ preventScroll: true });
   }
   function startGame() {
@@ -302,6 +318,17 @@ export function mountGame() {
     } catch { return false; }
     finally { loadingPublicAccess = false; }
   }
+  async function loadLockdownAssets(): Promise<boolean> {
+    if (lockdownAssetsReady) return true;
+    if (loadingLockdown) return false;
+    loadingLockdown = true;
+    try {
+      await Promise.all(Object.entries(LOCKDOWN_ASSETS).map(([name, url]) => loadImage(name === 'architecture' ? 'lockdownArchitecture' : name, url)));
+      lockdownAssetsReady = true;
+      return true;
+    } catch { return false; }
+    finally { loadingLockdown = false; }
+  }
   function enterBetrayal(previousLog: typeof mission.log) {
     mission = new BetrayalMission(undefined, previousLog, [], [...previousLog]);
     resetPhysical(); checkpoint = 'CP-L1-COMPLETE';
@@ -317,10 +344,22 @@ export function mountGame() {
     setMessage('OLD PUBLIC RELAY · OMEGA CONTAINED', 3);
     syncAudio(); canvas.focus({ preventScroll: true });
   }
+  function enterLockdown(previous: PublicAccessMission) {
+    mission = new LockdownMission(undefined, previous.log, previous.records, previous.history);
+    resetPhysical(); checkpoint = 'CP-L3-COMPLETE';
+    state = 'playing'; statusMessage = '';
+    setMessage('RESERVOIR ROAD · SPILLWAY RECORD AHEAD', 3);
+    syncAudio(); canvas.focus({ preventScroll: true });
+  }
   function continueGame() {
     if (assetLoadFailed) { state = 'error'; statusMessage = 'A required Delivery asset is missing. Retry loading before continuing.'; return; }
     if (state === 'ready') {
       if (sessionSave) {
+        if (sessionSave.checkpoint.startsWith('CP-L4-') && !lockdownAssetsReady) {
+          state = 'loading'; statusMessage = 'Loading Lockdown art.';
+          void loadLockdownAssets().then(ok => { if (ok) restoreCheckpoint(sessionSave!); else { state = 'error'; statusMessage = 'Lockdown art could not load. Retry Load or Menu.'; } });
+          return;
+        }
         if (sessionSave.checkpoint.startsWith('CP-L3-') && !publicAccessAssetsReady) {
           state = 'loading'; statusMessage = 'Loading Public Access art.';
           void loadPublicAccessAssets().then(ok => { if (ok) restoreCheckpoint(sessionSave!); else { state = 'error'; statusMessage = 'Public Access art could not load. Retry Load or Menu.'; } });
@@ -335,6 +374,11 @@ export function mountGame() {
       }
       const found = ignoreStoredSave ? { kind: 'none' as const } : readDeliverySave();
       if (found.kind === 'valid') {
+        if (found.save.checkpoint.startsWith('CP-L4-') && !lockdownAssetsReady) {
+          state = 'loading'; statusMessage = 'Loading Lockdown art.';
+          void loadLockdownAssets().then(ok => { if (ok) { restoreCheckpoint(found.save); hasSave = true; saveStatus = 'saved'; } else { state = 'error'; statusMessage = 'Lockdown art could not load. Retry Load or Menu.'; } });
+          return;
+        }
         if (found.save.checkpoint.startsWith('CP-L3-') && !publicAccessAssetsReady) {
           state = 'loading'; statusMessage = 'Loading Public Access art.';
           void loadPublicAccessAssets().then(ok => { if (ok) { restoreCheckpoint(found.save); hasSave = true; saveStatus = 'saved'; } else { state = 'error'; statusMessage = 'Public Access art could not load. Retry Load or Menu.'; } });
@@ -368,8 +412,17 @@ export function mountGame() {
       });
       return;
     }
+    if (state === 'complete' && checkpoint === 'CP-L3-COMPLETE' && mission instanceof PublicAccessMission) {
+      state = 'loading'; statusMessage = 'Loading reservoir road.'; clearInput();
+      const previous = mission;
+      void loadLockdownAssets().then(ok => {
+        if (ok) enterLockdown(previous);
+        else { state = 'error'; statusMessage = 'Lockdown art could not load. Public route completion is saved. Retry Load or Menu.'; syncAudio(); }
+      });
+      return;
+    }
     if (state === 'complete' || state === 'error') {
-      state = 'error'; statusMessage = isPublicAccess() ? 'Public route ready. The reservoir chapter is not in this milestone yet.' : 'Retry loading the next chapter.';
+      state = 'error'; statusMessage = isLockdown() ? 'Evacuation route cleared. The civic chapter is not in this milestone yet.' : 'Retry loading the next chapter.';
       syncAudio();
     }
   }
@@ -399,11 +452,15 @@ export function mountGame() {
         state = 'complete'; statusMessage = 'Recovery lock broken. Level 2 complete.';
         continueGame(); return;
       }
+      if (checkpoint === 'CP-L3-COMPLETE' && mission instanceof PublicAccessMission) {
+        state = 'complete'; statusMessage = 'Public route ready. Level 3 complete.';
+        continueGame(); return;
+      }
       if (sessionSave?.checkpoint.startsWith('CP-L2-')) {
         state = 'ready'; continueGame(); return;
       }
       const prior = sessionSave ?? (ignoreStoredSave ? null : readDeliverySave().kind === 'valid' ? (readDeliverySave() as {kind:'valid';save:CampaignSave}).save : null);
-      if (prior?.checkpoint.startsWith('CP-L3-')) { state = 'ready'; continueGame(); return; }
+      if (prior?.checkpoint.startsWith('CP-L3-') || prior?.checkpoint.startsWith('CP-L4-')) { state = 'ready'; continueGame(); return; }
     }
     if (state !== 'crashed' && state !== 'paused') return;
     if (sessionSave) restoreCheckpoint(sessionSave);
@@ -483,10 +540,60 @@ export function mountGame() {
       }
     }
   }
+  function onLockdownEvents(events: LockdownEvent[]) {
+    for (const event of events) {
+      if (event === 'checkpoint-controller') {
+        saveCheckpoint('CP-L4-CONTROLLER'); setMessage('BLADES J / CTRL · DISABLE THE MARKED CONTROLLER', 4);
+      }
+      if (event === 'controller-hit') { sound('slice'); setMessage('CONTROLLER DISABLED · BARRIER RETRACTING', 3); }
+      if (event === 'controller-missed') setMessage('CONTROLLER MISSED · RIGHT SERVICE LOOP', 4);
+      if (event === 'loop-return') setMessage('MARKED CONTROLLER AHEAD · J / CTRL', 3);
+      if (event === 'barrier-open') setMessage('BARRIER OPEN · BUS ROUTE CLEAR', 3);
+      if (event === 'checkpoint-escort') {
+        saveCheckpoint('CP-L4-ESCORT'); setMessage(saveStatus === 'session' ? 'SESSION ONLY · BUS CONDITION 3 / 3' : 'BUS CONDITION 3 / 3 · STAY NEAR', 4);
+      }
+      if (event === 'escort-telegraph') {
+        const m = mission as LockdownMission;
+        if (!traffic.some(car => car.kind === 'drone')) {
+          const drone = makeVehicle(4, 300, 'drone'); drone.x = 465; drone.phase = 'signal';
+          traffic.push(drone);
+        }
+        sound('warning'); setMessage('DRONE ON BUS · INTERCEPT RIGHT LANE', m.attackPasses === 0 ? 1.6 : 1.2);
+      }
+      if (event === 'escort-retarget') setMessage('DRONE ON JO · EVADE OR CUT', 1.2);
+      if (event === 'escort-strike') { sound('lunge'); setMessage('DRONE STRIKE', .7); }
+      if (event === 'bus-hit') {
+        const m = mission as LockdownMission;
+        burst('impactSparks', BUS_WORLD_X, m.busZ, 18, 55, .5);
+        sound('impact'); setMessage(`BUS HIT · CONDITION ${m.busCondition} / 3`, 2);
+      }
+      if (event === 'bus-lost') {
+        state = 'crashed'; clearInput(); charge = boost = 0;
+        statusMessage = 'EVACUATION ROUTE LOST. Retry from the full-condition escort checkpoint.';
+        syncAudio(); setMessage('EVACUATION ROUTE LOST', 5);
+      }
+      if (event === 'escort-cleared') { (mission as LockdownMission).droneDeparted = true; setMessage('DRONE SLICED · BUS ROUTE CLEAR', 3); }
+      if (event === 'bus-safe') {
+        traffic.filter(car => car.kind === 'drone').forEach(car => {
+          car.disengaging = true; car.retreatDirection = 1; car.side = 1; car.phase = 'recover';
+        });
+        setMessage('BUS SAFE · CIVIC RAMP AHEAD', 4);
+      }
+      if (event === 'ramp-passed') setMessage('CIVIC RAMP REACHED', 3);
+      if (event === 'ramp-missed') setMessage('CIVIC RAMP MISSED · SERVICE LOOP', 4);
+      if (event === 'ramp-loop-return') setMessage('CIVIC RAMP REJOINED', 3);
+      if (event === 'closure') { clearInput(); setMessage('ROAD CLEAR · READ OMEGA', 3); }
+      if (event === 'level-complete') {
+        clearInput(); saveCheckpoint('CP-L4-COMPLETE'); state = 'complete';
+        sound('success'); syncAudio(); setMessage('EVACUATION ROUTE CLEARED', 5);
+      }
+    }
+  }
   function advance() {
     if (state !== 'playing' || (mission.mode !== 'story' && mission.mode !== 'resolve')) return;
     clearInput();
-    if (mission instanceof PublicAccessMission) onPublicAccessEvents(mission.advance());
+    if (mission instanceof LockdownMission) onLockdownEvents(mission.advance());
+    else if (mission instanceof PublicAccessMission) onPublicAccessEvents(mission.advance());
     else if (mission instanceof BetrayalMission) onBetrayalEvents(mission.advance());
     else onMissionEvents(mission.advance());
     if (state === 'playing' && String(mission.mode) === 'action') canvas.focus({ preventScroll: true });
@@ -732,6 +839,45 @@ export function mountGame() {
     }
     if(car.phase==='lunge'&&(car.phaseTime===0||car.z< -70)) finishDrone(car,height>0?'jump':'miss');
   }
+  function updateEscortDrone(car: Car, dt: number, oldX: number, mission: LockdownMission) {
+    if (car.disengaging) { updateDrone(car, dt, oldX); return; }
+    const phase = mission.attackPhase;
+    const oldZ = car.z;
+    if (phase === 'telegraph') {
+      car.phase = 'signal';
+      car.x += (465 - car.x) * (1 - Math.exp(-5 * dt));
+      car.z += (45 - car.z) * (1 - Math.exp(-5 * dt));
+      car.attackX = mission.attackTarget === 'bus' ? BUS_WORLD_X : mission.attackJoX;
+    } else if (phase === 'strike') {
+      car.phase = 'lunge';
+      const fraction = clamp(1 - mission.attackTimer / .65, 0, 1);
+      const targetX = mission.attackTarget === 'bus' ? BUS_WORLD_X : mission.attackJoX;
+      car.x = 465 + (targetX - 465) * fraction;
+      car.z = 45 + ((mission.attackTarget === 'bus' ? mission.busZ : -50) - 45) * fraction;
+      if (blades > .65 && height < 18 && Math.abs(x - car.x) < car.w / 2 + bladeReach(car.x) && oldZ > -48 && car.z < 55) {
+        slices++; splitDrone(car); car.passed = true; car.z = -100;
+        sound('slice'); onLockdownEvents(mission.escortDroneCut()); return;
+      }
+      if (mission.attackTarget === 'jo' && oldZ > -26 && car.z < 26) {
+        if (height >= 28 || boost > 0) { onLockdownEvents(mission.escortDodge()); return; }
+        const steps = Math.max(1, Math.ceil(Math.max(Math.abs(car.z - oldZ), Math.abs(x - oldX)) / 2));
+        for (let i = 0; i <= steps; i++) {
+          const t = i / steps;
+          const z = oldZ + (car.z - oldZ) * t;
+          if (Math.abs(z) < 26 && bodyContact(car, z, oldX + (x - oldX) * t)) { crash(); return; }
+        }
+      }
+    } else if (phase === 'recover' || phase === 'idle') {
+      car.phase = 'recover';
+      car.x += (465 - car.x) * (1 - Math.exp(-4 * dt));
+      car.z += (280 - car.z) * (1 - Math.exp(-3 * dt));
+    }
+    if (phase === 'telegraph' && blades > .65 && height < 18 &&
+      Math.abs(x - car.x) < car.w / 2 + bladeReach(car.x) && oldZ > -48 && car.z < 55) {
+      slices++; splitDrone(car); car.passed = true; car.z = -100;
+      sound('slice'); onLockdownEvents(mission.escortDroneCut());
+    }
+  }
   function update(dt:number) {
     const oldX=x;
     elapsed += dt; feedbackTime -= dt;
@@ -808,7 +954,8 @@ export function mountGame() {
     for(const car of traffic) {
       const oldZ = car.z;
       if(car.kind==='drone') {
-        updateDrone(car,dt,oldX);
+        if (mission instanceof LockdownMission && mission.beat === 'L4.03') updateEscortDrone(car, dt, oldX, mission);
+        else updateDrone(car,dt,oldX);
         if(state==='crashed')break;
         continue;
       }
@@ -861,7 +1008,13 @@ export function mountGame() {
     for(const p of particles) {p.life-=dt;p.x+=p.vx*dt;p.y+=(p.vy+speed*.4)*dt;}
     score=Math.max(score,distance*8+calls*350+slices*1200+droneDodges*700);
     if(state==='playing' && !mechanicsFixture) {
-      if (mission instanceof PublicAccessMission) onPublicAccessEvents(mission.tick(dt, speed*dt, x, height === 0 && jumpWindup === 0, traffic.length === 0));
+      if (mission instanceof LockdownMission) {
+        if (mission.beat === 'L4.02' && mission.mode === 'action')
+          onLockdownEvents(mission.controllerBladeHit(x, height === 0 && jumpWindup === 0, bladeReach(CONTROLLER_X), blades > .65));
+        if (mission.busSafe && !traffic.some(car => car.kind === 'drone')) mission.droneDeparted = true;
+        onLockdownEvents(mission.tick(dt, speed*dt, x, traffic.length === 0));
+      }
+      else if (mission instanceof PublicAccessMission) onPublicAccessEvents(mission.tick(dt, speed*dt, x, height === 0 && jumpWindup === 0, traffic.length === 0));
       else if (mission instanceof BetrayalMission) onBetrayalEvents(mission.tick(dt,speed*dt,x,traffic.length===0 && (mission.beat !== 'L2.03' || carrierZ >= 1500)));
       else onMissionEvents(mission.tick(dt,speed*dt,x,traffic.length===0));
     }
@@ -893,7 +1046,8 @@ export function mountGame() {
   }
   function drawTelegraph(car:Car) {
     if(car.phase!=='signal')return;
-    const from=project(car.x,car.z), target=project(car.attackX??x,0);
+    const lockdown = mission instanceof LockdownMission && mission.beat === 'L4.03' ? mission : null;
+    const from=project(car.x,car.z), target=project(car.attackX??x,lockdown?.attackTarget === 'bus' ? lockdown.busZ : 0);
     const pulse=.55+.45*Math.sin(elapsed*30), alpha=Math.round(70+90*pulse).toString(16).padStart(2,'0');
     c.strokeStyle=`#ff5362${alpha}`; c.lineWidth=2+pulse*2; c.setLineDash([7,6]);
     c.beginPath(); c.moveTo(from.x,from.y-hoverLift(car)*from.scale); c.lineTo(target.x,target.y); c.stroke(); c.setLineDash([]);
@@ -1026,6 +1180,89 @@ export function mountGame() {
     drawRelayImage('relay', corridor.endZ);
     if (mission.inRange && mission.activeLink && mission.activeLink.seconds > 0) drawRelayImage('relayConnecting', corridor.endZ);
   }
+  function drawLockdownAsset(name: keyof typeof LOCKDOWN_ASSETS, wx: number, z: number, worldWidth: number, alpha = 1, shiftX = 0) {
+    if (z > 1500 || z < -90) return;
+    const img = images[name], meta = LOCKDOWN_ASSET_METADATA[name];
+    if (!img) return;
+    const [sx, sy, sw, sh] = meta.displayCrop ?? [0, 0, img.width, img.height];
+    const [ax, ay] = meta.anchor;
+    const p = project(wx + shiftX, z), scale = worldWidth / sw * p.scale;
+    c.save(); c.globalAlpha *= alpha * clamp((z + 90) / 140, 0, 1);
+    c.drawImage(img, sx, sy, sw, sh, p.x - (ax - sx) * scale, p.y - (ay - sy) * scale, sw * scale, sh * scale);
+    c.restore();
+  }
+  function drawLockdownProps() {
+    if (!(mission instanceof LockdownMission)) return;
+    const m = mission;
+    if (m.beat === 'L4.01') {
+      drawLockdownAsset('barrierClosed', 450, 780, 300);
+      drawLockdownAsset('controller', CONTROLLER_X, 520, 38);
+      drawLockdownAsset('controllerActive', CONTROLLER_X, 520, 38);
+      drawLockdownAsset('bus', BUS_WORLD_X, 640, 82);
+      return;
+    }
+    if (m.beat === 'L4.02') {
+      const gate = m.controller;
+      const z = gate.barrierZ, shift = gate.bypassShift;
+      if (gate.state === 'active') drawLockdownAsset('barrierClosed', 450, z, 300, 1, shift);
+      else if (gate.state === 'retracting') {
+        drawLockdownAsset('barrierOpen', 450, z, 300, gate.progress);
+        drawLockdownAsset('barrierClosed', 450, z, 300, 1 - gate.progress, -145 * gate.progress);
+      } else drawLockdownAsset('barrierOpen', 450, z, 300);
+      drawLockdownAsset('controller', CONTROLLER_X, gate.controllerZ, 38, 1, shift);
+      drawLockdownAsset(gate.state === 'active' ? 'controllerActive' : 'controllerDisabled', CONTROLLER_X, gate.controllerZ, 38, 1, shift);
+      drawRouteBand(Math.max(70, gate.controllerZ), gate.loop ? 'RIGHT SERVICE LOOP' : 'BLADE TARGET', 398, 488, '#ffe08d30');
+      drawLockdownAsset('bus', BUS_WORLD_X, z - 140, 82, 1, shift);
+      return;
+    }
+    if (m.barrierExitZ !== null) drawLockdownAsset('barrierOpen', 450, m.barrierExitZ, 300);
+    const busZ = m.mode === 'drain' ? m.drainBusZ : m.busZ;
+    if (m.beat === 'L4.03' || m.mode === 'drain') drawLockdownAsset('bus', BUS_WORLD_X, busZ, 82);
+    if (m.beat === 'L4.03' && m.mode === 'action') {
+      drawRouteBand(760, 'UPHILL CIVIC ROAD', 430, 590, '#9ad9c424');
+      drawRouteBand(265, 'BUS ESCORT', 340, 490, '#53e6ee2d');
+      if (!m.busSafe) drawRouteBand(m.busZ + BUS_PROGRESS_GOAL - m.busProgress, 'BUS SAFETY', 510, 590, '#d4f37d32');
+      if (m.attackPhase === 'telegraph' && m.attackTarget === 'bus') drawRouteBand(190, 'INTERCEPT RIGHT', INTERCEPT_MIN_X, INTERCEPT_MAX_X, '#ff465342');
+      const ramp = m.rampZ();
+      if (ramp !== null) drawRouteBand(ramp, 'CIVIC RAMP', RAMP_MIN_X, RAMP_MAX_X, '#d4f37d32');
+    }
+  }
+  function drawLockdownMidground(envX: number, envY: number, envScale: number) {
+    if (!(mission instanceof LockdownMission)) return;
+    const crop = LOCKDOWN_PLACEMENT_GUIDES.spillwayInnerGateCrop;
+    const bay = LOCKDOWN_PLACEMENT_GUIDES.environmentGateBay;
+    const dx = envX + bay[0][0] * envScale, dy = envY + bay[0][1] * envScale;
+    const dw = (bay[1][0] - bay[0][0]) * envScale, dh = (bay[1][1] - bay[0][1]) * envScale;
+    // The open gate is transparent. Its bay faces the reservoir, never the
+    // distant city skyline painted behind the environment layer.
+    c.save();
+    c.beginPath(); c.rect(dx, dy, dw, dh); c.clip();
+    const reservoir = c.createLinearGradient(dx, dy, dx, dy + dh);
+    reservoir.addColorStop(0, '#112d36');
+    reservoir.addColorStop(.48, '#173c45');
+    reservoir.addColorStop(1, '#587c80');
+    c.fillStyle = reservoir; c.fillRect(dx, dy, dw, dh);
+    c.restore();
+    const orderRead = mission.records.some(record => record.id === 'L4.01-RECORD-01');
+    const gateName = orderRead ? 'spillwayOpen' : 'spillwayClosed';
+    const waterName = orderRead ? 'waterHigh' : 'waterLow';
+    for (const name of [gateName, waterName] as const) {
+      const img = images[name]; if (!img) continue;
+      c.drawImage(img, crop[0], crop[1], crop[2], crop[3], dx, dy, dw, dh);
+    }
+  }
+  function lockdownEnvironmentPlacement() {
+    const img = images.lockdownArchitecture;
+    if (!img) return null;
+    const portrait = W < H;
+    const scale = portrait
+      ? Math.min(Math.max(W / img.width, H * .65 / img.height) * 1.03, (W - 24) / (1450 - 390))
+      : Math.max(W / img.width, H * .65 / img.height) * 1.03;
+    const parallax = -(cameraX - 320) * .035;
+    const x = portrait ? 12 - 390 * scale + parallax : W / 2 - LOCKDOWN_ASSET_METADATA.architecture.anchor[0] * scale + parallax;
+    const y = H * (portrait ? .32 : .42) - LOCKDOWN_ASSET_METADATA.architecture.anchor[1] * scale;
+    return {x, y, scale};
+  }
   function drawCity() {
     c.fillStyle='#08101b';c.fillRect(0,0,W,H);
     const skyline=images.city;
@@ -1034,14 +1271,19 @@ export function mountGame() {
       const skyW=skyline.width*skyScale,skyH=skyline.height*skyScale;
       c.drawImage(skyline,(W-skyW)/2-(cameraX-320)*.02,(H-skyH)/2,skyW,skyH);
     }
-    const img=images[isPublicAccess() ? 'publicAccessArchitecture' : isBetrayal() ? 'betrayalArchitecture' : 'architecture'];
+    const img=images[isLockdown() ? 'lockdownArchitecture' : isPublicAccess() ? 'publicAccessArchitecture' : isBetrayal() ? 'betrayalArchitecture' : 'architecture'];
     if(!img)return;
-    const scale=Math.max(W/img.width,H*.65/img.height)*1.03;
+    const lockdownPlacement = isLockdown() ? lockdownEnvironmentPlacement() : null;
+    const scale=lockdownPlacement?.scale ?? Math.max(W/img.width,H*.65/img.height)*1.03;
     const dw=img.width*scale,dh=img.height*scale;
     const parallax=-(cameraX-320)*.035;
-    const anchorY=isPublicAccess() ? PUBLIC_ACCESS_ASSET_METADATA.architecture.anchor[1]
+    const anchorY=isLockdown() ? LOCKDOWN_ASSET_METADATA.architecture.anchor[1]
+      : isPublicAccess() ? PUBLIC_ACCESS_ASSET_METADATA.architecture.anchor[1]
       : isBetrayal() ? BETRAYAL_ASSET_METADATA.architecture.anchor[1] : DELIVERY_ASSET_METADATA.architecture.anchor[1];
-    c.drawImage(img,(W-dw)/2+parallax,H*(W<H?.32:.42)-anchorY*scale,dw,dh);
+    const envX=lockdownPlacement?.x ?? (W-dw)/2+parallax;
+    const envY=lockdownPlacement?.y ?? H*(W<H?.32:.42)-anchorY*scale;
+    c.drawImage(img,envX,envY,dw,dh);
+    if (isLockdown()) drawLockdownMidground(envX, envY, scale);
     if (isBetrayal() && carrierActive && images.intakeScan) {
       c.save(); c.globalAlpha = .38 + .08 * Math.sin(elapsed * 7);
       c.drawImage(images.intakeScan,(W-dw)/2+parallax,H*(W<H?.32:.42)-anchorY*scale,dw,dh);
@@ -1056,7 +1298,7 @@ export function mountGame() {
     const img=images.road;
     if(!img)return;
     const hy=horizon(),base=H*roadBaseRatio;
-    const zoom=(W<H?3:1.6)*(1-(reduced?0:turboView*.07));
+    const zoom=(W<H ? mission instanceof LockdownMission ? 2 : 3 : 1.6)*(1-(reduced?0:turboView*.07));
     const unit=Math.min(W*.9,520)/(right-left)*zoom;
     // Warp the orthographic road texture one horizontal slice at a time. Its
     // baked five-lane markings now move with the asphalt as a single layer.
@@ -1075,6 +1317,70 @@ export function mountGame() {
     roadShade.addColorStop(0,'#02061144');roadShade.addColorStop(.24,'#02061108');roadShade.addColorStop(1,'#01040a24');
     c.fillStyle=roadShade;c.fillRect(0,hy,W,H-hy);
   }
+  function drawLockdownBranch() {
+    if (!(mission instanceof LockdownMission)) return;
+    const img = images.road, env = lockdownEnvironmentPlacement();
+    if (!img || !env) return;
+    const floor = LOCKDOWN_PLACEMENT_GUIDES.environmentPortalFloor;
+    const portalL = {x: env.x + floor[0][0] * env.scale, y: env.y + floor[0][1] * env.scale};
+    const portalR = {x: env.x + floor[1][0] * env.scale, y: env.y + floor[1][1] * env.scale};
+    const farL = project(180, 780), farR = project(760, 780);
+    const middleL = project(180, 260), middleR = project(760, 260);
+    const nearL = project(180, 0), nearR = project(760, 0);
+    const extend = (near: typeof nearL, far: typeof farL) =>
+      near.x + (near.x - far.x) * (H - near.y) / Math.max(1, near.y - far.y);
+    const bottomL = extend(nearL, middleL), bottomR = extend(nearR, middleR);
+    // A short textured apron joins the projected shared lane to the approved
+    // right portal floor. Its floor is behind the road and all road actors.
+    c.save();
+    c.beginPath();
+    c.moveTo(farL.x, farL.y); c.lineTo(farR.x, farR.y);
+    c.lineTo(portalR.x, portalR.y); c.lineTo(portalL.x, portalL.y);
+    c.closePath(); c.clip();
+    const apronX = Math.min(farL.x, portalL.x), apronY = Math.min(farL.y, portalL.y);
+    const apronW = Math.max(farR.x, portalR.x) - apronX;
+    const apronH = Math.max(farR.y, portalR.y) - apronY + 12;
+    c.globalAlpha = .9;
+    c.drawImage(img, img.width * .19, 0, img.width * .62, img.height,
+      apronX, apronY, apronW, apronH);
+    c.fillStyle = '#19262a52'; c.fillRect(apronX, apronY, apronW, apronH);
+    c.restore();
+    const leftEdge = [farL, middleL, nearL, {x: bottomL, y: H}];
+    const rightEdge = [farR, middleR, nearR, {x: bottomR, y: H}];
+    c.save();
+    c.beginPath();
+    leftEdge.forEach((point, index) => index ? c.lineTo(point.x, point.y) : c.moveTo(point.x, point.y));
+    [...rightEdge].reverse().forEach(point => c.lineTo(point.x, point.y));
+    c.closePath(); c.clip();
+    const edgeAt = (edge: typeof leftEdge, y: number) => {
+      for (let i = 1; i < edge.length; i++) {
+        if (y <= edge[i].y) {
+          const t = clamp((y - edge[i - 1].y) / Math.max(1, edge[i].y - edge[i - 1].y), 0, 1);
+          return edge[i - 1].x + (edge[i].x - edge[i - 1].x) * t;
+        }
+      }
+      return edge[edge.length - 1].x;
+    };
+    for (let y = Math.max(0, Math.ceil(farL.y)); y < H; y++) {
+      const xL = edgeAt(leftEdge, y), xR = edgeAt(rightEdge, y);
+      const sy = mirroredRow(offset * 1.35 + (H - y) * 2.15, img.height);
+      c.globalAlpha = clamp((y - farL.y) / 55, .45, 1);
+      c.drawImage(img, img.width * .08, sy, img.width * .84, Math.min(2, img.height - sy),
+        xL, y, xR - xL, 2);
+    }
+    c.globalAlpha = 1;
+    const shade = c.createLinearGradient(0, farL.y, 0, H);
+    shade.addColorStop(0, '#0711145c'); shade.addColorStop(1, '#07111414');
+    c.fillStyle = shade; c.fillRect(0, farL.y, W, H - farL.y);
+    c.restore();
+    c.save();
+    c.strokeStyle = '#bac3bdc9'; c.lineWidth = Math.max(1.5, W / 750);
+    c.beginPath(); c.moveTo(portalL.x, portalL.y); c.lineTo(farL.x, farL.y);
+    c.moveTo(farR.x, farR.y); c.lineTo(portalR.x, portalR.y);
+    c.moveTo(farR.x, farR.y);
+    for (const point of rightEdge.slice(1)) c.lineTo(point.x, point.y);
+    c.stroke(); c.restore();
+  }
   function drawVignette() {
     const vignette=c.createRadialGradient(W/2,H*.58,H*.08,W/2,H*.56,Math.max(W,H)*.72);
     vignette.addColorStop(.45,'#00000000');vignette.addColorStop(1,'#02061172');
@@ -1083,31 +1389,46 @@ export function mountGame() {
   function render() {
     const betrayal = mission instanceof BetrayalMission ? mission : null;
     const publicAccess = mission instanceof PublicAccessMission ? mission : null;
+    const lockdown = mission instanceof LockdownMission ? mission : null;
     const view: HudView = {
       state, readyToStart: state !== 'loading', mode: mission.mode, beatId: mission.beat,
-      chapterId: publicAccess ? 'L3' : betrayal ? 'L2' : 'L1', chapterLabel: publicAccess ? 'PUBLIC ACCESS' : betrayal ? 'BETRAYAL' : 'DELIVERY',
-      completionTitle: publicAccess ? 'PUBLIC ROUTE READY' : betrayal ? 'RECOVERY LOCK BROKEN' : 'DELIVERY APPROACH REACHED',
-      continueLabel: publicAccess ? 'TAKE THE RESERVOIR ROAD' : betrayal ? 'RIDE TO THE RELAY' : 'CONTINUE TO INTAKE',
-      completionSaveLabel: publicAccess ? 'SAVED / PUBLIC ROUTE READY' : betrayal ? 'SAVED / RECOVERY LOCK BROKEN' : 'SAVED / DELIVERY APPROACH',
-      retryLabel: state === 'error' && (checkpoint === 'CP-L1-COMPLETE' || checkpoint === 'CP-L2-COMPLETE' || checkpoint?.startsWith('CP-L3-')) ? 'RETRY LOAD' : 'RETRY CHECKPOINT',
+      chapterId: lockdown ? 'L4' : publicAccess ? 'L3' : betrayal ? 'L2' : 'L1', chapterLabel: lockdown ? 'LOCKDOWN' : publicAccess ? 'PUBLIC ACCESS' : betrayal ? 'BETRAYAL' : 'DELIVERY',
+      completionTitle: lockdown ? 'EVACUATION ROUTE CLEARED' : publicAccess ? 'PUBLIC ROUTE READY' : betrayal ? 'RECOVERY LOCK BROKEN' : 'DELIVERY APPROACH REACHED',
+      continueLabel: lockdown ? 'ENTER THE CIVIC DISTRICT' : publicAccess ? 'TAKE THE RESERVOIR ROAD' : betrayal ? 'RIDE TO THE RELAY' : 'CONTINUE TO INTAKE',
+      completionSaveLabel: lockdown ? 'SAVED / EVACUATION ROUTE CLEARED' : publicAccess ? 'SAVED / PUBLIC ROUTE READY' : betrayal ? 'SAVED / RECOVERY LOCK BROKEN' : 'SAVED / DELIVERY APPROACH',
+      retryLabel: state === 'error' && (checkpoint === 'CP-L1-COMPLETE' || checkpoint === 'CP-L2-COMPLETE' || checkpoint?.startsWith('CP-L3-') || checkpoint?.startsWith('CP-L4-')) ? 'RETRY LOAD' : 'RETRY CHECKPOINT',
       objective: mission.objective, routeCue: mission.routeCue,
       speed: Math.round(speed), energy: charge,
       turbo: mission.mode !== 'action' ? 'unavailable' : boost > 0 && overdrive.active === 0 ? 'active' : charge >= .4 ? 'ready' : 'charging',
       dialogue: mission.dialogue, dialogueIndex: mission.dialogueIndex,
       dialogueCount: mission.dialogueCount, log: mission.log,
-      record: betrayal?.record ?? null, recordIndex: betrayal?.recordIndex ?? (publicAccess ? publicAccess.records.length : 0), recordCount: betrayal ? 2 : publicAccess ? publicAccess.records.length : 0,
-      records: betrayal?.records ?? publicAccess?.records, history: betrayal?.history ?? publicAccess?.history,
+      record: lockdown?.record ?? betrayal?.record ?? null, recordIndex: lockdown ? lockdown.records.length : betrayal?.recordIndex ?? (publicAccess ? publicAccess.records.length : 0), recordCount: lockdown ? 3 : betrayal ? 2 : publicAccess ? publicAccess.records.length : 0,
+      records: lockdown?.records ?? betrayal?.records ?? publicAccess?.records, history: lockdown?.history ?? betrayal?.history ?? publicAccess?.history,
       abilities: {
         blades: { state: mission.mode === 'action' ? blades > .65 ? 'active' : 'ready' : 'unavailable', binding: 'J / CTRL' },
         jump: { state: mission.mode !== 'action' ? 'unavailable' : height > 0 ? 'active' : jumpCooldown > 0 ? 'cooldown' : 'ready', binding: 'K / ALT', cooldown: jumpCooldown },
       },
       overdrive: betrayal ? { value: overdrive.value, ready: overdrive.ready, active: overdrive.active > 0 } : undefined,
-      missionMeter: publicAccess?.relay && publicAccess.mode === 'action' && (publicAccess.relay === 'A' || publicAccess.droneCleared) ? {
+      missionMeter: lockdown?.beat === 'L4.02' && lockdown.mode === 'action' ? {
+        label: 'BUS ROUTE CONTROLLER', value: lockdown.controller.progress,
+        detail: lockdown.controller.state === 'retracting' ? 'BARRIER RETRACTING' : 'BLADE THE MARKED CONTROLLER · J / CTRL',
+      } : lockdown?.beat === 'L4.03' && lockdown.mode === 'action' ? {
+        label: 'BUS TO SAFETY', value: lockdown.busProgress / BUS_PROGRESS_GOAL,
+        detail: lockdown.busSafe ? 'BUS SAFE · REACH THE RAMP' : lockdown.escortInRange ? 'IN RANGE · PROTECT THE BUS' : 'OUT OF RANGE · RETURN TO BUS',
+      } : publicAccess?.relay && publicAccess.mode === 'action' && (publicAccess.relay === 'A' || publicAccess.droneCleared) ? {
         label: `RELAY ${publicAccess.relay} CONNECTION`, value: publicAccess.activeLink?.progress ?? 0,
         detail: publicAccess.connectionState === 'linking' ? 'LINKING · STAY GROUNDED' : publicAccess.connectionState === 'in-range' ? 'IN RANGE · LAND TO LINK' : 'OUT OF RANGE · FOLLOW THE CORRIDOR',
       } : betrayal?.beat === 'L2.03' && !betrayal.lockBroken ? { label: 'RECOVERY LOCK', value: Math.min(1, betrayal.lockOutside / 1.5), detail: 'STEER OUTSIDE · HOLD 1.5S' } : undefined,
       connection: publicAccess?.relay && publicAccess.mode === 'action' && (publicAccess.relay === 'A' || publicAccess.droneCleared) ? {
         relay: publicAccess.relay, state: publicAccess.connectionState, progress: publicAccess.activeLink?.progress ?? 0,
+      } : undefined,
+      controller: lockdown && (lockdown.beat === 'L4.02' || lockdown.beat === 'L4.03') ? {
+        state: lockdown.controller.state, progress: lockdown.controller.progress,
+      } : undefined,
+      escort: lockdown && (lockdown.beat === 'L4.03' || lockdown.beat === 'L4.04') ? {
+        condition: lockdown.busCondition, inRange: lockdown.escortInRange, intercept: lockdown.intercept,
+        busSafe: lockdown.busSafe, busProgress: lockdown.busProgress / BUS_PROGRESS_GOAL,
+        rampPassed: lockdown.rampPassed, attackPhase: lockdown.attackPhase,
       } : undefined,
       hasSave, saveStatus, message: state === 'playing' ? feedbackText : statusMessage,
     };
@@ -1118,8 +1439,9 @@ export function mountGame() {
     c.imageSmoothingEnabled=true;
     drawCity();
     drawRoad();
+    drawLockdownBranch();
     drawVignette();
-    if (publicAccess) drawPublicAccessProps(); else if (betrayal) drawBetrayalProps(); else drawDeliveryProps();
+    if (lockdown) drawLockdownProps(); else if (publicAccess) drawPublicAccessProps(); else if (betrayal) drawBetrayalProps(); else drawDeliveryProps();
     for(const car of traffic) if(car.kind==='drone') drawTelegraph(car);
     for(const car of traffic) if(car.kind==='drone'&&car.phase!=='lunge') {
       const fade = car.disengaging ? car.retreatDirection === -1 ? clamp((car.z + 65) / 53, 0, 1) : clamp((1500 - car.z) / 400, 0, 1) : 1;
@@ -1154,14 +1476,28 @@ export function mountGame() {
     if(!reduced&&boost>0){c.strokeStyle='#ffe57b55';for(let i=0;i<8;i++){const px=(i*137)%W;c.beginPath();c.moveTo(px,H);c.lineTo(W/2+(px-W/2)*.8,H*.8);c.stroke();}}
     // Small observable state is useful for regression tests and tuning controls.
     const drones=activeDrones(),drone=activeDrone();canvas.dataset.audio=audio?'ready':'locked';canvas.dataset.muted=String(muted);canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.dronePhases=drones.map(item=>item.phase).join(',');canvas.dataset.droneCount=String(drones.length);canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.dronePasses=String(drone?.attackPasses||0);canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.mode=mission.mode;canvas.dataset.beat=mission.beat;canvas.dataset.dialogueId=mission.dialogue?.id??'';canvas.dataset.dialogueIndex=String(mission.dialogueIndex);canvas.dataset.route=mission.route.toFixed(1);canvas.dataset.visualDistance=distance.toFixed(1);canvas.dataset.trafficCount=String(traffic.length);canvas.dataset.traffic=JSON.stringify(traffic.map(car=>({id:car.id,x:+car.x.toFixed(1),z:+car.z.toFixed(1),kind:car.kind,lane:car.lane})));canvas.dataset.checkpoint=checkpoint??'';canvas.dataset.gatePassed=String(mission instanceof DeliveryMission && mission.gates.serviceGate);canvas.dataset.approachPassed=String(mission instanceof DeliveryMission && mission.gates.approach);canvas.dataset.serviceLoops=String(serviceLoops);canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.score=String(Math.floor(score));
-    canvas.dataset.chapter=publicAccess?'L3':betrayal?'L2':'L1';canvas.dataset.recordId=betrayal?.record?.id??'';canvas.dataset.recordIndex=String(betrayal?.recordIndex??publicAccess?.records.length??0);canvas.dataset.recordCount=String(betrayal?.records.length??publicAccess?.records.length??0);canvas.dataset.betrayalKnown=String(betrayal?.betrayalKnown??(publicAccess ? true : false));canvas.dataset.lockOutside=(betrayal?.lockOutside??0).toFixed(2);canvas.dataset.lockBroken=String(betrayal?.lockBroken??false);canvas.dataset.carrierZ=carrierZ.toFixed(1);canvas.dataset.carrierActive=String(carrierActive);canvas.dataset.overdrive=String(overdrive.value);canvas.dataset.overdriveActive=String(overdrive.active>0);
+    canvas.dataset.chapter=lockdown?'L4':publicAccess?'L3':betrayal?'L2':'L1';canvas.dataset.recordId=lockdown?.record?.id??betrayal?.record?.id??'';canvas.dataset.recordIndex=String(lockdown?.records.length??betrayal?.recordIndex??publicAccess?.records.length??0);canvas.dataset.recordCount=String(lockdown?.records.length??betrayal?.records.length??publicAccess?.records.length??0);canvas.dataset.betrayalKnown=String(betrayal?.betrayalKnown??(publicAccess || lockdown ? true : false));canvas.dataset.lockOutside=(betrayal?.lockOutside??0).toFixed(2);canvas.dataset.lockBroken=String(betrayal?.lockBroken??false);canvas.dataset.carrierZ=carrierZ.toFixed(1);canvas.dataset.carrierActive=String(carrierActive);canvas.dataset.overdrive=String(overdrive.value);canvas.dataset.overdriveActive=String(overdrive.active>0);
     const corridor = publicAccess?.corridor();
-    canvas.dataset.relayA = String(publicAccess?.relayA ?? false); canvas.dataset.relayB = String(publicAccess?.relayB ?? false);
+    canvas.dataset.relayA = String(publicAccess?.relayA ?? Boolean(lockdown)); canvas.dataset.relayB = String(publicAccess?.relayB ?? Boolean(lockdown));
     canvas.dataset.relayTarget = publicAccess?.relay ?? 'none'; canvas.dataset.linkState = publicAccess?.connectionState ?? 'none';
     canvas.dataset.linkProgress = (publicAccess?.activeLink?.progress ?? 0).toFixed(3); canvas.dataset.linkSeconds = (publicAccess?.activeLink?.seconds ?? 0).toFixed(3);
     canvas.dataset.relayLoopsA = String(publicAccess?.loopsA ?? 0); canvas.dataset.relayLoopsB = String(publicAccess?.loopsB ?? 0);
     canvas.dataset.corridorStartZ = corridor?.startZ.toFixed(1) ?? 'none'; canvas.dataset.corridorEndZ = corridor?.endZ.toFixed(1) ?? 'none';
     canvas.dataset.relayDroneCleared = String(publicAccess?.droneCleared ?? false);
+    canvas.dataset.controllerState = lockdown?.controller.state ?? 'none';
+    canvas.dataset.barrierProgress = (lockdown?.controller.progress ?? 0).toFixed(3);
+    canvas.dataset.controllerLoops = String(lockdown?.controller.loops ?? 0);
+    canvas.dataset.busCondition = String(lockdown?.busCondition ?? 0);
+    canvas.dataset.busProgress = (lockdown?.busProgress ?? 0).toFixed(1);
+    canvas.dataset.busZ = (lockdown?.mode === 'drain' ? lockdown.drainBusZ : lockdown?.busZ ?? 0).toFixed(1);
+    canvas.dataset.escortInRange = String(lockdown?.escortInRange ?? false);
+    canvas.dataset.interceptLane = lockdown?.intercept ?? 'none';
+    canvas.dataset.escortAttackPhase = lockdown?.attackPhase ?? 'none';
+    canvas.dataset.escortTarget = lockdown?.attackTarget ?? 'none';
+    canvas.dataset.escortPasses = String(lockdown?.attackPasses ?? 0);
+    canvas.dataset.busSafe = String(lockdown?.busSafe ?? false);
+    canvas.dataset.rampPassed = String(lockdown?.rampPassed ?? false);
+    canvas.dataset.rampLoops = String(lockdown?.rampLoops ?? 0);
     const canvasBox = canvas.getBoundingClientRect();
     canvas.dataset.riderBottom = (canvasBox.top + project(x,0).y * canvasBox.height / H).toFixed(1);
   }

@@ -51,7 +51,7 @@ test('failed relay asset preserves completed M2 and Retry Load recovers',async({
  await expect(page.locator('#game')).toHaveAttribute('data-beat','L3.01');
 });
 
-test('two first-pass links and steering interception save local readiness; reload and M3 boundary preserve containment',async({page})=>{
+test('two first-pass links and steering interception save local readiness; reload and L4 entry preserve containment',async({page})=>{
  test.setTimeout(300000);
  const {finishRelays}=await import('./helpers/public-access');
  await startRelayA(page);await finishRelays(page);
@@ -69,8 +69,7 @@ test('two first-pass links and steering interception save local readiness; reloa
  await page.screenshot({path:`${capture}/desktop-complete.png`});
  await page.reload();await page.locator('#continue-save').click();await expect(page.locator('#headline')).toHaveText('PUBLIC ROUTE READY');
  await page.locator('#continue-chapter').click();
- await expect(page.locator('#message')).toContainText(/M3|slice|reservoir/i);
- expect(await page.locator('#game').getAttribute('data-beat')).not.toMatch(/^L4/);
+ await expect(page.locator('#game')).toHaveAttribute('data-beat','L4.01');
  expect(await savedCampaign(page)).toEqual(save);
 });
 
