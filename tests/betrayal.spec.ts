@@ -2,7 +2,7 @@ import { test,expect,type Page } from '@playwright/test';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 const legacy=JSON.parse(readFileSync('docs/bastrop37/phase3/earned-completion-save.json','utf8'));
 import { ack,reveal,escape } from './helpers/betrayal';
-const capture='docs/bastrop37/phase3/m3/regression-m2';
+const capture='docs/bastrop37/phase3/m5/regression-m2';
 mkdirSync(capture,{recursive:true});
 test.beforeEach(async({page})=>{page.setDefaultTimeout(10000);await page.clock.install();});
 async function intake(page:Page) {

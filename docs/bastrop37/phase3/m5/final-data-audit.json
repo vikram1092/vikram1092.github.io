@@ -1,0 +1,94 @@
+{
+  "audit": "Final content and data audit for Phase 3 M1-M5",
+  "checkedAt": "2026-10-04",
+  "scope": "Five chapter content modules, dialogue and equipment-record data, all declared static public asset URLs, and byte identity of the seven newly copied M5 release assets.",
+  "dialogue": {
+    "phase1ApprovedLines": 50,
+    "runtimeLines": 50,
+    "exactIdSpeakerTextMatches": 50,
+    "mismatches": [],
+    "perModule": {
+      "delivery-content.ts": 13,
+      "betrayal-content.ts": 14,
+      "public-access-content.ts": 7,
+      "lockdown-content.ts": 7,
+      "release-content.ts": 9
+    },
+    "speakerSet": ["Jo", "Vlad", "Omega"]
+  },
+  "equipmentRecords": {
+    "phase1ApprovedRecords": 3,
+    "runtimeRecords": 3,
+    "exactIdsAndLinesMatch": true,
+    "records": [
+      {
+        "id": "L2.02-RECORD-01",
+        "title": "EQUIPMENT RECORD",
+        "source": "RECOVERY CARRIER",
+        "lines": ["WIPE MODULE", "DETAIN COURIER", "AUTH: MAYOR VLAD"]
+      },
+      {
+        "id": "L2.02-RECORD-02",
+        "title": "EQUIPMENT RECORD",
+        "source": "RECOVERY CARRIER",
+        "lines": ["POWER SHUTDOWN", "AUTH: MAYOR VLAD"]
+      },
+      {
+        "id": "L4.01-RECORD-01",
+        "title": "LOWER ROAD DISCHARGE",
+        "source": "SPILLWAY",
+        "lines": ["LOWER ROAD DISCHARGE", "AUTH: MAYOR VLAD"]
+      }
+    ],
+    "mismatches": []
+  },
+  "assetReferences": {
+    "moduleReferenceCounts": {
+      "delivery-content.ts": 6,
+      "betrayal-content.ts": 4,
+      "public-access-content.ts": 4,
+      "lockdown-content.ts": 11,
+      "release-content.ts": 14
+    },
+    "declaredReferences": 39,
+    "uniqueURLs": 32,
+    "resolvedURLs": 32,
+    "missingURLs": []
+  },
+  "m5ReleaseCopies": {
+    "selectedFiles": 7,
+    "sourceCopyByteMatches": 7,
+    "sha256Matches": 7,
+    "byteCountsAndDimensionsMatchManifest": 7,
+    "discrepancies": [],
+    "files": [
+      {"name":"env-l5-v3.png","source":"docs/bastrop37/phase2/revision-v3/assets/env-l5-v3.png","bytes":2451815,"dimensions":[1536,1024],"sha256":"86fbcb31dfa6ba4d4015590984d3c033d66f90c221bc02e49055fb6baf175abb","copyVerified":true},
+      {"name":"civic-node-v3.png","source":"docs/bastrop37/phase2/revision-v3/assets/civic-node-v3.png","bytes":2972920,"dimensions":[1024,1536],"sha256":"7beef2f9cf2712f33ef1fa670ecfade4e141767d564206791a27d25fea030608","copyVerified":true},
+      {"name":"civic-linked-overlay-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/civic-linked-overlay-v3.svg","bytes":330,"dimensions":[1024,1536],"sha256":"14a4c9fc54c2df8631bf5d09f48872f628534338a04a92858bc569e01989fb0c","copyVerified":true},
+      {"name":"civic-public-overlay-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/civic-public-overlay-v3.svg","bytes":556,"dimensions":[1024,1536],"sha256":"419ce0a777b89ab95c2a496f9fbdcaae1d60131b7349907f10f504ac22cb05ad","copyVerified":true},
+      {"name":"dawn-atmosphere-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/dawn-atmosphere-v3.svg","bytes":372,"dimensions":[1536,1024],"sha256":"6b1bc32eb2f72ef4675e3f58f0a21c9407c855679ae06ea611a0d297b8a292a1","copyVerified":true},
+      {"name":"signal-restored-overlay-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/signal-restored-overlay-v3.svg","bytes":200,"dimensions":[1024,1536],"sha256":"fb82bd365c91f9158665194561dc00c638063f24002d549aec67dfbc92f4979b","copyVerified":true},
+      {"name":"approach-marker-overlay-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/approach-marker-overlay-v3.svg","bytes":241,"dimensions":[1536,1024],"sha256":"eca9e7d940a551d6163c901d0e7b54251b352c0a911abdde84e6c66846bba739","copyVerified":true}
+    ],
+    "previousGeometryVerification": "docs/bastrop37/phase3/m5/mechanical-check.json: declared source anchors, crops, layers and shared-transform metadata agree with revision-v3 manifest and M5 content handoff"
+  },
+  "discrepancies": [],
+  "acceptanceBoundary": "Routine content, record, URL and source-copy checks only. This audit makes no gameplay, save, browser, rendered-art or visual-acceptance claim.",
+  "evidence": [
+    "BASTROP37_STORY.md",
+    "docs/bastrop37/PHASE_1_NARRATIVE_AND_ENCOUNTERS.md",
+    "docs/bastrop37/handoffs/PHASE_3_M2_CONTENT.md",
+    "docs/bastrop37/handoffs/PHASE_3_M3_CONTENT.md",
+    "docs/bastrop37/handoffs/PHASE_3_M4_CONTENT.md",
+    "docs/bastrop37/handoffs/PHASE_3_M5_CONTENT.md",
+    "src/scripts/bastrop37/{delivery, betrayal, public-access, lockdown, release}-content.ts",
+    "public/bastrop37/assets/"
+  ],
+  "reproducibility": {
+    "dialogueComparison": "Parse Phase 1 numbered L1-L5 dialogue rows and compare every ID, normalized speaker key and exact text with object entries in all five content modules.",
+    "recordComparison": "Inspect BETRAYAL_RECORDS and LOCKDOWN_RECORDS against Phase 1 L2.02/L4.01 record copy and the M2/M4 content handoffs.",
+    "urlResolution": "Parse every static URL in each module's *_ASSETS object and test public/<URL> as a file.",
+    "m5CopyCheck": "For each file in m5ReleaseCopies.files compare source/public bytes, byte count, SHA-256, and PNG IHDR or SVG source canvas dimensions.",
+    "resultFileValidation": "python3 -m json.tool docs/bastrop37/phase3/m5/final-data-audit.json"
+  }
+}

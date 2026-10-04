@@ -1,5 +1,7 @@
 # M4 final acceptance — 2026-10-04
 
+Current integration note (2026-10-04): the user subsequently authorized all remaining levels and publication. This milestone is preserved in the locally accepted complete five-level campaign; all81distinct scenarios have passing evidence across the final full/focused runs. Earlier scope/publication gates below are historical. See PHASE_3_CAMPAIGN_REPORT.md for current acceptance, actual counts, limits and final publication pickup.
+
 **Accepted by the director for the authorized full-campaign integration.** The repaired build passed independent browser/visual review and all 15 affected tests in 480.170 seconds, zero failures/skips/flaky results. Build/check passed 24 files with zero diagnostics. The initial 15/15 behavior run and failed visual candidate are retained below as history; the final repaired evidence is under phase3/m4/repair/ and phase3/m4/review/repair/.
 
 Implemented Level 4 through EVACUATION ROUTE CLEARED: ordered spillway receipt, required safe blade controller and visible barrier opening, three-condition bus escort/draw-off/steering or blades, independent bus/ramp latches, failures and full-condition retry, compatible saves and mobile controls. Final earned save has 41 spoken lines, 3 records, 44 chronological entries, completed L1–L4, busSafe true and Omega still contained. Independent review covers controller miss/hit/retraction, bus attacks/range/ramp-first, reload, four-size actual action, mobile failure/retry and steer-plus-blades.

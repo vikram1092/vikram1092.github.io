@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { enterPublicAccess, startRelayA, savedCampaign, earnedM2 } from './helpers/public-access';
 import { ack, steer } from './helpers/betrayal';
 import { mkdirSync, writeFileSync } from 'node:fs';
-const capture='docs/bastrop37/phase3/m3';
+const capture='docs/bastrop37/phase3/m5/regression-m3';
 mkdirSync(capture,{recursive:true});
 test.beforeEach(async({page})=>{page.setDefaultTimeout(10000);await page.clock.install();});
 

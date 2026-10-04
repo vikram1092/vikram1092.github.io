@@ -272,6 +272,12 @@ body:has(.garage){background:#090d19}
 #bastrop-game #bus-condition i.empty{background:#66736955;border-color:#869389}
 #bastrop-game #escort-cue{font:700 10px/1.3 'Courier New',monospace;letter-spacing:.4px;color:#bde5d1}
 #bastrop-game .escort-status[data-range=out] #escort-cue{color:#f0d29b}
+#bastrop-game #replay-badge{position:absolute;z-index:6;top:55px;right:28px;padding:5px 8px;background:#172a30ed;border:1px solid #9ecdbc;color:#e5ead4;font:700 9px/1.3 'Courier New',monospace;letter-spacing:.5px;pointer-events:none}
+#bastrop-game .chapter-picker{margin-top:15px;padding-top:12px;border-top:1px solid #81958d88}
+#bastrop-game .chapter-picker p{margin:0 0 8px;color:#d8c298;font:11px/1.3 'Courier New',monospace;letter-spacing:1px}
+#bastrop-game .chapter-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+#bastrop-game .chapter-options button{min-height:42px;padding:8px 10px;text-align:left;background:#193038;color:#e5e9da;border:1px solid #7e9c91;font:10px/1.3 'Courier New',monospace;letter-spacing:.3px}
+#bastrop-game .chapter-options button:hover{background:#315248}
 #bastrop-game #dialogue-log li[data-kind=record]{padding-left:8px;border-left:2px solid #a5bdaf}
 @media(max-width:600px){
  #bastrop-game .combat-status{right:14px;bottom:95px;width:173px;gap:6px 8px;padding:8px 9px;font-size:9px}
@@ -283,5 +289,7 @@ body:has(.garage){background:#090d19}
  #bastrop-game .mission-meter #controller-status{font-size:8px}
  #bastrop-game .escort-condition strong{font-size:8px}
  #bastrop-game #escort-cue{font-size:9px}
+ #bastrop-game #replay-badge{top:8px;right:12px;font-size:8px;padding:4px 6px}
+ #bastrop-game .chapter-options button{min-height:44px;font-size:9px}
  #bastrop-game .comms[data-speaker=system] #speaker{font-size:18px}
 }

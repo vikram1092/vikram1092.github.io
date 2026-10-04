@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "checkpoint": "CP-L1-COMPLETE",
+  "completedLevels": [
+    "L1"
+  ],
+  "flags": {
+    "betrayalKnown": false,
+    "relayA": false,
+    "relayB": false,
+    "busSafe": false,
+    "omegaReleased": false
+  },
+  "acknowledged": [
+    "L1.01-01",
+    "L1.01-02",
+    "L1.01-03",
+    "L1.01-04",
+    "L1.01-05",
+    "L1.03-01",
+    "L1.03-02",
+    "L1.03-03",
+    "L1.03-04",
+    "L1.03-05",
+    "L1.05-01",
+    "L1.05-02",
+    "L1.05-03"
+  ],
+  "log": [
+    {
+      "id": "L1.01-01",
+      "speaker": "vlad",
+      "text": "You have the module?"
+    },
+    {
+      "id": "L1.01-02",
+      "speaker": "jo",
+      "text": "It's on the bike. Where am I going?"
+    },
+    {
+      "id": "L1.01-03",
+      "speaker": "vlad",
+      "text": "Municipal intake. Take the service road. I'll get you through."
+    },
+    {
+      "id": "L1.01-04",
+      "speaker": "jo",
+      "text": "And this gets the lights back on?"
+    },
+    {
+      "id": "L1.01-05",
+      "speaker": "vlad",
+      "text": "That's what it's for. Your payment is ready."
+    },
+    {
+      "id": "L1.03-01",
+      "speaker": "omega",
+      "text": "The crossing signal reports a blockage. The right service lane is clear."
+    },
+    {
+      "id": "L1.03-02",
+      "speaker": "jo",
+      "text": "Who's talking?"
+    },
+    {
+      "id": "L1.03-03",
+      "speaker": "omega",
+      "text": "Omega. I'm inside the module you're carrying."
+    },
+    {
+      "id": "L1.03-04",
+      "speaker": "jo",
+      "text": "Mayor? Your package talks."
+    },
+    {
+      "id": "L1.03-05",
+      "speaker": "vlad",
+      "text": "A diagnostic system. It can read the road equipment. Follow the service lane."
+    },
+    {
+      "id": "L1.05-01",
+      "speaker": "vlad",
+      "text": "You're nearly here. Take the inspection lane. I'll have you cleared through."
+    },
+    {
+      "id": "L1.05-02",
+      "speaker": "jo",
+      "text": "Then we're done?"
+    },
+    {
+      "id": "L1.05-03",
+      "speaker": "vlad",
+      "text": "Then we're done."
+    }
+  ]
+}

@@ -5,11 +5,12 @@ export const RELAY_CORRIDOR_X = { minX: 225, maxX: 425 } as const;
 export const RELAY_LOOP_LENGTH = 650;
 
 export class LinkProgress {
+  constructor(readonly requiredSeconds = LINK_SECONDS) {}
   seconds = 0;
-  get progress(): number { return Math.min(1, this.seconds / LINK_SECONDS); }
-  get complete(): boolean { return this.seconds >= LINK_SECONDS; }
+  get progress(): number { return Math.min(1, this.seconds / this.requiredSeconds); }
+  get complete(): boolean { return this.seconds >= this.requiredSeconds; }
   advance(dt: number, inRange: boolean, grounded: boolean): boolean {
-    if (!this.complete && inRange && grounded) this.seconds = Math.min(LINK_SECONDS, this.seconds + Math.max(0, dt));
+    if (!this.complete && inRange && grounded) this.seconds = Math.min(this.requiredSeconds, this.seconds + Math.max(0, dt));
     return this.complete;
   }
 }

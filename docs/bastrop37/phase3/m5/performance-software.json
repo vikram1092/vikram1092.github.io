@@ -1,0 +1,1560 @@
+{
+  "date": "2026-10-04T17:09:10.860Z",
+  "machine": "Apple M4",
+  "memoryBytes": 17179869184,
+  "browser": "153.0.8010.12",
+  "viewport": [
+    1440,
+    900
+  ],
+  "requestedRenderer": "ANGLE SwiftShader",
+  "samples": [
+    {
+      "label": "L4 active escort warning",
+      "before": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "signal",
+        "dronePhases": "signal",
+        "droneCount": "1",
+        "droneOutcome": "none",
+        "dronePasses": "0",
+        "droneZ": "300.0",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "300",
+        "height": "0.00",
+        "blades": "1.00",
+        "slices": "0",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "playing",
+        "mode": "action",
+        "beat": "L4.03",
+        "dialogueId": "",
+        "dialogueIndex": "0",
+        "route": "702.0",
+        "visualDistance": "195.0",
+        "trafficCount": "1",
+        "traffic": "[{\"id\":\"delivery-vehicle-1\",\"x\":465,\"z\":300,\"kind\":\"drone\",\"lane\":4}]",
+        "checkpoint": "CP-L4-ESCORT",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "451.7",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "195.0",
+        "score": "1560",
+        "chapter": "L4",
+        "recordId": "",
+        "recordIndex": "3",
+        "recordCount": "3",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "true",
+        "relayTarget": "none",
+        "linkState": "none",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "false",
+        "controllerState": "open",
+        "barrierProgress": "1.000",
+        "controllerLoops": "0",
+        "busCondition": "3",
+        "busProgress": "658.7",
+        "busZ": "220.0",
+        "escortInRange": "true",
+        "interceptLane": "right",
+        "escortAttackPhase": "telegraph",
+        "escortTarget": "bus",
+        "escortPasses": "0",
+        "busSafe": "false",
+        "rampPassed": "false",
+        "rampLoops": "0",
+        "releaseStage": "none",
+        "releaseDefenderCleared": "false",
+        "releaseInterceptCleared": "false",
+        "uploadSection": "none",
+        "uploadSecondsA": "0.000",
+        "uploadSecondsB": "0.000",
+        "uploadLoopsA": "0",
+        "uploadLoopsB": "0",
+        "uploadProgress": "0.000",
+        "omegaReleased": "false",
+        "recoveryRoute": "0.0",
+        "campaignComplete": "false",
+        "replayActive": "false",
+        "releasePrefix": "0",
+        "riderBottom": "756.0"
+      },
+      "result": {
+        "frames": 90,
+        "meanMs": 71.29333333333334,
+        "p95Ms": 83.40000000000146,
+        "estimatedFps": 14.026556947821208
+      },
+      "after": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "none",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "1.00",
+        "slices": "1",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "playing",
+        "mode": "action",
+        "beat": "L4.03",
+        "dialogueId": "",
+        "dialogueIndex": "0",
+        "route": "1490.7",
+        "visualDistance": "414.1",
+        "trafficCount": "0",
+        "traffic": "[]",
+        "checkpoint": "CP-L4-ESCORT",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "451.7",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "414.1",
+        "score": "4512",
+        "chapter": "L4",
+        "recordId": "",
+        "recordIndex": "3",
+        "recordCount": "3",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "true",
+        "relayTarget": "none",
+        "linkState": "none",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "false",
+        "controllerState": "open",
+        "barrierProgress": "1.000",
+        "controllerLoops": "0",
+        "busCondition": "3",
+        "busProgress": "1447.3",
+        "busZ": "220.0",
+        "escortInRange": "true",
+        "interceptLane": "none",
+        "escortAttackPhase": "cleared",
+        "escortTarget": "jo",
+        "escortPasses": "0",
+        "busSafe": "false",
+        "rampPassed": "false",
+        "rampLoops": "0",
+        "releaseStage": "none",
+        "releaseDefenderCleared": "false",
+        "releaseInterceptCleared": "false",
+        "uploadSection": "none",
+        "uploadSecondsA": "0.000",
+        "uploadSecondsB": "0.000",
+        "uploadLoopsA": "0",
+        "uploadLoopsB": "0",
+        "uploadProgress": "0.000",
+        "omegaReleased": "false",
+        "recoveryRoute": "0.0",
+        "campaignComplete": "false",
+        "replayActive": "false",
+        "releasePrefix": "0",
+        "riderBottom": "756.0"
+      },
+      "reportedWebGLRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+      "jsHeap": {
+        "usedBytes": 37300000,
+        "totalBytes": 37300000
+      },
+      "resources": [
+        {
+          "path": "/_astro/manrope.3kz-p_VZ.css",
+          "encodedBytes": 5142,
+          "transferBytes": 5442
+        },
+        {
+          "path": "/_astro/bastrop37.Vcf1r98o.css",
+          "encodedBytes": 29378,
+          "transferBytes": 29678
+        },
+        {
+          "path": "/_astro/index.astro_astro_type_script_index_0_lang.DoT1bky8.js",
+          "encodedBytes": 116771,
+          "transferBytes": 117071
+        },
+        {
+          "path": "/_astro/manrope-latin-wght-normal.DHIcAJRg.woff2",
+          "encodedBytes": 24836,
+          "transferBytes": 25136
+        },
+        {
+          "path": "/bastrop37/assets/delivery/signal-dead-v2.png",
+          "encodedBytes": 1548916,
+          "transferBytes": 1549216
+        },
+        {
+          "path": "/bastrop37/assets/environment/city-skyline-v4.png",
+          "encodedBytes": 2537126,
+          "transferBytes": 2537426
+        },
+        {
+          "path": "/bastrop37/assets/delivery/delivery-architecture-v2.png",
+          "encodedBytes": 2301825,
+          "transferBytes": 2302125
+        },
+        {
+          "path": "/bastrop37/assets/delivery/barrier-closed-v3.png",
+          "encodedBytes": 1738560,
+          "transferBytes": 1738860
+        },
+        {
+          "path": "/bastrop37/assets/delivery/service-gate-open-v2.png",
+          "encodedBytes": 2153180,
+          "transferBytes": 2153480
+        },
+        {
+          "path": "/bastrop37/assets/delivery/omega-symbol-v1.svg",
+          "encodedBytes": 371,
+          "transferBytes": 671
+        },
+        {
+          "path": "/bastrop37/assets/delivery/vlad-neutral-v1.png",
+          "encodedBytes": 2048475,
+          "transferBytes": 2048775
+        },
+        {
+          "path": "/bastrop37/assets/environment/road-loop-v4.png",
+          "encodedBytes": 3093415,
+          "transferBytes": 3093715
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-normal-straight.png",
+          "encodedBytes": 86704,
+          "transferBytes": 87004
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-straight.png",
+          "encodedBytes": 98317,
+          "transferBytes": 98617
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-left-15.png",
+          "encodedBytes": 130184,
+          "transferBytes": 130484
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-right-15.png",
+          "encodedBytes": 110810,
+          "transferBytes": 111110
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-left-35.png",
+          "encodedBytes": 127198,
+          "transferBytes": 127498
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-right-35.png",
+          "encodedBytes": 129183,
+          "transferBytes": 129483
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-normal-left-15.png",
+          "encodedBytes": 124175,
+          "transferBytes": 124475
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-normal-right-15.png",
+          "encodedBytes": 104466,
+          "transferBytes": 104766
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-slide-left.png",
+          "encodedBytes": 175752,
+          "transferBytes": 176052
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-slide-right.png",
+          "encodedBytes": 181811,
+          "transferBytes": 182111
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-jump-straight.png",
+          "encodedBytes": 99432,
+          "transferBytes": 99732
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-jump-left-15.png",
+          "encodedBytes": 127614,
+          "transferBytes": 127914
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-jump-right-15.png",
+          "encodedBytes": 107442,
+          "transferBytes": 107742
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-coupe-right.png",
+          "encodedBytes": 260473,
+          "transferBytes": 260773
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-coupe.png",
+          "encodedBytes": 220969,
+          "transferBytes": 221269
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-coupe-left.png",
+          "encodedBytes": 261369,
+          "transferBytes": 261669
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-sedan.png",
+          "encodedBytes": 213477,
+          "transferBytes": 213777
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-sedan-left.png",
+          "encodedBytes": 219954,
+          "transferBytes": 220254
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-hauler.png",
+          "encodedBytes": 353420,
+          "transferBytes": 353720
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-sedan-right.png",
+          "encodedBytes": 216788,
+          "transferBytes": 217088
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-hauler-right.png",
+          "encodedBytes": 406868,
+          "transferBytes": 407168
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-hauler-left.png",
+          "encodedBytes": 384229,
+          "transferBytes": 384529
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-hover.png",
+          "encodedBytes": 266798,
+          "transferBytes": 267098
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-flank-left.png",
+          "encodedBytes": 238231,
+          "transferBytes": 238531
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-flank-right.png",
+          "encodedBytes": 194199,
+          "transferBytes": 194499
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-attack-warning.png",
+          "encodedBytes": 262554,
+          "transferBytes": 262854
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-lunge.png",
+          "encodedBytes": 285874,
+          "transferBytes": 286174
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-fragment-left.png",
+          "encodedBytes": 229970,
+          "transferBytes": 230270
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-fragment-right.png",
+          "encodedBytes": 217719,
+          "transferBytes": 218019
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-core.png",
+          "encodedBytes": 186224,
+          "transferBytes": 186524
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-cyan-trail.png",
+          "encodedBytes": 227006,
+          "transferBytes": 227306
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-yellow-turbo.png",
+          "encodedBytes": 293980,
+          "transferBytes": 294280
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-hover-thrust.png",
+          "encodedBytes": 282954,
+          "transferBytes": 283254
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-blades.png",
+          "encodedBytes": 261572,
+          "transferBytes": 261872
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-cut-sparks.png",
+          "encodedBytes": 246442,
+          "transferBytes": 246742
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-impact-sparks.png",
+          "encodedBytes": 307805,
+          "transferBytes": 308105
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-landing-ring.png",
+          "encodedBytes": 216615,
+          "transferBytes": 216915
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-debris.png",
+          "encodedBytes": 196584,
+          "transferBytes": 196884
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/env-l4-v3.png",
+          "encodedBytes": 2253966,
+          "transferBytes": 2254266
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/spillway-water-low-v3.svg",
+          "encodedBytes": 1116,
+          "transferBytes": 1416
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/spillway-water-high-v3.svg",
+          "encodedBytes": 1116,
+          "transferBytes": 1416
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/barrier-open-v3.png",
+          "encodedBytes": 1351642,
+          "transferBytes": 1351942
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/barrier-closed-v3.png",
+          "encodedBytes": 1738560,
+          "transferBytes": 1738860
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/controller-v3.png",
+          "encodedBytes": 1382404,
+          "transferBytes": 1382704
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/spillway-open-v3.png",
+          "encodedBytes": 2558511,
+          "transferBytes": 2558811
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/spillway-closed-v3.png",
+          "encodedBytes": 3080949,
+          "transferBytes": 3081249
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/controller-active-overlay-v3.svg",
+          "encodedBytes": 193,
+          "transferBytes": 493
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/controller-disabled-overlay-v3.svg",
+          "encodedBytes": 237,
+          "transferBytes": 537
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/evac-bus-rear-v1.png",
+          "encodedBytes": 1285486,
+          "transferBytes": 1285786
+        }
+      ],
+      "errors": []
+    },
+    {
+      "label": "L5 safe opening",
+      "before": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "none",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "0",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "playing",
+        "mode": "story",
+        "beat": "L5.01",
+        "dialogueId": "L5.01-01",
+        "dialogueIndex": "0",
+        "route": "0.0",
+        "visualDistance": "4.7",
+        "trafficCount": "0",
+        "traffic": "[]",
+        "checkpoint": "CP-L4-COMPLETE",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "320.0",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "4.7",
+        "score": "37",
+        "chapter": "L5",
+        "recordId": "",
+        "recordIndex": "3",
+        "recordCount": "3",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "true",
+        "relayTarget": "none",
+        "linkState": "none",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "false",
+        "controllerState": "active",
+        "barrierProgress": "0.000",
+        "controllerLoops": "0",
+        "busCondition": "0",
+        "busProgress": "0.0",
+        "busZ": "0.0",
+        "escortInRange": "false",
+        "interceptLane": "none",
+        "escortAttackPhase": "none",
+        "escortTarget": "none",
+        "escortPasses": "0",
+        "busSafe": "true",
+        "rampPassed": "false",
+        "rampLoops": "0",
+        "releaseStage": "opening",
+        "releaseDefenderCleared": "false",
+        "releaseInterceptCleared": "false",
+        "uploadSection": "none",
+        "uploadSecondsA": "0.000",
+        "uploadSecondsB": "0.000",
+        "uploadLoopsA": "0",
+        "uploadLoopsB": "0",
+        "uploadProgress": "0.000",
+        "omegaReleased": "false",
+        "recoveryRoute": "0.0",
+        "campaignComplete": "false",
+        "replayActive": "false",
+        "releasePrefix": "0",
+        "riderBottom": "756.0"
+      },
+      "result": {
+        "frames": 90,
+        "meanMs": 50.73777777777777,
+        "p95Ms": 83.30000000000018,
+        "estimatedFps": 19.70918009810792
+      },
+      "after": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "none",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "0",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "playing",
+        "mode": "story",
+        "beat": "L5.01",
+        "dialogueId": "L5.01-01",
+        "dialogueIndex": "0",
+        "route": "0.0",
+        "visualDistance": "199.9",
+        "trafficCount": "0",
+        "traffic": "[]",
+        "checkpoint": "CP-L4-COMPLETE",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "320.0",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "199.9",
+        "score": "1599",
+        "chapter": "L5",
+        "recordId": "",
+        "recordIndex": "3",
+        "recordCount": "3",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "true",
+        "relayTarget": "none",
+        "linkState": "none",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "false",
+        "controllerState": "active",
+        "barrierProgress": "0.000",
+        "controllerLoops": "0",
+        "busCondition": "0",
+        "busProgress": "0.0",
+        "busZ": "0.0",
+        "escortInRange": "false",
+        "interceptLane": "none",
+        "escortAttackPhase": "none",
+        "escortTarget": "none",
+        "escortPasses": "0",
+        "busSafe": "true",
+        "rampPassed": "false",
+        "rampLoops": "0",
+        "releaseStage": "opening",
+        "releaseDefenderCleared": "false",
+        "releaseInterceptCleared": "false",
+        "uploadSection": "none",
+        "uploadSecondsA": "0.000",
+        "uploadSecondsB": "0.000",
+        "uploadLoopsA": "0",
+        "uploadLoopsB": "0",
+        "uploadProgress": "0.000",
+        "omegaReleased": "false",
+        "recoveryRoute": "0.0",
+        "campaignComplete": "false",
+        "replayActive": "false",
+        "releasePrefix": "0",
+        "riderBottom": "756.0"
+      },
+      "reportedWebGLRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+      "jsHeap": {
+        "usedBytes": 37300000,
+        "totalBytes": 37300000
+      },
+      "resources": [
+        {
+          "path": "/_astro/manrope.3kz-p_VZ.css",
+          "encodedBytes": 5142,
+          "transferBytes": 5442
+        },
+        {
+          "path": "/_astro/bastrop37.Vcf1r98o.css",
+          "encodedBytes": 29378,
+          "transferBytes": 29678
+        },
+        {
+          "path": "/_astro/index.astro_astro_type_script_index_0_lang.DoT1bky8.js",
+          "encodedBytes": 116771,
+          "transferBytes": 117071
+        },
+        {
+          "path": "/_astro/manrope-latin-wght-normal.DHIcAJRg.woff2",
+          "encodedBytes": 24836,
+          "transferBytes": 25136
+        },
+        {
+          "path": "/bastrop37/assets/delivery/signal-dead-v2.png",
+          "encodedBytes": 1548916,
+          "transferBytes": 1549216
+        },
+        {
+          "path": "/bastrop37/assets/delivery/barrier-closed-v3.png",
+          "encodedBytes": 1738560,
+          "transferBytes": 1738860
+        },
+        {
+          "path": "/bastrop37/assets/delivery/service-gate-open-v2.png",
+          "encodedBytes": 2153180,
+          "transferBytes": 2153480
+        },
+        {
+          "path": "/bastrop37/assets/delivery/delivery-architecture-v2.png",
+          "encodedBytes": 2301825,
+          "transferBytes": 2302125
+        },
+        {
+          "path": "/bastrop37/assets/environment/city-skyline-v4.png",
+          "encodedBytes": 2537126,
+          "transferBytes": 2537426
+        },
+        {
+          "path": "/bastrop37/assets/delivery/omega-symbol-v1.svg",
+          "encodedBytes": 371,
+          "transferBytes": 671
+        },
+        {
+          "path": "/bastrop37/assets/delivery/vlad-neutral-v1.png",
+          "encodedBytes": 2048475,
+          "transferBytes": 2048775
+        },
+        {
+          "path": "/bastrop37/assets/environment/road-loop-v4.png",
+          "encodedBytes": 3093415,
+          "transferBytes": 3093715
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-normal-straight.png",
+          "encodedBytes": 86704,
+          "transferBytes": 87004
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-straight.png",
+          "encodedBytes": 98317,
+          "transferBytes": 98617
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-left-15.png",
+          "encodedBytes": 130184,
+          "transferBytes": 130484
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-right-15.png",
+          "encodedBytes": 110810,
+          "transferBytes": 111110
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-left-35.png",
+          "encodedBytes": 127198,
+          "transferBytes": 127498
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-right-35.png",
+          "encodedBytes": 129183,
+          "transferBytes": 129483
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-normal-left-15.png",
+          "encodedBytes": 124175,
+          "transferBytes": 124475
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-normal-right-15.png",
+          "encodedBytes": 104466,
+          "transferBytes": 104766
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-slide-left.png",
+          "encodedBytes": 175752,
+          "transferBytes": 176052
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-slide-right.png",
+          "encodedBytes": 181811,
+          "transferBytes": 182111
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-jump-straight.png",
+          "encodedBytes": 99432,
+          "transferBytes": 99732
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-jump-left-15.png",
+          "encodedBytes": 127614,
+          "transferBytes": 127914
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-jump-right-15.png",
+          "encodedBytes": 107442,
+          "transferBytes": 107742
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-coupe.png",
+          "encodedBytes": 220969,
+          "transferBytes": 221269
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-coupe-right.png",
+          "encodedBytes": 260473,
+          "transferBytes": 260773
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-coupe-left.png",
+          "encodedBytes": 261369,
+          "transferBytes": 261669
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-sedan.png",
+          "encodedBytes": 213477,
+          "transferBytes": 213777
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-sedan-left.png",
+          "encodedBytes": 219954,
+          "transferBytes": 220254
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-hauler.png",
+          "encodedBytes": 353420,
+          "transferBytes": 353720
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-sedan-right.png",
+          "encodedBytes": 216788,
+          "transferBytes": 217088
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-hauler-right.png",
+          "encodedBytes": 406868,
+          "transferBytes": 407168
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-hauler-left.png",
+          "encodedBytes": 384229,
+          "transferBytes": 384529
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-hover.png",
+          "encodedBytes": 266798,
+          "transferBytes": 267098
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-flank-left.png",
+          "encodedBytes": 238231,
+          "transferBytes": 238531
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-flank-right.png",
+          "encodedBytes": 194199,
+          "transferBytes": 194499
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-attack-warning.png",
+          "encodedBytes": 262554,
+          "transferBytes": 262854
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-lunge.png",
+          "encodedBytes": 285874,
+          "transferBytes": 286174
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-fragment-left.png",
+          "encodedBytes": 229970,
+          "transferBytes": 230270
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-fragment-right.png",
+          "encodedBytes": 217719,
+          "transferBytes": 218019
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-core.png",
+          "encodedBytes": 186224,
+          "transferBytes": 186524
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-cyan-trail.png",
+          "encodedBytes": 227006,
+          "transferBytes": 227306
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-yellow-turbo.png",
+          "encodedBytes": 293980,
+          "transferBytes": 294280
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-cut-sparks.png",
+          "encodedBytes": 246442,
+          "transferBytes": 246742
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-blades.png",
+          "encodedBytes": 261572,
+          "transferBytes": 261872
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-hover-thrust.png",
+          "encodedBytes": 282954,
+          "transferBytes": 283254
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-impact-sparks.png",
+          "encodedBytes": 307805,
+          "transferBytes": 308105
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-debris.png",
+          "encodedBytes": 196584,
+          "transferBytes": 196884
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-landing-ring.png",
+          "encodedBytes": 216615,
+          "transferBytes": 216915
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/env-l4-v3.png",
+          "encodedBytes": 2253966,
+          "transferBytes": 2254266
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/spillway-closed-v3.png",
+          "encodedBytes": 3080949,
+          "transferBytes": 3081249
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/spillway-water-low-v3.svg",
+          "encodedBytes": 1116,
+          "transferBytes": 1416
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/spillway-water-high-v3.svg",
+          "encodedBytes": 1116,
+          "transferBytes": 1416
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/barrier-closed-v3.png",
+          "encodedBytes": 1738560,
+          "transferBytes": 1738860
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/controller-v3.png",
+          "encodedBytes": 1382404,
+          "transferBytes": 1382704
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/barrier-open-v3.png",
+          "encodedBytes": 1351642,
+          "transferBytes": 1351942
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/spillway-open-v3.png",
+          "encodedBytes": 2558511,
+          "transferBytes": 2558811
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/controller-active-overlay-v3.svg",
+          "encodedBytes": 193,
+          "transferBytes": 493
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/controller-disabled-overlay-v3.svg",
+          "encodedBytes": 237,
+          "transferBytes": 537
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/evac-bus-rear-v1.png",
+          "encodedBytes": 1285486,
+          "transferBytes": 1285786
+        },
+        {
+          "path": "/bastrop37/assets/release/env-l5-v3.png",
+          "encodedBytes": 2451815,
+          "transferBytes": 2452115
+        },
+        {
+          "path": "/bastrop37/assets/release/civic-public-overlay-v3.svg",
+          "encodedBytes": 556,
+          "transferBytes": 856
+        },
+        {
+          "path": "/bastrop37/assets/release/civic-linked-overlay-v3.svg",
+          "encodedBytes": 330,
+          "transferBytes": 630
+        },
+        {
+          "path": "/bastrop37/assets/release/dawn-atmosphere-v3.svg",
+          "encodedBytes": 372,
+          "transferBytes": 672
+        },
+        {
+          "path": "/bastrop37/assets/release/signal-restored-overlay-v3.svg",
+          "encodedBytes": 200,
+          "transferBytes": 500
+        },
+        {
+          "path": "/bastrop37/assets/release/approach-marker-overlay-v3.svg",
+          "encodedBytes": 241,
+          "transferBytes": 541
+        },
+        {
+          "path": "/bastrop37/assets/release/civic-node-v3.png",
+          "encodedBytes": 2972920,
+          "transferBytes": 2973220
+        }
+      ],
+      "errors": []
+    },
+    {
+      "label": "L5 active upload A",
+      "before": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "none",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "0",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "playing",
+        "mode": "action",
+        "beat": "L5.03",
+        "dialogueId": "",
+        "dialogueIndex": "0",
+        "route": "424.6",
+        "visualDistance": "118.0",
+        "trafficCount": "0",
+        "traffic": "[]",
+        "checkpoint": "CP-L5-UPLOAD",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "320.0",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "118.0",
+        "score": "943",
+        "chapter": "L5",
+        "recordId": "",
+        "recordIndex": "3",
+        "recordCount": "3",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "true",
+        "relayTarget": "none",
+        "linkState": "none",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "false",
+        "controllerState": "open",
+        "barrierProgress": "1.000",
+        "controllerLoops": "0",
+        "busCondition": "0",
+        "busProgress": "0.0",
+        "busZ": "0.0",
+        "escortInRange": "false",
+        "interceptLane": "none",
+        "escortAttackPhase": "none",
+        "escortTarget": "none",
+        "escortPasses": "0",
+        "busSafe": "true",
+        "rampPassed": "false",
+        "rampLoops": "0",
+        "releaseStage": "upload-a",
+        "releaseDefenderCleared": "true",
+        "releaseInterceptCleared": "false",
+        "uploadSection": "A",
+        "uploadSecondsA": "0.018",
+        "uploadSecondsB": "0.000",
+        "uploadLoopsA": "0",
+        "uploadLoopsB": "0",
+        "uploadProgress": "0.002",
+        "omegaReleased": "false",
+        "recoveryRoute": "0.0",
+        "campaignComplete": "false",
+        "replayActive": "false",
+        "releasePrefix": "0",
+        "riderBottom": "756.0"
+      },
+      "result": {
+        "frames": 90,
+        "meanMs": 48.51555555555555,
+        "p95Ms": 50.100000000000364,
+        "estimatedFps": 20.61194576768047
+      },
+      "after": {
+        "audio": "locked",
+        "muted": "false",
+        "dronePhase": "none",
+        "dronePhases": "",
+        "droneCount": "0",
+        "droneOutcome": "none",
+        "dronePasses": "0",
+        "droneZ": "none",
+        "fragments": "0",
+        "dodges": "0",
+        "hazard": "9999",
+        "height": "0.00",
+        "blades": "0.00",
+        "slices": "0",
+        "sliding": "false",
+        "jumpReady": "true",
+        "laneChanges": "0",
+        "trafficSprites": "",
+        "view": "rear-chase",
+        "state": "playing",
+        "mode": "action",
+        "beat": "L5.03",
+        "dialogueId": "",
+        "dialogueIndex": "0",
+        "route": "1213.2",
+        "visualDistance": "337.0",
+        "trafficCount": "0",
+        "traffic": "[]",
+        "checkpoint": "CP-L5-UPLOAD",
+        "gatePassed": "false",
+        "approachPassed": "false",
+        "serviceLoops": "0",
+        "x": "320.0",
+        "charge": "1.00",
+        "boost": "0.00",
+        "distance": "337.0",
+        "score": "2696",
+        "chapter": "L5",
+        "recordId": "",
+        "recordIndex": "3",
+        "recordCount": "3",
+        "betrayalKnown": "true",
+        "lockOutside": "0.00",
+        "lockBroken": "false",
+        "carrierZ": "720.0",
+        "carrierActive": "false",
+        "overdrive": "0",
+        "overdriveActive": "false",
+        "relayA": "true",
+        "relayB": "true",
+        "relayTarget": "none",
+        "linkState": "none",
+        "linkProgress": "0.000",
+        "linkSeconds": "0.000",
+        "relayLoopsA": "0",
+        "relayLoopsB": "0",
+        "corridorStartZ": "none",
+        "corridorEndZ": "none",
+        "relayDroneCleared": "false",
+        "controllerState": "open",
+        "barrierProgress": "1.000",
+        "controllerLoops": "0",
+        "busCondition": "0",
+        "busProgress": "0.0",
+        "busZ": "0.0",
+        "escortInRange": "false",
+        "interceptLane": "none",
+        "escortAttackPhase": "none",
+        "escortTarget": "none",
+        "escortPasses": "0",
+        "busSafe": "true",
+        "rampPassed": "false",
+        "rampLoops": "0",
+        "releaseStage": "upload-a",
+        "releaseDefenderCleared": "true",
+        "releaseInterceptCleared": "false",
+        "uploadSection": "A",
+        "uploadSecondsA": "3.051",
+        "uploadSecondsB": "0.000",
+        "uploadLoopsA": "0",
+        "uploadLoopsB": "0",
+        "uploadProgress": "0.305",
+        "omegaReleased": "false",
+        "recoveryRoute": "0.0",
+        "campaignComplete": "false",
+        "replayActive": "false",
+        "releasePrefix": "0",
+        "riderBottom": "756.0"
+      },
+      "reportedWebGLRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+      "jsHeap": {
+        "usedBytes": 37300000,
+        "totalBytes": 37300000
+      },
+      "resources": [
+        {
+          "path": "/_astro/manrope.3kz-p_VZ.css",
+          "encodedBytes": 5142,
+          "transferBytes": 5442
+        },
+        {
+          "path": "/_astro/bastrop37.Vcf1r98o.css",
+          "encodedBytes": 29378,
+          "transferBytes": 29678
+        },
+        {
+          "path": "/_astro/index.astro_astro_type_script_index_0_lang.DoT1bky8.js",
+          "encodedBytes": 116771,
+          "transferBytes": 117071
+        },
+        {
+          "path": "/_astro/manrope-latin-wght-normal.DHIcAJRg.woff2",
+          "encodedBytes": 24836,
+          "transferBytes": 25136
+        },
+        {
+          "path": "/bastrop37/assets/delivery/signal-dead-v2.png",
+          "encodedBytes": 1548916,
+          "transferBytes": 1549216
+        },
+        {
+          "path": "/bastrop37/assets/delivery/barrier-closed-v3.png",
+          "encodedBytes": 1738560,
+          "transferBytes": 1738860
+        },
+        {
+          "path": "/bastrop37/assets/environment/city-skyline-v4.png",
+          "encodedBytes": 2537126,
+          "transferBytes": 2537426
+        },
+        {
+          "path": "/bastrop37/assets/delivery/delivery-architecture-v2.png",
+          "encodedBytes": 2301825,
+          "transferBytes": 2302125
+        },
+        {
+          "path": "/bastrop37/assets/delivery/service-gate-open-v2.png",
+          "encodedBytes": 2153180,
+          "transferBytes": 2153480
+        },
+        {
+          "path": "/bastrop37/assets/delivery/vlad-neutral-v1.png",
+          "encodedBytes": 2048475,
+          "transferBytes": 2048775
+        },
+        {
+          "path": "/bastrop37/assets/delivery/omega-symbol-v1.svg",
+          "encodedBytes": 371,
+          "transferBytes": 671
+        },
+        {
+          "path": "/bastrop37/assets/environment/road-loop-v4.png",
+          "encodedBytes": 3093415,
+          "transferBytes": 3093715
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-normal-straight.png",
+          "encodedBytes": 86704,
+          "transferBytes": 87004
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-straight.png",
+          "encodedBytes": 98317,
+          "transferBytes": 98617
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-left-15.png",
+          "encodedBytes": 130184,
+          "transferBytes": 130484
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-right-15.png",
+          "encodedBytes": 110810,
+          "transferBytes": 111110
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-left-35.png",
+          "encodedBytes": 127198,
+          "transferBytes": 127498
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-blades-right-35.png",
+          "encodedBytes": 129183,
+          "transferBytes": 129483
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-normal-left-15.png",
+          "encodedBytes": 124175,
+          "transferBytes": 124475
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-normal-right-15.png",
+          "encodedBytes": 104466,
+          "transferBytes": 104766
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-slide-left.png",
+          "encodedBytes": 175752,
+          "transferBytes": 176052
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-slide-right.png",
+          "encodedBytes": 181811,
+          "transferBytes": 182111
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-jump-straight.png",
+          "encodedBytes": 99432,
+          "transferBytes": 99732
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-coupe.png",
+          "encodedBytes": 220969,
+          "transferBytes": 221269
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-jump-left-15.png",
+          "encodedBytes": 127614,
+          "transferBytes": 127914
+        },
+        {
+          "path": "/bastrop37/assets/sprites/bike-jump-right-15.png",
+          "encodedBytes": 107442,
+          "transferBytes": 107742
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-coupe-right.png",
+          "encodedBytes": 260473,
+          "transferBytes": 260773
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-sedan.png",
+          "encodedBytes": 213477,
+          "transferBytes": 213777
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-sedan-left.png",
+          "encodedBytes": 219954,
+          "transferBytes": 220254
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-coupe-left.png",
+          "encodedBytes": 261369,
+          "transferBytes": 261669
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-sedan-right.png",
+          "encodedBytes": 216788,
+          "transferBytes": 217088
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-hauler.png",
+          "encodedBytes": 353420,
+          "transferBytes": 353720
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-hauler-right.png",
+          "encodedBytes": 406868,
+          "transferBytes": 407168
+        },
+        {
+          "path": "/bastrop37/assets/sprites/traffic-hauler-left.png",
+          "encodedBytes": 384229,
+          "transferBytes": 384529
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-hover.png",
+          "encodedBytes": 266798,
+          "transferBytes": 267098
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-flank-right.png",
+          "encodedBytes": 194199,
+          "transferBytes": 194499
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-flank-left.png",
+          "encodedBytes": 238231,
+          "transferBytes": 238531
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-attack-warning.png",
+          "encodedBytes": 262554,
+          "transferBytes": 262854
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-lunge.png",
+          "encodedBytes": 285874,
+          "transferBytes": 286174
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-fragment-left.png",
+          "encodedBytes": 229970,
+          "transferBytes": 230270
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-fragment-right.png",
+          "encodedBytes": 217719,
+          "transferBytes": 218019
+        },
+        {
+          "path": "/bastrop37/assets/sprites/drone-core.png",
+          "encodedBytes": 186224,
+          "transferBytes": 186524
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-cyan-trail.png",
+          "encodedBytes": 227006,
+          "transferBytes": 227306
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-yellow-turbo.png",
+          "encodedBytes": 293980,
+          "transferBytes": 294280
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-hover-thrust.png",
+          "encodedBytes": 282954,
+          "transferBytes": 283254
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-blades.png",
+          "encodedBytes": 261572,
+          "transferBytes": 261872
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-cut-sparks.png",
+          "encodedBytes": 246442,
+          "transferBytes": 246742
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-impact-sparks.png",
+          "encodedBytes": 307805,
+          "transferBytes": 308105
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-landing-ring.png",
+          "encodedBytes": 216615,
+          "transferBytes": 216915
+        },
+        {
+          "path": "/bastrop37/assets/sprites/effects-debris.png",
+          "encodedBytes": 196584,
+          "transferBytes": 196884
+        },
+        {
+          "path": "/bastrop37/assets/release/civic-linked-overlay-v3.svg",
+          "encodedBytes": 330,
+          "transferBytes": 630
+        },
+        {
+          "path": "/bastrop37/assets/release/civic-public-overlay-v3.svg",
+          "encodedBytes": 556,
+          "transferBytes": 856
+        },
+        {
+          "path": "/bastrop37/assets/release/dawn-atmosphere-v3.svg",
+          "encodedBytes": 372,
+          "transferBytes": 672
+        },
+        {
+          "path": "/bastrop37/assets/release/signal-restored-overlay-v3.svg",
+          "encodedBytes": 200,
+          "transferBytes": 500
+        },
+        {
+          "path": "/bastrop37/assets/release/env-l5-v3.png",
+          "encodedBytes": 2451815,
+          "transferBytes": 2452115
+        },
+        {
+          "path": "/bastrop37/assets/release/civic-node-v3.png",
+          "encodedBytes": 2972920,
+          "transferBytes": 2973220
+        },
+        {
+          "path": "/bastrop37/assets/release/approach-marker-overlay-v3.svg",
+          "encodedBytes": 241,
+          "transferBytes": 541
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/controller-v3.png",
+          "encodedBytes": 1382404,
+          "transferBytes": 1382704
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/controller-active-overlay-v3.svg",
+          "encodedBytes": 193,
+          "transferBytes": 493
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/controller-disabled-overlay-v3.svg",
+          "encodedBytes": 237,
+          "transferBytes": 537
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/barrier-open-v3.png",
+          "encodedBytes": 1351642,
+          "transferBytes": 1351942
+        },
+        {
+          "path": "/bastrop37/assets/lockdown/barrier-closed-v3.png",
+          "encodedBytes": 1738560,
+          "transferBytes": 1738860
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "limits": "Three isolated short 90-frame samples on local desktop. No concurrent tests/review during collection. Diagnostic WebGL renderer does not prove the Canvas2D/compositor acceleration path; JS heap excludes GPU and total browser memory. Not sustained-load, physical-phone, cross-browser or human-pacing evidence. Real-clock chapter asset payload is measured separately; the fake-clock fresh campaign returned no resource timing entries."
+}

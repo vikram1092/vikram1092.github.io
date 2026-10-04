@@ -1,0 +1,76 @@
+{
+  "assignment": "Phase 3 M5 bounded mechanical verification",
+  "checkedAt": "2026-10-04",
+  "scope": "Phase 1 L5 content comparison and file/data checks only. No runtime, artistic, browser, build or test approval is inferred.",
+  "dialogue": {
+    "status": "pass",
+    "expected": 9,
+    "checked": 9,
+    "ids": ["L5.01-01","L5.01-02","L5.01-03","L5.04-01","L5.04-02","L5.04-03","L5.05-01","L5.05-02","L5.05-03"],
+    "speakersInOrder": ["Omega","Jo","Omega","Vlad","Jo","Omega","Jo","Omega","Jo"],
+    "exactPhase1TextMatch": true,
+    "allSpeakersAreJoVladOrOmega": true,
+    "L5_02_and_L5_03_have_no_spoken_lines": true
+  },
+  "assets": {
+    "runtimeReferenceCount": 14,
+    "uniqueRuntimeReferenceCount": 14,
+    "allRuntimeURLsResolveToPublicFiles": true,
+    "newCopiedFiles": 7,
+    "reusedDeliveryAndLockdownReferences": 7,
+    "allNewCopiesByteIdenticalToSelectedSources": true,
+    "newAssetDirectoryContainsExactlyExpectedFiles": true,
+    "newAssetTotalBytes": 5426434,
+    "newFiles": [
+      {"name":"env-l5-v3.png","source":"docs/bastrop37/phase2/revision-v3/assets/env-l5-v3.png","bytes":2451815,"sha256":"86fbcb31dfa6ba4d4015590984d3c033d66f90c221bc02e49055fb6baf175abb","dimensions":[1536,1024],"anchor":[768,451],"crop":[0,0,1536,1024],"layer":"midground","manifestAndRuntimeMetadataMatch":true},
+      {"name":"civic-node-v3.png","source":"docs/bastrop37/phase2/revision-v3/assets/civic-node-v3.png","bytes":2972920,"sha256":"7beef2f9cf2712f33ef1fa670ecfade4e141767d564206791a27d25fea030608","dimensions":[1024,1536],"anchor":[512,1515],"crop":[10,20,1005,1505],"layer":"roadside","manifestAndRuntimeMetadataMatch":true},
+      {"name":"civic-linked-overlay-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/civic-linked-overlay-v3.svg","bytes":330,"sha256":"14a4c9fc54c2df8631bf5d09f48872f628534338a04a92858bc569e01989fb0c","dimensions":[1024,1536],"anchor":[512,1515],"crop":[10,20,1005,1505],"layer":"state-overlay","sharesCivicNodeTransform":true,"manifestAndRuntimeMetadataMatch":true},
+      {"name":"civic-public-overlay-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/civic-public-overlay-v3.svg","bytes":556,"sha256":"419ce0a777b89ab95c2a496f9fbdcaae1d60131b7349907f10f504ac22cb05ad","dimensions":[1024,1536],"anchor":[512,1515],"crop":[10,20,1005,1505],"layer":"state-overlay","sharesCivicNodeTransform":true,"manifestAndRuntimeMetadataMatch":true},
+      {"name":"dawn-atmosphere-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/dawn-atmosphere-v3.svg","bytes":372,"sha256":"6b1bc32eb2f72ef4675e3f58f0a21c9407c855679ae06ea611a0d297b8a292a1","dimensions":[1536,1024],"anchor":[768,451],"crop":[0,0,1536,1024],"layer":"state-overlay","sharesEnvironmentTransform":true,"manifestAndRuntimeMetadataMatch":true},
+      {"name":"signal-restored-overlay-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/signal-restored-overlay-v3.svg","bytes":200,"sha256":"fb82bd365c91f9158665194561dc00c638063f24002d549aec67dfbc92f4979b","dimensions":[1024,1536],"anchor":[538,1515],"crop":[304,7,428,1510],"layer":"state-overlay","sharesReusedSignalTransform":true,"manifestAndRuntimeMetadataMatch":true},
+      {"name":"approach-marker-overlay-v3.svg","source":"docs/bastrop37/phase2/revision-v3/assets/approach-marker-overlay-v3.svg","bytes":241,"sha256":"eca9e7d940a551d6163c901d0e7b54251b352c0a911abdde84e6c66846bba739","dimensions":[1536,1024],"anchor":[768,999],"crop":[20,8,1504,994],"layer":"state-overlay","sharesReusedGateTransform":true,"manifestAndRuntimeMetadataMatch":true}
+    ],
+    "reusedReferences": [
+      {"key":"signalDead","url":"/bastrop37/assets/delivery/signal-dead-v2.png","resolved":true},
+      {"key":"markerBody","url":"/bastrop37/assets/delivery/service-gate-open-v2.png","resolved":true},
+      {"key":"controller","url":"/bastrop37/assets/lockdown/controller-v3.png","resolved":true},
+      {"key":"controllerActive","url":"/bastrop37/assets/lockdown/controller-active-overlay-v3.svg","resolved":true},
+      {"key":"controllerDisabled","url":"/bastrop37/assets/lockdown/controller-disabled-overlay-v3.svg","resolved":true},
+      {"key":"barrierClosed","url":"/bastrop37/assets/lockdown/barrier-closed-v3.png","resolved":true},
+      {"key":"barrierOpen","url":"/bastrop37/assets/lockdown/barrier-open-v3.png","resolved":true}
+    ],
+    "placementGuideMatchesContentHandoff": true,
+    "placementGuides": {
+      "civicRoadConvergence": [768,451],
+      "civicNodeGround": [512,1515],
+      "publicIndicatorRequiresCommittedRelease": true,
+      "dawnRequiresCommittedRelease": true,
+      "restoredSignalsOnlyDuringProtectedRecovery": true,
+      "recoveryMarkerAfterAcknowledgedL505": true
+    }
+  },
+  "discrepancies": [],
+  "limitations": [
+    "The checks establish text/data agreement, source-copy identity, file resolution and declared source geometry only.",
+    "No rendered placement, browser behavior, state gating, mission behavior, build or tests were evaluated."
+  ],
+  "evidenceSources": [
+    "BASTROP37_STORY.md",
+    "docs/bastrop37/PHASE_1_NARRATIVE_AND_ENCOUNTERS.md (Level 5)",
+    "docs/bastrop37/handoffs/PHASE_3_M5_CONTENT.md",
+    "src/scripts/bastrop37/release-content.ts",
+    "src/scripts/bastrop37/delivery-content.ts (reused reference geometry)",
+    "src/scripts/bastrop37/lockdown-content.ts (reused reference geometry)",
+    "docs/bastrop37/phase2/revision-v3/asset-manifest.json",
+    "docs/bastrop37/phase2/revision-v3/assets/measurements.json",
+    "public/bastrop37/assets/release/ (seven-file inventory)"
+  ],
+  "checksRun": [
+    "Compared all nine L5 runtime lines with Phase 1 L5.01, L5.04 and L5.05 text and speakers.",
+    "Compared RELEASE_ASSETS URL count and resolved every URL under public/.",
+    "Compared seven selected source and destination byte sequences, byte counts and SHA-256 digests.",
+    "Read PNG dimensions from IHDR and SVG source canvas dimensions from width/height; compared measurements and declared manifest/runtime source geometry.",
+    "Compared release placement guide constants with M5 content handoff coordinates and state-gating notes.",
+    "Parsed this evidence file with python3 -m json.tool and ran git diff --check on the two assigned files."
+  ]
+}

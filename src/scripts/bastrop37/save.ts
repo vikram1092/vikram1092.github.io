@@ -3,19 +3,22 @@ import { DELIVERY_DIALOGUE } from './delivery-content';
 import { BETRAYAL_DIALOGUE, BETRAYAL_RECORDS } from './betrayal-content';
 import { PUBLIC_ACCESS_DIALOGUE } from './public-access-content';
 import { LOCKDOWN_DIALOGUE, LOCKDOWN_RECORDS } from './lockdown-content';
+import { RELEASE_DIALOGUE } from './release-content';
 
 export const DELIVERY_SAVE_KEY = 'bastrop37-campaign-v1';
 export type DeliveryCheckpoint = 'CP-L1-ACTION' | 'CP-L1-SERVICE' | 'CP-L1-COMPLETE';
 export type BetrayalCheckpoint = 'CP-L2-SCAN' | 'CP-L2-ESCAPE' | 'CP-L2-COMPLETE';
 export type PublicAccessCheckpoint = 'CP-L3-A' | 'CP-L3-B' | 'CP-L3-COMPLETE';
 export type LockdownCheckpoint = 'CP-L4-CONTROLLER' | 'CP-L4-ESCORT' | 'CP-L4-COMPLETE';
+export type ReleaseCheckpoint = 'CP-L5-CONTROLLER' | 'CP-L5-UPLOAD' | 'CP-L5-RELEASED' | 'CP-CAMPAIGN-COMPLETE';
 type Flags = { betrayalKnown: boolean; relayA: boolean; relayB: boolean; busSafe: boolean; omegaReleased: false };
 type BaseSave = { version: 1; completedLevels: string[]; flags: Flags; acknowledged: string[]; log: DialogueLine[] };
 export type DeliverySave = BaseSave & { checkpoint: DeliveryCheckpoint; flags: Flags & { betrayalKnown: false } };
 export type BetrayalSave = BaseSave & { checkpoint: BetrayalCheckpoint; records: EquipmentRecord[]; history: TransmissionEntry[] };
 export type PublicAccessSave = BaseSave & { checkpoint: PublicAccessCheckpoint; records: EquipmentRecord[]; history: TransmissionEntry[]; flags: Flags & { betrayalKnown: true } };
 export type LockdownSave = BaseSave & { checkpoint: LockdownCheckpoint; records: EquipmentRecord[]; history: TransmissionEntry[]; flags: Flags & { betrayalKnown: true; relayA: true; relayB: true } };
-export type CampaignSave = DeliverySave | BetrayalSave | PublicAccessSave | LockdownSave;
+export type ReleaseSave = Omit<BaseSave, 'flags'> & { checkpoint: ReleaseCheckpoint; records: EquipmentRecord[]; history: TransmissionEntry[]; flags: Omit<Flags, 'omegaReleased'> & { omegaReleased: boolean } };
+export type CampaignSave = DeliverySave | BetrayalSave | PublicAccessSave | LockdownSave | ReleaseSave;
 
 const l1 = [...DELIVERY_DIALOGUE['L1.01'], ...DELIVERY_DIALOGUE['L1.03'], ...DELIVERY_DIALOGUE['L1.05']];
 const l2Opening = BETRAYAL_DIALOGUE['L2.01'];
@@ -26,6 +29,8 @@ const l3Opening = PUBLIC_ACCESS_DIALOGUE['L3.01'];
 const l3Closure = PUBLIC_ACCESS_DIALOGUE['L3.04'];
 const l4Opening = LOCKDOWN_DIALOGUE['L4.01'];
 const l4Closure = LOCKDOWN_DIALOGUE['L4.04'];
+const l5Opening = RELEASE_DIALOGUE['L5.01'];
+const l5AfterRelease = [...RELEASE_DIALOGUE['L5.04'], ...RELEASE_DIALOGUE['L5.05']];
 const flagKeys = ['betrayalKnown', 'busSafe', 'omegaReleased', 'relayA', 'relayB'];
 const cloneLine = (line: DialogueLine): DialogueLine => ({ id: line.id, speaker: line.speaker, text: line.text });
 const cloneRecord = (record: EquipmentRecord): EquipmentRecord => ({ id: record.id, title: record.title, source: record.source, lines: [...record.lines] });
@@ -73,6 +78,17 @@ export function lockdownSave(checkpoint: LockdownCheckpoint, log: DialogueLine[]
   return {
     version: 1, checkpoint, completedLevels: complete ? ['L1', 'L2', 'L3', 'L4'] : ['L1', 'L2', 'L3'],
     flags: { betrayalKnown: true, relayA: true, relayB: true, busSafe: complete, omegaReleased: false },
+    acknowledged: log.map(line => line.id), log: log.map(cloneLine), records: records.map(cloneRecord),
+    history: history.map(entry => 'speaker' in entry ? cloneLine(entry) : cloneRecord(entry)),
+  };
+}
+
+export function releaseSave(checkpoint: ReleaseCheckpoint, log: DialogueLine[], records: EquipmentRecord[], history: TransmissionEntry[]): ReleaseSave {
+  const released = checkpoint === 'CP-L5-RELEASED' || checkpoint === 'CP-CAMPAIGN-COMPLETE';
+  return {
+    version: 1, checkpoint,
+    completedLevels: checkpoint === 'CP-CAMPAIGN-COMPLETE' ? ['L1', 'L2', 'L3', 'L4', 'L5'] : ['L1', 'L2', 'L3', 'L4'],
+    flags: { betrayalKnown: true, relayA: true, relayB: true, busSafe: true, omegaReleased: released },
     acknowledged: log.map(line => line.id), log: log.map(cloneLine), records: records.map(cloneRecord),
     history: history.map(entry => 'speaker' in entry ? cloneLine(entry) : cloneRecord(entry)),
   };
@@ -156,18 +172,39 @@ function validLockdownFlags(value: unknown, complete: boolean): boolean {
     flags.relayA === true && flags.relayB === true && flags.busSafe === complete && flags.omegaReleased === false;
 }
 
+export function validReleaseSave(value: unknown): value is ReleaseSave {
+  if (!value || typeof value !== 'object') return false;
+  const save = value as Record<string, unknown>;
+  if (save.version !== 1 || !['CP-L5-CONTROLLER', 'CP-L5-UPLOAD', 'CP-L5-RELEASED', 'CP-CAMPAIGN-COMPLETE'].includes(String(save.checkpoint))) return false;
+  const checkpoint = save.checkpoint as ReleaseCheckpoint;
+  const released = checkpoint === 'CP-L5-RELEASED' || checkpoint === 'CP-CAMPAIGN-COMPLETE';
+  const complete = checkpoint === 'CP-CAMPAIGN-COMPLETE';
+  const prefix = released ? (Array.isArray(save.log) ? save.log.length - 44 : -1) : 0;
+  if (!Number.isInteger(prefix) || prefix < 0 || prefix > 6 || (complete && prefix !== 6)) return false;
+  const before = [...l1, ...l2, ...l3Opening, ...l3Closure, ...l4Opening, ...l4Closure];
+  const lines = [...before, ...l5Opening, ...l5AfterRelease.slice(0, prefix)];
+  const entries: TransmissionEntry[] = [...expectedHistory('CP-L2-COMPLETE'), ...l3Opening, ...l3Closure,
+    l4Opening[0], ...LOCKDOWN_RECORDS, ...l4Opening.slice(1), ...l4Closure, ...l5Opening, ...l5AfterRelease.slice(0, prefix)];
+  const flags = save.flags as Record<string, unknown> | null;
+  if (!flags || !sameCanonical(Object.keys(flags).sort(), flagKeys) || flags.betrayalKnown !== true || flags.relayA !== true ||
+    flags.relayB !== true || flags.busSafe !== true || flags.omegaReleased !== released) return false;
+  if (!sameCanonical(save.completedLevels, complete ? ['L1', 'L2', 'L3', 'L4', 'L5'] : ['L1', 'L2', 'L3', 'L4'])) return false;
+  return sameCanonical(save.acknowledged, lines.map(line => line.id)) && sameCanonical(save.log, lines) &&
+    sameCanonical(save.records, [...BETRAYAL_RECORDS, ...LOCKDOWN_RECORDS]) && sameCanonical(save.history, entries);
+}
+
 export type SaveRead = { kind: 'none' } | { kind: 'invalid' } | { kind: 'valid'; save: CampaignSave };
 export function readDeliverySave(): SaveRead {
   try {
     const raw = localStorage.getItem(DELIVERY_SAVE_KEY);
     if (raw === null) return { kind: 'none' };
     const parsed: unknown = JSON.parse(raw);
-    return validDeliverySave(parsed) || validBetrayalSave(parsed) || validPublicAccessSave(parsed) || validLockdownSave(parsed) ? { kind: 'valid', save: parsed } : { kind: 'invalid' };
+    return validDeliverySave(parsed) || validBetrayalSave(parsed) || validPublicAccessSave(parsed) || validLockdownSave(parsed) || validReleaseSave(parsed) ? { kind: 'valid', save: parsed } : { kind: 'invalid' };
   } catch { return { kind: 'invalid' }; }
 }
 
 export function writeDeliverySave(save: CampaignSave): boolean {
-  if (!validDeliverySave(save) && !validBetrayalSave(save) && !validPublicAccessSave(save) && !validLockdownSave(save)) return false;
+  if (!validDeliverySave(save) && !validBetrayalSave(save) && !validPublicAccessSave(save) && !validLockdownSave(save) && !validReleaseSave(save)) return false;
   try {
     const serialized = JSON.stringify(save);
     localStorage.setItem(DELIVERY_SAVE_KEY, serialized);

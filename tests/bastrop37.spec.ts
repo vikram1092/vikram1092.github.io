@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { reveal, ack, escape } from './helpers/betrayal';
 
-const capture = 'docs/bastrop37/phase3/m3/regression-m1';
+const capture = 'docs/bastrop37/phase3/m5/regression-m1';
 mkdirSync(capture, { recursive: true });
 test.beforeEach(async ({ page }) => { await page.clock.install(); });
 async function start(page: Page) {
@@ -90,8 +90,8 @@ test('riding, slide energy, deliberate turbo, pause and checkpoint retry preserv
   await expect(page.locator('#comms')).toBeHidden();
 });
 
-test('fresh full Delivery traverses traffic, betrayal and both relay links with compatible saves', async ({ page }) => {
-  test.setTimeout(480000);
+test('fresh full campaign earns all five levels, durable release and protected recovery with compatible saves', async ({ page }) => {
+  test.setTimeout(900000);
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await page.addInitScript(() => {
     const audit = { drainWithActors: false, removals: [] as number[] };
@@ -163,7 +163,24 @@ test('fresh full Delivery traverses traffic, betrayal and both relay links with 
   const campaign=await page.evaluate(()=>JSON.parse(localStorage.getItem('bastrop37-campaign-v1')!));
   expect(campaign.completedLevels).toEqual(['L1','L2','L3']);expect(campaign.flags.omegaReleased).toBe(false);
   expect(campaign.log).toHaveLength(34);expect(campaign.records).toHaveLength(2);expect(campaign.history).toHaveLength(36);
-  writeFileSync('docs/bastrop37/phase3/m3/fresh-campaign-completion-save.json',JSON.stringify(campaign,null,2));
+  await page.locator('#continue-chapter').click();await expect(page.locator('#game')).toHaveAttribute('data-beat','L4.01');
+  await ack(page,4);const {openController,finishEscort}=await import('./helpers/lockdown');
+  await openController(page);await finishEscort(page);await ack(page,4);
+  await expect(page.locator('#headline')).toHaveText('EVACUATION ROUTE CLEARED');
+  const rescued=await page.evaluate(()=>JSON.parse(localStorage.getItem('bastrop37-campaign-v1')!));
+  expect(rescued.completedLevels).toEqual(['L1','L2','L3','L4']);expect(rescued.flags.busSafe).toBe(true);expect(rescued.flags.omegaReleased).toBe(false);
+  await page.locator('#continue-chapter').click();await expect(page.locator('#game')).toHaveAttribute('data-beat','L5.01');await ack(page,3);
+  const {openFinalCorridor,finishUpload,finishRecovery}=await import('./helpers/release');
+  await openFinalCorridor(page);await finishUpload(page);await finishRecovery(page);
+  const released=await page.evaluate(()=>JSON.parse(localStorage.getItem('bastrop37-campaign-v1')!));
+  expect(released.checkpoint).toBe('CP-CAMPAIGN-COMPLETE');expect(released.completedLevels).toEqual(['L1','L2','L3','L4','L5']);
+  expect(released.flags).toEqual({betrayalKnown:true,relayA:true,relayB:true,busSafe:true,omegaReleased:true});
+  expect(released.log).toHaveLength(50);expect(released.records).toHaveLength(3);expect(released.history).toHaveLength(53);
+  writeFileSync('docs/bastrop37/phase3/m5/fresh-campaign-completion-save.json',JSON.stringify(released,null,2));
+  await page.screenshot({path:'docs/bastrop37/phase3/m5/fresh-campaign-complete.png'});
+  const resourceAudit=await page.evaluate(()=>({resources:performance.getEntriesByType('resource').map(entry=>{const r=entry as PerformanceResourceTiming;return {path:new URL(r.name).pathname,encodedBytes:r.encodedBodySize,decodedBytes:r.decodedBodySize,transferBytes:r.transferSize};}),note:'Actual resource timing from the earned fresh five-level browser journey; this is payload evidence, not sustained performance or total browser memory.'}));
+  writeFileSync('docs/bastrop37/phase3/m5/fresh-campaign-resources.json',JSON.stringify(resourceAudit,null,2));
+  await page.reload();await page.locator('#continue-save').click();await expect(page.locator('#game')).toHaveAttribute('data-campaign-complete','true');
   expect(errors).toEqual([]);
 });
 

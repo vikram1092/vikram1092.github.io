@@ -1,5 +1,7 @@
 # Phase 3 M3 director scope and pickup handoff
 
+Current integration note (2026-10-04): the user subsequently authorized all remaining levels and publication. This milestone is preserved in the locally accepted complete five-level campaign; all81distinct scenarios have passing evidence across the final full/focused runs. Earlier scope/publication gates below are historical. See PHASE_3_CAMPAIGN_REPORT.md for current acceptance, actual counts, limits and final publication pickup.
+
 2026-10-01. **M3 explicitly authorized by “Yes begin M3”; implemented and verified locally, awaiting user acceptance.** No M3 commit, push or deployment. M4/M5 remain unauthorized. The initial documentation-only audit below is historical; the execution record here supersedes its pending implementation gate.
 
 ## Final execution and verification

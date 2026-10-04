@@ -1,0 +1,1185 @@
+{
+  "distinctScenarios": 81,
+  "withPassingEvidence": 81,
+  "fullRun": {
+    "startTime": "2026-10-04T16:19:01.613Z",
+    "duration": 2505886.6730000004,
+    "expected": 80,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "focusedRun": {
+    "startTime": "2026-10-04T17:02:42.189Z",
+    "duration": 142182.335,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "method": "Union of scenario names including nested suite names from full run and final focused rerun. Full run retained80passed/1driver-synchronization failure; focused4/4 after title READY wait resolves that case. This is not a claim of one clean81/81 invocation. Production build unchanged.",
+  "scenarios": [
+    {
+      "scenario": "bastrop37.spec.ts / fresh story waits for a slow reader, repeated Enter is ignored and pause holds every clock",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / riding, slide energy, deliberate turbo, pause and checkpoint retry preserve mechanics",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / fresh full campaign earns all five levels, durable release and protected recovery with compatible saves",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / service miss repeats safely; checkpoint reload retains Omega introduction without duplication",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / actual traffic contact offers checkpoint retry without replaying acknowledged opening",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / storage failure is truthful and corrupt save remains recoverable",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / invalid save is preserved until an explicit new-run confirmation",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        },
+        {
+          "report": "results-final-focused.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / audio mute persists and gallery/home navigation still work",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / local mechanics regression keeps jump fresh-press, blade retraction and genuine drone combat",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / failed required asset load offers retry without losing saved progress",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / confirmed new delivery cannot continue the previous checkpoint",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        },
+        {
+          "report": "results-final-focused.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / focused dialogue button ignores native repeated Enter",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / mobile / readable touch dialogue and simultaneous steering/slide remain separated",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "bastrop37.spec.ts / mobile full Delivery / touch-only Delivery reaches a saved ending and can continue after reload",
+      "file": "bastrop37.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "betrayal-model.spec.ts / equipment receipts precede confrontation and slow reading never changes route or flags",
+      "file": "betrayal-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "betrayal-model.spec.ts / missed scan loops and steering escape requires continuous hold plus exit and actor clearance",
+      "file": "betrayal-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "betrayal-model.spec.ts / published version1 saves remain valid and L2 receipts/flags/history cannot be forged",
+      "file": "betrayal-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "betrayal-model.spec.ts / Overdrive awards each event once, has a distinct full meter and cannot retrigger an active burst",
+      "file": "betrayal-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "betrayal.spec.ts / legacy save enters neutral intake; receipts wait, log chronologically, refusal saves, retries skip revelation",
+      "file": "betrayal.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "betrayal.spec.ts / touch intake and long L2 lines fit four layouts; controls stay separate through saved ending",
+      "file": "betrayal.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "betrayal.spec.ts / required L2 asset failure preserves earned L1 save and Retry Load recovers",
+      "file": "betrayal.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "betrayal.spec.ts / local optional Overdrive fixture activates once at zero ordinary energy and lateral escape stays available",
+      "file": "betrayal.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "betrayal.spec.ts / actual drone collision retries safely, blade defense earns once, and session-only L2 completion is truthful",
+      "file": "betrayal.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "betrayal.spec.ts / missed inspection scan follows its safe loop and retries without early betrayal",
+      "file": "betrayal.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "betrayal.spec.ts / three defended drone passes leave visibly before removal while the lock remains unfinished",
+      "file": "betrayal.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "delivery-model.spec.ts / reading holds mission route and requires all thirteen acknowledgments",
+      "file": "delivery-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "delivery-model.spec.ts / missed service entrance cannot complete and repeat approach recovers",
+      "file": "delivery-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "delivery-model.spec.ts / save validation rejects corruption and preserves contained Omega",
+      "file": "delivery-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "dialogue-hud.spec.ts / whole-card keyboard activation, slow reading and pause cannot double advance",
+      "file": "dialogue-hud.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "dialogue-hud.spec.ts / mobile steering outside the dialogue card never acknowledges a line",
+      "file": "dialogue-hud.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "dialogue-hud.spec.ts / desktop whole dialogue card / header, words, portrait, outer rim and footer each advance once; checkpoint reload survives",
+      "file": "dialogue-hud.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "dialogue-hud.spec.ts / mobile whole dialogue card / header, words, portrait, outer rim and footer each advance once; checkpoint reload survives",
+      "file": "dialogue-hud.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "home.spec.ts / green jelly scene has clean navigation and drops the period after 1.5 seconds",
+      "file": "home.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "home.spec.ts / mobile preserves left and right footer groups and touch dragging",
+      "file": "home.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "home.spec.ts / reduced motion and no WebGL preserve the static name and links",
+      "file": "home.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "home.spec.ts / loading shows the photograph without static letters or water, then reveals the scene",
+      "file": "home.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown-model.spec.ts / L4 opening inserts the separate receipt before Omega without replaying prior evidence",
+      "file": "lockdown-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown-model.spec.ts / controller needs a grounded adjacent blade hit and visibly retracts once; missed pass safely repeats",
+      "file": "lockdown-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown-model.spec.ts / escort stays reachable and cannot advance or begin attacks while Jo is out of range",
+      "file": "lockdown-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown-model.spec.ts / three separately telegraphed uncountered strikes can lose bus before safety and emit failure once",
+      "file": "lockdown-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown-model.spec.ts / leaving during a bus telegraph allows only that strike; returning starts a new distinct warning",
+      "file": "lockdown-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown-model.spec.ts / marked interception retargets one pass to Jo and a completed dodge costs no bus condition",
+      "file": "lockdown-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown-model.spec.ts / bus safety and Jo ramp latch independently in either order; safe latch prevents further bus damage",
+      "file": "lockdown-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown-model.spec.ts / strict L4 checkpoints retain old saves and reject skipped receipt, early safety or release",
+      "file": "lockdown-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown.spec.ts / L4 spillway record precedes Omega evidence line and slow reading preserves earned relays",
+      "file": "lockdown.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown.spec.ts / missing L4 bus asset preserves M3 completion and explicit retry recovers",
+      "file": "lockdown.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown.spec.ts / controller miss uses safe bypass; actual blade pass retracts barrier before full-condition escort save",
+      "file": "lockdown.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown.spec.ts / required controller and blade escort save contained L4 completion with all three records",
+      "file": "lockdown.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown.spec.ts / three uncountered bus attacks cause explicit failure and retry restores full condition; leaving range prevents fresh attacks",
+      "file": "lockdown.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown.spec.ts / real Jo collision retries escort; steering draw-off can finish without a drone kill and blocked storage remains session-only",
+      "file": "lockdown.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "lockdown.spec.ts / four-size L4 evidence and longest dialogue fit; touch controller plus escort completes without keyboard",
+      "file": "lockdown.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access-model.spec.ts / L3 reading holds route and link A commits once without releasing Omega or skipping B",
+      "file": "public-access-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access-model.spec.ts / grounded connection counts corridor overlap only and retains partial seconds through a missed service loop",
+      "file": "public-access-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access-model.spec.ts / relay time is capped and invalid/airborne intervals cannot charge it",
+      "file": "public-access-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access-model.spec.ts / L3 saves strictly bind checkpoint relay flags and canonical evidence while retaining published L1/L2 compatibility",
+      "file": "public-access-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access-model.spec.ts / retry snapshots reset unbanked progress and CP-L3-B permanently retains A",
+      "file": "public-access-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access-model.spec.ts / relay B loop retains A and partial B without replaying the cleared interception",
+      "file": "public-access-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access.spec.ts / M2 completion enters safe L3; slow reading, whole-card input and first checkpoint retain evidence",
+      "file": "public-access.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access.spec.ts / failed relay asset preserves completed M2 and Retry Load recovers",
+      "file": "public-access.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access.spec.ts / two first-pass links and steering interception save local readiness; reload and L4 entry preserve containment",
+      "file": "public-access.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access.spec.ts / partial link pauses airborne/outside range, survives miss loop, and pause or slow frame never grants free progress",
+      "file": "public-access.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access.spec.ts / actual interception crash retries after A; blades finish B and blocked storage keeps truthful session progress",
+      "file": "public-access.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "public-access.spec.ts / touch-only relay route and whole-card dialogue remain clear at four sizes",
+      "file": "public-access.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release-model.spec.ts / reusable link defaults to three seconds while each final section independently needs five",
+      "file": "release-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release-model.spec.ts / L5 safe opening cannot progress or release before all three lines; controller checkpoint keeps prior evidence",
+      "file": "release-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release-model.spec.ts / final controller miss loops with no defender; grounded blade and full visible retraction precede defender and upload gate",
+      "file": "release-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release-model.spec.ts / upload partial time pauses airborne and out of range, warns before a miss, and survives its repeat approach",
+      "file": "release-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release-model.spec.ts / A banks half exactly once and B stays closed until the one interception and corridor both clear",
+      "file": "release-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release-model.spec.ts / both distinct links and cleared road commit release once; pre-release upload checkpoint resets all partial progress",
+      "file": "release-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release-model.spec.ts / release closure precedes dawn, slow recovery reading holds route, then harmless marker completes once",
+      "file": "release-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release-model.spec.ts / every released dialogue prefix reloads safely and resumes unfinished closure or recovery without duplicate history",
+      "file": "release-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release-model.spec.ts / strict final saves require prior completion, exact receipts and canonical release prefix while retaining old M4 saves",
+      "file": "release-model.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release.spec.ts / L5 begins safely with earned prerequisites; slow reading and controller checkpoint retain all evidence",
+      "file": "release.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release.spec.ts / failed civic asset preserves M4 completion; Retry Load recovers without granting release",
+      "file": "release.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release.spec.ts / controller miss safely repeats and real sequential defender must clear before the upload checkpoint",
+      "file": "release.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release.spec.ts / actual final route commits release before dialogue, every acknowledgment reloads safely, and recovery completes once",
+      "file": "release.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release.spec.ts / upload dropout pauses while airborne or outside range and survives the service loop; retry resets both sections",
+      "file": "release.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release.spec.ts / real between-section collision retries empty upload; blocked storage preserves released session and safe recovery",
+      "file": "release.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release.spec.ts / four-size finale dialogue remains readable and the entire finale works with touch controls",
+      "file": "release.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release.spec.ts / unlocked chapter replay keeps completed campaign immutable through opening retries, final replay and new-game cancellation",
+      "file": "release.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "unexpected",
+          "results": [
+            "failed"
+          ]
+        },
+        {
+          "report": "results-final-focused.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    },
+    {
+      "scenario": "release.spec.ts / a failed replay asset keeps the completed campaign and menu Continue intact",
+      "file": "release.spec.ts",
+      "runs": [
+        {
+          "report": "results-full.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        },
+        {
+          "report": "results-final-focused.json",
+          "status": "expected",
+          "results": [
+            "passed"
+          ]
+        }
+      ],
+      "hasPassingEvidence": true
+    }
+  ]
+}

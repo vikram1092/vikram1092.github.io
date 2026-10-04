@@ -6,13 +6,15 @@ import { DELIVERY_ASSETS, DELIVERY_ASSET_METADATA } from './bastrop37/delivery-c
 import { BETRAYAL_ASSETS, BETRAYAL_ASSET_METADATA } from './bastrop37/betrayal-content';
 import { PUBLIC_ACCESS_ASSETS, PUBLIC_ACCESS_ASSET_METADATA } from './bastrop37/public-access-content';
 import { LOCKDOWN_ASSETS, LOCKDOWN_ASSET_METADATA, LOCKDOWN_PLACEMENT_GUIDES } from './bastrop37/lockdown-content';
+import { RELEASE_ASSETS, RELEASE_ASSET_METADATA } from './bastrop37/release-content';
 import { BetrayalMission, SCAN_CORRIDOR, LOCK_CORRIDOR, type BetrayalEvent } from './bastrop37/betrayal';
 import { PublicAccessMission, type PublicAccessEvent } from './bastrop37/public-access';
 import { LockdownMission, BUS_WORLD_X, BUS_PROGRESS_GOAL, INTERCEPT_MIN_X, INTERCEPT_MAX_X, RAMP_MIN_X, RAMP_MAX_X, type LockdownEvent } from './bastrop37/lockdown';
+import { ReleaseMission, type ReleaseEvent } from './bastrop37/release';
 import { CONTROLLER_X } from './bastrop37/controller';
 import { OverdriveMeter } from './bastrop37/overdrive';
-import { betrayalSave, clearDeliverySave, deliverySave, publicAccessSave, lockdownSave, readDeliverySave, writeDeliverySave, type BetrayalCheckpoint, type CampaignSave, type DeliveryCheckpoint, type PublicAccessCheckpoint, type LockdownCheckpoint } from './bastrop37/save';
-import type { HudView } from './bastrop37/contracts';
+import { betrayalSave, clearDeliverySave, deliverySave, publicAccessSave, lockdownSave, releaseSave, readDeliverySave, writeDeliverySave, type BetrayalCheckpoint, type CampaignSave, type DeliveryCheckpoint, type PublicAccessCheckpoint, type LockdownCheckpoint, type ReleaseCheckpoint } from './bastrop37/save';
+import type { ChapterId, HudView } from './bastrop37/contracts';
 type DronePhase = 'approach' | 'flank' | 'signal' | 'lunge' | 'recover';
 type DroneOutcome = 'none' | 'slice' | 'boost' | 'jump' | 'miss';
 type Car = {
@@ -80,10 +82,15 @@ export function mountGame() {
   }
   type GameState = HudView['state'];
   let state: GameState = 'loading';
-  let mission: DeliveryMission | BetrayalMission | PublicAccessMission | LockdownMission = new DeliveryMission();
-  let checkpoint: DeliveryCheckpoint | BetrayalCheckpoint | PublicAccessCheckpoint | LockdownCheckpoint | null = null;
+  let mission: DeliveryMission | BetrayalMission | PublicAccessMission | LockdownMission | ReleaseMission = new DeliveryMission();
+  let checkpoint: DeliveryCheckpoint | BetrayalCheckpoint | PublicAccessCheckpoint | LockdownCheckpoint | ReleaseCheckpoint | null = null;
   let sessionSave: CampaignSave | null = null;
   const initialSave = readDeliverySave();
+  let durableCampaign: CampaignSave | null = initialSave.kind === 'valid' ? initialSave.save : null;
+  let replayActive = false;
+  let replayChapter: ChapterId | null = null;
+  let replayCheckpoint: CampaignSave | null = null;
+  let replayOriginalSaveStatus: HudView['saveStatus'] = initialSave.kind === 'valid' ? 'saved' : 'none';
   let hasSave = initialSave.kind === 'valid';
   let saveStatus: HudView['saveStatus'] = initialSave.kind === 'invalid' ? 'invalid' : hasSave ? 'saved' : 'none';
   let statusMessage = initialSave.kind === 'invalid' ? 'Saved progress is incompatible. Start a safe new ride.' : '';
@@ -94,6 +101,8 @@ export function mountGame() {
   let loadingPublicAccess = false;
   let lockdownAssetsReady = false;
   let loadingLockdown = false;
+  let releaseAssetsReady = false;
+  let loadingRelease = false;
   let ignoreStoredSave = false;
   let serviceLoops = 0;
   let fixtureDroneSpawned = false;
@@ -105,6 +114,7 @@ export function mountGame() {
   const isBetrayal = () => mission instanceof BetrayalMission;
   const isPublicAccess = () => mission instanceof PublicAccessMission;
   const isLockdown = () => mission instanceof LockdownMission;
+  const isRelease = () => mission instanceof ReleaseMission;
   let x = 320, vx = 0, angle = 0;
   let charge = 1, boost = 0, speed = 260, distance = 0, calls = 0, elapsed = 0;
   let sliding = false, spawn = 0, offset = 0, last = 0, feedbackTime = 0;
@@ -213,7 +223,7 @@ export function mountGame() {
     roadBaseRatio = mission.mode === 'story' ? storyBaseRatio() : .84;
   }
   function spawnActionTraffic() {
-    if (isLockdown()) { traffic = []; return; }
+    if (isLockdown() || isRelease()) { traffic = []; return; }
     if (isBetrayal()) {
       traffic = mission.beat === 'L2.02'
         ? [makeVehicle(0, 520, 'sedan'), makeVehicle(4, 760, 'coupe')]
@@ -229,18 +239,28 @@ export function mountGame() {
       : [makeVehicle(0, 640, 'sedan')];
     traffic.forEach(car => { car.changed = true; car.changeZ = -1; });
   }
-  function saveCheckpoint(next: DeliveryCheckpoint | BetrayalCheckpoint | PublicAccessCheckpoint | LockdownCheckpoint) {
+  function saveCheckpoint(next: DeliveryCheckpoint | BetrayalCheckpoint | PublicAccessCheckpoint | LockdownCheckpoint | ReleaseCheckpoint) {
     // Local mechanics fixtures must never create either durable or resumable campaign progress.
     if (mechanicsFixture || m2Fixture) return;
     checkpoint = next;
-    sessionSave = isLockdown() && next.startsWith('CP-L4-')
+    sessionSave = isRelease() && (next.startsWith('CP-L5-') || next === 'CP-CAMPAIGN-COMPLETE')
+      ? releaseSave(next as ReleaseCheckpoint, mission.log, (mission as ReleaseMission).records, (mission as ReleaseMission).history)
+      : isLockdown() && next.startsWith('CP-L4-')
       ? lockdownSave(next as LockdownCheckpoint, mission.log, (mission as LockdownMission).records, (mission as LockdownMission).history)
       : isPublicAccess() && next.startsWith('CP-L3-')
       ? publicAccessSave(next as PublicAccessCheckpoint, mission.log, (mission as PublicAccessMission).records, (mission as PublicAccessMission).history)
       : isBetrayal() && next.startsWith('CP-L2-')
       ? betrayalSave(next as BetrayalCheckpoint, mission.log, (mission as BetrayalMission).records, (mission as BetrayalMission).history)
       : deliverySave(next as DeliveryCheckpoint, mission.log);
+    if (replayActive) {
+      replayCheckpoint = sessionSave;
+      saveStatus = replayOriginalSaveStatus;
+      hasSave = Boolean(durableCampaign);
+      statusMessage = 'Replay checkpoint held for this session. Campaign progress is preserved.';
+      return;
+    }
     const durable = writeDeliverySave(sessionSave);
+    if (durable) durableCampaign = sessionSave;
     if (durable) ignoreStoredSave = false;
     saveStatus = durable ? 'saved' : 'session';
     hasSave = true;
@@ -249,6 +269,8 @@ export function mountGame() {
   function beginNewGame(resetSaved = false) {
     const cleared = resetSaved ? clearDeliverySave() : true;
     if (resetSaved) ignoreStoredSave = !cleared;
+    if (resetSaved) durableCampaign = null;
+    replayActive = false; replayChapter = null; replayCheckpoint = null;
     initAudio(); mission = new DeliveryMission(); resetPhysical(); checkpoint = null; sessionSave = null;
     if (mechanicsFixture) {
       mission = new DeliveryMission('CP-L1-ACTION');
@@ -275,7 +297,9 @@ export function mountGame() {
     syncAudio(); setMessage('MODULE SECURED · MAYOR VLAD INBOUND', 3); canvas.focus({ preventScroll: true });
   }
   function restoreCheckpoint(save: CampaignSave) {
-    mission = save.checkpoint.startsWith('CP-L4-')
+    mission = (save.checkpoint.startsWith('CP-L5-') || save.checkpoint === 'CP-CAMPAIGN-COMPLETE')
+      ? new ReleaseMission(save.checkpoint as ReleaseCheckpoint, save.log, 'records' in save ? save.records : [], 'history' in save ? save.history : [])
+      : save.checkpoint.startsWith('CP-L4-')
       ? new LockdownMission(save.checkpoint as LockdownCheckpoint, save.log, 'records' in save ? save.records : [], 'history' in save ? save.history : [])
       : save.checkpoint.startsWith('CP-L3-')
       ? new PublicAccessMission(save.checkpoint as PublicAccessCheckpoint, save.log, 'records' in save ? save.records : [], 'history' in save ? save.history : [])
@@ -288,7 +312,7 @@ export function mountGame() {
     if (mission.mode === 'action') spawnActionTraffic();
     if (isBetrayal()) { carrierActive = save.checkpoint !== 'CP-L2-SCAN'; carrierZ = save.checkpoint === 'CP-L2-SCAN' ? 720 : save.checkpoint === 'CP-L2-COMPLETE' ? 1600 : 350; }
     state = save.checkpoint.endsWith('COMPLETE') ? 'complete' : 'playing';
-    statusMessage = state === 'complete' ? (isLockdown() ? 'Evacuation route cleared. Level 4 complete.' : isPublicAccess() ? 'Public route ready. Level 3 complete.' : isBetrayal() ? 'Recovery lock broken. Level 2 complete.' : 'Delivery approach reached. Level 1 complete.') : 'Safe checkpoint restored.';
+    statusMessage = state === 'complete' ? (isRelease() ? 'Omega released. Campaign complete.' : isLockdown() ? 'Evacuation route cleared. Level 4 complete.' : isPublicAccess() ? 'Public route ready. Level 3 complete.' : isBetrayal() ? 'Recovery lock broken. Level 2 complete.' : 'Delivery approach reached. Level 1 complete.') : 'Safe checkpoint restored.';
     syncAudio(); canvas.focus({ preventScroll: true });
   }
   function startGame() {
@@ -329,6 +353,16 @@ export function mountGame() {
     } catch { return false; }
     finally { loadingLockdown = false; }
   }
+  async function loadReleaseAssets(): Promise<boolean> {
+    if (releaseAssetsReady) return true;
+    if (loadingRelease) return false;
+    loadingRelease = true;
+    try {
+      await Promise.all(Object.entries(RELEASE_ASSETS).map(([name, url]) => loadImage(name === 'architecture' ? 'releaseArchitecture' : `release${name[0].toUpperCase()}${name.slice(1)}`, url)));
+      releaseAssetsReady = true; return true;
+    } catch { return false; }
+    finally { loadingRelease = false; }
+  }
   function enterBetrayal(previousLog: typeof mission.log) {
     mission = new BetrayalMission(undefined, previousLog, [], [...previousLog]);
     resetPhysical(); checkpoint = 'CP-L1-COMPLETE';
@@ -351,10 +385,55 @@ export function mountGame() {
     setMessage('RESERVOIR ROAD · SPILLWAY RECORD AHEAD', 3);
     syncAudio(); canvas.focus({ preventScroll: true });
   }
+  function enterRelease(previous: LockdownMission) {
+    mission = new ReleaseMission(undefined, previous.log, previous.records, previous.history);
+    resetPhysical(); checkpoint = 'CP-L4-COMPLETE';
+    state = 'playing'; statusMessage = '';
+    setMessage('CIVIC ROAD · PUBLIC RELEASE AHEAD', 3);
+    syncAudio(); canvas.focus({ preventScroll: true });
+  }
+  function replayOpening(chapterId: ChapterId) {
+    if (!durableCampaign) return;
+    const order: ChapterId[] = ['L1', 'L2', 'L3', 'L4', 'L5'];
+    const preceding = order.slice(0, order.indexOf(chapterId));
+    const log = durableCampaign.log.filter(line => preceding.some(level => line.id.startsWith(`${level}.`)));
+    const records = 'records' in durableCampaign ? durableCampaign.records.filter(record => preceding.some(level => record.id.startsWith(`${level}.`))) : [];
+    const history = 'history' in durableCampaign ? durableCampaign.history.filter(entry => preceding.some(level => entry.id.startsWith(`${level}.`))) : [...log];
+    mission = chapterId === 'L5' ? new ReleaseMission(undefined, log, records, history)
+      : chapterId === 'L4' ? new LockdownMission(undefined, log, records, history)
+      : chapterId === 'L3' ? new PublicAccessMission(undefined, log, records, history)
+      : chapterId === 'L2' ? new BetrayalMission(undefined, log, records, history)
+      : new DeliveryMission();
+    resetPhysical(); checkpoint = null; replayCheckpoint = null; sessionSave = null;
+    roadBaseRatio = storyBaseRatio(); state = 'playing';
+    hasSave = true; saveStatus = replayOriginalSaveStatus;
+    statusMessage = `Chapter ${chapterId.slice(1)} replay. Campaign progress is preserved.`;
+    syncAudio(); canvas.focus({ preventScroll: true });
+  }
+  function replay(chapterId: ChapterId) {
+    const found = readDeliverySave();
+    const source = replayActive ? durableCampaign : sessionSave ?? durableCampaign ?? (found.kind === 'valid' ? found.save : null);
+    if (!source || !source.completedLevels.includes(chapterId)) return;
+    if (!replayActive) replayOriginalSaveStatus = saveStatus;
+    durableCampaign = source;
+    replayActive = true; replayChapter = chapterId;
+    state = 'loading'; statusMessage = `Loading chapter ${chapterId.slice(1)} replay.`; clearInput();
+    const load = chapterId === 'L5' ? loadReleaseAssets : chapterId === 'L4' ? loadLockdownAssets
+      : chapterId === 'L3' ? loadPublicAccessAssets : chapterId === 'L2' ? loadBetrayalAssets : async () => true;
+    void load().then(ok => {
+      if (ok) replayOpening(chapterId);
+      else { state = 'error'; statusMessage = `Chapter ${chapterId.slice(1)} art could not load. Retry Load or Menu.`; syncAudio(); }
+    });
+  }
   function continueGame() {
     if (assetLoadFailed) { state = 'error'; statusMessage = 'A required Delivery asset is missing. Retry loading before continuing.'; return; }
     if (state === 'ready') {
       if (sessionSave) {
+        if ((sessionSave.checkpoint.startsWith('CP-L5-') || sessionSave.checkpoint === 'CP-CAMPAIGN-COMPLETE') && !releaseAssetsReady) {
+          state = 'loading'; statusMessage = 'Loading Release art.';
+          void loadReleaseAssets().then(ok => { if (ok) restoreCheckpoint(sessionSave!); else { state = 'error'; statusMessage = 'Release art could not load. Retry Load or Menu.'; } });
+          return;
+        }
         if (sessionSave.checkpoint.startsWith('CP-L4-') && !lockdownAssetsReady) {
           state = 'loading'; statusMessage = 'Loading Lockdown art.';
           void loadLockdownAssets().then(ok => { if (ok) restoreCheckpoint(sessionSave!); else { state = 'error'; statusMessage = 'Lockdown art could not load. Retry Load or Menu.'; } });
@@ -374,6 +453,11 @@ export function mountGame() {
       }
       const found = ignoreStoredSave ? { kind: 'none' as const } : readDeliverySave();
       if (found.kind === 'valid') {
+        if ((found.save.checkpoint.startsWith('CP-L5-') || found.save.checkpoint === 'CP-CAMPAIGN-COMPLETE') && !releaseAssetsReady) {
+          state = 'loading'; statusMessage = 'Loading Release art.';
+          void loadReleaseAssets().then(ok => { if (ok) { restoreCheckpoint(found.save); hasSave = true; saveStatus = 'saved'; } else { state = 'error'; statusMessage = 'Release art could not load. Retry Load or Menu.'; } });
+          return;
+        }
         if (found.save.checkpoint.startsWith('CP-L4-') && !lockdownAssetsReady) {
           state = 'loading'; statusMessage = 'Loading Lockdown art.';
           void loadLockdownAssets().then(ok => { if (ok) { restoreCheckpoint(found.save); hasSave = true; saveStatus = 'saved'; } else { state = 'error'; statusMessage = 'Lockdown art could not load. Retry Load or Menu.'; } });
@@ -394,6 +478,8 @@ export function mountGame() {
       else { state = 'error'; saveStatus = found.kind === 'invalid' ? 'invalid' : 'none'; statusMessage = 'No compatible safe checkpoint is available. Start a new Delivery ride.'; }
       return;
     }
+    if (state === 'complete' && replayActive) { menu(); return; }
+    if (state === 'complete' && mission instanceof ReleaseMission && mission.campaignComplete) { menu(); return; }
     if (state === 'complete' && checkpoint === 'CP-L1-COMPLETE') {
       state = 'loading'; statusMessage = 'Loading municipal intake.'; clearInput();
       const l1Log = [...mission.log];
@@ -421,8 +507,17 @@ export function mountGame() {
       });
       return;
     }
+    if (state === 'complete' && checkpoint === 'CP-L4-COMPLETE' && mission instanceof LockdownMission) {
+      state = 'loading'; statusMessage = 'Loading civic road.'; clearInput();
+      const previous = mission;
+      void loadReleaseAssets().then(ok => {
+        if (ok) enterRelease(previous);
+        else { state = 'error'; statusMessage = 'Release art could not load. Lockdown completion is saved. Retry Load or Menu.'; syncAudio(); }
+      });
+      return;
+    }
     if (state === 'complete' || state === 'error') {
-      state = 'error'; statusMessage = isLockdown() ? 'Evacuation route cleared. The civic chapter is not in this milestone yet.' : 'Retry loading the next chapter.';
+      state = 'error'; statusMessage = isRelease() ? 'Campaign complete. Select a chapter replay or return to title.' : 'Retry loading the next chapter.';
       syncAudio();
     }
   }
@@ -435,6 +530,7 @@ export function mountGame() {
   }
   function resume() { if (state !== 'paused') return; state = 'playing'; clearInput(); syncAudio(); canvas.focus({preventScroll:true}); }
   function crash() {
+    if (mission instanceof ReleaseMission && mission.omegaReleased) return;
     burst('impactSparks',x,0,bikeLift(),74,.55);
     burst('debris',x,0,bikeLift(),62,.75);
     state = 'crashed'; clearInput(); charge = boost = 0;
@@ -444,6 +540,7 @@ export function mountGame() {
   function retry() {
     if (state === 'error') {
       if (assetLoadFailed) { loadAssets(); return; }
+      if (replayActive && replayChapter && !replayCheckpoint) { replay(replayChapter); return; }
       if (checkpoint === 'CP-L1-COMPLETE') {
         state = 'complete'; statusMessage = 'Delivery approach reached. Level 1 complete.';
         continueGame(); return;
@@ -456,19 +553,33 @@ export function mountGame() {
         state = 'complete'; statusMessage = 'Public route ready. Level 3 complete.';
         continueGame(); return;
       }
+      if (checkpoint === 'CP-L4-COMPLETE' && mission instanceof LockdownMission) {
+        state = 'complete'; statusMessage = 'Evacuation route cleared. Level 4 complete.';
+        continueGame(); return;
+      }
       if (sessionSave?.checkpoint.startsWith('CP-L2-')) {
         state = 'ready'; continueGame(); return;
       }
       const prior = sessionSave ?? (ignoreStoredSave ? null : readDeliverySave().kind === 'valid' ? (readDeliverySave() as {kind:'valid';save:CampaignSave}).save : null);
-      if (prior?.checkpoint.startsWith('CP-L3-') || prior?.checkpoint.startsWith('CP-L4-')) { state = 'ready'; continueGame(); return; }
+      if (prior?.checkpoint.startsWith('CP-L3-') || prior?.checkpoint.startsWith('CP-L4-') || prior?.checkpoint.startsWith('CP-L5-') || prior?.checkpoint === 'CP-CAMPAIGN-COMPLETE') { state = 'ready'; continueGame(); return; }
     }
     if (state !== 'crashed' && state !== 'paused') return;
     if (sessionSave) restoreCheckpoint(sessionSave);
+    else if (replayActive && replayChapter) replayOpening(replayChapter);
     else beginNewGame();
   }
   function menu() {
     if (state === 'loading') return;
     if (assetLoadFailed) { state = 'error'; statusMessage = 'Required Delivery art is unavailable. Retry loading to recover.'; return; }
+    if (replayActive) {
+      replayActive = false; replayChapter = null; replayCheckpoint = null;
+      sessionSave = durableCampaign; checkpoint = durableCampaign?.checkpoint ?? null;
+      hasSave = Boolean(durableCampaign); saveStatus = replayOriginalSaveStatus;
+      if (durableCampaign && (durableCampaign.checkpoint === 'CP-CAMPAIGN-COMPLETE' || durableCampaign.checkpoint.startsWith('CP-L5-') ? releaseAssetsReady
+        : durableCampaign.checkpoint.startsWith('CP-L4-') ? lockdownAssetsReady
+        : durableCampaign.checkpoint.startsWith('CP-L3-') ? publicAccessAssetsReady
+        : durableCampaign.checkpoint.startsWith('CP-L2-') ? betrayalAssetsReady : true)) restoreCheckpoint(durableCampaign);
+    }
     state = 'ready'; clearInput(); syncAudio();
   }
   function onMissionEvents(events: DeliveryEvent[]) {
@@ -589,16 +700,55 @@ export function mountGame() {
       }
     }
   }
+  function onReleaseEvents(events: ReleaseEvent[]) {
+    for (const event of events) {
+      if (event === 'checkpoint-controller') {
+        spawnActionTraffic(); saveCheckpoint('CP-L5-CONTROLLER');
+        setMessage('BLADES J / CTRL · OPEN THE CIVIC CORRIDOR', 4);
+      }
+      if (event === 'controller-hit') { sound('slice'); setMessage('CONTROLLER DISABLED · BARRIER RETRACTING', 3); }
+      if (event === 'controller-missed') setMessage('CONTROLLER MISSED · RIGHT SERVICE LOOP', 4);
+      if (event === 'loop-return') setMessage('MARKED APPROACH REJOINED · PROGRESS RETAINED', 3);
+      if (event === 'barrier-open') setMessage('BARRIER OPEN · DEFENDER AHEAD', 3);
+      if (event === 'defender-approach') {
+        const drone = makeVehicle(2, 540, 'drone'); drone.x = 430;
+        traffic.push(drone); setMessage('CIVIC DEFENDER · CUT OR EVADE', 3);
+      }
+      if (event === 'checkpoint-upload') {
+        saveCheckpoint('CP-L5-UPLOAD'); setMessage('UPLOAD A · STAY GROUNDED IN THE CORRIDOR', 4);
+      }
+      if (event === 'section-a-linked') { sound('success'); setMessage('UPLOAD A LINKED · LOCAL ROUTE READY', 3); }
+      if (event === 'intercept-approach') {
+        const drone = makeVehicle(2, 540, 'drone'); drone.x = 430;
+        traffic.push(drone); setMessage('MUNICIPAL INTERCEPT · CLEAR BEFORE B', 3);
+      }
+      if (event === 'intercept-cleared') setMessage('INTERCEPT CLEAR · UPLOAD B AHEAD', 3);
+      if (event === 'link-missed') setMessage('UPLOAD INCOMPLETE · FOLLOW SERVICE LOOP', 4);
+      if (event === 'omega-released') {
+        clearInput(); traffic = [];
+        saveCheckpoint('CP-L5-RELEASED');
+        sound('success'); setMessage('PUBLIC ACCESS ACTIVE · ROAD CLEAR', 5);
+      }
+      if (event === 'release-prefix-updated') saveCheckpoint('CP-L5-RELEASED');
+      if (event === 'closure-ack') { clearInput(); setMessage('DAWN · ROAD SAFE', 2); }
+      if (event === 'recovery-start') { clearInput(); setMessage('NEXT BLOCK · FOLLOW THE RECOVERY MARKER', 4); }
+      if (event === 'campaign-complete') {
+        clearInput(); saveCheckpoint('CP-CAMPAIGN-COMPLETE'); state = 'complete';
+        sound('success'); syncAudio(); setMessage('OMEGA PUBLIC · CAMPAIGN COMPLETE', 5);
+      }
+    }
+  }
   function advance() {
     if (state !== 'playing' || (mission.mode !== 'story' && mission.mode !== 'resolve')) return;
     clearInput();
-    if (mission instanceof LockdownMission) onLockdownEvents(mission.advance());
+    if (mission instanceof ReleaseMission) onReleaseEvents(mission.advance());
+    else if (mission instanceof LockdownMission) onLockdownEvents(mission.advance());
     else if (mission instanceof PublicAccessMission) onPublicAccessEvents(mission.advance());
     else if (mission instanceof BetrayalMission) onBetrayalEvents(mission.advance());
     else onMissionEvents(mission.advance());
     if (state === 'playing' && String(mission.mode) === 'action') canvas.focus({ preventScroll: true });
   }
-  const actions = { start: startGame, continue: continueGame, newGame, advance, pause, resume, retry, menu };
+  const actions = { start: startGame, continue: continueGame, newGame, replay, advance, pause, resume, retry, menu };
   const hud = createHud(actions);
   const aliases: Record<string,string> = {
     KeyA:'ArrowLeft', KeyD:'ArrowRight', KeyW:'ArrowUp', KeyS:'ArrowDown',
@@ -810,7 +960,7 @@ export function mountGame() {
       moveDroneAroundTraffic(car,retreatX,car.z+(255-car.z)*(1-Math.exp(-2.7*dt)),3.6,dt);
       if(car.phaseTime===0) {
         if((car.attackPasses||0)>=3) {
-          if (isBetrayal() || isPublicAccess()) {
+          if (isBetrayal() || isPublicAccess() || isRelease()) {
             car.disengaging = true; car.retreatDirection = car.z < 0 ? -1 : 1;
             car.side = car.x < x ? -1 : 1;
           } else { car.passed=true; car.z=-100; }
@@ -883,7 +1033,8 @@ export function mountGame() {
     elapsed += dt; feedbackTime -= dt;
     syncAudio(dt);
     const action = mission.mode === 'action';
-    const safeCruise = mission.mode === 'story' || mission.mode === 'resolve';
+    const safeCruise = mission.mode === 'story' || mission.mode === 'resolve' ||
+      (mission instanceof ReleaseMission && mission.omegaReleased);
     if (safeCruise && W < H) roadBaseRatio = storyBaseRatio();
     else roadBaseRatio += ((safeCruise ? storyBaseRatio() : .84)-roadBaseRatio)*(1-Math.exp(-3*dt));
     const input = Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
@@ -1008,7 +1159,16 @@ export function mountGame() {
     for(const p of particles) {p.life-=dt;p.x+=p.vx*dt;p.y+=(p.vy+speed*.4)*dt;}
     score=Math.max(score,distance*8+calls*350+slices*1200+droneDodges*700);
     if(state==='playing' && !mechanicsFixture) {
-      if (mission instanceof LockdownMission) {
+      if (mission instanceof ReleaseMission) {
+        if (mission.beat === 'L5.02' && mission.mode === 'action')
+          onReleaseEvents(mission.controllerBladeHit(x, height === 0 && jumpWindup === 0, bladeReach(CONTROLLER_X), blades > .65));
+        if (mission.defenderStarted && !mission.defenderCleared && !traffic.some(car => car.kind === 'drone'))
+          onReleaseEvents(mission.droneCleared('defender'));
+        if (mission.interceptStarted && !mission.interceptCleared && !traffic.some(car => car.kind === 'drone'))
+          onReleaseEvents(mission.droneCleared('intercept'));
+        onReleaseEvents(mission.tick(dt, speed*dt, x, height === 0 && jumpWindup === 0, traffic.length === 0));
+      }
+      else if (mission instanceof LockdownMission) {
         if (mission.beat === 'L4.02' && mission.mode === 'action')
           onLockdownEvents(mission.controllerBladeHit(x, height === 0 && jumpWindup === 0, bladeReach(CONTROLLER_X), blades > .65));
         if (mission.busSafe && !traffic.some(car => car.kind === 'drone')) mission.droneDeparted = true;
@@ -1018,7 +1178,9 @@ export function mountGame() {
       else if (mission instanceof BetrayalMission) onBetrayalEvents(mission.tick(dt,speed*dt,x,traffic.length===0 && (mission.beat !== 'L2.03' || carrierZ >= 1500)));
       else onMissionEvents(mission.tick(dt,speed*dt,x,traffic.length===0));
     }
-    if(feedbackTime<=0) feedbackText=safeCruise?'SAFE CRUISE · ENTER TO ADVANCE':mission.mode==='drain'?'TRAFFIC CLEARING':height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'STEER · SHIFT TURBO · SPACE SLIDE';
+    if(feedbackTime<=0) feedbackText=mission instanceof ReleaseMission && mission.omegaReleased && mission.mode === 'drain'
+      ? 'SAFE CRUISE · RECOVERY ROUTE'
+      : safeCruise?'SAFE CRUISE · ENTER TO ADVANCE':mission.mode==='drain'?'TRAFFIC CLEARING':height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'STEER · SHIFT TURBO · SPACE SLIDE';
   }
   function makeVehicle(lane:number,z:number,kind:string):Car {
     const vehicle=kind as Car['kind'];
@@ -1180,6 +1342,79 @@ export function mountGame() {
     drawRelayImage('relay', corridor.endZ);
     if (mission.inRange && mission.activeLink && mission.activeLink.seconds > 0) drawRelayImage('relayConnecting', corridor.endZ);
   }
+  function drawReleaseAsset(name: keyof typeof RELEASE_ASSETS, wx: number, z: number, worldWidth: number, alpha = 1, shiftX = 0) {
+    if (z > 1500 || z < -90) return;
+    const imageName = name === 'architecture' ? 'releaseArchitecture' : `release${name[0].toUpperCase()}${name.slice(1)}`;
+    const img = images[imageName], meta = RELEASE_ASSET_METADATA[name];
+    if (!img) return;
+    const [sx, sy, sw, sh] = meta.displayCrop ?? [0, 0, img.width, img.height];
+    const [ax, ay] = meta.anchor;
+    const p = project(wx + shiftX, z), scale = worldWidth / sw * p.scale;
+    c.save(); c.globalAlpha *= alpha * clamp((z + 90) / 140, 0, 1) * clamp((1500 - z) / 400, 0, 1);
+    c.drawImage(img, sx, sy, sw, sh, p.x - (ax - sx) * scale, p.y - (ay - sy) * scale, sw * scale, sh * scale);
+    c.restore();
+  }
+  function drawReleaseProps() {
+    if (!(mission instanceof ReleaseMission)) return;
+    const m = mission;
+    if (m.beat === 'L5.01') {
+      drawReleaseAsset('barrierClosed', 450, 780, 300);
+      drawReleaseAsset('controller', CONTROLLER_X, 520, 38);
+      drawReleaseAsset('controllerActive', CONTROLLER_X, 520, 38);
+      drawReleaseAsset('civicNode', 540, 1080, 90);
+      return;
+    }
+    if (m.beat === 'L5.02') {
+      const gate = m.controller, z = gate.barrierZ, shift = gate.bypassShift;
+      if (gate.state === 'active') drawReleaseAsset('barrierClosed', 450, z, 300, 1, shift);
+      else if (gate.state === 'retracting') {
+        drawReleaseAsset('barrierOpen', 450, z, 300, gate.progress);
+        drawReleaseAsset('barrierClosed', 450, z, 300, 1 - gate.progress, -145 * gate.progress);
+      } else drawReleaseAsset('barrierOpen', 450, z, 300);
+      drawReleaseAsset('controller', CONTROLLER_X, gate.controllerZ, 38, 1, shift);
+      drawReleaseAsset(gate.state === 'active' ? 'controllerActive' : 'controllerDisabled', CONTROLLER_X, gate.controllerZ, 38, 1, shift);
+      if (gate.state === 'active') drawRouteBand(Math.max(70, gate.controllerZ), gate.loop ? 'RIGHT SERVICE LOOP' : 'BLADE TARGET', 398, 488, '#ffe08d30');
+      drawReleaseAsset('civicNode', 540, z + 300, 90);
+      return;
+    }
+    if (m.barrierExitZ !== null) drawReleaseAsset('barrierOpen', 450, m.barrierExitZ, 300);
+    for (const z of [m.linkedAExitZ, m.linkedBExitZ]) if (z !== null) {
+      drawReleaseAsset('civicNode', 540, z, 90);
+      drawReleaseAsset('civicLinked', 540, z, 90);
+    }
+    const corridor = m.corridor();
+    if (corridor) {
+      const nearZ = Math.max(-35, corridor.startZ), farZ = Math.min(1100, corridor.endZ);
+      if (farZ > nearZ) {
+        const nearL = project(corridor.minX, nearZ), nearR = project(corridor.maxX, nearZ);
+        const farL = project(corridor.minX, farZ), farR = project(corridor.maxX, farZ);
+        c.save(); c.fillStyle = '#44e5e929'; c.strokeStyle = '#70f3ea9a'; c.lineWidth = Math.max(1, nearL.scale * 2);
+        c.beginPath(); c.moveTo(farL.x, farL.y); c.lineTo(farR.x, farR.y);
+        c.lineTo(nearR.x, nearR.y); c.lineTo(nearL.x, nearL.y); c.closePath(); c.fill(); c.stroke();
+        c.fillStyle = '#ddfffb'; c.font = `700 ${Math.max(8, 11 * nearL.scale)}px monospace`; c.textAlign = 'center';
+        c.fillText(`UPLOAD ${corridor.section} · LINK CORRIDOR`, (nearL.x + nearR.x) / 2, nearL.y - 12 * nearL.scale);
+        c.restore();
+      }
+      drawReleaseAsset('civicNode', 540, corridor.endZ, 90);
+      if (m.inRange && m.activeLink && m.activeLink.seconds > 0) drawReleaseAsset('civicLinked', 540, corridor.endZ, 90, m.activeLink.progress);
+    }
+    if (m.omegaReleased) {
+      const publicZ = m.beat === 'L5.04' ? 640 : 640 - m.recoveryRoute;
+      drawReleaseAsset('civicNode', 540, publicZ, 90);
+      drawReleaseAsset('civicPublic', 540, publicZ, 90);
+    }
+    if (m.beat === 'L5.05' && (m.mode === 'drain' || m.campaignComplete)) {
+      const signalZ = 520 - m.recoveryRoute;
+      drawReleaseAsset('signalDead', 465, signalZ, 42);
+      drawReleaseAsset('signalRestored', 465, signalZ, 42);
+      const marker = m.recoveryMarkerZ;
+      if (marker !== null) {
+        drawRouteBand(marker, 'NEXT BLOCK', 225, 425, '#d4f37d32');
+        drawReleaseAsset('markerBody', 320, marker, 230);
+        drawReleaseAsset('recoveryMarker', 320, marker, 230);
+      }
+    } else if (!m.omegaReleased) drawReleaseAsset('signalDead', 465, 780, 42);
+  }
   function drawLockdownAsset(name: keyof typeof LOCKDOWN_ASSETS, wx: number, z: number, worldWidth: number, alpha = 1, shiftX = 0) {
     if (z > 1500 || z < -90) return;
     const img = images[name], meta = LOCKDOWN_ASSET_METADATA[name];
@@ -1271,18 +1506,35 @@ export function mountGame() {
       const skyW=skyline.width*skyScale,skyH=skyline.height*skyScale;
       c.drawImage(skyline,(W-skyW)/2-(cameraX-320)*.02,(H-skyH)/2,skyW,skyH);
     }
-    const img=images[isLockdown() ? 'lockdownArchitecture' : isPublicAccess() ? 'publicAccessArchitecture' : isBetrayal() ? 'betrayalArchitecture' : 'architecture'];
+    // The approved recovery sky replaces the moonlit skyline as dawn completes.
+    // Keep it behind the civic frame; the aligned dawn asset still warms the frame itself.
+    if (mission instanceof ReleaseMission && mission.omegaReleased && mission.dawn > 0) {
+      const dawnSky = c.createLinearGradient(0, 0, 0, H);
+      dawnSky.addColorStop(0, '#8a8784');
+      dawnSky.addColorStop(.45, '#c5b695');
+      dawnSky.addColorStop(1, '#101d28');
+      c.save(); c.globalAlpha = mission.dawn;
+      c.fillStyle = dawnSky; c.fillRect(0, 0, W, H);
+      c.restore();
+    }
+    const img=images[isRelease() ? 'releaseArchitecture' : isLockdown() ? 'lockdownArchitecture' : isPublicAccess() ? 'publicAccessArchitecture' : isBetrayal() ? 'betrayalArchitecture' : 'architecture'];
     if(!img)return;
     const lockdownPlacement = isLockdown() ? lockdownEnvironmentPlacement() : null;
     const scale=lockdownPlacement?.scale ?? Math.max(W/img.width,H*.65/img.height)*1.03;
     const dw=img.width*scale,dh=img.height*scale;
     const parallax=-(cameraX-320)*.035;
-    const anchorY=isLockdown() ? LOCKDOWN_ASSET_METADATA.architecture.anchor[1]
+    const anchorY=isRelease() ? RELEASE_ASSET_METADATA.architecture.anchor[1]
+      : isLockdown() ? LOCKDOWN_ASSET_METADATA.architecture.anchor[1]
       : isPublicAccess() ? PUBLIC_ACCESS_ASSET_METADATA.architecture.anchor[1]
       : isBetrayal() ? BETRAYAL_ASSET_METADATA.architecture.anchor[1] : DELIVERY_ASSET_METADATA.architecture.anchor[1];
     const envX=lockdownPlacement?.x ?? (W-dw)/2+parallax;
     const envY=lockdownPlacement?.y ?? H*(W<H?.32:.42)-anchorY*scale;
     c.drawImage(img,envX,envY,dw,dh);
+    if (mission instanceof ReleaseMission && mission.omegaReleased && mission.dawn > 0 && images.releaseDawn) {
+      c.save(); c.globalAlpha = mission.dawn * .85;
+      c.drawImage(images.releaseDawn, envX, envY, dw, dh);
+      c.restore();
+    }
     if (isLockdown()) drawLockdownMidground(envX, envY, scale);
     if (isBetrayal() && carrierActive && images.intakeScan) {
       c.save(); c.globalAlpha = .38 + .08 * Math.sin(elapsed * 7);
@@ -1390,26 +1642,35 @@ export function mountGame() {
     const betrayal = mission instanceof BetrayalMission ? mission : null;
     const publicAccess = mission instanceof PublicAccessMission ? mission : null;
     const lockdown = mission instanceof LockdownMission ? mission : null;
+    const release = mission instanceof ReleaseMission ? mission : null;
     const view: HudView = {
       state, readyToStart: state !== 'loading', mode: mission.mode, beatId: mission.beat,
-      chapterId: lockdown ? 'L4' : publicAccess ? 'L3' : betrayal ? 'L2' : 'L1', chapterLabel: lockdown ? 'LOCKDOWN' : publicAccess ? 'PUBLIC ACCESS' : betrayal ? 'BETRAYAL' : 'DELIVERY',
-      completionTitle: lockdown ? 'EVACUATION ROUTE CLEARED' : publicAccess ? 'PUBLIC ROUTE READY' : betrayal ? 'RECOVERY LOCK BROKEN' : 'DELIVERY APPROACH REACHED',
-      continueLabel: lockdown ? 'ENTER THE CIVIC DISTRICT' : publicAccess ? 'TAKE THE RESERVOIR ROAD' : betrayal ? 'RIDE TO THE RELAY' : 'CONTINUE TO INTAKE',
-      completionSaveLabel: lockdown ? 'SAVED / EVACUATION ROUTE CLEARED' : publicAccess ? 'SAVED / PUBLIC ROUTE READY' : betrayal ? 'SAVED / RECOVERY LOCK BROKEN' : 'SAVED / DELIVERY APPROACH',
-      retryLabel: state === 'error' && (checkpoint === 'CP-L1-COMPLETE' || checkpoint === 'CP-L2-COMPLETE' || checkpoint?.startsWith('CP-L3-') || checkpoint?.startsWith('CP-L4-')) ? 'RETRY LOAD' : 'RETRY CHECKPOINT',
+      chapterId: release ? 'L5' : lockdown ? 'L4' : publicAccess ? 'L3' : betrayal ? 'L2' : 'L1', chapterLabel: release ? 'RELEASE' : lockdown ? 'LOCKDOWN' : publicAccess ? 'PUBLIC ACCESS' : betrayal ? 'BETRAYAL' : 'DELIVERY',
+      omegaReleased: release?.omegaReleased ?? false, campaignComplete: release?.campaignComplete ?? false,
+      replay: { active: replayActive, unlocked: ((replayActive ? durableCampaign : sessionSave ?? durableCampaign)?.completedLevels ?? []) as ChapterId[] },
+      completionTitle: release ? 'BASTROP / PUBLIC ACCESS RESTORED' : lockdown ? 'EVACUATION ROUTE CLEARED' : publicAccess ? 'PUBLIC ROUTE READY' : betrayal ? 'RECOVERY LOCK BROKEN' : 'DELIVERY APPROACH REACHED',
+      continueLabel: release ? 'RETURN TO TITLE' : lockdown ? 'ENTER THE CIVIC DISTRICT' : publicAccess ? 'TAKE THE RESERVOIR ROAD' : betrayal ? 'RIDE TO THE RELAY' : 'CONTINUE TO INTAKE',
+      completionSaveLabel: release ? replayActive ? 'REPLAY COMPLETE / CAMPAIGN PRESERVED' : saveStatus === 'session' ? 'SESSION ONLY / CAMPAIGN COMPLETE' : 'SAVED / CAMPAIGN COMPLETE' : lockdown ? 'SAVED / EVACUATION ROUTE CLEARED' : publicAccess ? 'SAVED / PUBLIC ROUTE READY' : betrayal ? 'SAVED / RECOVERY LOCK BROKEN' : 'SAVED / DELIVERY APPROACH',
+      retryLabel: state === 'error' && (checkpoint === 'CP-L1-COMPLETE' || checkpoint === 'CP-L2-COMPLETE' || checkpoint?.startsWith('CP-L3-') || checkpoint?.startsWith('CP-L4-') || checkpoint?.startsWith('CP-L5-') || checkpoint === 'CP-CAMPAIGN-COMPLETE') ? 'RETRY LOAD' : replayActive && !checkpoint ? 'RESTART REPLAY' : 'RETRY CHECKPOINT',
       objective: mission.objective, routeCue: mission.routeCue,
       speed: Math.round(speed), energy: charge,
       turbo: mission.mode !== 'action' ? 'unavailable' : boost > 0 && overdrive.active === 0 ? 'active' : charge >= .4 ? 'ready' : 'charging',
       dialogue: mission.dialogue, dialogueIndex: mission.dialogueIndex,
       dialogueCount: mission.dialogueCount, log: mission.log,
-      record: lockdown?.record ?? betrayal?.record ?? null, recordIndex: lockdown ? lockdown.records.length : betrayal?.recordIndex ?? (publicAccess ? publicAccess.records.length : 0), recordCount: lockdown ? 3 : betrayal ? 2 : publicAccess ? publicAccess.records.length : 0,
-      records: lockdown?.records ?? betrayal?.records ?? publicAccess?.records, history: lockdown?.history ?? betrayal?.history ?? publicAccess?.history,
+      record: lockdown?.record ?? betrayal?.record ?? null, recordIndex: release ? release.records.length : lockdown ? lockdown.records.length : betrayal?.recordIndex ?? (publicAccess ? publicAccess.records.length : 0), recordCount: release ? 3 : lockdown ? 3 : betrayal ? 2 : publicAccess ? publicAccess.records.length : 0,
+      records: release?.records ?? lockdown?.records ?? betrayal?.records ?? publicAccess?.records, history: release?.history ?? lockdown?.history ?? betrayal?.history ?? publicAccess?.history,
       abilities: {
         blades: { state: mission.mode === 'action' ? blades > .65 ? 'active' : 'ready' : 'unavailable', binding: 'J / CTRL' },
         jump: { state: mission.mode !== 'action' ? 'unavailable' : height > 0 ? 'active' : jumpCooldown > 0 ? 'cooldown' : 'ready', binding: 'K / ALT', cooldown: jumpCooldown },
       },
       overdrive: betrayal ? { value: overdrive.value, ready: overdrive.ready, active: overdrive.active > 0 } : undefined,
-      missionMeter: lockdown?.beat === 'L4.02' && lockdown.mode === 'action' ? {
+      missionMeter: release?.beat === 'L5.03' && release.mode === 'action' ? {
+        label: 'PUBLIC UPLOAD', value: release.uploadProgress,
+        detail: release.section === 'B' && !release.interceptCleared ? 'CLEAR THE INTERCEPT' : release.connectionState === 'linking' ? 'UPLOADING · STAY GROUNDED' : release.connectionState === 'in-range' ? 'IN RANGE · LAND TO UPLOAD' : 'FOLLOW THE MARKED CORRIDOR',
+      } : release?.beat === 'L5.02' && release.mode === 'action' ? {
+        label: 'CIVIC CONTROLLER', value: release.controller.progress,
+        detail: release.controller.state === 'retracting' ? 'BARRIER RETRACTING' : release.defenderStarted ? 'CLEAR THE DEFENDER' : 'BLADE THE MARKED CONTROLLER · J / CTRL',
+      } : lockdown?.beat === 'L4.02' && lockdown.mode === 'action' ? {
         label: 'BUS ROUTE CONTROLLER', value: lockdown.controller.progress,
         detail: lockdown.controller.state === 'retracting' ? 'BARRIER RETRACTING' : 'BLADE THE MARKED CONTROLLER · J / CTRL',
       } : lockdown?.beat === 'L4.03' && lockdown.mode === 'action' ? {
@@ -1419,10 +1680,14 @@ export function mountGame() {
         label: `RELAY ${publicAccess.relay} CONNECTION`, value: publicAccess.activeLink?.progress ?? 0,
         detail: publicAccess.connectionState === 'linking' ? 'LINKING · STAY GROUNDED' : publicAccess.connectionState === 'in-range' ? 'IN RANGE · LAND TO LINK' : 'OUT OF RANGE · FOLLOW THE CORRIDOR',
       } : betrayal?.beat === 'L2.03' && !betrayal.lockBroken ? { label: 'RECOVERY LOCK', value: Math.min(1, betrayal.lockOutside / 1.5), detail: 'STEER OUTSIDE · HOLD 1.5S' } : undefined,
-      connection: publicAccess?.relay && publicAccess.mode === 'action' && (publicAccess.relay === 'A' || publicAccess.droneCleared) ? {
+      connection: release?.section && release.mode === 'action' && (release.section === 'A' || release.interceptCleared && release.collisionCorridorClear) ? {
+        kind: 'upload', relay: release.section, state: release.connectionState, progress: release.activeLink?.progress ?? 0,
+      } : publicAccess?.relay && publicAccess.mode === 'action' && (publicAccess.relay === 'A' || publicAccess.droneCleared) ? {
         relay: publicAccess.relay, state: publicAccess.connectionState, progress: publicAccess.activeLink?.progress ?? 0,
       } : undefined,
-      controller: lockdown && (lockdown.beat === 'L4.02' || lockdown.beat === 'L4.03') ? {
+      controller: release && (release.beat === 'L5.02' || release.beat === 'L5.03') ? {
+        state: release.controller.state, progress: release.controller.progress,
+      } : lockdown && (lockdown.beat === 'L4.02' || lockdown.beat === 'L4.03') ? {
         state: lockdown.controller.state, progress: lockdown.controller.progress,
       } : undefined,
       escort: lockdown && (lockdown.beat === 'L4.03' || lockdown.beat === 'L4.04') ? {
@@ -1441,7 +1706,7 @@ export function mountGame() {
     drawRoad();
     drawLockdownBranch();
     drawVignette();
-    if (lockdown) drawLockdownProps(); else if (publicAccess) drawPublicAccessProps(); else if (betrayal) drawBetrayalProps(); else drawDeliveryProps();
+    if (release) drawReleaseProps(); else if (lockdown) drawLockdownProps(); else if (publicAccess) drawPublicAccessProps(); else if (betrayal) drawBetrayalProps(); else drawDeliveryProps();
     for(const car of traffic) if(car.kind==='drone') drawTelegraph(car);
     for(const car of traffic) if(car.kind==='drone'&&car.phase!=='lunge') {
       const fade = car.disengaging ? car.retreatDirection === -1 ? clamp((car.z + 65) / 53, 0, 1) : clamp((1500 - car.z) / 400, 0, 1) : 1;
@@ -1476,17 +1741,17 @@ export function mountGame() {
     if(!reduced&&boost>0){c.strokeStyle='#ffe57b55';for(let i=0;i<8;i++){const px=(i*137)%W;c.beginPath();c.moveTo(px,H);c.lineTo(W/2+(px-W/2)*.8,H*.8);c.stroke();}}
     // Small observable state is useful for regression tests and tuning controls.
     const drones=activeDrones(),drone=activeDrone();canvas.dataset.audio=audio?'ready':'locked';canvas.dataset.muted=String(muted);canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.dronePhases=drones.map(item=>item.phase).join(',');canvas.dataset.droneCount=String(drones.length);canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.dronePasses=String(drone?.attackPasses||0);canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.mode=mission.mode;canvas.dataset.beat=mission.beat;canvas.dataset.dialogueId=mission.dialogue?.id??'';canvas.dataset.dialogueIndex=String(mission.dialogueIndex);canvas.dataset.route=mission.route.toFixed(1);canvas.dataset.visualDistance=distance.toFixed(1);canvas.dataset.trafficCount=String(traffic.length);canvas.dataset.traffic=JSON.stringify(traffic.map(car=>({id:car.id,x:+car.x.toFixed(1),z:+car.z.toFixed(1),kind:car.kind,lane:car.lane})));canvas.dataset.checkpoint=checkpoint??'';canvas.dataset.gatePassed=String(mission instanceof DeliveryMission && mission.gates.serviceGate);canvas.dataset.approachPassed=String(mission instanceof DeliveryMission && mission.gates.approach);canvas.dataset.serviceLoops=String(serviceLoops);canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.score=String(Math.floor(score));
-    canvas.dataset.chapter=lockdown?'L4':publicAccess?'L3':betrayal?'L2':'L1';canvas.dataset.recordId=lockdown?.record?.id??betrayal?.record?.id??'';canvas.dataset.recordIndex=String(lockdown?.records.length??betrayal?.recordIndex??publicAccess?.records.length??0);canvas.dataset.recordCount=String(lockdown?.records.length??betrayal?.records.length??publicAccess?.records.length??0);canvas.dataset.betrayalKnown=String(betrayal?.betrayalKnown??(publicAccess || lockdown ? true : false));canvas.dataset.lockOutside=(betrayal?.lockOutside??0).toFixed(2);canvas.dataset.lockBroken=String(betrayal?.lockBroken??false);canvas.dataset.carrierZ=carrierZ.toFixed(1);canvas.dataset.carrierActive=String(carrierActive);canvas.dataset.overdrive=String(overdrive.value);canvas.dataset.overdriveActive=String(overdrive.active>0);
+    canvas.dataset.chapter=release?'L5':lockdown?'L4':publicAccess?'L3':betrayal?'L2':'L1';canvas.dataset.recordId=lockdown?.record?.id??betrayal?.record?.id??'';canvas.dataset.recordIndex=String(release?.records.length??lockdown?.records.length??betrayal?.recordIndex??publicAccess?.records.length??0);canvas.dataset.recordCount=String(release?.records.length??lockdown?.records.length??betrayal?.records.length??publicAccess?.records.length??0);canvas.dataset.betrayalKnown=String(betrayal?.betrayalKnown??(publicAccess || lockdown || release ? true : false));canvas.dataset.lockOutside=(betrayal?.lockOutside??0).toFixed(2);canvas.dataset.lockBroken=String(betrayal?.lockBroken??false);canvas.dataset.carrierZ=carrierZ.toFixed(1);canvas.dataset.carrierActive=String(carrierActive);canvas.dataset.overdrive=String(overdrive.value);canvas.dataset.overdriveActive=String(overdrive.active>0);
     const corridor = publicAccess?.corridor();
-    canvas.dataset.relayA = String(publicAccess?.relayA ?? Boolean(lockdown)); canvas.dataset.relayB = String(publicAccess?.relayB ?? Boolean(lockdown));
+    canvas.dataset.relayA = String(publicAccess?.relayA ?? Boolean(lockdown || release)); canvas.dataset.relayB = String(publicAccess?.relayB ?? Boolean(lockdown || release));
     canvas.dataset.relayTarget = publicAccess?.relay ?? 'none'; canvas.dataset.linkState = publicAccess?.connectionState ?? 'none';
     canvas.dataset.linkProgress = (publicAccess?.activeLink?.progress ?? 0).toFixed(3); canvas.dataset.linkSeconds = (publicAccess?.activeLink?.seconds ?? 0).toFixed(3);
     canvas.dataset.relayLoopsA = String(publicAccess?.loopsA ?? 0); canvas.dataset.relayLoopsB = String(publicAccess?.loopsB ?? 0);
     canvas.dataset.corridorStartZ = corridor?.startZ.toFixed(1) ?? 'none'; canvas.dataset.corridorEndZ = corridor?.endZ.toFixed(1) ?? 'none';
     canvas.dataset.relayDroneCleared = String(publicAccess?.droneCleared ?? false);
-    canvas.dataset.controllerState = lockdown?.controller.state ?? 'none';
-    canvas.dataset.barrierProgress = (lockdown?.controller.progress ?? 0).toFixed(3);
-    canvas.dataset.controllerLoops = String(lockdown?.controller.loops ?? 0);
+    canvas.dataset.controllerState = release?.controller.state ?? lockdown?.controller.state ?? 'none';
+    canvas.dataset.barrierProgress = (release?.controller.progress ?? lockdown?.controller.progress ?? 0).toFixed(3);
+    canvas.dataset.controllerLoops = String(release?.controller.loops ?? lockdown?.controller.loops ?? 0);
     canvas.dataset.busCondition = String(lockdown?.busCondition ?? 0);
     canvas.dataset.busProgress = (lockdown?.busProgress ?? 0).toFixed(1);
     canvas.dataset.busZ = (lockdown?.mode === 'drain' ? lockdown.drainBusZ : lockdown?.busZ ?? 0).toFixed(1);
@@ -1495,9 +1760,23 @@ export function mountGame() {
     canvas.dataset.escortAttackPhase = lockdown?.attackPhase ?? 'none';
     canvas.dataset.escortTarget = lockdown?.attackTarget ?? 'none';
     canvas.dataset.escortPasses = String(lockdown?.attackPasses ?? 0);
-    canvas.dataset.busSafe = String(lockdown?.busSafe ?? false);
+    canvas.dataset.busSafe = String(lockdown?.busSafe ?? Boolean(release));
     canvas.dataset.rampPassed = String(lockdown?.rampPassed ?? false);
     canvas.dataset.rampLoops = String(lockdown?.rampLoops ?? 0);
+    canvas.dataset.releaseStage = release ? release.campaignComplete ? 'complete' : release.beat === 'L5.01' ? 'opening' : release.beat === 'L5.02' ? release.defenderStarted ? 'defender' : 'controller' : release.beat === 'L5.03' ? release.section === 'A' ? 'upload-a' : release.interceptCleared && release.collisionCorridorClear ? 'upload-b' : 'intercept' : release.beat === 'L5.04' ? 'closure' : release.dawn < 1 ? 'dawn' : release.mode === 'drain' ? 'recovery-travel' : 'recovery-read' : 'none';
+    canvas.dataset.releaseDefenderCleared = String(release?.defenderCleared ?? false);
+    canvas.dataset.releaseInterceptCleared = String(release?.interceptCleared ?? false);
+    canvas.dataset.uploadSection = release?.section ?? 'none';
+    canvas.dataset.uploadSecondsA = (release?.linkA.seconds ?? 0).toFixed(3);
+    canvas.dataset.uploadSecondsB = (release?.linkB.seconds ?? 0).toFixed(3);
+    canvas.dataset.uploadLoopsA = String(release?.loopsA ?? 0);
+    canvas.dataset.uploadLoopsB = String(release?.loopsB ?? 0);
+    canvas.dataset.uploadProgress = (release?.uploadProgress ?? 0).toFixed(3);
+    canvas.dataset.omegaReleased = String(release?.omegaReleased ?? false);
+    canvas.dataset.recoveryRoute = (release?.recoveryRoute ?? 0).toFixed(1);
+    canvas.dataset.campaignComplete = String(release?.campaignComplete ?? false);
+    canvas.dataset.replayActive = String(replayActive);
+    canvas.dataset.releasePrefix = String(release ? Math.max(0, release.log.length - 44) : 0);
     const canvasBox = canvas.getBoundingClientRect();
     canvas.dataset.riderBottom = (canvasBox.top + project(x,0).y * canvasBox.height / H).toFixed(1);
   }

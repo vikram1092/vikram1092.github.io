@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { enterLockdown, startController, savedCampaign, earnedM3 } from './helpers/lockdown';
 import { ack } from './helpers/betrayal';
-const capture='docs/bastrop37/phase3/m4';
+const capture='docs/bastrop37/phase3/m5/regression-m4';
 mkdirSync(capture,{recursive:true});
 test.beforeEach(async({page})=>{page.setDefaultTimeout(10000);await page.clock.install();});
 
@@ -66,7 +66,7 @@ test('required controller and blade escort save contained L4 completion with all
  expect(save.log).toHaveLength(41);expect(save.records).toHaveLength(3);expect(save.history).toHaveLength(44);
  writeFileSync(`${capture}/earned-completion-save.json`,JSON.stringify(save,null,2));await page.screenshot({path:`${capture}/desktop-complete.png`});
  await page.reload();await page.locator('#continue-save').click();await expect(page.locator('#headline')).toHaveText('EVACUATION ROUTE CLEARED');
- await page.locator('#continue-chapter').click();await expect(page.locator('#message')).toContainText(/milestone|civic|Level 5/i);
+ await page.locator('#continue-chapter').click();await expect(game).toHaveAttribute('data-beat','L5.01');
  expect(await savedCampaign(page)).toEqual(save);
 });
 
