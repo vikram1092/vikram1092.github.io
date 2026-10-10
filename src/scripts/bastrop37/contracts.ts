@@ -22,6 +22,8 @@ export type HudView = {
   beatId: string;
   objective: string;
   routeCue: string;
+  roadCombat?: { condition: number; knockouts: number };
+  driveLabel?: string;
   speed: number;
   energy: number; // 0..1
   turbo: 'ready' | 'active' | 'charging' | 'unavailable';

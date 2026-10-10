@@ -75,6 +75,7 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
   const chapterBrand = requireElement<HTMLElement>('.brand small');
   const chapterMicro = requireElement<HTMLElement>('.mission .micro');
   const combat = requireElement<HTMLElement>('#combat-status');
+  const riderCondition = requireElement<HTMLElement>('#rider-condition');
   const blades = requireElement<HTMLElement>('#blades-state');
   const jump = requireElement<HTMLElement>('#jump-state');
   const overdrive = requireElement<HTMLElement>('#overdrive-state');
@@ -159,7 +160,7 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
       setText(objective, view.objective);
       setText(routeCue, view.routeCue);
       setText(speed, String(Math.max(0, Math.round(view.speed))).padStart(3, '0'));
-      setText(driveState, view.omegaReleased ? 'SAFE CRUISE' : view.mode === 'action' ? 'MANUAL / DRIVE' : view.mode === 'drain' ? 'TRAFFIC CLEARING' : 'SAFE CRUISE');
+      setText(driveState, view.driveLabel ?? (view.omegaReleased ? 'SAFE CRUISE' : view.mode === 'action' ? 'MANUAL / DRIVE' : view.mode === 'drain' ? 'TRAFFIC CLEARING' : 'SAFE CRUISE'));
 
       const energy = Math.min(100, Math.max(0, Math.round(view.energy * 100)));
       setText(energyValue, String(energy));
@@ -170,14 +171,16 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
       setText(turboState, `↗ TURBO / ${turbo.toUpperCase()}`);
 
       const action = view.state === 'playing' && view.mode === 'action';
-      show(combat, action && (view.chapterId === 'L2' || view.chapterId === 'L3' || view.chapterId === 'L4' || view.chapterId === 'L5') && !!view.abilities);
+      show(combat, action && (!!view.roadCombat || view.chapterId === 'L2' || view.chapterId === 'L3' || view.chapterId === 'L4' || view.chapterId === 'L5') && !!view.abilities);
       if (view.abilities) {
-        for (const [element, label, ability] of [[blades, 'BLADES', view.abilities.blades], [jump, 'JUMP', view.abilities.jump]] as const) {
+        for (const [element, label, ability] of [[blades, view.roadCombat ? 'SPIKES' : 'BLADES', view.abilities.blades], [jump, 'JUMP', view.abilities.jump]] as const) {
           setText(element, `${label} · ${ability.binding} / ${ability.state.toUpperCase()}${ability.state === 'cooldown' && ability.cooldown ? ` ${ability.cooldown.toFixed(1)}s` : ''}`);
           element.dataset.state = ability.state;
           element.title = ability.binding;
         }
       }
+      show(riderCondition, !!view.roadCombat);
+      if (view.roadCombat) setText(riderCondition, `BIKE ${'●'.repeat(view.roadCombat.condition)}${'○'.repeat(3-view.roadCombat.condition)} · ${view.roadCombat.knockouts} RIDERS DOWN`);
       const od = view.overdrive;
       show(overdrive, !!od);
       show(overdriveMeter, !!od);

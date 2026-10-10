@@ -21,7 +21,7 @@ test('L5 begins safely with earned prerequisites; slow reading and controller ch
 
 test('failed civic asset preserves M4 completion; Retry Load recovers without granting release',async({page})=>{
  let fail=true;await page.route('**/release/civic-node-v3.png',route=>fail?route.abort():route.continue());
- await page.goto('/bastrop37/');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),earnedM4);await page.reload();
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),earnedM4);await page.reload();
  await page.locator('#continue-save').click();await page.locator('#continue-chapter').click();await expect(page.locator('#game')).toHaveAttribute('data-state','error');
  expect(await savedCampaign(page)).toEqual(earnedM4);fail=false;await page.locator('#retry').click();await expect(page.locator('#game')).toHaveAttribute('data-beat','L5.01');await expect(page.locator('#game')).toHaveAttribute('data-omega-released','false');
 });
@@ -109,7 +109,7 @@ async function completeFixture(){
 
 test('unlocked chapter replay keeps completed campaign immutable through opening retries, final replay and new-game cancellation',async({page})=>{
  test.setTimeout(420000);const {openFinalCorridor,finishUpload,finishRecovery}=await import('./helpers/release');const durable=await completeFixture();
- await page.goto('/bastrop37/');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),durable);await page.reload();const game=page.locator('#game');
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),durable);await page.reload();const game=page.locator('#game');
  await expect(page.locator('#chapter-picker')).toBeVisible();
  for(const chapter of ['L1','L2','L3','L4','L5']){
   await page.locator(`[data-replay-chapter="${chapter}"]`).click();await expect(game).toHaveAttribute('data-state','playing');await expect(game).toHaveAttribute('data-beat',`${chapter}.01`);await expect(game).toHaveAttribute('data-replay-active','true');await expect(game).toHaveAttribute('data-omega-released','false');await expect(page.locator('#replay-badge')).toBeVisible();expect(await savedCampaign(page)).toEqual(durable);
@@ -124,7 +124,7 @@ test('unlocked chapter replay keeps completed campaign immutable through opening
 
 test('a failed replay asset keeps the completed campaign and menu Continue intact',async({page})=>{
  const durable=await completeFixture();let fail=true;await page.route('**/release/civic-node-v3.png',route=>fail?route.abort():route.continue());
- await page.goto('/bastrop37/');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),durable);await page.reload();
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),durable);await page.reload();
  await page.locator('[data-replay-chapter="L5"]').click();await expect(page.locator('#game')).toHaveAttribute('data-state','error');expect(await savedCampaign(page)).toEqual(durable);
  await page.locator('#menu').click();fail=false;await page.locator('#continue-save').click();await expect(page.locator('#game')).toHaveAttribute('data-campaign-complete','true');await expect(page.locator('#game')).toHaveAttribute('data-omega-released','true');expect(await savedCampaign(page)).toEqual(durable);
 });

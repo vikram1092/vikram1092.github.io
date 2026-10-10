@@ -1,5 +1,7 @@
 // BASTROP37 Delivery: authored beats over the existing projected sprite road.
 // X and Z are shared road-space units; projected opaque bodies decide visible contact.
+import { RoadRival, RideGesture } from './bastrop37/road-combat';
+import { RoadRace, ROAD_COURSES } from './bastrop37/race';
 import { createHud } from './bastrop37/hud';
 import { DeliveryMission, SERVICE_CORRIDOR, type DeliveryEvent } from './bastrop37/delivery';
 import { DELIVERY_ASSETS, DELIVERY_ASSET_METADATA } from './bastrop37/delivery-content';
@@ -23,6 +25,7 @@ type Car = {
   velocity: number; passed: boolean; phase?: DronePhase; phaseTime?: number;
   side?: -1 | 1; attackX?: number; outcome?: DroneOutcome; attackPasses?: number;
   lane: number; targetLane: number; turn: -1 | 0 | 1; changeZ: number; changed: boolean;
+  contacted?: boolean;
   disengaging?: boolean;
   retreatDirection?: -1 | 1;
 };
@@ -36,6 +39,8 @@ export function mountGame() {
     new URLSearchParams(location.search).get('fixture') === 'mechanics';
   const m2Fixture = ['localhost','127.0.0.1'].includes(location.hostname) &&
     new URLSearchParams(location.search).get('fixture') === 'm2';
+  const encounterFixture = ['localhost','127.0.0.1'].includes(location.hostname) &&
+    new URLSearchParams(location.search).get('fixture') === 'encounters';
   const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
   const ctx = canvas.getContext('2d');
   const start = document.querySelector<HTMLButtonElement>('#start')!;
@@ -68,7 +73,15 @@ export function mountGame() {
   const left = 128, right = 512;
   const bounds: Record<string, {x:number;y:number;w:number;h:number}> = {};
   const horizon = () => H * (W < H ? .32 : .42) + (reduced ? 0 : cameraPitch);
-  function lockdownCurve(z: number): number {
+  const roadZoom = () => chaseZoom * (1 - (reduced ? 0 : turboView * .07));
+  function roadCurve(z: number): number {
+    if (roadRace && !roadRace.complete) {
+      const sample = clamp(z / 40, 0, 50);
+      const index = Math.min(49, Math.floor(sample));
+      const center = roadCenters[index] + (roadCenters[index + 1] - roadCenters[index]) * (sample - index);
+      const continuation = Math.max(0, z - 2000) * (roadCenters[50] - roadCenters[49]) / 40;
+      return (center + continuation) * Math.min(W * .9, 520) / (right-left) * roadZoom() * 65 / (65 + Math.max(0, z));
+    }
     if (!(mission instanceof LockdownMission)) return 0;
     const t = clamp(z / 780, 0, 1);
     return (W < H ? 100 : 180) * t * (2 - t);
@@ -76,9 +89,9 @@ export function mountGame() {
   function project(wx:number, z:number) {
     // Close chase: enlarge the whole road-space view, tracking the rider laterally.
     const scale = 65 / (65 + Math.max(-53,z));
-    const zoom = (W < H ? mission instanceof LockdownMission ? 2 : 3 : 1.6) * (1 - (reduced ? 0 : turboView * .07));
+    const zoom = roadZoom();
     const unit = Math.min(W * .9, 520) / (right-left) * zoom;
-    return {x:W/2+(wx-cameraX)*unit*scale+lockdownCurve(z), y:horizon()+(H*roadBaseRatio-horizon())*scale, scale:unit*scale};
+    return {x:W/2+(wx-cameraX)*unit*scale+roadCurve(z), y:horizon()+(H*roadBaseRatio-horizon())*scale, scale:unit*scale};
   }
   type GameState = HudView['state'];
   let state: GameState = 'loading';
@@ -115,6 +128,16 @@ export function mountGame() {
   const isPublicAccess = () => mission instanceof PublicAccessMission;
   const isLockdown = () => mission instanceof LockdownMission;
   const isRelease = () => mission instanceof ReleaseMission;
+  let roadRace: RoadRace | null = null;
+  let raceBeat = '';
+  let roadCenters = Array<number>(51).fill(0);
+  let drafting = false;
+  let chaseZoom = 1.6;
+  const gesture = new RideGesture();
+  const gestureControls = () => !encounterFixture && !mechanicsFixture && !m2Fixture && (matchMedia('(pointer: coarse)').matches || canvas.clientWidth <= 600);
+  let rivals: RoadRival[] = [], rivalSerial = 0, knockouts = 0;
+  let obstacles: { id: number; x: number; z: number; w: number; kind: 'barricade' | 'pothole'; contacted: boolean; warned: boolean }[] = [];
+  let condition = 3, hitGrace = 0, spikePulse = 0, spikeCooldown = 0;
   let x = 320, vx = 0, angle = 0;
   let charge = 1, boost = 0, speed = 260, distance = 0, calls = 0, elapsed = 0;
   let sliding = false, spawn = 0, offset = 0, last = 0, feedbackTime = 0;
@@ -146,6 +169,7 @@ export function mountGame() {
     const pixelWidth=Math.round(nw*nextScale),pixelHeight=Math.round(nh*nextScale);
     if(W===nw&&H===nh&&canvas.width===pixelWidth&&canvas.height===pixelHeight)return;
     W=nw;H=nh;renderScale=nextScale;
+    chaseZoom = W < H ? (roadRace && !roadRace.complete) || isLockdown() ? 2 : 3 : 1.6;
     canvas.width=pixelWidth;canvas.height=pixelHeight;
     c.setTransform(renderScale,0,0,renderScale,0,0);
   }
@@ -211,8 +235,11 @@ export function mountGame() {
     updateMuteButton();if(!muted)initAudio();syncAudio();
   });
   function setMessage(text: string, seconds = 1) { feedbackText = text; feedbackTime = seconds; }
-  function clearInput() { keys.clear(); pressed.clear(); sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
+  function clearInput() { gesture.end(); keys.clear(); pressed.clear(); sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
   function resetPhysical() {
+    roadRace = null; raceBeat = ''; roadCenters.fill(0); drafting = false;
+    rivals = []; obstacles = []; rivalSerial = knockouts = hitGrace = spikePulse = spikeCooldown = 0; condition = 3;
+    chaseZoom = W < H ? isLockdown() ? 2 : 3 : 1.6;
     clearInput(); x = 320; vx = angle = boost = distance = calls = elapsed = offset = score = 0;
     charge = 1; speed = 260; spawn = Infinity; particles = []; fragments = []; effects = [];
     cameraX = 320; cameraPitch = turboView = height = verticalSpeed = jumpWindup = jumpCooldown = landing = blades = slices = droneDodges = laneChanges = 0;
@@ -564,9 +591,17 @@ export function mountGame() {
       if (prior?.checkpoint.startsWith('CP-L3-') || prior?.checkpoint.startsWith('CP-L4-') || prior?.checkpoint.startsWith('CP-L5-') || prior?.checkpoint === 'CP-CAMPAIGN-COMPLETE') { state = 'ready'; continueGame(); return; }
     }
     if (state !== 'crashed' && state !== 'paused') return;
+    const retryRace = roadRace && raceBeat === mission.beat ? roadRace : null;
+    const retryBeat = raceBeat;
     if (sessionSave) restoreCheckpoint(sessionSave);
     else if (replayActive && replayChapter) replayOpening(replayChapter);
     else beginNewGame();
+    if (retryRace && mission.beat === retryBeat) {
+      roadRace = retryRace; raceBeat = retryBeat;
+      if (!roadRace.complete) { roadRace.retrySector(); traffic = []; }
+      roadCenters = roadRace.centerline();
+      setMessage(roadRace.complete ? 'ENCOUNTER CHECKPOINT' : 'SECTOR RESTART · ROAD CLEAR AHEAD', 3);
+    }
   }
   function menu() {
     if (state === 'loading') return;
@@ -795,6 +830,65 @@ export function mountGame() {
     const release = () => { keys.delete(button.dataset.key!); button.classList.remove('held'); };
     button.addEventListener('pointerup', release); button.addEventListener('pointercancel', release); button.addEventListener('lostpointercapture', release);
   });
+  document.querySelector<HTMLButtonElement>('#turbo-trigger')!.addEventListener('click', () => {
+    if (state === 'playing' && mission.mode === 'action') pressed.add('ShiftLeft');
+  });
+  canvas.addEventListener('pointerdown', event => {
+    if (!gestureControls() || state !== 'playing') return;
+    if (!gesture.start(event.pointerId, event.clientX, event.clientY, x)) return;
+    event.preventDefault(); canvas.setPointerCapture(event.pointerId);
+  });
+  canvas.addEventListener('pointermove', event => {
+    if (state !== 'playing' || !gestureControls()) return;
+    const action = gesture.move(event.pointerId, event.clientX, event.clientY, canvas.clientWidth);
+    if (mission.mode !== 'action') return;
+    if (action === 'jump') pressed.add('AltLeft');
+    if (action === 'spikes') pressed.add('ControlLeft');
+  });
+  const endGesture = (event: PointerEvent) => gesture.end(event.pointerId);
+  canvas.addEventListener('pointerup', endGesture);
+  canvas.addEventListener('pointercancel', endGesture);
+  canvas.addEventListener('lostpointercapture', endGesture);
+
+  function roadHit(direction: number, message: string) {
+    if (hitGrace > 0 || state !== 'playing') return;
+    condition--; hitGrace = 1.4; boost = 0; charge = Math.max(0, charge - .15);
+    speed *= .68; x = clamp(x + direction * 18, left + 22, right - 22);
+    sparks(18, '#ffb26c'); sound('impact');
+    if (condition === 0) { crash(); return; }
+    setMessage(`${message} · BIKE ${condition} / 3`, 2);
+  }
+  function updateRoadCombat(dt: number) {
+    hitGrace = Math.max(0, hitGrace - dt);
+    const blockers = [...traffic.filter(car => car.kind !== 'drone'), ...obstacles];
+    for (const rival of rivals) {
+      const events = rival.tick(dt, { x, height, spikes: blades > .65, reach: bladeReach(rival.x) }, blockers,
+        roadRace!.position > roadRace!.length - 1600);
+      for (const event of events) {
+        if (event === 'windup') { sound('warning'); setMessage(`RIDER ON ${rival.x < x ? 'LEFT' : 'RIGHT'} · SPIKES OR SWERVE`, 1); }
+        if (event === 'player-hit') roadHit(rival.side * -1, 'SIDE STRIKE');
+        if (event === 'counter' || event === 'knockout') {
+          sound('slice'); burst('cutSparks', rival.x, rival.z, 10, 55, .4); charge = clamp(charge + .18, 0, 1);
+          if (event === 'knockout') { knockouts++; setMessage('RIDER DOWN · ROAD CLEAR', 1.5); }
+          else setMessage('SPIKE COUNTER · ONE MORE HIT', 1.2);
+        }
+      }
+    }
+    rivals = rivals.filter(rival => !rival.finished);
+    for (const obstacle of obstacles) {
+      const oldZ = obstacle.z;
+      obstacle.z -= speed * dt;
+      if (!obstacle.warned && obstacle.z < 550) {
+        obstacle.warned = true; setMessage(obstacle.kind === 'barricade' ? 'BARRICADE · JUMP OR GO AROUND' : 'BROKEN ROAD · JUMP OR CHANGE LINE', 1.8);
+      }
+      if (!obstacle.contacted && oldZ > -24 && obstacle.z < 24 && Math.abs(x-obstacle.x) < (obstacle.w+26)/2) {
+        obstacle.contacted = true;
+        if (height < (obstacle.kind === 'barricade' ? 28 : 12)) roadHit(x < obstacle.x ? -1 : 1, 'OBSTACLE HIT');
+        else { charge = clamp(charge + .12, 0, 1); setMessage('CLEAN JUMP · +12 ENERGY', 1); }
+      }
+    }
+    obstacles = obstacles.filter(obstacle => obstacle.z > -65);
+  }
   function sparks(count:number, color:string, wx=x, z=0) {
     const p=project(wx,z);
     for(let i=0;i<count;i++) particles.push({x:p.x+(Math.random()-.5)*15,y:p.y-height*p.scale,vx:(Math.random()-.5)*130,vy:40+Math.random()*90,life:.25+Math.random()*.3,color});
@@ -1029,6 +1123,17 @@ export function mountGame() {
     }
   }
   function update(dt:number) {
+    if (mission.mode === 'action' && raceBeat !== mission.beat) {
+      raceBeat = mission.beat;
+      const course = ROAD_COURSES[raceBeat];
+      roadRace = course && !mechanicsFixture && !m2Fixture && !encounterFixture ? new RoadRace(course) : null;
+      if (roadRace) { traffic = []; setMessage(`${course.name} · BRAKE BEFORE BENDS · BOOST ON EXITS`, 5); }
+    }
+    const racing = !!roadRace && !roadRace.complete;
+    if (racing) roadCenters = roadRace!.centerline();
+    // Blend the wider portrait road back into encounter framing without a camera snap.
+    const targetZoom = W < H ? racing || isLockdown() ? 2 : 3 : 1.6;
+    chaseZoom += (targetZoom - chaseZoom) * (1 - Math.exp(-2 * dt));
     const oldX=x;
     elapsed += dt; feedbackTime -= dt;
     syncAudio(dt);
@@ -1037,7 +1142,9 @@ export function mountGame() {
       (mission instanceof ReleaseMission && mission.omegaReleased);
     if (safeCruise && W < H) roadBaseRatio = storyBaseRatio();
     else roadBaseRatio += ((safeCruise ? storyBaseRatio() : .84)-roadBaseRatio)*(1-Math.exp(-3*dt));
-    const input = Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
+    const input = gesture.pointer !== null ? clamp((gesture.targetX-x)/32, -1, 1) : Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
+    spikePulse = Math.max(0, spikePulse-dt); spikeCooldown = Math.max(0, spikeCooldown-dt);
+    if (action && (racing || gestureControls()) && pressed.has('ControlLeft') && spikeCooldown === 0) { spikePulse = .7; spikeCooldown = 1.1; }
     boost = Math.max(0, boost-dt);
     overdrive.tick(dt);
     jumpCooldown = Math.max(0,jumpCooldown-dt);
@@ -1061,19 +1168,26 @@ export function mountGame() {
       verticalSpeed-=380*dt; height+=verticalSpeed*dt;
       if(height<=0) { height=verticalSpeed=0; landing=.42; burst('landingRing',x,0,0,72,.5); sparks(20,'#8fffea'); sound('land');setMessage('TOUCHDOWN',.5); }
     }
-    blades += ((action && keys.has('ControlLeft')?1:0)-blades)*(1-Math.exp(-25*dt));
+    blades += ((action && (spikePulse > 0 || (!racing && keys.has('ControlLeft')))?1:0)-blades)*(1-Math.exp(-25*dt));
     sliding = action && keys.has('Space') && height===0 && boost===0;
-    // Slide is a deliberate lateral reposition, with countersteer and strong release grip.
-    if(boost===0) charge=clamp(charge+dt*(sliding&&input ? .3 : .10),0,1);
+    const curvature = racing ? roadRace!.curvature() : 0;
+    drafting = action && racing && height === 0 && traffic.some(car => car.kind !== 'drone' && car.z > 100 && car.z < 550 && Math.abs(car.x-x) < 28);
+    // Cornering and close passes earn energy; weaving on straights no longer farms turbo.
+    const cornering = sliding && input * curvature > .15 && speed > 180;
+    if(boost===0) charge=clamp(charge+dt*(racing ? cornering ? .22 : drafting ? .12 : .055 : sliding && input ? .3 : .10),0,1);
     // Faster road motion and closing speed, while keeping ability timers in real time.
     const target = safeCruise ? keys.has('ArrowDown') ? 205 : keys.has('ArrowUp') ? 255 : 230
       : mission.mode === 'drain' ? 230
-      : sliding ? 200 : overdrive.active > 0 ? 540 : boost>0 ? 470 : keys.has('ArrowDown') ? 155 : keys.has('ArrowUp') ? 320 : 260;
-    speed += (target-speed)*(1-Math.exp(-(boost>0?7:4)*dt));
-    vx += (input*(sliding?230:180)*(height>0?.8:1)-vx)*(1-Math.exp(-(sliding?10:20)*dt));
-    x = clamp(x+vx*dt,left+22,right-22);
+      : !racing ? sliding ? 200 : overdrive.active > 0 ? 540 : boost>0 ? 470 : keys.has('ArrowDown') ? 155 : keys.has('ArrowUp') || gesture.pointer !== null ? 320 : gestureControls() ? 190 : 260
+      : keys.has('ArrowDown') ? 155 : sliding ? 220 : overdrive.active > 0 ? 540 : boost>0 ? 470 : keys.has('ArrowUp') || gesture.pointer !== null ? 330 : gestureControls() ? 190 : 285;
+    const edgeDrag = racing && (x < left + 30 || x > right - 30) ? 80 : 0;
+    speed += (target + (drafting ? 22 : 0) - edgeDrag-speed)*(1-Math.exp(-(boost>0?7:4)*dt));
+    const steering = !racing ? sliding ? 230 : 180 : sliding ? 215 : 190 * clamp(300 / speed, .65, 1.15);
+    vx += (input*steering*(height>0?.65:1)-vx)*(1-Math.exp(-(racing ? sliding?7:14 : sliding?10:20)*dt));
+    const cornerDrift = curvature * 60 * (speed/300)**2 * (sliding ? .5 : 1);
+    x = clamp(x+(vx-cornerDrift)*dt,left+22,right-22);
     if(x===left+22 || x===right-22) vx=0;
-    angle += ((sliding?input*.65:input*.19)-angle)*(1-Math.exp(-16*dt));
+    angle += ((sliding?input*.65:input*.25+curvature*.12)-angle)*(1-Math.exp(-16*dt));
     cameraX += (320+(x-320)*.85-cameraX)*(1-Math.exp(-12*dt));
     turboView += ((boost>0?1:0)-turboView)*(1-Math.exp(-5*dt));
     cameraPitch += ((boost>0?5:0)-height*.08+(landing>0?Math.sin((.42-landing)*22)*landing*10:0)-cameraPitch)*(1-Math.exp(-8*dt));
@@ -1088,7 +1202,7 @@ export function mountGame() {
       fixtureDroneSpawned = true;
       traffic.push(makeVehicle(2,540,'drone'));
     }
-    if (mission instanceof BetrayalMission) {
+    if (!racing && mission instanceof BetrayalMission) {
       scanPulse = Math.max(0, scanPulse - dt);
       if (mission.beat === 'L2.02') {
         if (mission.mode === 'action' && mission.loop) carrierZ -= Math.max(180, speed - 30) * dt;
@@ -1101,6 +1215,7 @@ export function mountGame() {
       }
       if (mission.beat === 'L2.03' && mission.mode === 'drain') carrierZ += 460 * dt;
     }
+    if (racing) updateRoadCombat(dt);
     const bw = 26 + (sliding ? 8 : 0), bh = 24;
     for(const car of traffic) {
       const oldZ = car.z;
@@ -1128,19 +1243,24 @@ export function mountGame() {
       // The coupe's windows and glow extend above its physical body.
       const clearance = car.kind==='hauler'?110:24;
       // Swept depth interval avoids tunnelling during turbo or a slow frame.
-      if(height<clearance && oldZ > -reach && car.z < reach) {
+      if(!car.contacted && height<clearance && oldZ > -reach && car.z < reach) {
         // Sweep both steering and approach, so turbo cannot skip a narrow contact.
         const steps=Math.max(1,Math.ceil(Math.max(Math.abs(car.z-oldZ),Math.abs(x-oldX))/2));
         for(let i=0;i<=steps;i++) {
           const t=i/steps, z=oldZ+(car.z-oldZ)*t;
-          if(Math.abs(z)<reach&&bodyContact(car,z,oldX+(x-oldX)*t)) { crash(); break; }
+          if(Math.abs(z)<reach&&bodyContact(car,z,oldX+(x-oldX)*t)) {
+            if (racing) { car.contacted = true; roadHit(x < car.x ? -1 : 1, 'TRAFFIC CONTACT'); }
+            else crash();
+            break;
+          }
         }
         if(state==='crashed')break;
       }
       if(!car.passed && car.z < -reach) {
         car.passed=true;
+        if (racing) roadRace!.overtakes++;
         const gap = dx-(bw+car.w)/2;
-        if(gap>=0 && gap<17) {
+        if(!car.contacted && gap>=0 && gap<17) {
           calls++; charge=clamp(charge+.3,0,1);
           if (isBetrayal()) overdrive.award('near-pass', car.id);
           sparks(10,'#ffd5a3'); sound('close');setMessage(isBetrayal() ? 'CLOSE CALL / +30 ENERGY · +10 OVERDRIVE' : 'CLOSE CALL / +30 ENERGY',1.2);
@@ -1158,7 +1278,29 @@ export function mountGame() {
     particles=particles.filter(p=>p.life>0).slice(-180);
     for(const p of particles) {p.life-=dt;p.x+=p.vx*dt;p.y+=(p.vy+speed*.4)*dt;}
     score=Math.max(score,distance*8+calls*350+slices*1200+droneDodges*700);
-    if(state==='playing' && !mechanicsFixture) {
+    if (state === 'playing' && racing) {
+      const wasComplete = roadRace!.complete;
+      for (const vehicle of roadRace!.tick(dt, speed*dt, traffic.length === 0 && rivals.length === 0 && obstacles.length === 0)) {
+        const car = makeVehicle(vehicle.lane, vehicle.z, vehicle.kind);
+        car.velocity = vehicle.velocity; car.changed = true;
+        traffic.push(car);
+      }
+      for (const challenge of roadRace!.challenges) {
+        if (challenge.kind === 'rival') {
+          if (rivals.length < 2) rivals.push(new RoadRival(++rivalSerial, challenge.lane === 0 ? -1 : 1));
+        } else {
+          // Place the obstacle in an unoccupied approach lane; adjacent road remains usable.
+          const candidates = [challenge.lane, 0, 1, 2, 3, 4];
+          const lane = candidates.find(lane => !traffic.some(car => Math.abs(car.z-1050) < 300 && Math.abs(car.x-(left+(lane+.5)*(right-left)/5)) < 85));
+          if (lane !== undefined) obstacles.push({ id: ++vehicleSerial, x: left+(lane+.5)*(right-left)/5, z: 1050, w: 72, kind: challenge.kind, contacted: false, warned: false });
+        }
+      }
+      if (!wasComplete && roadRace!.complete) {
+        spawnActionTraffic();
+        setMessage(`ROUTE CLEAR · ${mission.routeCue}`, 4);
+      }
+    }
+    if(state==='playing' && !mechanicsFixture && !racing) {
       if (mission instanceof ReleaseMission) {
         if (mission.beat === 'L5.02' && mission.mode === 'action')
           onReleaseEvents(mission.controllerBladeHit(x, height === 0 && jumpWindup === 0, bladeReach(CONTROLLER_X), blades > .65));
@@ -1180,7 +1322,7 @@ export function mountGame() {
     }
     if(feedbackTime<=0) feedbackText=mission instanceof ReleaseMission && mission.omegaReleased && mission.mode === 'drain'
       ? 'SAFE CRUISE · RECOVERY ROUTE'
-      : safeCruise?'SAFE CRUISE · ENTER TO ADVANCE':mission.mode==='drain'?'TRAFFIC CLEARING':height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'STEER · SHIFT TURBO · SPACE SLIDE';
+      : racing ? drafting ? 'SLIPSTREAM · ENERGY BUILDING · PULL OUT TO PASS' : cornering ? 'CORNER SLIDE · ENERGY BUILDING' : x < left+30 || x > right-30 ? 'SHOULDER DRAG · RETURN TO THE ROAD' : roadRace!.cue : safeCruise?'SAFE CRUISE · ENTER TO ADVANCE':mission.mode==='drain'?'TRAFFIC CLEARING':height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'STEER · SHIFT TURBO · SPACE SLIDE';
   }
   function makeVehicle(lane:number,z:number,kind:string):Car {
     const vehicle=kind as Car['kind'];
@@ -1535,7 +1677,7 @@ export function mountGame() {
       c.drawImage(images.releaseDawn, envX, envY, dw, dh);
       c.restore();
     }
-    if (isLockdown()) drawLockdownMidground(envX, envY, scale);
+    if (isLockdown() && !(roadRace && !roadRace.complete)) drawLockdownMidground(envX, envY, scale);
     if (isBetrayal() && carrierActive && images.intakeScan) {
       c.save(); c.globalAlpha = .38 + .08 * Math.sin(elapsed * 7);
       c.drawImage(images.intakeScan,(W-dw)/2+parallax,H*(W<H?.32:.42)-anchorY*scale,dw,dh);
@@ -1550,7 +1692,7 @@ export function mountGame() {
     const img=images.road;
     if(!img)return;
     const hy=horizon(),base=H*roadBaseRatio;
-    const zoom=(W<H ? mission instanceof LockdownMission ? 2 : 3 : 1.6)*(1-(reduced?0:turboView*.07));
+    const zoom=roadZoom();
     const unit=Math.min(W*.9,520)/(right-left)*zoom;
     // Warp the orthographic road texture one horizontal slice at a time. Its
     // baked five-lane markings now move with the asphalt as a single layer.
@@ -1558,7 +1700,7 @@ export function mountGame() {
       const t=(y-hy)/(base-hy);
       const scale=Math.max(.012,t),z=65/scale-65;
       const width=(right-left)*unit*scale;
-      const center=W/2+(320-cameraX)*unit*scale;
+      const center=W/2+(320-cameraX)*unit*scale+roadCurve(z);
       const sy=mirroredRow(offset*1.35+z*2.15,img.height);
       c.globalAlpha=clamp((scale-.01)/.16,.32,1);
       const sampleHeight=Math.min(2,img.height-sy);
@@ -1570,7 +1712,7 @@ export function mountGame() {
     c.fillStyle=roadShade;c.fillRect(0,hy,W,H-hy);
   }
   function drawLockdownBranch() {
-    if (!(mission instanceof LockdownMission)) return;
+    if (!(mission instanceof LockdownMission) || (roadRace && !roadRace.complete)) return;
     const img = images.road, env = lockdownEnvironmentPlacement();
     if (!img || !env) return;
     const floor = LOCKDOWN_PLACEMENT_GUIDES.environmentPortalFloor;
@@ -1633,6 +1775,64 @@ export function mountGame() {
     for (const point of rightEdge.slice(1)) c.lineTo(point.x, point.y);
     c.stroke(); c.restore();
   }
+  function drawRival(rival: RoadRival) {
+    const p = project(rival.x, rival.z);
+    c.save(); c.filter = `hue-rotate(${rival.side < 0 ? 155 : 230}deg)`;
+    if (rival.phase === 'down') c.globalAlpha = clamp((rival.z+100)/100, 0, 1);
+    const pose = rival.phase === 'strike' ? rival.side < 0 ? 'bikeRight' : 'bikeLeft' : 'bike';
+    sprite(pose, rival.x, rival.z, 28, 45, 0); c.restore();
+    if (rival.phase === 'down' || rival.phase === 'leaving') return;
+    const top = p.y - 52*p.scale;
+    c.fillStyle = '#09151ce6'; c.fillRect(p.x-12*p.scale, top-5*p.scale, 24*p.scale, 4*p.scale);
+    for (let hit = 0; hit < 2; hit++) {
+      c.fillStyle = hit >= rival.health ? '#56646b' : rival.phase === 'windup' ? '#ff9479' : '#dfbd73';
+      c.fillRect(p.x+(-11+hit*12)*p.scale, top-4*p.scale, 10*p.scale, 2*p.scale);
+    }
+    if (rival.phase === 'windup') {
+      c.strokeStyle = '#ff9c72'; c.lineWidth = Math.max(2, 2*p.scale);
+      const tipX = p.x-rival.side*25*p.scale, tipY = top+12*p.scale;
+      c.beginPath(); c.moveTo(p.x-rival.side*8*p.scale, top+6*p.scale); c.lineTo(tipX, tipY);
+      c.moveTo(tipX+rival.side*7*p.scale, tipY-7*p.scale); c.lineTo(tipX, tipY);
+      c.lineTo(tipX+rival.side*9*p.scale, tipY+2*p.scale); c.stroke();
+    }
+  }
+  function drawRoadObstacle(obstacle: typeof obstacles[number]) {
+    const p = project(obstacle.x, obstacle.z), width = obstacle.w*p.scale;
+    if (obstacle.kind === 'pothole') {
+      c.fillStyle = '#02060c'; c.strokeStyle = '#d9aa6c'; c.lineWidth = Math.max(1, p.scale);
+      c.beginPath(); c.ellipse(p.x, p.y, width/2, 10*p.scale, -.1, 0, Math.PI*2); c.fill(); c.stroke();
+    } else {
+      const height = 25*p.scale;
+      c.fillStyle = '#121e27'; c.fillRect(p.x-width/2, p.y-height, width, height);
+      c.save(); c.beginPath(); c.rect(p.x-width/2, p.y-height, width, height); c.clip();
+      c.strokeStyle = '#f2ae58'; c.lineWidth = 10*p.scale;
+      for (let i = -3; i < 7; i++) { c.beginPath(); c.moveTo(p.x-width/2+i*20*p.scale, p.y); c.lineTo(p.x-width/2+(i*20+25)*p.scale, p.y-height); c.stroke(); }
+      c.restore();
+      c.fillStyle = '#fff0b5'; c.fillRect(p.x-width/2, p.y-height-3*p.scale, width, 3*p.scale);
+    }
+  }
+  function drawCourseMarkers() {
+    if (!roadRace) return;
+    const phase = roadRace.position % 220;
+    for (let z = 1400 - phase; z > 15; z -= 220) {
+      const curve = roadRace.curvature(roadRace.position + z);
+      for (const edge of [left - 8, right + 8]) {
+        const p = project(edge, z);
+        c.fillStyle = '#85e5db';
+        c.fillRect(p.x-1, p.y-18*p.scale, Math.max(1, 3*p.scale), 18*p.scale);
+      }
+      if (Math.abs(curve) > .3) {
+        const p = project(curve > 0 ? left - 25 : right + 25, z);
+        const size = 22*p.scale;
+        c.fillStyle = '#142830'; c.fillRect(p.x-size/2, p.y-size*2, size, size);
+        c.strokeStyle = '#ffe2a6'; c.lineWidth = Math.max(1, 3*p.scale);
+        const direction = Math.sign(curve);
+        c.beginPath(); c.moveTo(p.x-direction*size*.22, p.y-size*1.85);
+        c.lineTo(p.x+direction*size*.22, p.y-size*1.5);
+        c.lineTo(p.x-direction*size*.22, p.y-size*1.15); c.stroke();
+      }
+    }
+  }
   function drawVignette() {
     const vignette=c.createRadialGradient(W/2,H*.58,H*.08,W/2,H*.56,Math.max(W,H)*.72);
     vignette.addColorStop(.45,'#00000000');vignette.addColorStop(1,'#02061172');
@@ -1643,6 +1843,7 @@ export function mountGame() {
     const publicAccess = mission instanceof PublicAccessMission ? mission : null;
     const lockdown = mission instanceof LockdownMission ? mission : null;
     const release = mission instanceof ReleaseMission ? mission : null;
+    const racing = !!roadRace && !roadRace.complete;
     const view: HudView = {
       state, readyToStart: state !== 'loading', mode: mission.mode, beatId: mission.beat,
       chapterId: release ? 'L5' : lockdown ? 'L4' : publicAccess ? 'L3' : betrayal ? 'L2' : 'L1', chapterLabel: release ? 'RELEASE' : lockdown ? 'LOCKDOWN' : publicAccess ? 'PUBLIC ACCESS' : betrayal ? 'BETRAYAL' : 'DELIVERY',
@@ -1651,8 +1852,8 @@ export function mountGame() {
       completionTitle: release ? 'BASTROP / PUBLIC ACCESS RESTORED' : lockdown ? 'EVACUATION ROUTE CLEARED' : publicAccess ? 'PUBLIC ROUTE READY' : betrayal ? 'RECOVERY LOCK BROKEN' : 'DELIVERY APPROACH REACHED',
       continueLabel: release ? 'RETURN TO TITLE' : lockdown ? 'ENTER THE CIVIC DISTRICT' : publicAccess ? 'TAKE THE RESERVOIR ROAD' : betrayal ? 'RIDE TO THE RELAY' : 'CONTINUE TO INTAKE',
       completionSaveLabel: release ? replayActive ? 'REPLAY COMPLETE / CAMPAIGN PRESERVED' : saveStatus === 'session' ? 'SESSION ONLY / CAMPAIGN COMPLETE' : 'SAVED / CAMPAIGN COMPLETE' : lockdown ? 'SAVED / EVACUATION ROUTE CLEARED' : publicAccess ? 'SAVED / PUBLIC ROUTE READY' : betrayal ? 'SAVED / RECOVERY LOCK BROKEN' : 'SAVED / DELIVERY APPROACH',
-      retryLabel: state === 'error' && (checkpoint === 'CP-L1-COMPLETE' || checkpoint === 'CP-L2-COMPLETE' || checkpoint?.startsWith('CP-L3-') || checkpoint?.startsWith('CP-L4-') || checkpoint?.startsWith('CP-L5-') || checkpoint === 'CP-CAMPAIGN-COMPLETE') ? 'RETRY LOAD' : replayActive && !checkpoint ? 'RESTART REPLAY' : 'RETRY CHECKPOINT',
-      objective: mission.objective, routeCue: mission.routeCue,
+      retryLabel: racing ? 'RETRY SECTOR' : state === 'error' && (checkpoint === 'CP-L1-COMPLETE' || checkpoint === 'CP-L2-COMPLETE' || checkpoint?.startsWith('CP-L3-') || checkpoint?.startsWith('CP-L4-') || checkpoint?.startsWith('CP-L5-') || checkpoint === 'CP-CAMPAIGN-COMPLETE') ? 'RETRY LOAD' : replayActive && !checkpoint ? 'RESTART REPLAY' : 'RETRY CHECKPOINT',
+      objective: mission.objective, routeCue: racing ? roadRace!.cue : mission.routeCue,
       speed: Math.round(speed), energy: charge,
       turbo: mission.mode !== 'action' ? 'unavailable' : boost > 0 && overdrive.active === 0 ? 'active' : charge >= .4 ? 'ready' : 'charging',
       dialogue: mission.dialogue, dialogueIndex: mission.dialogueIndex,
@@ -1664,7 +1865,11 @@ export function mountGame() {
         jump: { state: mission.mode !== 'action' ? 'unavailable' : height > 0 ? 'active' : jumpCooldown > 0 ? 'cooldown' : 'ready', binding: 'K / ALT', cooldown: jumpCooldown },
       },
       overdrive: betrayal ? { value: overdrive.value, ready: overdrive.ready, active: overdrive.active > 0 } : undefined,
-      missionMeter: release?.beat === 'L5.03' && release.mode === 'action' ? {
+      missionMeter: racing ? {
+        label: `${roadRace!.locate().index + 1} / ${roadRace!.course.sectors.length} · ${roadRace!.locate().sector.name}`,
+        value: roadRace!.position / roadRace!.length,
+        detail: `${((roadRace!.length-roadRace!.position)/3600).toFixed(1)} KM TO GO · ${Math.floor(roadRace!.seconds/60)}:${String(Math.floor(roadRace!.seconds%60)).padStart(2,'0')} · ${roadRace!.overtakes} PASSES`,
+      } : release?.beat === 'L5.03' && release.mode === 'action' ? {
         label: 'PUBLIC UPLOAD', value: release.uploadProgress,
         detail: release.section === 'B' && !release.interceptCleared ? 'CLEAR THE INTERCEPT' : release.connectionState === 'linking' ? 'UPLOADING · STAY GROUNDED' : release.connectionState === 'in-range' ? 'IN RANGE · LAND TO UPLOAD' : 'FOLLOW THE MARKED CORRIDOR',
       } : release?.beat === 'L5.02' && release.mode === 'action' ? {
@@ -1697,6 +1902,18 @@ export function mountGame() {
       } : undefined,
       hasSave, saveStatus, message: state === 'playing' ? feedbackText : statusMessage,
     };
+    if (racing) { view.connection = undefined; view.controller = undefined; view.escort = undefined; }
+    view.roadCombat = racing ? { condition, knockouts } : undefined;
+    view.driveLabel = gestureControls() && mission.mode === 'action' ? gesture.pointer !== null ? 'THROTTLE ON' : 'PRESS TO RIDE' : undefined;
+    const gestureMode = gestureControls();
+    document.querySelector<HTMLElement>('#bastrop-game')!.dataset.controls = gestureMode ? 'gestures' : 'buttons';
+    document.querySelector<HTMLElement>('#gesture-hint')!.hidden = !gestureMode || state !== 'playing' || mission.mode !== 'action';
+    if (view.abilities && gestureMode) { view.abilities.blades.binding = 'SWIPE ↓'; view.abilities.jump.binding = 'SWIPE ↑'; }
+    if (view.abilities && (racing || gestureMode)) {
+      view.abilities.blades.state = spikePulse > 0 ? 'active' : spikeCooldown > 0 ? 'cooldown' : 'ready';
+      view.abilities.blades.cooldown = spikeCooldown;
+    }
+    if (racing) view.overdrive = undefined;
     hud.render(view);
     if (state === 'playing' && W < H && (mission.mode === 'story' || mission.mode === 'resolve')) {
       roadBaseRatio = storyBaseRatio();
@@ -1706,7 +1923,8 @@ export function mountGame() {
     drawRoad();
     drawLockdownBranch();
     drawVignette();
-    if (release) drawReleaseProps(); else if (lockdown) drawLockdownProps(); else if (publicAccess) drawPublicAccessProps(); else if (betrayal) drawBetrayalProps(); else drawDeliveryProps();
+    if (!racing) { if (release) drawReleaseProps(); else if (lockdown) drawLockdownProps(); else if (publicAccess) drawPublicAccessProps(); else if (betrayal) drawBetrayalProps(); else drawDeliveryProps(); }
+    if (racing) drawCourseMarkers();
     for(const car of traffic) if(car.kind==='drone') drawTelegraph(car);
     for(const car of traffic) if(car.kind==='drone'&&car.phase!=='lunge') {
       const fade = car.disengaging ? car.retreatDirection === -1 ? clamp((car.z + 65) / 53, 0, 1) : clamp((1500 - car.z) / 400, 0, 1) : 1;
@@ -1720,12 +1938,21 @@ export function mountGame() {
       if(boost>0) drawEffect('yellowTurbo',x,0,30,lift-10,.85+.1*Math.sin(elapsed*26),.9,12);
       if(blades>.08) drawEffect('bladeEffect',x,0,42,lift+1,Math.min(1,blades*.85),.9,9);
       const pose=bikePose();
-      sprite(pose,x,0,sliding?34:26,47,lift);
+      c.save(); if (hitGrace > 0) c.globalAlpha = .65 + .35 * Math.abs(Math.sin(elapsed*7));
+      sprite(pose,x,0,sliding?34:26,47,lift); c.restore();
       for(const particle of particles){c.globalAlpha=clamp(particle.life*3,0,1);c.fillStyle=particle.color;c.fillRect(particle.x,particle.y,2,boost>0?7:3);}c.globalAlpha=1;
     };
     let bikeDrawn=false;
-    for(const car of [...traffic].sort((a,b)=>b.z-a.z)) {
-      if(car.z<0&&!bikeDrawn){drawBike();bikeDrawn=true;}
+    const roadActors = [
+      ...traffic.map(car => ({ kind: 'car' as const, z: car.z, car })),
+      ...rivals.map(rival => ({ kind: 'rival' as const, z: rival.z, rival })),
+      ...obstacles.map(obstacle => ({ kind: 'obstacle' as const, z: obstacle.z, obstacle })),
+    ];
+    for (const actor of roadActors.sort((a,b) => b.z-a.z)) {
+      if(actor.z<0&&!bikeDrawn){drawBike();bikeDrawn=true;}
+      if (actor.kind === 'rival') { drawRival(actor.rival); continue; }
+      if (actor.kind === 'obstacle') { drawRoadObstacle(actor.obstacle); continue; }
+      const car = actor.car;
       // Lift the sprite independently of its road-plane shadow; preserve its aspect ratio.
       const hover = hoverLift(car);
 
@@ -1740,6 +1967,16 @@ export function mountGame() {
     for(const effect of [...effects].filter(effect=>effect.sprite!=='landingRing').sort((a,b)=>b.z-a.z))drawBurst(effect);
     if(!reduced&&boost>0){c.strokeStyle='#ffe57b55';for(let i=0;i<8;i++){const px=(i*137)%W;c.beginPath();c.moveTo(px,H);c.lineTo(W/2+(px-W/2)*.8,H*.8);c.stroke();}}
     // Small observable state is useful for regression tests and tuning controls.
+    canvas.dataset.rivals=JSON.stringify(rivals.map(rival => ({ x: rival.x, z: rival.z, phase: rival.phase, health: rival.health, targetX: rival.targetX, timer: rival.timer })));
+    canvas.dataset.roadObstacles=JSON.stringify(obstacles);
+    canvas.dataset.condition=String(condition); canvas.dataset.knockouts=String(knockouts);
+    canvas.dataset.spikeCooldown=String(spikeCooldown); canvas.dataset.touchHeld=String(gesture.pointer !== null);
+    canvas.dataset.raceActive=String(racing);
+    canvas.dataset.racePosition=String(roadRace?.position ?? 0);
+    canvas.dataset.raceLength=String(roadRace?.length ?? 0);
+    canvas.dataset.raceSector=String(roadRace?.locate().index ?? 0);
+    canvas.dataset.curvature=String(racing ? roadRace!.curvature() : 0);
+    canvas.dataset.drafting=String(drafting);
     const drones=activeDrones(),drone=activeDrone();canvas.dataset.audio=audio?'ready':'locked';canvas.dataset.muted=String(muted);canvas.dataset.dronePhase=drone?.phase||'none';canvas.dataset.dronePhases=drones.map(item=>item.phase).join(',');canvas.dataset.droneCount=String(drones.length);canvas.dataset.droneOutcome=droneOutcome;canvas.dataset.dronePasses=String(drone?.attackPasses||0);canvas.dataset.droneZ=drone?.z.toFixed(1)||'none';canvas.dataset.fragments=String(fragments.length);canvas.dataset.dodges=String(droneDodges);canvas.dataset.hazard=String(Math.min(9999,...traffic.filter(car=>Math.abs(car.x-x)<(car.w+26)/2&&car.z>0).map(car=>car.z)));canvas.dataset.height=height.toFixed(2);canvas.dataset.blades=blades.toFixed(2);canvas.dataset.slices=String(slices);canvas.dataset.sliding=String(sliding);canvas.dataset.jumpReady=String(jumpCooldown===0);canvas.dataset.laneChanges=String(laneChanges);canvas.dataset.trafficSprites=traffic.filter(car=>car.kind!=='drone').map(vehicleSprite).join(',');canvas.dataset.view='rear-chase';canvas.dataset.state=state;canvas.dataset.mode=mission.mode;canvas.dataset.beat=mission.beat;canvas.dataset.dialogueId=mission.dialogue?.id??'';canvas.dataset.dialogueIndex=String(mission.dialogueIndex);canvas.dataset.route=mission.route.toFixed(1);canvas.dataset.visualDistance=distance.toFixed(1);canvas.dataset.trafficCount=String(traffic.length);canvas.dataset.traffic=JSON.stringify(traffic.map(car=>({id:car.id,x:+car.x.toFixed(1),z:+car.z.toFixed(1),kind:car.kind,lane:car.lane})));canvas.dataset.checkpoint=checkpoint??'';canvas.dataset.gatePassed=String(mission instanceof DeliveryMission && mission.gates.serviceGate);canvas.dataset.approachPassed=String(mission instanceof DeliveryMission && mission.gates.approach);canvas.dataset.serviceLoops=String(serviceLoops);canvas.dataset.x=x.toFixed(1);canvas.dataset.charge=charge.toFixed(2);canvas.dataset.boost=boost.toFixed(2);canvas.dataset.distance=distance.toFixed(1);canvas.dataset.score=String(Math.floor(score));
     canvas.dataset.chapter=release?'L5':lockdown?'L4':publicAccess?'L3':betrayal?'L2':'L1';canvas.dataset.recordId=lockdown?.record?.id??betrayal?.record?.id??'';canvas.dataset.recordIndex=String(release?.records.length??lockdown?.records.length??betrayal?.recordIndex??publicAccess?.records.length??0);canvas.dataset.recordCount=String(release?.records.length??lockdown?.records.length??betrayal?.records.length??publicAccess?.records.length??0);canvas.dataset.betrayalKnown=String(betrayal?.betrayalKnown??(publicAccess || lockdown || release ? true : false));canvas.dataset.lockOutside=(betrayal?.lockOutside??0).toFixed(2);canvas.dataset.lockBroken=String(betrayal?.lockBroken??false);canvas.dataset.carrierZ=carrierZ.toFixed(1);canvas.dataset.carrierActive=String(carrierActive);canvas.dataset.overdrive=String(overdrive.value);canvas.dataset.overdriveActive=String(overdrive.active>0);
     const corridor = publicAccess?.corridor();

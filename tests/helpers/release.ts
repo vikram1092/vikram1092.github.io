@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {ack} from './betrayal';
 export const earnedM4=JSON.parse(readFileSync('docs/bastrop37/phase3/m4/earned-completion-save.json','utf8'));
 export async function enterRelease(page:Page){
- await page.goto('/bastrop37/');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),earnedM4);
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),earnedM4);
  await page.reload();await page.locator('#continue-save').click();await expect(page.locator('#headline')).toHaveText('EVACUATION ROUTE CLEARED');
  await page.locator('#continue-chapter').click();await expect(page.locator('#game')).toHaveAttribute('data-beat','L5.01');await page.clock.runFor(32);
 }
@@ -15,7 +15,7 @@ export async function loadUploadFixture(page:Page){
  const {releaseSave}=await import('../../src/scripts/bastrop37/save');
  const opening=RELEASE_DIALOGUE['L5.01'];
  const save=releaseSave('CP-L5-UPLOAD',[...earnedM4.log,...opening],earnedM4.records,[...earnedM4.history,...opening]);
- await page.goto('/bastrop37/');await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),save);
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),save);
  await page.reload();await page.locator('#continue-save').click();await expect(page.locator('#game')).toHaveAttribute('data-beat','L5.03');return save;
 }
 

@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { ack } from './betrayal';
 export const earnedM2 = JSON.parse(readFileSync('docs/bastrop37/phase3/m2/earned-completion-save.json','utf8'));
 export async function enterPublicAccess(page: Page) {
-  await page.goto('/bastrop37/');
+  await page.goto('/bastrop37/?fixture=encounters');
   await page.evaluate(save => localStorage.setItem('bastrop37-campaign-v1', JSON.stringify(save)), earnedM2);
   await page.reload();
   await page.locator('#continue-save').click();

@@ -6,7 +6,7 @@ const capture='docs/bastrop37/phase3/m5/regression-m2';
 mkdirSync(capture,{recursive:true});
 test.beforeEach(async({page})=>{page.setDefaultTimeout(10000);await page.clock.install();});
 async function intake(page:Page) {
- await page.goto('/bastrop37/');
+ await page.goto('/bastrop37/?fixture=encounters');
  await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),legacy);
  await page.reload(); await page.locator('#continue-save').click();
  await page.locator('#continue-chapter').click();
@@ -89,7 +89,7 @@ test('touch intake and long L2 lines fit four layouts; controls stay separate th
 test('required L2 asset failure preserves earned L1 save and Retry Load recovers',async({page})=>{
  let fail=true;
  await page.route('**/betrayal/carrier-rear-v3.png',route=>fail?route.abort():route.continue());
- await page.goto('/bastrop37/');await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),legacy);
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),legacy);
  await page.reload();await page.locator('#continue-save').click();await page.locator('#continue-chapter').click();
  await expect(page.locator('#game')).toHaveAttribute('data-state','error');
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('bastrop37-campaign-v1')!).checkpoint)).toBe('CP-L1-COMPLETE');
@@ -116,7 +116,7 @@ test('actual drone collision retries safely, blade defense earns once, and sessi
  const opening=BETRAYAL_DIALOGUE['L2.01'], confrontation=BETRAYAL_DIALOGUE['L2.02'];
  const log=[...legacy.log,...opening,...confrontation];
  const save=betrayalSave('CP-L2-ESCAPE',log,BETRAYAL_RECORDS,[...legacy.log,...opening,...BETRAYAL_RECORDS,...confrontation]);
- await page.goto('/bastrop37/'); await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),save);
+ await page.goto('/bastrop37/?fixture=encounters'); await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),save);
  await page.reload(); await page.locator('#continue-save').click();
  const {steer}=await import('./helpers/betrayal');
  await steer(page,490);
@@ -143,7 +143,7 @@ test('missed inspection scan follows its safe loop and retries without early bet
  const { betrayalSave } = await import('../src/scripts/bastrop37/save');
  const log=[...legacy.log,...BETRAYAL_DIALOGUE['L2.01']];
  const save=betrayalSave('CP-L2-SCAN',log,[],log);
- await page.goto('/bastrop37/');await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),save);
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),save);
  await page.reload();await page.locator('#continue-save').click();
  await expect(page.locator('#game')).toHaveAttribute('data-beat','L2.02');
  const {steer}=await import('./helpers/betrayal');await steer(page,490);
@@ -163,7 +163,7 @@ test('three defended drone passes leave visibly before removal while the lock re
  const { betrayalSave } = await import('../src/scripts/bastrop37/save');
  const opening=BETRAYAL_DIALOGUE['L2.01'], confrontation=BETRAYAL_DIALOGUE['L2.02'];
  const save=betrayalSave('CP-L2-ESCAPE',[...legacy.log,...opening,...confrontation],BETRAYAL_RECORDS,[...legacy.log,...opening,...BETRAYAL_RECORDS,...confrontation]);
- await page.goto('/bastrop37/');await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),save);
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),save);
  await page.reload();await page.locator('#continue-save').click();await expect(page.locator('#game')).toHaveAttribute('data-beat','L2.03');
  let defenses=0,lastZ=0;
  for(let i=0;i<350;i++) {

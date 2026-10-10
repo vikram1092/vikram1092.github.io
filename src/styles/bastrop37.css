@@ -293,3 +293,55 @@ body:has(.garage){background:#090d19}
  #bastrop-game .chapter-options button{min-height:44px;font-size:9px}
  #bastrop-game .comms[data-speaker=system] #speaker{font-size:18px}
 }
+
+/* The road is the phone controller. HUD readouts never intercept a riding gesture. */
+#bastrop-game[data-controls=gestures] .touch-controls{display:none}
+#bastrop-game #turbo-trigger{width:100%;border:0;background:none;text-align:left}
+#bastrop-game[data-controls=gestures] #turbo-trigger{pointer-events:auto;min-height:44px}
+#bastrop-game[data-controls=gestures] #turbo-trigger kbd{display:none}
+#bastrop-game[data-controls=gestures] #turbo-trigger::after{content:'TAP';font-size:8px;border:1px solid #6c7d7b;padding:3px}
+#bastrop-game[data-controls=gestures] .instruments,
+#bastrop-game[data-controls=gestures] .mission,
+#bastrop-game[data-controls=gestures] .mission-meter,
+#bastrop-game[data-controls=gestures] .combat-status,
+#bastrop-game[data-controls=gestures] .feedback{pointer-events:none}
+#bastrop-game #gesture-hint{position:absolute;z-index:2;bottom:calc(12px + env(safe-area-inset-bottom));left:12px;right:12px;margin:0;text-align:center;color:#e8d7ae;font:10px/1.6 'Courier New',monospace;letter-spacing:.5px;text-shadow:0 2px 4px #000;pointer-events:none}
+#bastrop-game #gesture-hint span{display:block;color:#b8d9d1;font-size:9px}
+@media(max-width:600px){
+ #bastrop-game[data-controls=gestures] .instruments{bottom:64px;left:12px;width:53%;display:grid;grid-template-columns:65px 1fr;gap:4px}
+ #bastrop-game[data-controls=gestures] .speed-dial{height:45px;width:65px}
+ #bastrop-game[data-controls=gestures] .speed-dial svg,#bastrop-game[data-controls=gestures] .drive-state{display:none}
+ #bastrop-game[data-controls=gestures] .speed-reading{top:0;left:0;gap:2px;align-items:end}
+ #bastrop-game[data-controls=gestures] .speed-reading strong{font-size:34px}
+ #bastrop-game[data-controls=gestures] .speed-reading span{font-size:7px;writing-mode:vertical-rl}
+ #bastrop-game[data-controls=gestures] .energy-rail{padding:4px 0 4px 6px}
+ #bastrop-game[data-controls=gestures] .energy-rail>div:first-child{gap:3px;font-size:8px;letter-spacing:0}
+ #bastrop-game[data-controls=gestures] .energy-rail b{margin-left:0;font-size:13px}
+ #bastrop-game[data-controls=gestures] .segments{width:100%;gap:2px}
+ #bastrop-game[data-controls=gestures] .segments i{flex:1;min-width:0}
+ #bastrop-game[data-controls=gestures] .turbo-rail{grid-column:1/-1;padding-top:0;font-size:8px}
+ #bastrop-game[data-controls=gestures] .combat-status{bottom:64px;right:12px;width:38%;padding:6px;gap:4px;font-size:8px}
+ #bastrop-game[data-controls=gestures] .combat-status strong{font-size:8px}
+}
+@media(pointer:coarse) and (max-height:500px){
+ #bastrop-game{min-height:0}
+ #bastrop-game[data-controls=gestures] .ride-top{padding:8px 14px}
+ #bastrop-game[data-controls=gestures] .mission{top:48px;left:14px;gap:8px;max-width:34%}
+ #bastrop-game[data-controls=gestures] .chapter-number{font-size:28px}
+ #bastrop-game[data-controls=gestures] .mission h1{font-size:16px;margin:4px 0}
+ #bastrop-game[data-controls=gestures] .micro,#bastrop-game[data-controls=gestures] .route{font-size:8px;letter-spacing:0}
+ #bastrop-game[data-controls=gestures] .module-stamp{display:none}
+ #bastrop-game[data-controls=gestures] .mission-meter{top:47px;width:230px;font-size:8px;padding:5px 8px}
+ #bastrop-game[data-controls=gestures] .feedback{top:48px;right:14px;max-width:24%;font-size:8px}
+ #bastrop-game[data-controls=gestures] .instruments{left:14px;bottom:8px;width:180px}
+ #bastrop-game[data-controls=gestures] .speed-dial{height:40px}
+ #bastrop-game[data-controls=gestures] .speed-dial svg,#bastrop-game[data-controls=gestures] .drive-state{display:none}
+ #bastrop-game[data-controls=gestures] .speed-reading{top:0;left:0}
+ #bastrop-game[data-controls=gestures] .speed-reading strong{font-size:38px}
+ #bastrop-game[data-controls=gestures] .energy-rail{display:none}
+ #bastrop-game[data-controls=gestures] .combat-status{right:14px;bottom:16px;width:190px;padding:6px;font-size:8px}
+ #bastrop-game[data-controls=gestures] .combat-status strong{font-size:8px}
+ #bastrop-game[data-controls=gestures] #gesture-hint{left:210px;right:210px;font-size:8px}
+ #bastrop-game[data-controls=gestures] #gesture-hint span{font-size:8px}
+ #bastrop-game[data-controls=gestures] .comms{bottom:12px;width:55%;max-height:calc(100% - 115px);overflow:auto}
+}

@@ -36,7 +36,7 @@ test('M2 completion enters safe L3; slow reading, whole-card input and first che
 test('failed relay asset preserves completed M2 and Retry Load recovers',async({page})=>{
  let fail=true;
  await page.route('**/public-access/relay-node-v3.png',route=>fail?route.abort():route.continue());
- await page.goto('/bastrop37/');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),earnedM2);
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),earnedM2);
  await page.reload();await page.locator('#continue-save').click();await page.locator('#continue-chapter').click();
  await expect(page.locator('#game')).toHaveAttribute('data-state','error');
  expect(await savedCampaign(page)).toEqual(earnedM2);
@@ -109,7 +109,7 @@ test('actual interception crash retries after A; blades finish B and blocked sto
  const {finishRelays}=await import('./helpers/public-access');
  const opening=PUBLIC_ACCESS_DIALOGUE['L3.01'];
  const fixture=publicAccessSave('CP-L3-B',[...earnedM2.log,...opening],earnedM2.records,[...earnedM2.history,...opening]);
- await page.goto('/bastrop37/');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),fixture);
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),fixture);
  await page.reload();await page.locator('#continue-save').click();await steer(page,490);
  for(let i=0;i<140 && await page.locator('#game').getAttribute('data-state')==='playing';i++)await page.clock.runFor(100);
  await expect(page.locator('#game')).toHaveAttribute('data-state','crashed');

@@ -6,7 +6,7 @@ const capture = 'docs/bastrop37/phase3/m5/regression-m1';
 mkdirSync(capture, { recursive: true });
 test.beforeEach(async ({ page }) => { await page.clock.install(); });
 async function start(page: Page) {
-  await page.goto('/bastrop37/');
+  await page.goto('/bastrop37/?fixture=encounters');
   await page.locator('#start').click();
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'playing');
   await expect(page.locator('#dialogue-text')).toHaveText('You have the module?');
@@ -90,7 +90,7 @@ test('riding, slide energy, deliberate turbo, pause and checkpoint retry preserv
   await expect(page.locator('#comms')).toBeHidden();
 });
 
-test('fresh full campaign earns all five levels, durable release and protected recovery with compatible saves', async ({ page }) => {
+test('encounter campaign earns all five levels, durable release and protected recovery with compatible saves', async ({ page }) => {
   test.setTimeout(900000);
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await page.addInitScript(() => {
@@ -217,7 +217,7 @@ test('storage failure is truthful and corrupt save remains recoverable', async (
 
 test('invalid save is preserved until an explicit new-run confirmation', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('bastrop37-campaign-v1', '{invalid'));
-  await page.goto('/bastrop37/');
+  await page.goto('/bastrop37/?fixture=encounters');
   await expect(page.locator('#save-note')).toContainText(/save|progress/i);
   expect(await page.evaluate(() => localStorage.getItem('bastrop37-campaign-v1'))).toBe('{invalid');
 });
@@ -281,7 +281,7 @@ test('local mechanics regression keeps jump fresh-press, blade retraction and ge
 
 test('failed required asset load offers retry without losing saved progress', async ({ page }) => {
   await page.route('**/delivery/signal-dead-v2.png', route => route.abort());
-  await page.goto('/bastrop37/');
+  await page.goto('/bastrop37/?fixture=encounters');
   await expect(page.locator('#game')).toHaveAttribute('data-state', 'error');
   await page.locator('#menu').click();
   await expect(page.locator('#start')).toBeDisabled();

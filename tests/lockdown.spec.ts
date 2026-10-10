@@ -36,7 +36,7 @@ test('L4 spillway record precedes Omega evidence line and slow reading preserves
 
 test('missing L4 bus asset preserves M3 completion and explicit retry recovers',async({page})=>{
  let fail=true;await page.route('**/lockdown/evac-bus-rear-v1.png',route=>fail?route.abort():route.continue());
- await page.goto('/bastrop37/');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),earnedM3);
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(save=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(save)),earnedM3);
  await page.reload();await page.locator('#continue-save').click();await page.locator('#continue-chapter').click();
  await expect(page.locator('#game')).toHaveAttribute('data-state','error');expect(await savedCampaign(page)).toEqual(earnedM3);
  fail=false;await page.locator('#retry').click();await expect(page.locator('#game')).toHaveAttribute('data-beat','L4.01');
@@ -74,7 +74,7 @@ async function escortCheckpoint(page:import('@playwright/test').Page) {
  const {LockdownMission}=await import('../src/scripts/bastrop37/lockdown');const {lockdownSave}=await import('../src/scripts/bastrop37/save');
  const mission=new LockdownMission(undefined,earnedM3.log,earnedM3.records,earnedM3.history);for(let i=0;i<4;i++)mission.advance();
  const save=lockdownSave('CP-L4-ESCORT',mission.log,mission.records,mission.history);
- await page.goto('/bastrop37/');await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),save);
+ await page.goto('/bastrop37/?fixture=encounters');await page.evaluate(value=>localStorage.setItem('bastrop37-campaign-v1',JSON.stringify(value)),save);
  await page.reload();await page.locator('#continue-save').click();await expect(page.locator('#game')).toHaveAttribute('data-beat','L4.03');return save;
 }
 
