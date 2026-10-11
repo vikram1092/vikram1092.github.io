@@ -35,7 +35,7 @@ async function steerTo(page: Page, target: number) {
 }
 async function finishService(page: Page) {
   await steerTo(page, 397);
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 140; i++) {
     if (await page.locator('#comms').isVisible()) return;
     await page.clock.runFor(300);
     expect(await page.locator('#game').getAttribute('data-state')).toBe('playing');
@@ -185,12 +185,13 @@ test('encounter campaign earns all five levels, durable release and protected re
 });
 
 test('service miss repeats safely; checkpoint reload retains Omega introduction without duplication', async ({ page }) => {
+  test.setTimeout(180000);
   await toAction(page); await rideToOmega(page); await acknowledge(page, 5);
   await page.reload(); await page.locator('#continue-save').click();
   await expect(page.locator('#comms')).toBeHidden();
-  await page.clock.runFor(4500);
-  await expect(page.locator('#route-cue')).toContainText('LOOP');
-  await page.clock.runFor(3500);
+  for (let i=0;i<80&&await page.locator('#game').getAttribute('data-junction-phase')!=='return';i++) await page.clock.runFor(200);
+  await expect(page.locator('#route-cue')).toContainText('RETURN ROAD');
+  for (let i=0;i<110&&await page.locator('#game').getAttribute('data-junction-phase')==='return';i++) await page.clock.runFor(200);
   await finishService(page); await acknowledge(page, 3);
   const log = await page.evaluate(() => JSON.parse(localStorage.getItem('bastrop37-campaign-v1')!).log);
   expect(log).toHaveLength(13); expect(new Set(log.map((line: {id:string}) => line.id)).size).toBe(13);
@@ -349,7 +350,7 @@ test.describe('mobile full Delivery', () => {
     await page.screenshot({ path: `${capture}/mobile-omega-long.png` });
     await page.locator('#advance').tap(); await page.clock.runFor(32);
     await steer(397);
-    for (let i = 0; i < 50 && await page.locator('#comms').isHidden(); i++) await page.clock.runFor(300);
+    for (let i = 0; i < 140 && await page.locator('#comms').isHidden(); i++) await page.clock.runFor(300);
     await expect(page.locator('#dialogue-text')).toContainText("You're nearly here");
     for (let i = 0; i < 3; i++) await page.locator('#advance').tap();
     await expect(page.locator('#game')).toHaveAttribute('data-state', 'complete');

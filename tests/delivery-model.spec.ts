@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { DeliveryMission, SERVICE_CORRIDOR } from '../src/scripts/bastrop37/delivery';
+import { DeliveryMission } from '../src/scripts/bastrop37/delivery';
 import { DELIVERY_DIALOGUE } from '../src/scripts/bastrop37/delivery-content';
 import { deliverySave, validDeliverySave } from '../src/scripts/bastrop37/save';
 
@@ -25,10 +25,10 @@ test('reading holds mission route and requires all thirteen acknowledgments', ()
   expect(mission.dialogue?.id).toBe('L1.03-01');
   for (let i = 0; i < 5; i++) mission.advance();
   expect(mission.objective).toBe('TAKE THE SERVICE LANE');
-  mission.tick(30, 10000, (SERVICE_CORRIDOR.minX + SERVICE_CORRIDOR.maxX) / 2, true);
+  mission.tick(30, 10000, 397, true);
   expect(mission.gates.serviceGate).toBe(true);
   expect(mission.gates.approach).toBe(true);
-  mission.tick(0, 0, 400, true);
+  mission.tick(1, 260, 400, true);
   expect(mission.dialogue?.id).toBe('L1.05-01');
   for (let i = 0; i < 2; i++) expect(mission.advance()).toEqual([]);
   expect(mission.advance()).toEqual(['level-complete']);
@@ -38,12 +38,12 @@ test('reading holds mission route and requires all thirteen acknowledgments', ()
 
 test('missed service entrance cannot complete and repeat approach recovers', () => {
   const mission = new DeliveryMission('CP-L1-SERVICE', [...opening, ...service]);
-  mission.tick(30, 10000, 490, true);
+  mission.tick(12, 3000, 320, true);
   expect(mission.loop).toBe(true);
   expect(mission.gates.serviceGate).toBe(false);
   expect(mission.gates.approach).toBe(false);
   mission.tick(30, 10000, 400, true);
-  expect(mission.route).toBe(0);
+  expect(mission.route).toBe(400);
   expect(mission.loop).toBe(false);
   mission.tick(30, 10000, 400, true);
   expect(mission.gates.serviceGate).toBe(true);

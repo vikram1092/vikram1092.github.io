@@ -1,3 +1,4 @@
+import { RoadJunction } from './junction';
 import type { BeatMode, DialogueLine } from './contracts';
 import type { DeliveryCheckpoint } from './save';
 import { DELIVERY_DIALOGUE } from './delivery-content';
@@ -7,11 +8,6 @@ export type DeliveryEvent = 'gap-one' | 'gap-two' | 'signal' | 'gate' | 'gate-mi
 const GAP_ONE = 650;
 const GAP_TWO = 1450;
 const SIGNAL = 2150;
-const GATE = 900;
-const APPROACH = 1640;
-const LOOP_LENGTH = 650;
-export const SERVICE_CORRIDOR = { minX: 370, maxX: 445 } as const;
-const BLOCKED_CROSSING = { minX: 152, maxX: 258 } as const;
 
 /** Authored mission position is independent of visual road scroll and wall time. */
 export class DeliveryMission {
@@ -21,6 +17,7 @@ export class DeliveryMission {
   dialogueIndex = 0;
   readonly log: DialogueLine[] = [];
   readonly gates = { gapOne: false, gapTwo: false, signal: false, serviceGate: false, approach: false };
+  readonly junction = new RoadJunction('INTAKE SERVICE ROAD');
   loop = false;
   loopDistance = 0;
   reaction = 0;
@@ -46,7 +43,7 @@ export class DeliveryMission {
   get routeCue(): string {
     if (this.mode === 'drain') return 'TRAFFIC CLEARING';
     if (this.beat === 'L1.02') return this.gates.gapOne ? 'WATCH THE NEXT GAP' : 'STEER THROUGH THE GAP';
-    if (this.beat === 'L1.04') return this.loop ? 'SERVICE LOOP — REJOIN AHEAD' : this.gates.serviceGate ? 'DELIVERY APPROACH AHEAD' : 'OPEN RIGHT SERVICE LANE';
+    if (this.beat === 'L1.04') return this.junction.cue;
     return this.beat === 'L1.05' ? 'MUNICIPAL INTAKE APPROACH' : 'CRUISE AND READ';
   }
 
@@ -69,12 +66,12 @@ export class DeliveryMission {
     return ['level-complete'];
   }
 
-  tick(dt: number, worldTravel: number, riderX: number, trafficClear: boolean): DeliveryEvent[] {
+  tick(dt: number, worldTravel: number, riderX: number, trafficClear: boolean, grounded = true): DeliveryEvent[] {
     if (this.mode === 'drain') {
       // Continue past the just-crossed landmark while traffic leaves. The next
       // named landmark is withheld until action resumes after reading.
       this.route += worldTravel;
-      const passedMarker = this.beat === 'L1.02' ? SIGNAL : APPROACH;
+      const passedMarker = this.beat === 'L1.02' ? SIGNAL : this.junction.destination;
       if (!trafficClear || this.route - passedMarker < 95) return [];
       this.beat = this.beat === 'L1.02' ? 'L1.03' : 'L1.05';
       this.mode = this.beat === 'L1.03' ? 'story' : 'resolve';
@@ -97,24 +94,14 @@ export class DeliveryMission {
       }
       return events;
     }
-    if (this.loop) {
-      this.loopDistance += worldTravel;
-      if (this.loopDistance >= LOOP_LENGTH) {
-        this.loop = false; this.loopDistance = 0; this.route = 0;
-        events.push('loop-return');
-      }
-      return events;
-    }
-    if (!this.gates.serviceGate && crossed(GATE)) {
-      if (riderX >= SERVICE_CORRIDOR.minX && riderX <= SERVICE_CORRIDOR.maxX) {
-        this.gates.serviceGate = true; events.push('gate');
-      } else if (riderX >= BLOCKED_CROSSING.minX && riderX <= BLOCKED_CROSSING.maxX) {
-        events.push('barrier-contact');
-      } else {
-        this.loop = true; this.loopDistance = 0; events.push('gate-missed');
-      }
-    }
-    if (this.gates.serviceGate && !this.gates.approach && crossed(APPROACH)) {
+    const junctionEvents = this.junction.tick(worldTravel, riderX, grounded);
+    this.route = this.junction.position;
+    this.loop = this.junction.phase === 'return';
+    this.loopDistance = this.loop ? this.junction.position-this.junction.decisionEnd : 0;
+    if (junctionEvents.includes('exit-entered')) { this.gates.serviceGate = true; events.push('gate'); }
+    if (junctionEvents.includes('exit-missed')) events.push('gate-missed');
+    if (junctionEvents.includes('returned')) events.push('loop-return');
+    if (junctionEvents.includes('arrived')) {
       this.gates.approach = true; this.mode = 'drain'; events.push('approach');
     }
     return events;
@@ -128,12 +115,12 @@ export class DeliveryMission {
       return z > -95 ? z : null;
     }
     if (this.beat === 'L1.04') {
-      if (kind === 'gate') {
-        const z = GATE - this.route;
+      if (kind === 'gate' && !this.junction.selected && !this.loop) {
+        const z = this.junction.mouth - this.route;
         return z > -95 ? z : null;
       }
       if (kind === 'approach' && this.gates.serviceGate) {
-        const z = APPROACH - this.route;
+        const z = this.junction.destination - this.route;
         return z > -95 ? z : null;
       }
     }

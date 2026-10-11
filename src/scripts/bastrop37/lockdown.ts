@@ -1,3 +1,4 @@
+import { RoadJunction } from './junction';
 import type { BeatMode, DialogueLine, EquipmentRecord, TransmissionEntry } from './contracts';
 import { LOCKDOWN_DIALOGUE, LOCKDOWN_RECORDS } from './lockdown-content';
 import { ControllerGate, type ControllerEvent } from './controller';
@@ -13,14 +14,9 @@ export const ESCORT_MIN_X = 340;
 export const ESCORT_MAX_X = 490;
 export const INTERCEPT_MIN_X = 420;
 export const INTERCEPT_MAX_X = 490;
-export const BUS_WORLD_X = 550;
+export const BUS_WORLD_X = 474;
 export const BUS_PROGRESS_GOAL = 3600;
-export const RAMP_ROUTE = 3900;
-export const RAMP_MIN_X = 345;
-export const RAMP_MAX_X = 490;
-export const RAMP_LOOP_LENGTH = 650;
 export const BUS_ATTACK_MARKERS = [650, 1300, 1950] as const;
-const RAMP_MISS_ROUTE = RAMP_ROUTE + 100;
 
 /** L4 authored mission state. The rider, drone body, and visual props remain in the shared renderer. */
 export class LockdownMission {
@@ -34,6 +30,7 @@ export class LockdownMission {
   busCondition: 0 | 1 | 2 | 3 = 3;
   busProgress = 0;
   busSafe = false;
+  readonly junction = new RoadJunction('UPHILL CIVIC ROAD');
   rampPassed = false;
   riderRoute = 0;
   rampLoop = false;
@@ -95,8 +92,7 @@ export class LockdownMission {
     if (this.beat === 'L4.03') {
       if (!this.escortInRange && !this.busSafe) return 'OUT OF RANGE · RETURN TO BUS';
       if (this.attackPhase === 'telegraph') return this.attackTarget === 'jo' ? 'DRONE ON JO · EVADE OR CUT' : 'INTERCEPT RIGHT LANE · STEER OR CUT';
-      if (this.rampLoop) return 'CIVIC RAMP MISSED · SERVICE LOOP';
-      if (this.busSafe && !this.rampPassed) return 'BUS SAFE · REACH CIVIC RAMP';
+      if (this.busSafe && !this.rampPassed) return this.junction.cue;
       if (this.rampPassed && !this.busSafe) return 'RAMP REACHED · STAY WITH BUS';
       return 'STAY WITH BUS · PROTECT THE EXIT';
     }
@@ -140,7 +136,7 @@ export class LockdownMission {
     return ['escort-recover'];
   }
 
-  tick(dt: number, travel: number, riderX: number, trafficClear: boolean): LockdownEvent[] {
+  tick(dt: number, travel: number, riderX: number, trafficClear: boolean, grounded = true): LockdownEvent[] {
     if (this.beat === 'L4.02' && this.mode === 'action') {
       const events = this.controller.tick(dt, travel);
       if (events.includes('barrier-open')) {
@@ -172,22 +168,16 @@ export class LockdownMission {
         events.push('bus-safe');
       }
     }
-    // Jo's route remains independent: the civic marker may be earned before or after the bus reaches safety.
-    if (this.rampLoop) {
-      this.rampLoopDistance += Math.max(0, travel);
-      if (this.rampLoopDistance >= RAMP_LOOP_LENGTH) {
-        this.rampLoop = false; this.rampLoopDistance = 0; this.riderRoute = RAMP_ROUTE - 650;
-        events.push('ramp-loop-return');
-      }
-    } else if (!this.rampPassed) {
-      const before = this.riderRoute;
-      this.riderRoute += Math.max(0, travel);
-      if (before < RAMP_ROUTE && this.riderRoute >= RAMP_ROUTE && riderX >= RAMP_MIN_X && riderX <= RAMP_MAX_X) {
-        this.rampPassed = true; events.push('ramp-passed');
-      } else if (this.riderRoute >= RAMP_MISS_ROUTE) {
-        this.rampLoop = true; this.rampLoopDistance = 0; this.riderRoute = RAMP_MISS_ROUTE;
-        this.rampLoops++; events.push('ramp-missed');
-      }
+    // First clear the escort threat. Then follow the bus through a real road fork.
+    if (this.busSafe && trafficClear) {
+      const junctionEvents = this.junction.tick(travel, riderX, grounded);
+      this.riderRoute = this.junction.position;
+      this.rampLoop = this.junction.phase === 'return';
+      this.rampLoops = this.junction.attempts;
+      this.rampLoopDistance = this.rampLoop ? this.junction.position-this.junction.decisionEnd : 0;
+      if (junctionEvents.includes('exit-missed')) events.push('ramp-missed');
+      if (junctionEvents.includes('returned')) events.push('ramp-loop-return');
+      if (junctionEvents.includes('arrived')) { this.rampPassed = true; events.push('ramp-passed'); }
     }
     if (!this.busSafe && !this.droneDestroyed && !this.droneDeparted) {
       if (this.attackPhase === 'idle') {
@@ -231,7 +221,7 @@ export class LockdownMission {
   }
 
   rampZ(): number | null {
-    if (this.beat !== 'L4.03' || this.rampPassed || this.rampLoop) return null;
-    return RAMP_ROUTE - this.riderRoute;
+    if (this.beat !== 'L4.03' || !this.busSafe || this.rampPassed || this.rampLoop) return null;
+    return this.junction.destination - this.junction.position;
   }
 }

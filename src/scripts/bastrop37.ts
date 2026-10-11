@@ -3,7 +3,7 @@
 import { RoadRival, RideGesture } from './bastrop37/road-combat';
 import { RoadRace, ROAD_COURSES } from './bastrop37/race';
 import { createHud } from './bastrop37/hud';
-import { DeliveryMission, SERVICE_CORRIDOR, type DeliveryEvent } from './bastrop37/delivery';
+import { DeliveryMission, type DeliveryEvent } from './bastrop37/delivery';
 import { DELIVERY_ASSETS, DELIVERY_ASSET_METADATA } from './bastrop37/delivery-content';
 import { BETRAYAL_ASSETS, BETRAYAL_ASSET_METADATA } from './bastrop37/betrayal-content';
 import { PUBLIC_ACCESS_ASSETS, PUBLIC_ACCESS_ASSET_METADATA } from './bastrop37/public-access-content';
@@ -11,7 +11,7 @@ import { LOCKDOWN_ASSETS, LOCKDOWN_ASSET_METADATA, LOCKDOWN_PLACEMENT_GUIDES } f
 import { RELEASE_ASSETS, RELEASE_ASSET_METADATA } from './bastrop37/release-content';
 import { BetrayalMission, SCAN_CORRIDOR, LOCK_CORRIDOR, type BetrayalEvent } from './bastrop37/betrayal';
 import { PublicAccessMission, type PublicAccessEvent } from './bastrop37/public-access';
-import { LockdownMission, BUS_WORLD_X, BUS_PROGRESS_GOAL, INTERCEPT_MIN_X, INTERCEPT_MAX_X, RAMP_MIN_X, RAMP_MAX_X, type LockdownEvent } from './bastrop37/lockdown';
+import { LockdownMission, BUS_WORLD_X, BUS_PROGRESS_GOAL, INTERCEPT_MIN_X, INTERCEPT_MAX_X, type LockdownEvent } from './bastrop37/lockdown';
 import { ReleaseMission, type ReleaseEvent } from './bastrop37/release';
 import { CONTROLLER_X } from './bastrop37/controller';
 import { OverdriveMeter } from './bastrop37/overdrive';
@@ -74,6 +74,11 @@ export function mountGame() {
   const bounds: Record<string, {x:number;y:number;w:number;h:number}> = {};
   const horizon = () => H * (W < H ? .32 : .42) + (reduced ? 0 : cameraPitch);
   const roadZoom = () => chaseZoom * (1 - (reduced ? 0 : turboView * .07));
+  function activeJunction() {
+    if (mission instanceof DeliveryMission && (mission.beat === 'L1.04' || mission.junction.complete)) return mission.junction;
+    if (mission instanceof LockdownMission && mission.busSafe && (mission.beat === 'L4.03' || mission.junction.complete)) return mission.junction;
+    return null;
+  }
   function roadCurve(z: number): number {
     if (roadRace && !roadRace.complete) {
       const sample = clamp(z / 40, 0, 50);
@@ -82,13 +87,16 @@ export function mountGame() {
       const continuation = Math.max(0, z - 2000) * (roadCenters[50] - roadCenters[49]) / 40;
       return (center + continuation) * Math.min(W * .9, 520) / (right-left) * roadZoom() * 65 / (65 + Math.max(0, z));
     }
-    if (!(mission instanceof LockdownMission)) return 0;
+    const junction = activeJunction();
+    if (junction) return junction.centerAhead(z) * Math.min(W*.9,520)/(right-left)*roadZoom()*140/(140+Math.max(-53,z));
+    if (!(mission instanceof LockdownMission) || mission.beat === 'L4.03' || mission.beat === 'L4.04') return 0;
     const t = clamp(z / 780, 0, 1);
     return (W < H ? 100 : 180) * t * (2 - t);
   }
   function project(wx:number, z:number) {
     // Close chase: enlarge the whole road-space view, tracking the rider laterally.
-    const scale = 65 / (65 + Math.max(-53,z));
+    const focal = activeJunction() ? 140 : 65;
+    const scale = focal / (focal + Math.max(-53,z));
     const zoom = roadZoom();
     const unit = Math.min(W * .9, 520) / (right-left) * zoom;
     return {x:W/2+(wx-cameraX)*unit*scale+roadCurve(z), y:horizon()+(H*roadBaseRatio-horizon())*scale, scale:unit*scale};
@@ -169,7 +177,7 @@ export function mountGame() {
     const pixelWidth=Math.round(nw*nextScale),pixelHeight=Math.round(nh*nextScale);
     if(W===nw&&H===nh&&canvas.width===pixelWidth&&canvas.height===pixelHeight)return;
     W=nw;H=nh;renderScale=nextScale;
-    chaseZoom = W < H ? (roadRace && !roadRace.complete) || isLockdown() ? 2 : 3 : 1.6;
+    chaseZoom = W < H ? activeJunction() ? 1.6 : (roadRace && !roadRace.complete) || isLockdown() ? 2 : 3 : 1.6;
     canvas.width=pixelWidth;canvas.height=pixelHeight;
     c.setTransform(renderScale,0,0,renderScale,0,0);
   }
@@ -591,11 +599,16 @@ export function mountGame() {
       if (prior?.checkpoint.startsWith('CP-L3-') || prior?.checkpoint.startsWith('CP-L4-') || prior?.checkpoint.startsWith('CP-L5-') || prior?.checkpoint === 'CP-CAMPAIGN-COMPLETE') { state = 'ready'; continueGame(); return; }
     }
     if (state !== 'crashed' && state !== 'paused') return;
+    const safeBus = mission instanceof LockdownMission && mission.busSafe && !mission.rampPassed ? mission.busCondition : null;
     const retryRace = roadRace && raceBeat === mission.beat ? roadRace : null;
     const retryBeat = raceBeat;
     if (sessionSave) restoreCheckpoint(sessionSave);
     else if (replayActive && replayChapter) replayOpening(replayChapter);
     else beginNewGame();
+    if (safeBus !== null && mission instanceof LockdownMission && mission.beat === 'L4.03') {
+      mission.busSafe = true; mission.busCondition = safeBus; mission.busProgress = BUS_PROGRESS_GOAL;
+      mission.attackPhase = 'cleared'; mission.droneDestroyed = mission.droneDeparted = true; traffic = [];
+    }
     if (retryRace && mission.beat === retryBeat) {
       roadRace = retryRace; raceBeat = retryBeat;
       if (!roadRace.complete) { roadRace.retrySector(); traffic = []; }
@@ -625,7 +638,7 @@ export function mountGame() {
       if (event === 'gap-two') setMessage('SECOND GAP CLEAR · DEAD SIGNAL AHEAD', 3);
       if (event === 'signal') setMessage('DEAD SIGNAL · CROSSING BLOCKED', 2);
       if (event === 'gate') setMessage('SERVICE GATE CROSSED', 2);
-      if (event === 'gate-missed') { serviceLoops++; setMessage('SERVICE LOOP · FOLLOW THE REPEAT APPROACH', 4); }
+      if (event === 'gate-missed') { serviceLoops++; setMessage('RIGHT EXIT MISSED · FOLLOW THE RETURN ROAD', 4); }
       if (event === 'barrier-contact') { crash(); return; }
       if (event === 'loop-return') setMessage('OPEN SERVICE GATE AHEAD', 3);
       if (event === 'approach') setMessage('DELIVERY APPROACH MARKER REACHED', 3);
@@ -726,7 +739,7 @@ export function mountGame() {
         setMessage('BUS SAFE · CIVIC RAMP AHEAD', 4);
       }
       if (event === 'ramp-passed') setMessage('CIVIC RAMP REACHED', 3);
-      if (event === 'ramp-missed') setMessage('CIVIC RAMP MISSED · SERVICE LOOP', 4);
+      if (event === 'ramp-missed') setMessage('CIVIC EXIT MISSED · FOLLOW THE RETURN ROAD', 4);
       if (event === 'ramp-loop-return') setMessage('CIVIC RAMP REJOINED', 3);
       if (event === 'closure') { clearInput(); setMessage('ROAD CLEAR · READ OMEGA', 3); }
       if (event === 'level-complete') {
@@ -1132,7 +1145,7 @@ export function mountGame() {
     const racing = !!roadRace && !roadRace.complete;
     if (racing) roadCenters = roadRace!.centerline();
     // Blend the wider portrait road back into encounter framing without a camera snap.
-    const targetZoom = W < H ? racing || isLockdown() ? 2 : 3 : 1.6;
+    const targetZoom = W < H ? activeJunction() ? 1.6 : racing || isLockdown() ? 2 : 3 : 1.6;
     chaseZoom += (targetZoom - chaseZoom) * (1 - Math.exp(-2 * dt));
     const oldX=x;
     elapsed += dt; feedbackTime -= dt;
@@ -1185,8 +1198,9 @@ export function mountGame() {
     const steering = !racing ? sliding ? 230 : 180 : sliding ? 215 : 190 * clamp(300 / speed, .65, 1.15);
     vx += (input*steering*(height>0?.65:1)-vx)*(1-Math.exp(-(racing ? sliding?7:14 : sliding?10:20)*dt));
     const cornerDrift = curvature * 60 * (speed/300)**2 * (sliding ? .5 : 1);
-    x = clamp(x+(vx-cornerDrift)*dt,left+22,right-22);
-    if(x===left+22 || x===right-22) vx=0;
+    const laneBounds = activeJunction()?.riderBounds ?? { min: left+22, max: right-22 };
+    x = clamp(x+(vx-cornerDrift)*dt,laneBounds.min,laneBounds.max);
+    if(x===laneBounds.min || x===laneBounds.max) vx=0;
     angle += ((sliding?input*.65:input*.25+curvature*.12)-angle)*(1-Math.exp(-16*dt));
     cameraX += (320+(x-320)*.85-cameraX)*(1-Math.exp(-12*dt));
     turboView += ((boost>0?1:0)-turboView)*(1-Math.exp(-5*dt));
@@ -1301,6 +1315,8 @@ export function mountGame() {
       }
     }
     if(state==='playing' && !mechanicsFixture && !racing) {
+      const junctionBefore = activeJunction();
+      const hadExit = junctionBefore?.selected ?? false;
       if (mission instanceof ReleaseMission) {
         if (mission.beat === 'L5.02' && mission.mode === 'action')
           onReleaseEvents(mission.controllerBladeHit(x, height === 0 && jumpWindup === 0, bladeReach(CONTROLLER_X), blades > .65));
@@ -1314,15 +1330,22 @@ export function mountGame() {
         if (mission.beat === 'L4.02' && mission.mode === 'action')
           onLockdownEvents(mission.controllerBladeHit(x, height === 0 && jumpWindup === 0, bladeReach(CONTROLLER_X), blades > .65));
         if (mission.busSafe && !traffic.some(car => car.kind === 'drone')) mission.droneDeparted = true;
-        onLockdownEvents(mission.tick(dt, speed*dt, x, traffic.length === 0));
+        onLockdownEvents(mission.tick(dt, speed*dt, x, traffic.length === 0, height === 0));
       }
       else if (mission instanceof PublicAccessMission) onPublicAccessEvents(mission.tick(dt, speed*dt, x, height === 0 && jumpWindup === 0, traffic.length === 0));
       else if (mission instanceof BetrayalMission) onBetrayalEvents(mission.tick(dt,speed*dt,x,traffic.length===0 && (mission.beat !== 'L2.03' || carrierZ >= 1500)));
-      else onMissionEvents(mission.tick(dt,speed*dt,x,traffic.length===0));
+      else onMissionEvents(mission.tick(dt,speed*dt,x,traffic.length===0,height===0));
+      if (junctionBefore?.selected && !hadExit) {
+        const shift = junctionBefore.origin;
+        x -= shift; cameraX -= shift;
+        gesture.riderX -= shift; gesture.targetX -= shift;
+        for (const car of traffic) car.x -= shift;
+        setMessage(`${junctionBefore.destinationName} · EXIT TAKEN`, 3);
+      }
     }
     if(feedbackTime<=0) feedbackText=mission instanceof ReleaseMission && mission.omegaReleased && mission.mode === 'drain'
       ? 'SAFE CRUISE · RECOVERY ROUTE'
-      : racing ? drafting ? 'SLIPSTREAM · ENERGY BUILDING · PULL OUT TO PASS' : cornering ? 'CORNER SLIDE · ENERGY BUILDING' : x < left+30 || x > right-30 ? 'SHOULDER DRAG · RETURN TO THE ROAD' : roadRace!.cue : safeCruise?'SAFE CRUISE · ENTER TO ADVANCE':mission.mode==='drain'?'TRAFFIC CLEARING':height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'STEER · SHIFT TURBO · SPACE SLIDE';
+      : activeJunction() ? activeJunction()!.cue : racing ? drafting ? 'SLIPSTREAM · ENERGY BUILDING · PULL OUT TO PASS' : cornering ? 'CORNER SLIDE · ENERGY BUILDING' : x < left+30 || x > right-30 ? 'SHOULDER DRAG · RETURN TO THE ROAD' : roadRace!.cue : safeCruise?'SAFE CRUISE · ENTER TO ADVANCE':mission.mode==='drain'?'TRAFFIC CLEARING':height>0?'AIRBORNE':boost>0?'TURBO':sliding?'ENERGY SLIDE':blades>.5?'BLADES DEPLOYED':charge<.4?'TURBO RECHARGING':'STEER · SHIFT TURBO · SPACE SLIDE';
   }
   function makeVehicle(lane:number,z:number,kind:string):Car {
     const vehicle=kind as Car['kind'];
@@ -1395,7 +1418,7 @@ export function mountGame() {
     c.drawImage(img,sx,sy,sw,sh,p.x-(anchorX-sx)*scale,y,sw*scale,sh*scale);
     c.restore();
   }
-  function drawRouteBand(z:number,label:string,minX:number=SERVICE_CORRIDOR.minX,maxX:number=SERVICE_CORRIDOR.maxX,tint='#55e9df28') {
+  function drawRouteBand(z:number,label:string,minX:number=175,maxX:number=465,tint='#55e9df28') {
     if(z>1200||z< -60)return;
     const far=project(minX,z+150), farR=project(maxX,z+150);
     const near=project(minX,z), nearR=project(maxX,z);
@@ -1408,14 +1431,11 @@ export function mountGame() {
     if (!(mission instanceof DeliveryMission)) return;
     const signal=mission.landmark('signal');
     if(signal!==null) drawRoadProp('signalDead',left+18,signal,30);
-    const gate=mission.landmark('gate');
-    if(gate!==null) {
-      drawRouteBand(gate,'SERVICE');
-      drawRoadProp('crossingBlocked',205,gate,105);
-      drawRoadProp('serviceGateOpen',400,gate,138);
+    const junction = activeJunction();
+    if (junction?.selected) {
+      const z = junction.destination-junction.position;
+      drawRouteBand(z, 'MUNICIPAL INTAKE', 175, 465);
     }
-    const approach=mission.landmark('approach');
-    if(approach!==null) drawRouteBand(approach,'INTAKE APPROACH');
   }
   function drawCarrierImage(name: 'carrier' | 'carrierActive', wx: number, z: number, width: number) {
     if (z > 1500 || z < -35) return;
@@ -1593,15 +1613,18 @@ export function mountGame() {
       return;
     }
     if (m.barrierExitZ !== null) drawLockdownAsset('barrierOpen', 450, m.barrierExitZ, 300);
-    const busZ = m.mode === 'drain' ? m.drainBusZ : m.busZ;
-    if (m.beat === 'L4.03' || m.mode === 'drain') drawLockdownAsset('bus', BUS_WORLD_X, busZ, 82);
-    if (m.beat === 'L4.03' && m.mode === 'action') {
-      drawRouteBand(760, 'UPHILL CIVIC ROAD', 430, 590, '#9ad9c424');
-      drawRouteBand(265, 'BUS ESCORT', 340, 490, '#53e6ee2d');
-      if (!m.busSafe) drawRouteBand(m.busZ + BUS_PROGRESS_GOAL - m.busProgress, 'BUS SAFETY', 510, 590, '#d4f37d32');
-      if (m.attackPhase === 'telegraph' && m.attackTarget === 'bus') drawRouteBand(190, 'INTERCEPT RIGHT', INTERCEPT_MIN_X, INTERCEPT_MAX_X, '#ff465342');
-      const ramp = m.rampZ();
-      if (ramp !== null) drawRouteBand(ramp, 'CIVIC RAMP', RAMP_MIN_X, RAMP_MAX_X, '#d4f37d32');
+    const junction = activeJunction();
+    if (junction) {
+      const z = m.mode === 'drain' ? m.drainBusZ : 300;
+      const busX = junction.selected ? 345 : junction.phase === 'return' ? 345 : junction.exitCenter(junction.position+z)-junction.origin+25;
+      drawLockdownAsset('bus', busX, z, 82);
+      if (junction.selected) drawRouteBand(junction.destination-junction.position, 'CIVIC ROAD', 175, 465, '#d4f37d32');
+    } else {
+      if (m.beat === 'L4.03' || m.mode === 'drain') drawLockdownAsset('bus', BUS_WORLD_X, m.mode === 'drain' ? m.drainBusZ : m.busZ, 82);
+      if (m.beat === 'L4.03' && m.mode === 'action') {
+        drawRouteBand(265, 'BUS ESCORT', 340, 490, '#53e6ee2d');
+        if (m.attackPhase === 'telegraph' && m.attackTarget === 'bus') drawRouteBand(190, 'INTERCEPT RIGHT', INTERCEPT_MIN_X, INTERCEPT_MAX_X, '#ff465342');
+      }
     }
   }
   function drawLockdownMidground(envX: number, envY: number, envScale: number) {
@@ -1688,7 +1711,58 @@ export function mountGame() {
     const cycle=length*2,wrapped=((value%cycle)+cycle)%cycle;
     return Math.min(length-1,Math.floor(wrapped<length?wrapped:cycle-wrapped));
   }
+  function drawJunctionRoad() {
+    const junction = activeJunction()!, img = images.road;
+    if (!img) return;
+    const hy = horizon(), base = H*roadBaseRatio, unit = Math.min(W*.9,520)/(right-left)*roadZoom();
+    const flat = (wx: number, z: number) => {
+      const depth = 140/(140+Math.max(-53,z));
+      return { x: W/2+(wx-cameraX)*unit*depth, y: hy+(base-hy)*depth, scale: unit*depth };
+    };
+    // Separate textured road ribbons, with visible ground between the two branches.
+    const ground = c.createLinearGradient(0,hy,0,H);
+    ground.addColorStop(0,'#10232600'); ground.addColorStop(.25,'#10232666'); ground.addColorStop(1,'#0c191ee8');
+    c.fillStyle = ground; c.fillRect(0,hy,W,H-hy);
+    for (let y = Math.ceil(hy)+1; y < H; y++) {
+      const depth = Math.max(.012,(y-hy)/(base-hy)), z = 140/depth-140;
+      const sy = mirroredRow(offset*1.35+z*2.15,img.height);
+      for (const strip of junction.stripsAhead(z)) {
+        const width = strip.width*unit*depth, center = W/2+(strip.center-cameraX)*unit*depth;
+        c.fillStyle = strip.exit ? '#54766a' : '#49585b';
+        c.fillRect(center-width/2-4*unit*depth,y,width+8*unit*depth,2);
+        const crop = Math.min(1,strip.width/384);
+        c.drawImage(img,img.width*(1-crop)/2,sy,img.width*crop,Math.min(2,img.height-sy),center-width/2,y,width,2);
+        c.fillStyle = strip.exit ? '#e8d99b' : '#ccd5d0';
+        const line = Math.max(1,1.4*unit*depth);
+        c.fillRect(center-width/2+3*unit*depth,y,line,2);
+        c.fillRect(center+width/2-4.4*unit*depth,y,line,2);
+      }
+    }
+    if (junction.phase !== 'return') {
+      for (let z = 1400-(junction.position%220); z > 30; z-=220) {
+        const s = junction.position+z;
+        if (s < junction.mouth || s > junction.destination) continue;
+        const p = flat(junction.exitCenter(s)-junction.origin,z);
+        const size = 13*p.scale;
+        c.strokeStyle = '#adf0d5'; c.lineWidth = Math.max(1,3*p.scale);
+        c.beginPath(); c.moveTo(p.x-size,p.y); c.lineTo(p.x,p.y-size*.55); c.lineTo(p.x+size,p.y); c.stroke();
+      }
+    }
+    if (!junction.selected && junction.phase !== 'return') {
+      const z = junction.mouth-junction.position;
+      if (z > -50 && z < 1900) {
+        const p = flat(490,z), width = Math.min(W*.58, Math.max(90,110*p.scale));
+        const signX = clamp(p.x-width/2,12,W-width-12), signY = Math.max(hy+10,p.y-70*p.scale);
+        c.fillStyle = '#123e36'; c.fillRect(signX,signY,width,38);
+        c.strokeStyle = '#b6ead0'; c.lineWidth = 1.5; c.strokeRect(signX,signY,width,38);
+        c.fillStyle = '#eef9dc'; c.textAlign = 'center'; c.font = "bold 10px monospace";
+        c.fillText(junction.destinationName+' ↗',signX+width/2,signY+16,width-8);
+        c.font = "9px monospace"; c.fillText('RIGHT EXIT',signX+width/2,signY+30); c.textAlign = 'start';
+      }
+    }
+  }
   function drawRoad() {
+    if (activeJunction()) { drawJunctionRoad(); return; }
     const img=images.road;
     if(!img)return;
     const hy=horizon(),base=H*roadBaseRatio;
@@ -1712,7 +1786,7 @@ export function mountGame() {
     c.fillStyle=roadShade;c.fillRect(0,hy,W,H-hy);
   }
   function drawLockdownBranch() {
-    if (!(mission instanceof LockdownMission) || (roadRace && !roadRace.complete)) return;
+    if (!(mission instanceof LockdownMission) || mission.beat === 'L4.03' || mission.beat === 'L4.04' || activeJunction() || (roadRace && !roadRace.complete)) return;
     const img = images.road, env = lockdownEnvironmentPlacement();
     if (!img || !env) return;
     const floor = LOCKDOWN_PLACEMENT_GUIDES.environmentPortalFloor;
@@ -1902,6 +1976,13 @@ export function mountGame() {
       } : undefined,
       hasSave, saveStatus, message: state === 'playing' ? feedbackText : statusMessage,
     };
+    const junction = activeJunction();
+    if (junction && mission.mode === 'action') {
+      view.controller = undefined;
+      view.routeCue = junction.cue;
+      view.missionMeter = { label: junction.selected ? 'RIGHT EXIT · '+junction.destinationName : junction.phase === 'return' ? 'RETURN ROAD' : 'JUNCTION · RIGHT EXIT',
+        value: junction.position/junction.destination, detail: junction.selected ? `${((junction.destination-junction.position)/3600).toFixed(1)} KM TO DESTINATION` : junction.phase === 'return' ? 'FOLLOW THE ROAD BACK TO THE SIGNED FORK' : 'DRAG / STEER RIGHT ONTO THE BRANCH' };
+    }
     if (racing) { view.connection = undefined; view.controller = undefined; view.escort = undefined; }
     view.roadCombat = racing ? { condition, knockouts } : undefined;
     view.driveLabel = gestureControls() && mission.mode === 'action' ? gesture.pointer !== null ? 'THROTTLE ON' : 'PRESS TO RIDE' : undefined;
@@ -1967,6 +2048,10 @@ export function mountGame() {
     for(const effect of [...effects].filter(effect=>effect.sprite!=='landingRing').sort((a,b)=>b.z-a.z))drawBurst(effect);
     if(!reduced&&boost>0){c.strokeStyle='#ffe57b55';for(let i=0;i<8;i++){const px=(i*137)%W;c.beginPath();c.moveTo(px,H);c.lineTo(W/2+(px-W/2)*.8,H*.8);c.stroke();}}
     // Small observable state is useful for regression tests and tuning controls.
+    canvas.dataset.junctionPhase=activeJunction()?.phase ?? 'none';
+    canvas.dataset.junctionPosition=String(activeJunction()?.position ?? 0);
+    canvas.dataset.junctionOrigin=String(activeJunction()?.origin ?? 0);
+    canvas.dataset.junctionBounds=JSON.stringify(activeJunction()?.riderBounds ?? null);
     canvas.dataset.rivals=JSON.stringify(rivals.map(rival => ({ x: rival.x, z: rival.z, phase: rival.phase, health: rival.health, targetX: rival.targetX, timer: rival.timer })));
     canvas.dataset.roadObstacles=JSON.stringify(obstacles);
     canvas.dataset.condition=String(condition); canvas.dataset.knockouts=String(knockouts);

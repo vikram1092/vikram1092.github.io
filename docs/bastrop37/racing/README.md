@@ -4,18 +4,18 @@ The campaign retains its dialogue, mission milestones, and save format. Five aut
 
 | Chapter | Course | Distance | Base driving time at 300 km/h |
 | --- | --- | --- | --- |
-| Delivery | Intake Express | 7.0 km | 84 s |
-| Betrayal | Recovery Run | 7.7 km | 92 s |
-| Public Access | Relay Crossing | 7.7 km | 92 s |
-| Lockdown | Reservoir Run | 7.7 km | 93 s |
-| Release | Civic Descent | 7.9 km | 95 s |
+| Delivery | Intake Express | 14.2 km | 170 s |
+| Betrayal | Recovery Run | 14.8 km | 178 s |
+| Public Access | Relay Crossing | 14.8 km | 178 s |
+| Lockdown | Reservoir Run | 14.9 km | 179 s |
+| Release | Civic Descent | 15.1 km | 181 s |
 
 These times exclude dialogue and mission encounters. Braking, drafting, and boost affect actual times. World travel uses the existing simulation convention of speed × seconds; displayed kilometres divide world units by 3600.
 
 ## Driving
 
 - Phone input: press and hold the road to accelerate, release to coast, drag horizontally to steer, swipe up to jump, and swipe down to deploy spikes. Swipes work during the same held gesture. The turbo readout is tappable. Portrait and landscape use this layout; keyboard controls remain available on desktop.
-- Six named sectors per course, with eased left and right bends, switchbacks, freight traffic, and passing straights.
+- Twelve named sectors per course, with eased left and right bends, switchbacks, freight traffic, and passing straights.
 - Road texture, vehicles, collision sprites, and roadside chevrons share the same projected centerline.
 - Higher speed reduces steering authority and increases outward drift. Braking before a bend or holding slide while steering into it helps hold the line.
 - Close passes, traffic slipstreams, and slides into bends replenish boost. Straight-line weaving no longer earns extra slide energy during a course.
@@ -39,8 +39,10 @@ The earlier story/encounter browser regressions use localhost-only `?fixture=enc
 
 This iteration keeps the existing story, controller, relay, and escort encounters. Human playtesting should guide traffic density, rival pressure, steering feel, and route duration.
 
-## Existing mission-turn limitation
+## Connected right exits
 
-The new road courses precede the original mission encounters; they do not redesign their required exits. Delivery's service gate still tests lateral position in `SERVICE_CORRIDOR` at a crossing plane. Lockdown's civic ramp still tests `RAMP_MIN_X` through `RAMP_MAX_X` at its route marker. Neither is a player-selected junction with its own continuous branch geometry. Keeping dialogue and mission flags intact should not be described as validating the story's playable route design.
+Delivery and Lockdown now use `RoadJunction`, shared by route selection, painted road strips, camera projection, and rider boundaries. A signed two-lane exit grows out of the right lanes and curves away from the continuing road. Riding on its surface for 80 travel units selects it; full-right steering is valid. The camera and touch steering change road coordinates together, preserving the rider's screen position. After selecting the exit, the player still rides roughly 5,300 world units to the destination before the story advances.
 
-The encounter-only regressions deliberately bypass the new courses. The current integrated tests cover the first course's encounter handoff and saved entry into the other courses, not a complete five-chapter run through every required exit with the new phone controls.
+Staying on the main road follows a curved return road back to the same signed fork. Jumping over the entrance does not select it. Pause freezes the junction; retry returns to its approach. In Lockdown, the bus must first reach safety and the drone clear, then the civic fork begins. Retrying that junction preserves the earned bus safety within the session. Reloading still uses the existing escort checkpoint and repeats the escort; save format and dialogue remain unchanged.
+
+`tests/junction-model.spec.ts` verifies shared geometry, broad entry, missed exits, and arrival requirements. `tests/junctions.spec.ts` uses the normal production route, valid campaign checkpoints, real keyboard/touch input, and the real bus defense: it drives a missed Delivery exit and return, then both right exits through their story destinations on a phone, including a Lockdown junction retry. These do not use the encounter-only fixture. The suite does not claim a single uninterrupted five-chapter phone playthrough.

@@ -46,8 +46,9 @@ async function driver(page: Page) {
   });
 }
 
-test('real route lasts over a minute, bends flow, pause freezes it and encounters resume', async ({ page }) => {
-  test.setTimeout(240000);
+test('real route lasts over three minutes, bends flow, pause freezes it and encounters resume', async ({ page }) => {
+  test.setTimeout(480000);
+  await page.setViewportSize({ width: 960, height: 640 });
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await start(page); await driver(page);
   const game = page.locator('#game');
@@ -71,13 +72,13 @@ test('real route lasts over a minute, bends flow, pause freezes it and encounter
   expect(Number(await game.getAttribute('data-race-position'))).toBeGreaterThanOrEqual(4200);
   expect(Number(await game.getAttribute('data-race-position'))).toBeLessThan(4250);
   await expect(game).toHaveAttribute('data-traffic-count', '0');
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < 240; i++) {
     await page.clock.runFor(1000);
     await expect(game).toHaveAttribute('data-state', 'playing');
     if (await game.getAttribute('data-race-active') === 'false') break;
   }
   await expect(game).toHaveAttribute('data-race-active', 'false');
-  expect(Number(await game.getAttribute('data-race-position'))).toBeGreaterThanOrEqual(25000);
+  expect(Number(await game.getAttribute('data-race-position'))).toBeGreaterThanOrEqual(50000);
   await expect(game).toHaveAttribute('data-beat', 'L1.02');
   expect(errors).toEqual([]);
 });

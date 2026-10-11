@@ -4,7 +4,7 @@ import { RoadRace, ROAD_COURSES } from '../src/scripts/bastrop37/race';
 for (const [beat, course] of Object.entries(ROAD_COURSES)) {
   test(`${beat}: full-length route, continuous bends, readable traffic and a clean finish`, () => {
     const race = new RoadRace(course);
-    expect(race.length / 300).toBeGreaterThanOrEqual(80);
+    expect(race.length / 300).toBeGreaterThanOrEqual(160);
     expect(new Set(course.sectors.map(s => s.traffic)).size).toBeGreaterThanOrEqual(3);
     let boundary = 0;
     for (const sector of course.sectors) {

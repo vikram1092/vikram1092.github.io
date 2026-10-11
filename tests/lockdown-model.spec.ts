@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {readFileSync} from 'node:fs';
 import {ControllerGate,CONTROLLER_ROUTE,CONTROLLER_LOOP_START,CONTROLLER_LOOP_LENGTH,BARRIER_RETRACT_SECONDS} from '../src/scripts/bastrop37/controller';
-import {LockdownMission,BUS_PROGRESS_GOAL,RAMP_ROUTE} from '../src/scripts/bastrop37/lockdown';
+import {LockdownMission,BUS_PROGRESS_GOAL} from '../src/scripts/bastrop37/lockdown';
 import {lockdownSave,validLockdownSave,validPublicAccessSave} from '../src/scripts/bastrop37/save';
 const earned=JSON.parse(readFileSync('docs/bastrop37/phase3/m3/earned-completion-save.json','utf8'));
 function opening(){const m=new LockdownMission(undefined,earned.log,earned.records,earned.history);for(let i=0;i<4;i++)m.advance();return m;}
@@ -33,7 +33,7 @@ test('controller needs a grounded adjacent blade hit and visibly retracts once; 
 
 test('escort stays reachable and cannot advance or begin attacks while Jo is out of range',()=>{
  const m=escort();frames(m,30,300);expect(m.busProgress).toBe(0);expect(m.busCondition).toBe(3);expect(m.attackPhase).toBe('idle');expect(m.busZ).toBeGreaterThanOrEqual(100);expect(m.busZ).toBeLessThanOrEqual(230);
- expect(m.rampLoops).toBeGreaterThan(0);expect(m.rampPassed).toBe(false);expect(m.routeCue).toContain('RETURN TO BUS');
+ expect(m.rampLoops).toBe(0);expect(m.rampPassed).toBe(false);expect(m.routeCue).toContain('RETURN TO BUS');
  frames(m,1,370);expect(m.busProgress).toBeGreaterThan(0);expect(m.escortInRange).toBe(true);
 });
 
@@ -62,16 +62,18 @@ test('marked interception retargets one pass to Jo and a completed dodge costs n
  expect(m.escortDroneCut()).toEqual(['escort-cleared']);expect(m.escortDroneCut()).toEqual([]);
 });
 
-test('bus safety and Jo ramp latch independently in either order; safe latch prevents further bus damage',()=>{
- const first=escort();first.escortDroneCut();first.tick(BUS_PROGRESS_GOAL/260,BUS_PROGRESS_GOAL,370,true);
- expect(first.busSafe).toBe(true);expect(first.rampPassed).toBe(false);expect(first.mode).toBe('action');
- first.tick((RAMP_ROUTE-BUS_PROGRESS_GOAL)/260,RAMP_ROUTE-BUS_PROGRESS_GOAL,370,true);expect(first.rampPassed).toBe(true);expect(first.mode).toBe('drain');
- const ramp=escort();ramp.escortDroneCut();ramp.tick((RAMP_ROUTE-10)/260,RAMP_ROUTE-10,300,true);ramp.tick(.04,10,370,true);
- expect(ramp.rampPassed).toBe(true);expect(ramp.busSafe).toBe(false);expect(ramp.mode).toBe('action');
- ramp.tick(BUS_PROGRESS_GOAL/260,BUS_PROGRESS_GOAL,370,true);expect(ramp.busSafe).toBe(true);expect(ramp.mode).toBe('drain');expect(ramp.busCondition).toBe(3);
- expect(ramp.tick(10,3000,370,false)).toEqual([]);ramp.droneDeparted=true;expect(ramp.tick(2,520,370,true)).toEqual(['closure']);
- for(let i=0;i<3;i++)expect(ramp.advance()).toEqual([]);expect(ramp.advance()).toEqual(['level-complete']);expect(ramp.advance()).toEqual([]);
- expect(ramp.log).toHaveLength(41);expect(ramp.records).toHaveLength(3);expect(ramp.history).toHaveLength(44);
+test('the bus must be safe before the civic fork; selecting the exit is not arrival',()=>{
+ const m=escort();m.escortDroneCut();frames(m,16,370);
+ expect(m.busSafe).toBe(true);expect(m.rampPassed).toBe(false);
+ frames(m,10,320);expect(m.junction.phase).toBe('return');expect(m.rampLoops).toBe(1);
+ expect(m.mode).toBe('action');expect(m.busCondition).toBe(3);
+ while(m.junction.phase==='return')m.tick(.02,5.2,320,true);
+ while(!m.junction.selected)m.tick(.02,5.2,490,true);
+ expect(m.rampPassed).toBe(false);expect(m.mode).toBe('action');
+ frames(m,24,320);expect(m.rampPassed).toBe(true);expect(m.mode).toBe('drain');
+ expect(m.tick(10,3000,320,false)).toEqual([]);m.droneDeparted=true;expect(m.tick(2,520,320,true)).toEqual(['closure']);
+ for(let i=0;i<3;i++)expect(m.advance()).toEqual([]);expect(m.advance()).toEqual(['level-complete']);
+ expect(m.log).toHaveLength(41);expect(m.records).toHaveLength(3);expect(m.history).toHaveLength(44);
 });
 
 test('strict L4 checkpoints retain old saves and reject skipped receipt, early safety or release',()=>{

@@ -29,6 +29,22 @@ export const ROAD_COURSES: Record<string, RoadCourse> = {
     sector('NORTH SWITCHBACK', 3600, 1, 'weave'), sector('PUBLIC MILE', 7000, 0, 'sprint'),
   ] },
 };
+// Each chapter adds a second district, rather than stretching a single bend.
+const DISTRICTS: Record<string, string[]> = {
+  'L1.02': ['WAREHOUSE RUN', 'MARKET APPROACH', 'MARKET S-BEND', 'CANAL UNDERPASS', 'EAST FREIGHT', 'INTAKE VIADUCT'],
+  'L2.03': ['LOWER RING', 'DEPOT EAST', 'DEPOT WEST', 'RAIL UNDERPASS', 'CARGO BYPASS', 'NORTH VIADUCT'],
+  'L3.02': ['RELAY PROMENADE', 'EAST BANK', 'WEST BANK', 'AQUEDUCT UNDERPASS', 'RIVERSIDE FREIGHT', 'HIGH CROSSING'],
+  'L4.02': ['LOWER RESERVOIR', 'DAM EAST', 'DAM WEST', 'SPILLWAY UNDERPASS', 'SUPPLY ROAD', 'UPPER VIADUCT'],
+  'L5.02': ['CIVIC BOULEVARD', 'ARCHIVE EAST', 'ARCHIVE WEST', 'COUNCIL UNDERPASS', 'SERVICE DISTRICT', 'PUBLIC VIADUCT'],
+};
+for (const [beat, names] of Object.entries(DISTRICTS)) {
+  const extra = [
+    sector(names[0], 4800, 0, 'sprint'), sector(names[1], 3600, .7, 'flow'),
+    sector(names[2], 3600, -.7, 'weave'), sector(names[3], 4200, 0, 'flow'),
+    sector(names[4], 4800, -.4, 'freight'), sector(names[5], 4800, .55, 'sprint'),
+  ];
+  ROAD_COURSES[beat].sectors.splice(5, 0, ...extra);
+}
 export type RoadChallenge = { kind: 'rival' | 'barricade' | 'pothole'; lane: number };
 export type RoadTraffic = { lane: number; z: number; kind: 'coupe' | 'sedan' | 'hauler'; velocity: number };
 export class RoadRace {
