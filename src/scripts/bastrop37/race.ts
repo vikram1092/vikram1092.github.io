@@ -45,7 +45,7 @@ for (const [beat, names] of Object.entries(DISTRICTS)) {
   ];
   ROAD_COURSES[beat].sectors.splice(5, 0, ...extra);
 }
-export type RoadChallenge = { kind: 'rival' | 'barricade' | 'pothole'; lane: number };
+export type RoadChallenge = { kind: 'drone' | 'rival' | 'barricade' | 'pothole'; lane: number };
 export type RoadTraffic = { lane: number; z: number; kind: 'coupe' | 'sedan' | 'hauler'; velocity: number };
 export class RoadRace {
   position = 0;
@@ -98,7 +98,7 @@ export class RoadRace {
     this.position = Math.min(this.length, this.position + Math.max(0, travel));
     if (this.position >= this.length) { this.complete = trafficClear; return []; }
     while (this.nextRival <= this.position && this.nextRival < this.length - 3500) {
-      this.challenges.push({ kind: 'rival', lane: Math.floor(this.nextRival / 4500) % 2 ? 0 : 4 });
+      this.challenges.push({ kind: Math.floor(this.nextRival / 4500) % 3 === 2 ? 'drone' : 'rival', lane: Math.floor(this.nextRival / 4500) % 2 ? 0 : 4 });
       this.nextRival += 4500;
     }
     while (this.nextObstacle <= this.position && this.nextObstacle < this.length - 2500) {

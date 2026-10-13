@@ -105,7 +105,12 @@ test('phone hold accelerates, dragging steers, swipes jump/deploy spikes and rel
   await page.clock.runFor(1200);
   await expect(game).toHaveAttribute('data-touch-held', 'false');
   expect(Number(await page.locator('#speed').textContent())).toBeLessThan(220);
-  await page.locator('#turbo-trigger').click(); await page.clock.runFor(100);
+  const turbo = page.locator('#turbo-trigger');
+  const turboBox = (await turbo.boundingBox())!;
+  expect(turboBox.width).toBeGreaterThanOrEqual(84);
+  expect(turboBox.width).toBe(turboBox.height);
+  expect(await turbo.evaluate(el => getComputedStyle(el).borderRadius)).toBe('50%');
+  await turbo.click(); await page.clock.runFor(100);
   expect(Number(await game.getAttribute('data-boost'))).toBeGreaterThan(0);
   await page.screenshot({ path: 'test-results/racing-portrait.png' });
   expect(errors).toEqual([]);
@@ -175,3 +180,33 @@ for (const [beat, checkpoint] of [['L2.03', 'CP-L2-ESCAPE'], ['L3.02', 'CP-L3-A'
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem('bastrop37-campaign-v1')!))).toEqual(save);
   });
 }
+
+test('gentle steering uses the intermediate pose in both directions', async ({ page }) => {
+  await start(page);
+  const game = page.locator('#game');
+  for (const [key, mid, full] of [['ArrowLeft', 'bikeMidLeft', 'bikeLeft'], ['ArrowRight', 'bikeMidRight', 'bikeRight']]) {
+    await page.keyboard.down(key); await page.clock.runFor(65);
+    await expect(game).toHaveAttribute('data-bike-pose', mid);
+    await page.clock.runFor(350); await expect(game).toHaveAttribute('data-bike-pose', full);
+    await page.keyboard.up(key); await page.clock.runFor(550);
+    await expect(game).toHaveAttribute('data-bike-pose', 'bike');
+  }
+});
+
+test('a road drone warns, can be turbo-evaded, and does not advance the story', async ({ page }) => {
+  await start(page); await driver(page);
+  const game = page.locator('#game');
+  let warned = false;
+  for (let i = 0; i < 300; i++) {
+    await page.clock.runFor(200);
+    await expect(game).toHaveAttribute('data-state', 'playing');
+    if (await game.getAttribute('data-drone-phase') === 'signal') { warned = true; break; }
+  }
+  expect(warned).toBe(true);
+  await expect(game).toHaveAttribute('data-race-active', 'true');
+  await expect(game).toHaveAttribute('data-route', '0.0');
+  await page.screenshot({ path: 'test-results/racing-drone.png' });
+  await page.keyboard.press('ShiftLeft'); await page.clock.runFor(100);
+  await expect(game).toHaveAttribute('data-drone-outcome', 'boost');
+  await expect(game).toHaveAttribute('data-state', 'playing');
+});

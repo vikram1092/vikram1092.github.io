@@ -921,7 +921,7 @@ export function mountGame() {
     return b && layer ? Math.abs(layer.root+(layer.tip-layer.root)*bladeExtension-(b.x+b.w/2))/b.h*47 : 0;
   }
   function bikePose(bodyOnly=false) {
-    return !bodyOnly&&blades>.65?bladePose():height>0?(angle<-.08?'jumpLeft':angle>.08?'jumpRight':'jump'):sliding&&Math.abs(angle)>.3?(angle<0?'slideLeft':'slideRight'):angle<-.08?'bikeLeft':angle>.08?'bikeRight':'bike';
+    return !bodyOnly&&blades>.65?bladePose():height>0?(angle<-.08?'jumpLeft':angle>.08?'jumpRight':'jump'):sliding&&Math.abs(angle)>.3?(angle<0?'slideLeft':'slideRight'):angle<-.20?'bikeLeft':angle>.20?'bikeRight':angle<-.035?'bikeMidLeft':angle>.035?'bikeMidRight':'bike';
   }
   function bikeLift() {
     return height+(landing>0?Math.sin((.42-landing)*22)*landing*8:0)-(jumpWindup>0?Math.sin(jumpWindup/.12*Math.PI)*3:0);
@@ -1029,8 +1029,10 @@ export function mountGame() {
   }
   function updateDrone(car:Car,dt:number,oldX:number) {
     const oldZ=car.z;
+    const roadDrone = !!roadRace && !roadRace.complete;
+    if (roadDrone && roadRace!.position > roadRace!.length - 1600) { car.disengaging = true; car.retreatDirection = 1; }
     if (car.disengaging) {
-      if (Math.abs(car.z) < 90 && bodyContact(car, car.z, oldX)) { crash(); return; }
+      if (!roadDrone && Math.abs(car.z) < 90 && bodyContact(car, car.z, oldX)) { crash(); return; }
       car.x += ((car.side === -1 ? left + 22 : right - 22) - car.x) * (1 - Math.exp(-4 * dt));
       car.z += (car.retreatDirection ?? 1) * 460 * dt;
       return;
@@ -1045,8 +1047,8 @@ export function mountGame() {
       car.phaseTime=Math.max(0,(car.phaseTime||0)-dt);
       const flankX=clamp(x+(car.side||1)*82,left+28,right-28);
       moveDroneAroundTraffic(car,flankX,car.z-Math.min(105,Math.max(62,speed-car.velocity))*dt,3.2,dt);
-      if(car.phaseTime===0&&car.z<=235&&canSignalDrone(car)) {
-        car.phase='signal'; car.phaseTime=.8; car.attackX=x; car.z=205;
+      if(car.phaseTime===0&&car.z<=235&&canSignalDrone(car)&&(!roadDrone || (!rivals.some(r => r.phase === 'windup' || r.phase === 'strike') && !obstacles.some(o => o.z > -50 && o.z < 400)))) {
+        car.phase='signal'; car.phaseTime=roadDrone ? 1.1 : .8; car.attackX=x; car.z=205;
         sound('warning');setMessage('ATTACK SIGNAL / SLICE · BOOST · JUMP',.9);
       } else if(car.z<170) car.z=170;
     } else if(car.phase==='signal') {
@@ -1066,8 +1068,8 @@ export function mountGame() {
       const retreatX=clamp(x+(car.side||1)*130,left+28,right-28);
       moveDroneAroundTraffic(car,retreatX,car.z+(255-car.z)*(1-Math.exp(-2.7*dt)),3.6,dt);
       if(car.phaseTime===0) {
-        if((car.attackPasses||0)>=3) {
-          if (isBetrayal() || isPublicAccess() || isRelease()) {
+        if((car.attackPasses||0)>=(roadDrone ? 2 : 3)) {
+          if (roadDrone || isBetrayal() || isPublicAccess() || isRelease()) {
             car.disengaging = true; car.retreatDirection = car.z < 0 ? -1 : 1;
             car.side = car.x < x ? -1 : 1;
           } else { car.passed=true; car.z=-100; }
@@ -1090,7 +1092,11 @@ export function mountGame() {
       const steps=Math.max(1,Math.ceil(Math.max(Math.abs(car.z-oldZ),Math.abs(x-oldX))/2));
       for(let i=0;i<=steps;i++) {
         const t=i/steps,z=oldZ+(car.z-oldZ)*t;
-        if(Math.abs(z)<reach&&bodyContact(car,z,oldX+(x-oldX)*t)) { crash(); return; }
+        if(Math.abs(z)<reach&&bodyContact(car,z,oldX+(x-oldX)*t)) {
+          if (roadDrone) { finishDrone(car,'miss'); roadHit(x < car.x ? -1 : 1, 'DRONE STRIKE'); }
+          else crash();
+          return;
+        }
       }
       if(oldZ>0&&car.z<=0) { finishDrone(car,'miss'); return; }
     }
@@ -1201,7 +1207,7 @@ export function mountGame() {
     const laneBounds = activeJunction()?.riderBounds ?? { min: left+22, max: right-22 };
     x = clamp(x+(vx-cornerDrift)*dt,laneBounds.min,laneBounds.max);
     if(x===laneBounds.min || x===laneBounds.max) vx=0;
-    angle += ((sliding?input*.65:input*.25+curvature*.12)-angle)*(1-Math.exp(-16*dt));
+    angle += ((sliding?input*.65:input*.25+curvature*.12)-angle)*(1-Math.exp(-9*dt));
     cameraX += (320+(x-320)*.85-cameraX)*(1-Math.exp(-12*dt));
     turboView += ((boost>0?1:0)-turboView)*(1-Math.exp(-5*dt));
     cameraPitch += ((boost>0?5:0)-height*.08+(landing>0?Math.sin((.42-landing)*22)*landing*10:0)-cameraPitch)*(1-Math.exp(-8*dt));
@@ -1234,7 +1240,7 @@ export function mountGame() {
     for(const car of traffic) {
       const oldZ = car.z;
       if(car.kind==='drone') {
-        if (mission instanceof LockdownMission && mission.beat === 'L4.03') updateEscortDrone(car, dt, oldX, mission);
+        if (!racing && mission instanceof LockdownMission && mission.beat === 'L4.03') updateEscortDrone(car, dt, oldX, mission);
         else updateDrone(car,dt,oldX);
         if(state==='crashed')break;
         continue;
@@ -1300,8 +1306,13 @@ export function mountGame() {
         traffic.push(car);
       }
       for (const challenge of roadRace!.challenges) {
-        if (challenge.kind === 'rival') {
-          if (rivals.length < 2) rivals.push(new RoadRival(++rivalSerial, challenge.lane === 0 ? -1 : 1));
+        if (challenge.kind === 'drone') {
+          if (!activeDrones().length) {
+            traffic.push(makeVehicle(challenge.lane, 850, 'drone'));
+            setMessage('DRONE INBOUND · SPIKES, TURBO OR SWIPE UP', 3);
+          }
+        } else if (challenge.kind === 'rival') {
+          if (!activeDrones().length && rivals.length < 2) rivals.push(new RoadRival(++rivalSerial, challenge.lane === 0 ? -1 : 1));
         } else {
           // Place the obstacle in an unoccupied approach lane; adjacent road remains usable.
           const candidates = [challenge.lane, 0, 1, 2, 3, 4];
@@ -2057,6 +2068,7 @@ export function mountGame() {
     canvas.dataset.condition=String(condition); canvas.dataset.knockouts=String(knockouts);
     canvas.dataset.spikeCooldown=String(spikeCooldown); canvas.dataset.touchHeld=String(gesture.pointer !== null);
     canvas.dataset.raceActive=String(racing);
+    canvas.dataset.bikePose=bikePose();
     canvas.dataset.racePosition=String(roadRace?.position ?? 0);
     canvas.dataset.raceLength=String(roadRace?.length ?? 0);
     canvas.dataset.raceSector=String(roadRace?.locate().index ?? 0);
@@ -2109,7 +2121,7 @@ export function mountGame() {
     if(state==='playing'||state==='complete'||frames++%3===0)render();
     requestAnimationFrame(frame);
   }
-  const assets:Record<string,string>={bike:'bike-normal-straight',bikeBlades:'bike-blades-straight',bikeBladesLeft:'bike-blades-left-15',bikeBladesRight:'bike-blades-right-15',bikeBladesLeft35:'bike-blades-left-35',bikeBladesRight35:'bike-blades-right-35',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-slide-left',slideRight:'bike-slide-right',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',coupeLeft:'traffic-coupe-right',coupeRight:'traffic-coupe-left',sedan:'traffic-sedan',sedanLeft:'traffic-sedan-left',sedanRight:'traffic-sedan-right',hauler:'traffic-hauler',haulerLeft:'traffic-hauler-right',haulerRight:'traffic-hauler-left',drone:'drone-hover',droneFlankLeft:'drone-flank-left',droneFlankRight:'drone-flank-right',droneWarning:'drone-attack-warning',droneLunge:'drone-lunge',droneFragmentLeft:'drone-fragment-left',droneFragmentRight:'drone-fragment-right',droneCore:'drone-core',cyanTrail:'effects-cyan-trail',yellowTurbo:'effects-yellow-turbo',hoverThrust:'effects-hover-thrust',bladeEffect:'effects-blades',cutSparks:'effects-cut-sparks',impactSparks:'effects-impact-sparks',landingRing:'effects-landing-ring',debris:'effects-debris'};
+  const assets:Record<string,string>={bike:'bike-normal-straight',bikeBlades:'bike-blades-straight',bikeBladesLeft:'bike-blades-left-15',bikeBladesRight:'bike-blades-right-15',bikeBladesLeft35:'bike-blades-left-35',bikeBladesRight35:'bike-blades-right-35',bikeMidLeft:'bike-normal-left-7',bikeMidRight:'bike-normal-right-7',bikeLeft:'bike-normal-left-15',bikeRight:'bike-normal-right-15',slideLeft:'bike-slide-left',slideRight:'bike-slide-right',jump:'bike-jump-straight',jumpLeft:'bike-jump-left-15',jumpRight:'bike-jump-right-15',coupe:'traffic-coupe',coupeLeft:'traffic-coupe-right',coupeRight:'traffic-coupe-left',sedan:'traffic-sedan',sedanLeft:'traffic-sedan-left',sedanRight:'traffic-sedan-right',hauler:'traffic-hauler',haulerLeft:'traffic-hauler-right',haulerRight:'traffic-hauler-left',drone:'drone-hover',droneFlankLeft:'drone-flank-left',droneFlankRight:'drone-flank-right',droneWarning:'drone-attack-warning',droneLunge:'drone-lunge',droneFragmentLeft:'drone-fragment-left',droneFragmentRight:'drone-fragment-right',droneCore:'drone-core',cyanTrail:'effects-cyan-trail',yellowTurbo:'effects-yellow-turbo',hoverThrust:'effects-hover-thrust',bladeEffect:'effects-blades',cutSparks:'effects-cut-sparks',impactSparks:'effects-impact-sparks',landingRing:'effects-landing-ring',debris:'effects-debris'};
   function loadImage(name: string, url: string) {
     return new Promise<void>((resolve,reject)=>{
       const img=new Image();img.onload=()=>{images[name]=img;resolve();};img.onerror=reject;img.src=url;

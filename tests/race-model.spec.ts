@@ -43,3 +43,16 @@ test('sector retry gives a clear run-up, retains the timer, and cannot finish ea
   expect(race.complete).toBe(false);
   expect(race.tick(2, 600, false).length).toBeGreaterThan(0);
 });
+
+test('road drones are spaced between rival waves and stop before the finish', () => {
+  const race = new RoadRace(ROAD_COURSES['L1.02']);
+  const positions: number[] = [];
+  while (race.position < race.length) {
+    race.tick(.1, 30, false);
+    if (race.challenges.some(c => c.kind === 'drone')) positions.push(race.position);
+  }
+  expect(positions.length).toBeGreaterThanOrEqual(3);
+  expect(positions[0]).toBeGreaterThan(10000);
+  for (let i = 1; i < positions.length; i++) expect(positions[i]-positions[i-1]).toBeGreaterThanOrEqual(13000);
+  expect(positions.at(-1)!).toBeLessThan(race.length-3500);
+});

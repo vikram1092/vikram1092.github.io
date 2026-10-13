@@ -297,9 +297,11 @@ body:has(.garage){background:#090d19}
 /* The road is the phone controller. HUD readouts never intercept a riding gesture. */
 #bastrop-game[data-controls=gestures] .touch-controls{display:none}
 #bastrop-game #turbo-trigger{width:100%;border:0;background:none;text-align:left}
-#bastrop-game[data-controls=gestures] #turbo-trigger{pointer-events:auto;min-height:44px}
+#bastrop-game[data-controls=gestures] #turbo-trigger{pointer-events:auto;position:absolute;left:0;bottom:80px;width:92px;height:92px;min-height:92px;border-radius:50%;border:2px solid #efce88;background:radial-gradient(circle at 35% 25%,#5b492b,#18242b 75%);box-shadow:0 0 0 5px #e9c88c18,0 5px 18px #0008;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:12px;text-align:center;font: bold 11px/1.4 'Courier New',monospace;letter-spacing:.5px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#bastrop-game[data-controls=gestures] #turbo-trigger:active{transform:scale(.95);background:#66522e}
+#bastrop-game[data-controls=gestures] #turbo-trigger:focus-visible{outline:3px solid #b8fff1;outline-offset:5px}
 #bastrop-game[data-controls=gestures] #turbo-trigger kbd{display:none}
-#bastrop-game[data-controls=gestures] #turbo-trigger::after{content:'TAP';font-size:8px;border:1px solid #6c7d7b;padding:3px}
+#bastrop-game[data-controls=gestures] #turbo-trigger::after{content:'TAP';font-size:9px;color:#b9d8d0}
 #bastrop-game[data-controls=gestures] .instruments,
 #bastrop-game[data-controls=gestures] .mission,
 #bastrop-game[data-controls=gestures] .mission-meter,
@@ -345,3 +347,5 @@ body:has(.garage){background:#090d19}
  #bastrop-game[data-controls=gestures] #gesture-hint span{font-size:8px}
  #bastrop-game[data-controls=gestures] .comms{bottom:12px;width:55%;max-height:calc(100% - 115px);overflow:auto}
 }
+
+@media(pointer:coarse) and (max-height:500px){#bastrop-game[data-controls=gestures] #turbo-trigger{bottom:56px;width:84px;height:84px;min-height:84px}}

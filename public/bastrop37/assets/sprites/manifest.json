@@ -962,6 +962,32 @@
       "blend": "source-over",
       "state": "jump",
       "angle": "left-35"
+    },
+    "bike-normal-left-7": {
+      "file": "bike-normal-left-7.png",
+      "source": "Built-in image_gen; scripts/bastrop37-mid-turn-prompts.json",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "blend": "source-over"
+    },
+    "bike-normal-right-7": {
+      "file": "bike-normal-right-7.png",
+      "source": "Built-in image_gen; scripts/bastrop37-mid-turn-prompts.json",
+      "size": {
+        "w": 1254,
+        "h": 1254
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "blend": "source-over"
     }
   }
 }
