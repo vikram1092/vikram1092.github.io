@@ -108,8 +108,9 @@ test('phone hold accelerates, dragging steers, swipes jump/deploy spikes and rel
   const turbo = page.locator('#turbo-trigger');
   const turboBox = (await turbo.boundingBox())!;
   expect(turboBox.width).toBeGreaterThanOrEqual(84);
-  expect(turboBox.width).toBe(turboBox.height);
-  expect(await turbo.evaluate(el => getComputedStyle(el).borderRadius)).toBe('50%');
+  // The integrated turbo rail retains a full touch target in the new instrument panel.
+  expect(turboBox.height).toBeGreaterThanOrEqual(44);
+  await expect(turbo).toHaveAccessibleName('Activate turbo');
   await turbo.click(); await page.clock.runFor(100);
   expect(Number(await game.getAttribute('data-boost'))).toBeGreaterThan(0);
   await page.screenshot({ path: 'test-results/racing-portrait.png' });

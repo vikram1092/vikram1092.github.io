@@ -37,6 +37,9 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
   const objective = requireElement<HTMLElement>('#objective');
   const routeCue = requireElement<HTMLElement>('#route-cue');
   const speed = requireElement<HTMLElement>('#speed');
+  const speedMeter = requireElement<HTMLElement>('#speed-meter');
+  const instruments = requireElement<HTMLElement>('.instruments');
+  const turboTrigger = requireElement<HTMLButtonElement>('#turbo-trigger');
   const driveState = requireElement<HTMLElement>('#drive-state');
   const energyValue = requireElement<HTMLElement>('#charge-value');
   const energySegments = requireElement<HTMLElement>('#energy-segments');
@@ -56,6 +59,9 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
   const saveNote = requireElement<HTMLElement>('#save-note');
   const start = requireElement<HTMLButtonElement>('#start');
   const pause = requireElement<HTMLButtonElement>('#pause');
+  const mute = requireElement<HTMLButtonElement>('#mute');
+  const topControls = requireElement<HTMLElement>('.top-controls');
+  const menuTools = requireElement<HTMLElement>('#menu-tools');
   const continueSave = requireElement<HTMLButtonElement>('#continue-save');
   const resume = requireElement<HTMLButtonElement>('#resume');
   const retry = requireElement<HTMLButtonElement>('#retry');
@@ -99,6 +105,33 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
   let confirmingReset = false;
   let lastLogKey = '';
   let previousState: HudView['state'] | null = null;
+  let lastTransmission = '';
+  let lastFeedback = '';
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  function receive(element: HTMLElement): void {
+    if (reducedMotion.matches) return;
+    element.getAnimations().forEach(animation => animation.cancel());
+    element.animate([{ opacity: .4, transform: 'translateY(3px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 180, easing: 'ease-out' });
+  }
+
+  // Keep keyboard navigation inside the open terminal, including reset confirmation.
+  root.addEventListener('keydown', event => {
+    if (overlay.hidden) return;
+    if (event.code === 'Escape' && confirmingReset) {
+      event.preventDefault();
+      event.stopPropagation();
+      cancelNewGame.click();
+    }
+    if (event.key !== 'Tab') return;
+    const scope = confirmingReset ? resetConfirm : overlay;
+    const targets = [...scope.querySelectorAll<HTMLElement>('button:not(:disabled),a[href],summary')].filter(element => element.getClientRects().length > 0);
+    const first = targets[0], last = targets[targets.length - 1];
+    if (!first) { event.preventDefault(); overlay.focus(); return; }
+    if (!scope.contains(document.activeElement) || (event.shiftKey && document.activeElement === first) || (!event.shiftKey && document.activeElement === last)) {
+      event.preventDefault();
+      (event.shiftKey ? last : first).focus();
+    }
+  });
 
   start.addEventListener('click', () => actions.start());
   pause.addEventListener('click', () => actions.pause());
@@ -159,16 +192,27 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
       setText(retry, view.retryLabel || (view.chapterId === 'L1' ? 'RETRY DELIVERY' : 'RETRY CHECKPOINT'));
       setText(objective, view.objective);
       setText(routeCue, view.routeCue);
-      setText(speed, String(Math.max(0, Math.round(view.speed))).padStart(3, '0'));
+      const velocity = Math.max(0, Math.round(view.speed));
+      setText(speed, String(velocity).padStart(3, '0'));
+      speedMeter.setAttribute('aria-valuenow', String(Math.min(600, velocity)));
+      speedMeter.setAttribute('aria-valuetext', `${velocity} kilometers per hour`);
+      speedMeter.style.setProperty('--speed-fill', String(Math.min(1, velocity / 600)));
       setText(driveState, view.driveLabel ?? (view.omegaReleased ? 'SAFE CRUISE' : view.mode === 'action' ? 'MANUAL / DRIVE' : view.mode === 'drain' ? 'TRAFFIC CLEARING' : 'SAFE CRUISE'));
 
       const energy = Math.min(100, Math.max(0, Math.round(view.energy * 100)));
+      instruments.dataset.energy = energy < 40 ? 'low' : 'normal';
       setText(energyValue, String(energy));
       energySegments.setAttribute('aria-valuenow', String(energy));
       const lit = Math.ceil(energy / 10);
       segments.forEach((segment, index) => segment.classList.toggle('empty', index >= lit));
-      const turbo = view.mode === 'action' ? view.turbo : 'unavailable';
-      setText(turboState, `↗ TURBO / ${turbo.toUpperCase()}`);
+      const overdriveAvailable = view.overdrive?.active || view.overdrive?.ready;
+      const turbo = view.state !== 'playing' || view.mode !== 'action' ? 'unavailable'
+        : view.overdrive?.active ? 'active' : view.overdrive?.ready && view.turbo !== 'active' ? 'ready' : view.turbo;
+      const boostName = overdriveAvailable ? 'OVERDRIVE' : 'TURBO';
+      setText(turboState, `${boostName} / ${turbo.toUpperCase()}`);
+      turboTrigger.dataset.state = turbo;
+      turboTrigger.disabled = turbo !== 'ready';
+      turboTrigger.setAttribute('aria-label', turbo === 'ready' ? `Activate ${boostName.toLowerCase()}` : `${boostName.toLowerCase()} ${turbo}`);
 
       const action = view.state === 'playing' && view.mode === 'action';
       show(combat, action && (!!view.roadCombat || view.chapterId === 'L2' || view.chapterId === 'L3' || view.chapterId === 'L4' || view.chapterId === 'L5') && !!view.abilities);
@@ -267,10 +311,16 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
           setText(identityCode, view.omegaReleased ? 'Ω / PUBLIC ACCESS' : 'Ω / MODULE');
         }
       }
+      const transmission = !comms.hidden ? `${view.record?.id || view.dialogue?.id || ''}:${view.dialogueIndex}:${view.recordIndex}` : '';
+      if (transmission && transmission !== lastTransmission) receive(dialogueText);
+      lastTransmission = transmission;
 
       const menuVisible = view.state !== 'playing';
+      const muteContainer = menuVisible ? menuTools : topControls;
+      if (mute.parentElement !== muteContainer) muteContainer.prepend(mute);
       show(overlay, menuVisible);
-      if (view.state !== previousState) {
+      const stateChanged = view.state !== previousState;
+      if (stateChanged) {
         confirmingReset = false;
         show(resetConfirm, false);
         previousState = view.state;
@@ -324,6 +374,17 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
         setText(message, view.message || 'The ride could not load. Refresh to try again.');
       }
       setText(feedback, view.state === 'playing' ? (view.message || (view.mode === 'drain' && !view.omegaReleased ? 'TRAFFIC CLEARING' : '')) : '');
+      if (feedback.textContent && feedback.textContent !== lastFeedback) receive(feedback);
+      lastFeedback = feedback.textContent || '';
+      if (stateChanged) {
+        if (menuVisible) {
+          const primary = [resume, continueChapter, continueSave, start, retry, menu].find(button => !button.hidden && !button.disabled);
+          // Pausing must not turn an incidental Enter into an immediate resume.
+          (view.state === 'paused' ? overlay : primary || overlay).focus({ preventScroll: true });
+        } else {
+          requireElement<HTMLCanvasElement>('#game').focus({ preventScroll: true });
+        }
+      }
     },
   };
 }

@@ -241,6 +241,7 @@ export function mountGame() {
   muteButton.addEventListener('click',()=>{
     muted=!muted;try{localStorage.setItem('bastrop37-muted',String(muted));}catch{}
     updateMuteButton();if(!muted)initAudio();syncAudio();
+    if (state === 'playing') canvas.focus({ preventScroll: true });
   });
   function setMessage(text: string, seconds = 1) { feedbackText = text; feedbackTime = seconds; }
   function clearInput() { gesture.end(); keys.clear(); pressed.clear(); sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
@@ -844,7 +845,10 @@ export function mountGame() {
     button.addEventListener('pointerup', release); button.addEventListener('pointercancel', release); button.addEventListener('lostpointercapture', release);
   });
   document.querySelector<HTMLButtonElement>('#turbo-trigger')!.addEventListener('click', () => {
-    if (state === 'playing' && mission.mode === 'action') pressed.add('ShiftLeft');
+    if (state === 'playing' && mission.mode === 'action') {
+      pressed.add('ShiftLeft');
+      canvas.focus({ preventScroll: true });
+    }
   });
   canvas.addEventListener('pointerdown', event => {
     if (!gestureControls() || state !== 'playing') return;
