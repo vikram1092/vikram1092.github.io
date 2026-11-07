@@ -1684,7 +1684,8 @@ export function mountGame() {
     if(skyline) {
       const skyScale=Math.max(W/skyline.width,H*.64/skyline.height);
       const skyW=skyline.width*skyScale,skyH=skyline.height*skyScale;
-      c.drawImage(skyline,(W-skyW)/2-(cameraX-320)*.02,(H-skyH)/2,skyW,skyH);
+      // A portrait viewport must not reserve an empty header above the world.
+      c.drawImage(skyline,(W-skyW)/2-(cameraX-320)*.02,Math.min(0,(H-skyH)/2),skyW,skyH);
     }
     // The approved recovery sky replaces the moonlit skyline as dawn completes.
     // Keep it behind the civic frame; the aligned dawn asset still warms the frame itself.
@@ -2003,7 +2004,6 @@ export function mountGame() {
     view.driveLabel = gestureControls() && mission.mode === 'action' ? gesture.pointer !== null ? 'THROTTLE ON' : 'PRESS TO RIDE' : undefined;
     const gestureMode = gestureControls();
     document.querySelector<HTMLElement>('#bastrop-game')!.dataset.controls = gestureMode ? 'gestures' : 'buttons';
-    document.querySelector<HTMLElement>('#gesture-hint')!.hidden = !gestureMode || state !== 'playing' || mission.mode !== 'action';
     if (view.abilities && gestureMode) { view.abilities.blades.binding = 'SWIPE ↓'; view.abilities.jump.binding = 'SWIPE ↑'; }
     if (view.abilities && (racing || gestureMode)) {
       view.abilities.blades.state = spikePulse > 0 ? 'active' : spikeCooldown > 0 ? 'cooldown' : 'ready';

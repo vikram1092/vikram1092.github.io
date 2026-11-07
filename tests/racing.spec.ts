@@ -89,7 +89,7 @@ test('phone hold accelerates, dragging steers, swipes jump/deploy spikes and rel
   await start(page);
   const game = page.locator('#game');
   await expect(page.locator('.touch-controls')).toBeHidden();
-  await expect(page.locator('#gesture-hint')).toBeVisible();
+  await expect(page.locator('#gesture-hint')).toHaveCount(0);
   const touch = await page.context().newCDPSession(page);
   const point = async (type: 'touchStart' | 'touchMove', x: number, y: number) => touch.send('Input.dispatchTouchEvent', { type, touchPoints: [{ x, y, id: 1 }] });
   await point('touchStart', 195, 500); await page.clock.runFor(1000);
@@ -107,8 +107,8 @@ test('phone hold accelerates, dragging steers, swipes jump/deploy spikes and rel
   expect(Number(await page.locator('#speed').textContent())).toBeLessThan(220);
   const turbo = page.locator('#turbo-trigger');
   const turboBox = (await turbo.boundingBox())!;
-  expect(turboBox.width).toBeGreaterThanOrEqual(84);
-  // The integrated turbo rail retains a full touch target in the new instrument panel.
+  expect(turboBox.width).toBeGreaterThanOrEqual(44);
+  // The boost ring retains a full touch target without a surrounding panel.
   expect(turboBox.height).toBeGreaterThanOrEqual(44);
   await expect(turbo).toHaveAccessibleName('Activate turbo');
   await turbo.click(); await page.clock.runFor(100);
@@ -142,7 +142,7 @@ test.describe('landscape phone', () => {
     const game = page.locator('#game');
     await expect(page.locator('#bastrop-game')).toHaveAttribute('data-controls', 'gestures');
     await expect(page.locator('.touch-controls')).toBeHidden();
-    for (const selector of ['#game', '#gesture-hint', '#turbo-trigger', '#pause', '.combat-status', '.mission-meter']) {
+    for (const selector of ['#game', '#turbo-trigger', '#pause', '#velocity']) {
       const box = await page.locator(selector).boundingBox();
       expect(box, selector).not.toBeNull();
       expect(box!.y, selector).toBeGreaterThanOrEqual(0);
@@ -210,4 +210,37 @@ test('a road drone warns, can be turbo-evaded, and does not advance the story', 
   await page.keyboard.press('ShiftLeft'); await page.clock.runFor(100);
   await expect(game).toHaveAttribute('data-drone-outcome', 'boost');
   await expect(game).toHaveAttribute('data-state', 'playing');
+});
+
+test.describe('phone contextual HUD', () => {
+  test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  test('turns, threats and cooldowns stay out of the playable road', async ({ page }) => {
+    await start(page);
+    await expect(page.locator('#guidance')).toBeHidden();
+    await page.keyboard.press('KeyK'); await page.clock.runFor(1180);
+    await expect(page.locator('#jump-recovery')).toBeVisible();
+    const cooldown=(await page.locator('#ability-recovery').boundingBox())!;
+    const speed=(await page.locator('#velocity').boundingBox())!;
+    expect(cooldown.y).toBeGreaterThan(speed.y+speed.height);
+    await driver(page);await page.keyboard.down('ArrowUp');
+    let turn=false,threat=false;
+    for(let step=0;step<100 && !(turn&&threat);step++){
+      await page.clock.runFor(200);
+      await expect(page.locator('#game')).toHaveAttribute('data-state','playing');
+      if(await page.locator('#guidance').isVisible()){
+        const box=(await page.locator('#guidance').boundingBox())!;
+        expect(box.y+box.height).toBeLessThanOrEqual(88);
+        if(await page.locator('#feedback').isVisible()){
+          if(!threat)await page.screenshot({path:'test-results/road-first-phone-threat.png'});
+          threat=true;
+        }else if(/left|right/i.test(await page.locator('#next-move').textContent()||'')){
+          if(!turn)await page.screenshot({path:'test-results/road-first-phone-turn.png'});
+          turn=true;
+        }
+      }
+    }
+    await page.keyboard.up('ArrowUp');
+    expect(threat,'real rider or obstacle warning was never shown').toBe(true);
+    expect(turn,'approaching turn guidance was never shown').toBe(true);
+  });
 });

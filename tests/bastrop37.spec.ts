@@ -225,6 +225,7 @@ test('invalid save is preserved until an explicit new-run confirmation', async (
 
 test('audio mute persists and gallery/home navigation still work', async ({ page }) => {
   await start(page);
+  await page.locator('#pause').click();
   await page.getByRole('button', { name: 'Mute audio' }).click();
   await expect(page.locator('#game')).toHaveAttribute('data-muted', 'true');
   await page.reload(); await expect(page.getByRole('button', { name: 'Unmute audio' })).toHaveAttribute('aria-pressed', 'true');

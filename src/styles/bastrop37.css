@@ -1,289 +1,166 @@
-:root{font-family:'Manrope Variable',Arial,sans-serif;color:#eee9dc;background:#0b151b;font-synthesis:none}
+:root{font-family:'Manrope Variable',Arial,sans-serif;color:#eee9dc;background:#070d13;font-synthesis:none}
 *{box-sizing:border-box}body{margin:0}button{font:inherit;cursor:pointer}a{color:inherit;text-decoration:none}[hidden]{display:none!important}
-/* One instrument language: asphalt, warm window light, signal teal and bike red. */
-#bastrop-game{--ink:#09141e;--panel:#0b1823ed;--line:#a8c1ca38;--text:#f0eee3;--muted:#a5b6bf;--red:#ff4b55;--teal:#94d4cf;--amber:#e3c18e;--display:'Rajdhani',sans-serif;--mono:'Share Tech Mono',monospace;--edge:clamp(16px,2.5vw,40px);height:100svh;min-height:320px;overflow:hidden;background:var(--ink);color:var(--text)}
-#bastrop-game .ride{position:relative;width:100%;height:100%;overflow:hidden;isolation:isolate;background:#18232a}
+/* The road is the interface. Riding information is restricted to two narrow edges. */
+#bastrop-game{--red:#ff4452;--paper:#f5f1e7;--muted:#c0c8c9;--amber:#efd2a1;--teal:#a9ddd5;--display:'Rajdhani',sans-serif;--edge:max(20px,env(safe-area-inset-left),env(safe-area-inset-right));--top:max(16px,env(safe-area-inset-top));--bottom:max(18px,env(safe-area-inset-bottom));height:100svh;min-height:280px;overflow:hidden;color:var(--paper);background:#070d13}
+#bastrop-game .ride{position:relative;width:100%;height:100%;overflow:hidden;isolation:isolate}
 #bastrop-game #game{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none}
-#bastrop-game .scene-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#050d17bc,transparent 28%,transparent 64%,#050d1799)}
-#bastrop-game button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background-color .16s,border-color .16s,color .16s,box-shadow .16s}
-#bastrop-game :is(button,a,summary,canvas):focus-visible{outline:2px solid var(--teal);outline-offset:4px}
-#bastrop-game button:disabled{cursor:default;opacity:.45}
-#bastrop-game button:not(:disabled):active{filter:brightness(1.22)}
-#bastrop-game .ride-top{position:absolute;inset:max(16px,env(safe-area-inset-top)) var(--edge) auto;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:12px;pointer-events:none}
-#bastrop-game .brand{display:flex;align-items:center;gap:18px}
-#bastrop-game .brand strong{font:700 29px/.9 var(--display);letter-spacing:1px}
-#bastrop-game .brand strong span{color:var(--red)}
-#bastrop-game .brand small{border-left:1px solid var(--line);padding-left:18px;font:10px var(--mono);letter-spacing:1.5px;color:var(--muted)}
-#bastrop-game .top-controls{display:flex;gap:8px;pointer-events:auto}
-#bastrop-game .top-controls button,#bastrop-game .menu-tools button{min-height:44px;border:1px solid var(--line);background:#0b1823b8;color:var(--muted);padding:8px 14px;font:11px var(--mono);letter-spacing:1px}
-#bastrop-game .menu-tools button:hover:not(:disabled),#bastrop-game .top-controls button:hover:not(:disabled){color:var(--text);border-color:var(--teal);background:#19303e}
-#bastrop-game #mute[aria-pressed=true]{color:var(--amber);border-color:#e3c18e66}
-#bastrop-game .mission{position:absolute;z-index:1;top:100px;left:var(--edge);display:flex;gap:16px;max-width:min(46%,600px);pointer-events:none;text-shadow:0 2px 8px #000}
-#bastrop-game .chapter-number{align-self:start;font:600 25px/1 var(--display);color:var(--red);border-top:2px solid var(--red);padding-top:9px}
-#bastrop-game .micro{font:10px var(--mono);letter-spacing:1.8px;color:var(--muted);margin:0 0 6px}
-#bastrop-game .mission h1{font:600 clamp(22px,2vw,30px)/1.05 var(--display);letter-spacing:.7px;margin:0 0 9px}
-#bastrop-game .route{font:11px/1.5 var(--mono);margin:0;color:var(--amber);letter-spacing:.6px}
-#bastrop-game .module-stamp{position:absolute;right:var(--edge);top:103px;display:grid;gap:6px;text-align:right;font:10px var(--mono);letter-spacing:1.5px;pointer-events:none}
-#bastrop-game .module-stamp span{color:var(--muted)}
-#bastrop-game .module-stamp strong{font-weight:400;color:var(--teal)}
-#bastrop-game .module-stamp strong::before{content:'';display:inline-block;width:5px;height:5px;margin:0 7px 2px 0;background:var(--teal)}
-#bastrop-game #replay-badge{position:absolute;z-index:2;right:var(--edge);top:72px;font:9px var(--mono);color:var(--amber);letter-spacing:1px;pointer-events:none}
-/* Speed is a true 0–600 km/h instrument. Fill is supplied by the simulation. */
-#bastrop-game .instruments{position:absolute;z-index:2;left:var(--edge);bottom:max(28px,env(safe-area-inset-bottom));width:224px;padding:16px 18px 0;background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--red);pointer-events:none}
-#bastrop-game .instrument-heading{display:flex;justify-content:space-between;color:var(--muted);font:9px var(--mono);letter-spacing:1.7px}
-#bastrop-game .instrument-id{color:#758b97}
-#bastrop-game .speed-reading{display:flex;align-items:baseline;gap:9px;margin:8px 0}
-#bastrop-game .speed-reading strong{font:400 76px/.95 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-5px;color:var(--red);text-shadow:0 0 24px #ff4b5524}
-#bastrop-game .speed-reading>span{font:10px var(--mono);color:var(--muted);white-space:nowrap}
-#bastrop-game .speed-meter{height:4px;background:#ff4b5526;overflow:hidden}
-#bastrop-game .speed-meter>span{display:block;width:100%;height:100%;background:var(--red);transform:scaleX(var(--speed-fill,0));transform-origin:left;transition:transform .12s linear}
-#bastrop-game .drive-state{display:block;font:9px var(--mono);letter-spacing:1.2px;color:var(--muted);margin:9px 0 16px}
-#bastrop-game .energy-rail{border-top:1px solid var(--line);padding:12px 0}
-#bastrop-game .energy-rail>div:first-child{display:flex;gap:5px;align-items:baseline;font:10px var(--mono);color:var(--muted);letter-spacing:1px}
-#bastrop-game .energy-rail b{margin-left:auto;font:15px var(--mono);color:var(--text)}
-#bastrop-game .segments{display:flex;gap:3px;height:4px;margin-top:8px}
-#bastrop-game .segments i{flex:1;background:var(--teal);transition:background-color .2s}
-#bastrop-game .segments i.empty{background:#94d4cf24}
-#bastrop-game .instruments[data-energy=low] .segments i:not(.empty){background:var(--amber)}
-#bastrop-game #turbo-trigger{position:relative;display:flex;align-items:center;justify-content:space-between;gap:5px;width:calc(100% + 36px);min-height:44px;margin:0 -18px;padding:12px 18px;border:0;border-top:1px solid var(--line);background:#94d4cf0b;color:var(--teal);font:10px var(--mono);letter-spacing:.6px;pointer-events:auto;overflow:hidden}
-#bastrop-game #turbo-trigger:disabled{opacity:1;color:#80939f;background:transparent}
-#bastrop-game #turbo-trigger:hover:not(:disabled){background:#94d4cf20}
-#bastrop-game #turbo-trigger[data-state=active]{color:var(--text);background:#ff4b5521}
-#bastrop-game #turbo-trigger[data-state=active]::after{content:'';position:absolute;bottom:0;left:0;width:38%;height:2px;background:var(--red);animation:signal-sweep .75s linear infinite}
-#bastrop-game kbd{font:9px var(--mono);border:1px solid var(--line);padding:3px 4px;color:var(--muted)}
-#bastrop-game .feedback{position:absolute;z-index:2;top:164px;right:var(--edge);max-width:310px;margin:0;padding:8px 12px;border-right:2px solid var(--amber);background:#0b1823d9;color:var(--amber);font:11px/1.5 var(--mono);text-align:right;pointer-events:none}
-#bastrop-game .feedback:empty{display:none}
-/* One receiver surface, with a short signal acquisition on each new line. */
-#bastrop-game .comms{--accent:var(--amber);position:absolute;z-index:3;right:var(--edge);bottom:max(28px,env(safe-area-inset-bottom));width:460px;max-width:calc(100% - 32px);animation:receiver-in .24s ease-out}
-#bastrop-game .comms[data-speaker=omega]{--accent:var(--teal)}
-#bastrop-game .comms[data-speaker=jo]{--accent:var(--red)}
-#bastrop-game .comms[data-speaker=system]{--accent:var(--muted)}
-#bastrop-game .comms-trigger{display:block;width:100%;padding:0;text-align:left;color:var(--text);background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--accent);box-shadow:0 12px 36px #0004}
-#bastrop-game .comms-trigger:hover{border-color:var(--accent)}
-#bastrop-game .comms-rail{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);font:9px var(--mono);letter-spacing:1px;color:var(--accent)}
-#bastrop-game .channel-number{color:var(--muted);padding-right:12px;border-right:1px solid var(--line)}
-#bastrop-game .signal-status{margin-left:auto;font-size:8px;display:flex;align-items:center;gap:6px;color:var(--muted)}
-#bastrop-game .signal-status i{width:4px;height:4px;background:var(--teal)}
-#bastrop-game .comms-body{display:grid;grid-template-columns:64px minmax(0,1fr);gap:16px;padding:18px 16px 0}
-#bastrop-game .comms-identity{display:flex;flex-direction:column;gap:7px;align-items:start}
-#bastrop-game .portrait-dock{display:block;width:64px;height:72px;border:1px solid var(--line);padding:3px;background:#060e16}
-#bastrop-game .comms-identity img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 30%;filter:saturate(.7)}
-#bastrop-game .comms[data-speaker=omega] img{object-fit:contain;padding:6px}
-#bastrop-game #identity-code{font:8px/1.5 var(--mono);color:var(--muted);letter-spacing:.4px}
-#bastrop-game .transmission{min-width:0;display:flex;flex-direction:column}
-#bastrop-game .speaker-line{display:flex;align-items:center;justify-content:space-between;gap:10px}
-#bastrop-game #speaker{font:600 21px/1 var(--display);letter-spacing:1px;color:var(--accent)}
-#bastrop-game #dialogue-count{font:10px var(--mono);color:var(--muted);white-space:nowrap}
-#bastrop-game #dialogue-text{display:block;font:15px/1.6 'Manrope Variable',sans-serif;margin:9px 0 16px;text-wrap:pretty}
-#bastrop-game .comms-action{display:flex;align-items:center;gap:10px;min-height:44px;border-top:1px solid var(--line);color:var(--muted);font:9px var(--mono);letter-spacing:.7px}
-#bastrop-game .action-cue{flex:1}
-#bastrop-game .action-arrow{color:var(--accent);font-size:20px;transition:transform .16s}
-#bastrop-game .comms-trigger:hover .action-arrow{transform:translateX(3px)}
-#bastrop-game .advance-key{border:1px solid var(--line);padding:3px 5px;font-size:8px}
+#bastrop-game button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:0;color:inherit;background:none;transition:color .15s,opacity .15s,transform .15s}
+#bastrop-game :is(button,a,summary):focus-visible{outline:2px solid var(--paper);outline-offset:5px}
+#bastrop-game #game:focus-visible{outline:0}
+#bastrop-game button:disabled{cursor:default}
+#bastrop-game button:active:not(:disabled){transform:translateY(1px)}
+#bastrop-game #riding-hud{pointer-events:none}
+#bastrop-game .guidance{position:absolute;z-index:2;top:var(--top);left:var(--edge);width:min(440px,calc(100% - 100px));text-shadow:0 1px 3px #000,0 2px 10px #000;pointer-events:none}
+#bastrop-game .navigation-cue{display:flex;align-items:center;gap:12px;min-height:42px}
+#bastrop-game #turn-arrow{font:600 36px/1 var(--display)}
+#bastrop-game #next-move{font:600 22px/1.15 var(--display);letter-spacing:.3px;text-wrap:balance}
+#bastrop-game #feedback{font:600 21px/1.2 var(--display);color:var(--amber);margin:0;min-height:42px;display:flex;align-items:center;text-wrap:balance}
+#bastrop-game .guidance[data-alert=true] .navigation-cue{display:none}
+#bastrop-game #task-progress{appearance:none;width:140px;height:2px;border:0;background:#ffffff33;display:block;margin:5px 0 0 1px;accent-color:var(--teal)}
+#bastrop-game #task-progress::-webkit-meter-bar{height:2px;border:0;border-radius:0;background:#ffffff33}
+#bastrop-game #task-progress::-webkit-meter-optimum-value{background:var(--teal);transition:width .15s linear}
+#bastrop-game #task-progress::-moz-meter-bar{background:var(--teal)}
+#bastrop-game #pause{position:absolute;z-index:3;top:var(--top);right:var(--edge);width:44px;height:44px;padding:11px;opacity:.8;filter:drop-shadow(0 1px 4px #000)}
+#bastrop-game #pause svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2.5}
+#bastrop-game #pause:hover{opacity:1;color:var(--red)}
+/* No panel, backing plate, scale, artificial zeroes, or duplicate charge display. */
+#bastrop-game .velocity{position:absolute;z-index:2;left:var(--edge);bottom:var(--bottom);display:flex;align-items:baseline;gap:8px;pointer-events:none;line-height:1}
+#bastrop-game #speed{font:700 italic 94px/.72 var(--display);letter-spacing:-5px;font-variant-numeric:tabular-nums;color:var(--red);text-shadow:0 2px 3px #0009}
+#bastrop-game .velocity>span{font:600 12px/1 var(--display);color:var(--muted);text-shadow:0 1px 3px #000}
+#bastrop-game .boost-control{position:absolute;z-index:2;right:var(--edge);bottom:var(--bottom);width:66px;pointer-events:none}
+#bastrop-game #turbo-trigger{position:relative;display:block;width:66px;height:66px;padding:0;color:var(--red);pointer-events:auto;filter:drop-shadow(0 2px 3px #0009);touch-action:manipulation}
+#bastrop-game #turbo-trigger svg{display:block;width:100%;height:100%;overflow:visible}
+#bastrop-game .boost-track{fill:none;stroke:#f5f1e74d;stroke-width:1}
+#bastrop-game #boost-charge{fill:none;stroke:currentColor;stroke-width:2;stroke-dasharray:100;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset .15s linear}
+#bastrop-game .boost-mark{fill:currentColor;transform-origin:center;transition:transform .14s}
+#bastrop-game #boost-label{position:absolute;top:100%;left:50%;transform:translateX(-50%);font:600 9px/1 var(--display);letter-spacing:1px;white-space:nowrap;padding-top:3px}
+#bastrop-game #turbo-trigger:disabled{color:#b2bbbe}
+#bastrop-game #turbo-trigger[data-state=active]{color:var(--red)}
+#bastrop-game #turbo-trigger[data-state=active] .boost-mark{animation:ignition .25s ease-out}
+#bastrop-game #turbo-trigger:hover:not(:disabled) .boost-mark{transform:scale(1.12)}
+#bastrop-game #turbo-trigger:active:not(:disabled){transform:scale(.94)}
+#bastrop-game .ability-recovery{position:absolute;z-index:2;bottom:max(2px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;gap:12px;font:600 11px/1.2 var(--display);color:var(--muted);text-shadow:0 1px 3px #000;pointer-events:none}
+#bastrop-game #bike-health,#bastrop-game #bus-health{display:flex;align-items:center;gap:4px}
+#bastrop-game #bike-health{justify-content:center;position:absolute;bottom:calc(100% + 9px);left:0;right:0}
+#bastrop-game #bus-health{font:600 10px/1 var(--display);color:var(--muted);margin-top:5px}
+#bastrop-game #bus-health>span{margin-right:4px;letter-spacing:1px}
+#bastrop-game :is(#bike-health,#bus-health) i{display:block;width:14px;height:3px;background:var(--amber);box-shadow:0 1px 3px #0008}
+#bastrop-game :is(#bike-health,#bus-health) i.empty{background:#ffffff33}
+/* Dialogue is a subtitle, visible only after the road has become safe. */
+#bastrop-game .subtitles{--voice:var(--amber);position:absolute;z-index:3;bottom:calc(var(--bottom) + 4px);left:50%;transform:translateX(-50%);width:min(640px,calc(100% - 64px));max-height:calc(100% - 90px);overflow:auto;scrollbar-width:thin;scrollbar-color:#ffffff40 transparent}
+#bastrop-game[data-state=playing]:is([data-mode=story],[data-mode=resolve]) .ride::after{content:'';position:absolute;z-index:1;pointer-events:none;left:0;right:0;bottom:0;height:48%;background:linear-gradient(transparent,#03090e99 60%,#03090ed9)}
+#bastrop-game .subtitles[data-speaker=omega]{--voice:var(--teal)}
+#bastrop-game .subtitles[data-speaker=jo]{--voice:var(--red)}
+#bastrop-game .subtitles[data-speaker=system]{--voice:var(--muted)}
+#bastrop-game #advance{width:100%;padding:10px 6px 0;text-align:left;display:block;min-height:80px;text-shadow:0 1px 4px #000}
+#bastrop-game #speaker{display:block;font:700 13px/1.2 var(--display);letter-spacing:2px;color:var(--voice);margin-bottom:10px}
+#bastrop-game #dialogue-text{display:block;font:400 22px/1.45 'Manrope Variable',sans-serif;text-wrap:pretty}
+#bastrop-game .subtitles[data-speaker=system] #dialogue-text{white-space:pre-line;font-size:18px}
+#bastrop-game .subtitle-next{display:flex;justify-content:flex-end;align-items:center;gap:9px;min-height:38px;font:600 10px var(--display);letter-spacing:1px;color:var(--muted)}
+#bastrop-game .next-arrow{font:600 26px/1 var(--display);color:var(--voice);transition:transform .15s}
+#bastrop-game #advance:hover .next-arrow{transform:translate(2px,-2px)}
 #bastrop-game .advance-tap{display:none}
-#bastrop-game .comms-tail{display:flex;align-items:center;gap:12px;padding:9px 16px;border-top:1px solid var(--line);font:8px var(--mono);letter-spacing:1.5px;color:var(--muted)}
-#bastrop-game .tail-track{flex:1;height:1px;background:var(--line)}
-#bastrop-game .tail-bolt{color:var(--accent)}
-#bastrop-game .comms:is([data-speaker=jo],[data-speaker=system]) .comms-body{grid-template-columns:1fr}
-#bastrop-game .comms[data-speaker=system] #dialogue-text{white-space:pre-line;font:12px/1.7 var(--mono)}
-/* Context instruments only appear while their systems are relevant. */
-#bastrop-game .combat-status{position:absolute;z-index:2;right:var(--edge);bottom:max(28px,env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 1fr;gap:12px;width:290px;padding:16px;background:var(--panel);border:1px solid var(--line);font:10px/1.5 var(--mono);color:var(--muted);pointer-events:none}
-#bastrop-game .combat-status>span{padding-top:8px;border-top:2px solid var(--teal)}
-#bastrop-game .combat-status>span[data-state=active]{color:var(--text);border-color:var(--red);animation:system-active 1.2s ease-in-out infinite alternate}
-#bastrop-game .combat-status>span[data-state=cooldown]{border-color:var(--amber);color:var(--amber)}
-#bastrop-game .combat-status strong{grid-column:1/-1;font:10px/1.5 var(--mono);color:var(--muted)}
-#bastrop-game .combat-status[data-overdrive=ready] #overdrive-state,#bastrop-game .combat-status[data-overdrive=active] #overdrive-state{color:var(--teal)}
-#bastrop-game meter{appearance:none;display:block;width:100%;height:4px;border:0;background:#94d4cf24;accent-color:var(--teal)}
-#bastrop-game meter::-webkit-meter-bar{height:4px;border:0;border-radius:0;background:#94d4cf24}
-#bastrop-game meter::-webkit-meter-optimum-value{background:var(--teal);transition:width .15s linear}
-#bastrop-game meter::-moz-meter-bar{background:var(--teal)}
-#bastrop-game #overdrive-meter{grid-column:1/-1}
-#bastrop-game .mission-meter{position:absolute;z-index:2;left:50%;top:94px;transform:translateX(-50%);width:280px;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--teal);display:grid;gap:9px;font:10px/1.5 var(--mono);pointer-events:none}
-#bastrop-game .meter-heading{display:flex;flex-wrap:wrap;justify-content:space-between;gap:5px 8px}
-#bastrop-game .meter-heading strong{font-weight:400;letter-spacing:1px}
-#bastrop-game .mission-meter span{color:var(--muted)}
-#bastrop-game #connection-status,#bastrop-game #controller-status{color:var(--teal);font-size:9px}
-#bastrop-game .mission-meter[data-connection=out-of-range]{border-top-color:var(--amber)}
-#bastrop-game .mission-meter[data-connection=out-of-range] #connection-status{color:var(--amber)}
-#bastrop-game .mission-meter[data-connection=linking] meter{animation:system-active 1.2s ease-in-out infinite alternate}
-#bastrop-game .escort-status{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:10px}
-#bastrop-game .escort-condition{display:flex;align-items:center;justify-content:space-between;gap:10px}
-#bastrop-game .escort-condition strong{font:9px var(--mono)}
-#bastrop-game #bus-condition{display:flex;gap:4px}
-#bastrop-game #bus-condition i{width:22px;height:4px;background:var(--teal)}
-#bastrop-game #bus-condition i.empty{background:#94d4cf24}
-#bastrop-game .escort-status[data-range=out] #escort-cue{color:var(--amber)}
-/* Menus share the same terminal, focus treatment and physical button response. */
-#bastrop-game .overlay{position:absolute;z-index:5;inset:0;display:flex;align-items:center;padding:clamp(20px,6vw,90px);background:linear-gradient(90deg,#050e18f5,#050e18c7 45%,#050e1822);overflow:auto}
-#bastrop-game .menu-panel{width:min(480px,100%);max-height:calc(100svh - 48px);overflow:auto;overscroll-behavior:contain;padding:28px;background:#0b1823f5;border:1px solid var(--line);border-top:2px solid var(--red);scrollbar-width:thin;scrollbar-color:#506271 transparent;animation:receiver-in .25s ease-out}
-#bastrop-game .menu-system{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:28px;font:9px var(--mono);letter-spacing:1.6px;color:var(--muted)}
-#bastrop-game .menu-eyebrow{font:10px var(--mono);letter-spacing:2px;color:var(--amber);margin:0 0 10px}
-#bastrop-game .menu-panel h2{font:700 clamp(34px,4.8vw,68px)/.95 var(--display);letter-spacing:1px;margin:0 0 18px;text-wrap:balance}
-#bastrop-game[data-state=ready] #headline,#bastrop-game[data-state=loading] #headline{color:var(--red)}
-#bastrop-game .menu-panel>p:not(.menu-eyebrow){font-size:14px;line-height:1.7;color:var(--muted);margin:0 0 22px}
-#bastrop-game .menu-panel .save-note{font:10px/1.6 var(--mono)!important;color:var(--teal)!important;border-left:2px solid var(--teal);padding-left:10px}
-#bastrop-game .menu-panel .save-note.session{color:var(--amber)!important;border-color:var(--amber)}
-#bastrop-game .menu-actions{display:grid;gap:8px}
-#bastrop-game :is(.menu-actions,.reset-confirm,.chapter-options) button{min-height:46px;padding:12px 14px;border:1px solid var(--line);background:#172632;color:var(--text);text-align:left;font:600 15px/1.2 var(--display);letter-spacing:1px}
-#bastrop-game :is(.menu-actions,.reset-confirm,.chapter-options) button:hover:not(:disabled){background:#243b49;border-color:var(--teal)}
-#bastrop-game .menu-actions :is(.primary,#continue-save,#resume,#continue-chapter){background:var(--red);color:#08131c;border-color:var(--red);font-weight:700}
-#bastrop-game .menu-actions :is(.primary,#continue-save,#resume,#continue-chapter):hover:not(:disabled){background:#ff7278;border-color:#ff7278}
-#bastrop-game :is(#new-game,#menu){background:transparent;color:var(--muted)}
-#bastrop-game .reset-confirm{margin:18px 0;padding:16px;border:1px solid #ff4b5566;background:#ff4b550a;animation:receiver-in .2s ease-out}
-#bastrop-game .reset-confirm p{font-size:13px;line-height:1.6;margin:0 0 14px}
-#bastrop-game .reset-confirm button{margin:0 5px 5px 0}
-#bastrop-game #confirm-new-game{color:var(--red);border-color:#ff4b5566}
-#bastrop-game .chapter-picker{margin-top:22px;border-top:1px solid var(--line);padding-top:16px}
-#bastrop-game .chapter-picker p{font:10px var(--mono);letter-spacing:1px;color:var(--muted);margin:0 0 10px}
-#bastrop-game .chapter-options{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-#bastrop-game .chapter-options button{font-size:12px;letter-spacing:.5px}
-#bastrop-game details{border-top:1px solid var(--line);margin-top:18px;font-size:12px;line-height:1.8}
-#bastrop-game summary{cursor:pointer;padding:14px 0;font:10px var(--mono);letter-spacing:1px;color:var(--muted)}
-#bastrop-game summary:hover,#bastrop-game details[open]>summary{color:var(--teal)}
-#bastrop-game details p{margin:0 0 12px;color:var(--muted)}
-#bastrop-game #dialogue-log{padding-left:20px;max-height:180px;overflow:auto;margin:0 0 12px}
-#bastrop-game #dialogue-log li{margin-bottom:12px;color:var(--muted)}
-#bastrop-game #dialogue-log strong{color:var(--amber)}
-#bastrop-game #dialogue-log li[data-kind=record]{border-left:2px solid var(--teal);padding-left:8px}
-#bastrop-game .site-link{display:inline-block;padding:14px 0 0;font:10px var(--mono);letter-spacing:1px;color:var(--muted)}
-#bastrop-game .site-link:hover{color:var(--text)}
-#bastrop-game[data-state=crashed] .menu-panel,#bastrop-game[data-state=error] .menu-panel{border-top-color:var(--amber)}
-#bastrop-game[data-state=complete] .menu-panel{border-top-color:var(--teal)}
-#bastrop-game:not([data-state=playing]) :is(.mission,.module-stamp,.instruments,.combat-status,.mission-meter,.feedback,.ride-top){visibility:hidden}
-#bastrop-game .noscript{position:relative;z-index:9;padding:16px;background:var(--ink)}
-#bastrop-game .menu-tools{margin-top:16px}
-/* The open road remains the touch target. Only the turbo button captures taps. */
+/* Pausing gives information room to breathe; no terminal frame or stacked cards. */
+#bastrop-game .overlay{position:absolute;z-index:5;inset:0;overflow:auto;overscroll-behavior:contain;display:flex;align-items:center;padding:48px clamp(28px,8vw,120px);background:linear-gradient(90deg,#050b12f5,#050b12bf 48%,#050b1226);scrollbar-width:thin;scrollbar-color:#ffffff40 transparent}
+#bastrop-game .menu-content{width:min(620px,100%);position:relative;margin:auto 0}
+#bastrop-game #overline{margin:0 0 22px;font:600 12px var(--display);letter-spacing:3px;color:var(--muted)}
+#bastrop-game #headline{font:700 italic clamp(44px,6vw,84px)/.88 var(--display);letter-spacing:-2px;margin:0 0 24px;text-wrap:balance}
+#bastrop-game:is([data-state=ready],[data-state=loading]) #headline{font-size:clamp(64px,8.8vw,128px);letter-spacing:-4px;white-space:nowrap}
+#bastrop-game .title-number{color:var(--red)}
+#bastrop-game #message{font:400 14px/1.7 'Manrope Variable',sans-serif;color:var(--muted);max-width:390px;margin:0 0 22px}
+#bastrop-game #save-note{color:var(--teal);font:600 11px/1.5 var(--display);letter-spacing:1px;margin:0 0 16px}
+#bastrop-game #save-note.session{color:var(--amber)}
+#bastrop-game .menu-actions{display:flex;flex-wrap:wrap;align-items:center;column-gap:26px;row-gap:2px;margin:0 0 12px;max-width:460px}
+#bastrop-game .menu-actions button{display:block;text-align:left;min-height:44px;padding:10px 0;font:600 15px/1.2 var(--display);letter-spacing:1px;color:var(--muted)}
+#bastrop-game .menu-actions button.primary{flex-basis:100%;font-size:32px;font-weight:700;font-style:italic;letter-spacing:.3px;color:var(--red);padding:10px 0 18px;margin-bottom:8px}
+#bastrop-game .menu-actions button.primary::after{content:' ↗';display:inline-block;transition:transform .15s}
+#bastrop-game .menu-actions button.primary:hover::after{transform:translate(4px,-4px)}
+#bastrop-game .menu-actions button:hover:not(:disabled){color:var(--paper)}
+#bastrop-game .menu-actions button:focus-visible{outline:0;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px}
+#bastrop-game .menu-actions button:disabled{opacity:.45}
+#bastrop-game :is(#reset-confirm,#chapter-picker){max-width:460px;margin:20px 0;padding-top:16px;border-top:1px solid #ffffff26}
+#bastrop-game #reset-confirm{color:var(--amber)}
+#bastrop-game #reset-confirm p{font-size:14px;line-height:1.5}
+#bastrop-game #reset-confirm button{min-height:44px;font:700 14px var(--display);letter-spacing:.5px;margin-right:18px;padding:8px 0}
+#bastrop-game #confirm-new-game{color:var(--red)}
+#bastrop-game #chapter-picker p{font:600 11px var(--display);letter-spacing:2px;color:var(--muted)}
+#bastrop-game .chapter-options{display:flex;flex-wrap:wrap;gap:2px 20px}
+#bastrop-game .chapter-options button{min-height:44px;padding:8px 0;font:600 14px var(--display);color:var(--muted)}
+#bastrop-game .chapter-options button:hover{color:var(--red)}
+#bastrop-game details{max-width:460px;border-top:1px solid #ffffff26;margin-top:10px;font:12px/1.7 'Manrope Variable',sans-serif;color:var(--muted)}
+#bastrop-game summary{font:600 12px var(--display);letter-spacing:1.5px;padding:14px 0;cursor:pointer;min-height:44px}
+#bastrop-game summary:hover,#bastrop-game details[open]>summary{color:var(--paper)}
+#bastrop-game .control-guide p{margin:0 0 16px}
+#bastrop-game .control-guide strong{display:block;color:var(--paper)}
+#bastrop-game #objective{color:var(--paper);font-weight:600}
+#bastrop-game #ride-details dl{display:grid;grid-template-columns:auto 1fr;gap:5px 18px}
+#bastrop-game #ride-details dd{margin:0;text-align:right}
+#bastrop-game #replay-badge{color:var(--amber)}
+#bastrop-game #dialogue-log{padding-left:18px;max-height:220px;overflow:auto;margin:0 0 14px}
+#bastrop-game #dialogue-log li{margin-bottom:12px}
+#bastrop-game #dialogue-log strong{color:var(--paper)}
+#bastrop-game .menu-footer{display:flex;gap:24px;align-items:center;max-width:460px;margin-top:18px}
+#bastrop-game .menu-footer button,#bastrop-game .site-link{min-height:44px;display:flex;align-items:center;padding:6px 0;font:600 11px var(--display);letter-spacing:1px;color:var(--muted)}
+#bastrop-game .menu-footer button:hover,#bastrop-game .site-link:hover{color:var(--paper)}
+#bastrop-game #mute[aria-pressed=true]{color:var(--amber)}
 #bastrop-game .touch-controls{display:none}
-#bastrop-game #gesture-hint{position:absolute;bottom:max(12px,env(safe-area-inset-bottom));left:16px;right:16px;margin:0;text-align:center;color:var(--text);font:10px/1.7 var(--mono);letter-spacing:.5px;pointer-events:none;text-shadow:0 2px 4px #000}
-#bastrop-game #gesture-hint span{display:block;color:var(--muted);font-size:9px}
-#bastrop-game[data-controls=gestures] #turbo-trigger kbd{display:none}
-#bastrop-game[data-controls=gestures] #turbo-trigger::before{content:'↗';font-size:19px;line-height:1}
-@keyframes receiver-in{from{opacity:0;translate:0 6px}to{opacity:1;translate:0 0}}
-@keyframes signal-sweep{from{translate:-110% 0}to{translate:280% 0}}
-@keyframes system-active{from{box-shadow:0 0 0 #94d4cf00}to{box-shadow:0 0 12px #94d4cf35}}
-@media(max-width:1100px){
- #bastrop-game .mission{max-width:39%}
- #bastrop-game .mission-meter{top:190px;width:260px}
- #bastrop-game .comms{width:420px}
-}
-@media(pointer:coarse){
- #bastrop-game[data-controls=buttons] .touch-controls{position:absolute;z-index:2;bottom:12px;left:12px;right:12px;display:flex;justify-content:space-between;gap:8px}
- #bastrop-game .touch-controls button{touch-action:none;user-select:none;border:1px solid var(--line);background:var(--panel);color:var(--text);min-width:44px;min-height:44px;font:12px var(--mono)}
- #bastrop-game .touch-controls button.held{background:#345b61;border-color:var(--teal)}
- #bastrop-game .dpad,#bastrop-game .actions{display:flex;gap:4px;align-items:center}
- #bastrop-game .dpad>div{display:flex;flex-direction:column;gap:3px}
- #bastrop-game .dpad>div button{min-height:27px}
- #bastrop-game .actions button{padding:8px}
- #bastrop-game .actions span{display:block;font-size:7px;margin-top:4px}
- #bastrop-game[data-controls=buttons] .instruments,#bastrop-game[data-controls=buttons] .combat-status,#bastrop-game[data-controls=buttons] .comms{bottom:94px}
- #bastrop-game[data-controls=gestures] .instruments,#bastrop-game[data-controls=gestures] .combat-status{bottom:64px}
-}
+#bastrop-game .noscript{position:relative;z-index:9;padding:16px;background:#070d13}
+@keyframes ignition{from{transform:translateY(3px);opacity:.5}to{transform:translateY(0);opacity:1}}
 @media(max-width:600px){
- #bastrop-game{--edge:16px}
- #bastrop-game .ride-top{top:max(10px,env(safe-area-inset-top))}
- #bastrop-game .brand strong{font-size:24px}
- #bastrop-game .brand small{display:none}
- #bastrop-game .top-controls{gap:6px}
- #bastrop-game .top-controls button,#bastrop-game .menu-tools button{padding:8px 10px;font-size:10px}
- #bastrop-game .mission{top:78px;max-width:calc(100% - 32px);gap:12px}
- #bastrop-game .mission h1{font-size:24px;margin-bottom:6px}
- #bastrop-game .chapter-number{font-size:21px}
- #bastrop-game .micro{font-size:9px}
- #bastrop-game .route{font-size:10px}
- #bastrop-game .module-stamp{display:none}
- #bastrop-game #replay-badge{top:62px;font-size:8px}
- #bastrop-game .mission-meter{top:171px;width:calc(100% - 32px);padding:10px 12px;font-size:9px}
- #bastrop-game .feedback{top:272px;right:16px;max-width:calc(100% - 32px);font-size:10px}
- #bastrop-game .instruments{width:150px;padding:12px 12px 0;bottom:20px}
- #bastrop-game .instrument-heading{font-size:8px;letter-spacing:1px}
- #bastrop-game .instrument-id{display:none}
- #bastrop-game .speed-reading{gap:7px;margin:7px 0}
- #bastrop-game .speed-reading strong{font-size:52px;letter-spacing:-3px}
- #bastrop-game .speed-reading>span{font-size:9px}
- #bastrop-game .drive-state{font-size:8px;letter-spacing:.6px;margin-bottom:11px}
- #bastrop-game .energy-rail{padding:9px 0}
- #bastrop-game[data-mode=action] .drive-state{display:none}
- #bastrop-game #turbo-trigger{width:calc(100% + 24px);margin:0 -12px;padding:10px 12px;font-size:9px;letter-spacing:0}
- #bastrop-game .combat-status{width:calc(100% - 194px);min-width:110px;bottom:64px;padding:12px;grid-template-columns:1fr;gap:8px;font-size:9px}
- #bastrop-game .combat-status strong{font-size:9px}
- #bastrop-game .comms{left:16px;right:16px;bottom:20px;width:auto;max-width:none}
- #bastrop-game .comms-rail{padding:10px 12px;gap:8px;font-size:8px;letter-spacing:.4px}
- #bastrop-game .channel-number{padding-right:8px}
- #bastrop-game .signal-status{font-size:7px;gap:4px}
- #bastrop-game .comms-body{padding:14px 12px 0;grid-template-columns:48px minmax(0,1fr);gap:12px}
- #bastrop-game .portrait-dock{width:48px;height:58px}
- #bastrop-game #speaker{font-size:19px}
- #bastrop-game #dialogue-text{font-size:16px;line-height:1.55;margin-bottom:12px}
- #bastrop-game .comms-action{font-size:8px;letter-spacing:.2px;gap:7px}
+ #bastrop-game{--edge:max(16px,env(safe-area-inset-left),env(safe-area-inset-right));--top:max(10px,env(safe-area-inset-top));--bottom:max(26px,calc(env(safe-area-inset-bottom) + 16px))}
+ #bastrop-game .guidance{width:calc(100% - 90px)}
+ #bastrop-game .navigation-cue{gap:8px}
+ #bastrop-game #next-move,#bastrop-game #feedback{font-size:18px}
+ #bastrop-game #turn-arrow{font-size:30px}
+ #bastrop-game #speed{font-size:72px;letter-spacing:-4px}
+ #bastrop-game .velocity{gap:6px}
+ #bastrop-game .velocity>span{font-size:10px}
+ #bastrop-game .boost-control,#bastrop-game #turbo-trigger{width:56px;height:56px}
+ #bastrop-game .ability-recovery{font-size:10px;gap:8px}
+ #bastrop-game .subtitles{width:calc(100% - 40px);bottom:var(--bottom)}
+ #bastrop-game #advance{padding:8px 0 0}
+ #bastrop-game #speaker{font-size:12px;margin-bottom:8px}
+ #bastrop-game #dialogue-text{font-size:18px;line-height:1.45}
+ #bastrop-game .subtitles[data-speaker=system] #dialogue-text{font-size:16px}
  #bastrop-game .advance-key{display:none}
- #bastrop-game .advance-tap{display:inline;font-size:8px}
- #bastrop-game .comms-tail{padding:8px 12px}
- #bastrop-game:is([data-mode=story],[data-mode=resolve]) .instruments{top:167px;bottom:auto;width:140px;padding:10px 12px}
- #bastrop-game:is([data-mode=story],[data-mode=resolve]) .speed-reading strong{font-size:47px;letter-spacing:-3px}
- #bastrop-game:is([data-mode=story],[data-mode=resolve]) .drive-state{margin-bottom:0;font-size:7px}
- #bastrop-game:is([data-mode=story],[data-mode=resolve]) :is(.energy-rail,#turbo-trigger,.feedback){display:none}
- #bastrop-game .overlay{padding:16px}
- #bastrop-game .menu-panel{max-height:calc(100svh - 32px);padding:22px}
- #bastrop-game .menu-panel h2{font-size:46px}
- #bastrop-game .menu-system{margin-bottom:22px;font-size:8px}
+ #bastrop-game .advance-tap{display:inline}
+ #bastrop-game .overlay{padding:max(32px,env(safe-area-inset-top)) 28px max(24px,env(safe-area-inset-bottom));background:linear-gradient(90deg,#050b12e8,#050b1266)}
+ #bastrop-game #overline{font-size:11px;margin-bottom:18px}
+ #bastrop-game:is([data-state=ready],[data-state=loading]) #headline{font-size:clamp(58px,16vw,88px);letter-spacing:-2px}
+ #bastrop-game #headline{font-size:46px}
+ #bastrop-game #message{font-size:13px}
+ #bastrop-game .menu-actions{column-gap:22px}
+ #bastrop-game .menu-actions button{font-size:14px}
+ #bastrop-game .menu-actions button.primary{font-size:28px}
 }
-@media(max-height:600px) and (min-width:601px){
- #bastrop-game{--edge:16px}
- #bastrop-game .ride-top{top:max(8px,env(safe-area-inset-top))}
- #bastrop-game .brand strong{font-size:24px}
- #bastrop-game .mission{top:66px;max-width:32%;gap:10px}
- #bastrop-game .mission h1{font-size:20px}
- #bastrop-game .micro,#bastrop-game .route{font-size:8px}
- #bastrop-game .chapter-number{font-size:20px}
- #bastrop-game .module-stamp{display:none}
- #bastrop-game .mission-meter{top:65px;width:235px;font-size:8px;padding:8px 10px;gap:5px}
- #bastrop-game .feedback{top:65px;font-size:8px;max-width:24%;padding:6px 8px}
- #bastrop-game .instruments,#bastrop-game[data-controls=gestures] .instruments{bottom:12px;width:158px;padding:10px 12px 0}
- #bastrop-game .speed-reading strong{font-size:50px;letter-spacing:-3px}
- #bastrop-game .speed-reading>span{font-size:8px}
- #bastrop-game .energy-rail{padding:6px 0}
- #bastrop-game .energy-rail>div:first-child{font-size:8px}
- #bastrop-game .drive-state{margin:6px 0 8px;font-size:8px;letter-spacing:.4px}
- #bastrop-game #turbo-trigger{width:calc(100% + 24px);margin:0 -12px;padding:8px 12px;font-size:9px}
- #bastrop-game .instrument-id{display:none}
- #bastrop-game .combat-status,#bastrop-game[data-controls=gestures] .combat-status{bottom:12px;width:220px;padding:10px;font-size:9px;gap:6px}
- #bastrop-game .comms,#bastrop-game[data-controls=buttons] .comms{bottom:12px;width:48%;max-height:calc(100% - 130px);overflow:auto}
- #bastrop-game[data-controls=buttons] .comms{bottom:94px;max-height:calc(100% - 210px)}
- #bastrop-game[data-controls=buttons] .energy-rail{display:none}
- #bastrop-game .comms-rail{padding:8px 12px}
- #bastrop-game .comms-body{padding:12px 12px 0;gap:12px;grid-template-columns:48px minmax(0,1fr)}
- #bastrop-game .portrait-dock{width:48px;height:58px}
- #bastrop-game #dialogue-text{font-size:13px;margin:6px 0 9px}
- #bastrop-game .comms-tail{display:none}
- #bastrop-game #gesture-hint{left:185px;right:245px;bottom:12px;font-size:8px}
- #bastrop-game #gesture-hint span{font-size:7px}
- #bastrop-game .menu-panel{max-height:calc(100svh - 24px);padding:20px}
- #bastrop-game .menu-system{margin-bottom:16px}
- #bastrop-game .overlay{padding:12px 32px}
+@media(max-height:500px) and (min-width:601px){
+ #bastrop-game{--edge:max(18px,env(safe-area-inset-left),env(safe-area-inset-right));--top:max(6px,env(safe-area-inset-top));--bottom:max(18px,env(safe-area-inset-bottom))}
+ #bastrop-game #next-move,#bastrop-game #feedback{font-size:18px}
+ #bastrop-game .guidance{max-width:420px}
+ #bastrop-game #speed{font-size:70px}
+ #bastrop-game .boost-control,#bastrop-game #turbo-trigger{width:52px;height:52px}
+ #bastrop-game .subtitles{width:min(600px,calc(100% - 140px));bottom:14px}
+ #bastrop-game #dialogue-text{font-size:18px}
+ #bastrop-game #speaker{margin-bottom:5px}
+ #bastrop-game .subtitle-next{min-height:30px}
+ #bastrop-game .overlay{padding:28px 54px}
+ #bastrop-game #overline{margin-bottom:12px}
+ #bastrop-game:is([data-state=ready],[data-state=loading]) #headline{font-size:70px;margin-bottom:14px}
+ #bastrop-game #headline{font-size:48px}
+ #bastrop-game #message{margin-bottom:8px}
 }
-@media(max-width:600px) and (max-height:650px){
- #bastrop-game .mission{top:68px}
- #bastrop-game .mission h1{font-size:21px}
- #bastrop-game .mission-meter{top:148px;padding:8px 10px;gap:6px}
- #bastrop-game .feedback{top:235px;font-size:9px}
- #bastrop-game .instruments{padding:9px 10px 0;width:140px}
- #bastrop-game .speed-reading{margin:5px 0}
- #bastrop-game .speed-reading strong{font-size:43px}
- #bastrop-game .drive-state{margin:6px 0 8px;font-size:7px}
- #bastrop-game .energy-rail{padding:7px 0}
- #bastrop-game #turbo-trigger{width:calc(100% + 20px);margin:0 -10px;padding:8px 10px}
- #bastrop-game .combat-status{width:calc(100% - 184px);padding:9px;font-size:8px}
- #bastrop-game .combat-status strong{font-size:8px}
- #bastrop-game:is([data-mode=story],[data-mode=resolve]) .instruments{top:148px;width:126px}
- #bastrop-game:is([data-mode=story],[data-mode=resolve]) .speed-reading strong{font-size:38px}
- #bastrop-game .comms{max-height:calc(100% - 282px);overflow:auto}
- #bastrop-game[data-controls=buttons] .comms{max-height:calc(100% - 356px)}
- #bastrop-game .comms-body{grid-template-columns:1fr;padding-top:10px}
- #bastrop-game .comms-identity,#bastrop-game .comms-tail{display:none}
+/* Legacy encounter fixtures retain their explicit controls; the published ride uses road gestures. */
+@media(pointer:coarse){
+ #bastrop-game[data-controls=buttons][data-state=playing] .touch-controls{position:absolute;z-index:3;bottom:8px;left:12px;right:12px;display:flex;justify-content:space-between;gap:8px}
+ #bastrop-game .touch-controls button{touch-action:none;user-select:none;min-width:36px;min-height:44px;padding:6px;font:600 11px var(--display);background:#070d1355;border:1px solid #ffffff26}
+ #bastrop-game .touch-controls button.held{color:var(--red);border-color:var(--red)}
+ #bastrop-game .dpad,#bastrop-game .actions{display:flex;gap:3px;align-items:center}
+ #bastrop-game .dpad>div{display:flex;flex-direction:column}
+ #bastrop-game .dpad>div button{min-height:24px}
+ #bastrop-game[data-controls=buttons] :is(.velocity,.boost-control,.ability-recovery){bottom:80px}
+ #bastrop-game[data-controls=buttons] .subtitles{bottom:84px}
 }
-@media(prefers-reduced-motion:reduce){
- #bastrop-game *,#bastrop-game *::before,#bastrop-game *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-}
+@media(prefers-reduced-motion:reduce){#bastrop-game *,#bastrop-game *::before,#bastrop-game *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 .garage{max-width:1320px;padding:28px 48px 20px;margin:auto;color:#e3e8ef;background:#090d19;min-height:100svh}
 body:has(.garage){background:#090d19}
 .garage .mast{display:flex;justify-content:space-between;gap:20px;font:10px monospace;letter-spacing:1.5px;color:#98a4b9;padding-bottom:25px;border-bottom:1px solid #293040}
