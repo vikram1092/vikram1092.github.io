@@ -90,6 +90,9 @@ test('phone hold accelerates, dragging steers, swipes jump/deploy spikes and rel
   const game = page.locator('#game');
   await expect(page.locator('.touch-controls')).toBeHidden();
   await expect(page.locator('#gesture-hint')).toHaveCount(0);
+  await expect(page.locator('#spike-lesson')).toHaveText('↓Swipe down for spikes');
+  await expect(page.locator('#spike-lesson')).toBeVisible();
+  const distanceBefore = Number(await page.locator('#distance-value').textContent());
   const touch = await page.context().newCDPSession(page);
   const point = async (type: 'touchStart' | 'touchMove', x: number, y: number) => touch.send('Input.dispatchTouchEvent', { type, touchPoints: [{ x, y, id: 1 }] });
   await point('touchStart', 195, 500); await page.clock.runFor(1000);
@@ -98,8 +101,12 @@ test('phone hold accelerates, dragging steers, swipes jump/deploy spikes and rel
   expect(Number(await game.getAttribute('data-x'))).toBeGreaterThan(365);
   await point('touchMove', 245, 430); await page.clock.runFor(500);
   expect(Number(await game.getAttribute('data-height'))).toBeGreaterThan(28);
+  await expect(page.locator('#spike-lesson')).toBeVisible();
+  expect(Number(await page.locator('#distance-value').textContent())).toBeLessThan(distanceBefore);
   await point('touchMove', 245, 510); await page.clock.runFor(250);
   expect(Number(await game.getAttribute('data-blades'))).toBeGreaterThan(.65);
+  await expect(page.locator('#spike-lesson')).toBeHidden();
+  expect(await page.evaluate(()=>window.getSelection()?.toString())).toBe('');
   await expect(game).toHaveAttribute('data-touch-held', 'true');
   await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   await page.clock.runFor(1200);
@@ -114,6 +121,14 @@ test('phone hold accelerates, dragging steers, swipes jump/deploy spikes and rel
   await turbo.click(); await page.clock.runFor(100);
   expect(Number(await game.getAttribute('data-boost'))).toBeGreaterThan(0);
   await page.screenshot({ path: 'test-results/racing-portrait.png' });
+  await page.locator('#pause').click();
+  await expect(page.locator('#distance-remaining')).toBeHidden();
+  await page.locator('#retry').click(); await page.clock.runFor(32);
+  await expect(page.locator('#spike-lesson')).toBeHidden();
+  await page.reload(); await page.locator('#continue-save').click();
+  await page.clock.runFor(32);
+  await expect(page.locator('#distance-remaining')).toBeVisible();
+  await expect(page.locator('#spike-lesson')).toBeHidden();
   expect(errors).toEqual([]);
 });
 
@@ -142,7 +157,7 @@ test.describe('landscape phone', () => {
     const game = page.locator('#game');
     await expect(page.locator('#bastrop-game')).toHaveAttribute('data-controls', 'gestures');
     await expect(page.locator('.touch-controls')).toBeHidden();
-    for (const selector of ['#game', '#turbo-trigger', '#pause', '#velocity']) {
+    for (const selector of ['#game', '#turbo-trigger', '#pause', '#velocity', '#distance-remaining']) {
       const box = await page.locator(selector).boundingBox();
       expect(box, selector).not.toBeNull();
       expect(box!.y, selector).toBeGreaterThanOrEqual(0);
@@ -216,7 +231,7 @@ test.describe('phone contextual HUD', () => {
   test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   test('turns, threats and cooldowns stay out of the playable road', async ({ page }) => {
     await start(page);
-    await expect(page.locator('#guidance')).toBeHidden();
+    await expect(page.locator('#spike-lesson')).toBeVisible();
     await page.keyboard.press('KeyK'); await page.clock.runFor(1180);
     await expect(page.locator('#jump-recovery')).toBeVisible();
     const cooldown=(await page.locator('#ability-recovery').boundingBox())!;
@@ -231,9 +246,11 @@ test.describe('phone contextual HUD', () => {
         const box=(await page.locator('#guidance').boundingBox())!;
         expect(box.y+box.height).toBeLessThanOrEqual(88);
         if(await page.locator('#feedback').isVisible()){
+          await expect(page.locator('#spike-lesson')).toBeHidden();
           if(!threat)await page.screenshot({path:'test-results/road-first-phone-threat.png'});
           threat=true;
         }else if(/left|right/i.test(await page.locator('#next-move').textContent()||'')){
+          await expect(page.locator('#spike-lesson')).toBeHidden();
           if(!turn)await page.screenshot({path:'test-results/road-first-phone-turn.png'});
           turn=true;
         }

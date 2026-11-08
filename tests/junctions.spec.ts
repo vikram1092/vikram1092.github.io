@@ -29,6 +29,7 @@ test('Delivery main road returns to its fork, then the right road reaches intake
   await page.clock.runFor(6000);
   await page.screenshot({path:'test-results/delivery-fork-desktop.png'});
   await until(page,'data-junction-phase','return');
+  await expect(page.locator('#distance-remaining')).toBeHidden();
   await expect(game).toHaveAttribute('data-gate-passed','false');
   await expect(game).toHaveAttribute('data-approach-passed','false');
   await page.keyboard.press('KeyP'); const frozen = await game.getAttribute('data-junction-position');
@@ -37,10 +38,13 @@ test('Delivery main road returns to its fork, then the right road reaches intake
   await until(page,'data-junction-phase','approach');
   await page.keyboard.down('ArrowRight'); await page.clock.runFor(1400); await page.keyboard.up('ArrowRight');
   await until(page,'data-junction-phase','exit');
+  await expect(page.locator('#distance-remaining')).toBeVisible();
+  expect(Number(await page.locator('#distance-value').textContent())).toBeCloseTo((7600-Number(await game.getAttribute('data-junction-position')))/3600,1);
   await expect(game).toHaveAttribute('data-gate-passed','true');
   await expect(game).toHaveAttribute('data-approach-passed','false');
   await until(page,'data-beat','L1.05');
   await expect(game).toHaveAttribute('data-junction-phase','complete');
+  await expect(page.locator('#distance-remaining')).toBeHidden();
   await expect(page.locator('#dialogue-text')).toHaveText(DELIVERY_DIALOGUE['L1.05'][0].text);
 });
 

@@ -25,6 +25,8 @@ export type HudView = {
   roadCombat?: { condition: number; knockouts: number };
   driveLabel?: string;
   speed: number;
+  distanceRemainingKm?: number; // Remaining distance on the current road or selected exit.
+  teachSpikeSwipe?: boolean;
   energy: number; // 0..1
   turbo: 'ready' | 'active' | 'charging' | 'unavailable';
   dialogue: DialogueLine | null;

@@ -18,8 +18,10 @@ import '../../styles/bastrop37.css';
   <section class="ride" aria-label="Bastrop37 ride">
     <canvas id="game" width="640" height="360" tabindex="0" aria-label="Third-person motorcycle ride. On a phone, hold to accelerate, drag to steer, swipe up to jump and down for spikes. With a keyboard, steer with arrows or WASD. Hold Space to slide. Shift uses turbo. P pauses. Enter advances dialogue.">Your browser needs Canvas to run BASTROP37.</canvas>
     <div id="riding-hud" hidden>
+      <div class="distance-remaining" id="distance-remaining" hidden><strong id="distance-value"></strong><span>km left</span></div>
       <div class="guidance" id="guidance" aria-label="Next maneuver">
         <div class="navigation-cue"><span id="turn-arrow" aria-hidden="true">↑</span><span id="next-move"></span></div>
+        <p class="gesture-lesson" id="spike-lesson" hidden><span aria-hidden="true">↓</span><span>Swipe down for spikes</span></p>
         <p id="feedback" role="status" aria-live="polite" hidden></p>
         <meter id="task-progress" min="0" max="1" value="0" aria-label="Mission progress" hidden></meter>
         <span id="bus-health" role="meter" aria-label="Bus condition" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3" hidden><span>BUS</span><i></i><i></i><i></i></span>

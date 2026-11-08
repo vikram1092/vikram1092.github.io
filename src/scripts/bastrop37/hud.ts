@@ -21,6 +21,8 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
   const root = element('#bastrop-game'), canvas = element('#game');
   const overlay = element('#overlay'), riding = element('#riding-hud');
   const guidance = element('#guidance'), nextMove = element('#next-move'), arrow = element('#turn-arrow');
+  const navigationCue = element('.navigation-cue'), spikeLesson = element('#spike-lesson');
+  const distance = element('#distance-remaining'), distanceValue = element('#distance-value');
   const feedback = element('#feedback'), taskProgress = element<HTMLMeterElement>('#task-progress');
   const velocity = element('#velocity'), speed = element('#speed');
   const boost = element<HTMLButtonElement>('#turbo-trigger'), boostLabel = element('#boost-label');
@@ -43,6 +45,11 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let confirmingReset = false, previousState: HudView['state'] | null = null;
   let lastLogKey = '', lastTransmission = '', lastWarning = '';
+
+  // Keep long presses and repeated taps inside the ride from opening browser selection UI.
+  for (const type of ['selectstart', 'contextmenu']) root.addEventListener(type, event => {
+    if (root.dataset.state === 'playing') event.preventDefault();
+  });
 
   function receive(node: HTMLElement): void {
     if (reducedMotion.matches) return;
@@ -111,8 +118,18 @@ export function createHud(actions: HudActions): { render(view: HudView): void } 
     const stateChanged = previousState !== view.state;
     root.dataset.state = view.state; root.dataset.mode = view.mode;
     show(riding, action); show(pause, playing); pause.disabled = !playing;
+    const hasDistance = action && view.distanceRemainingKm !== undefined;
+    show(distance, hasDistance); riding.dataset.distance = String(hasDistance);
+    if (hasDistance) {
+      const km = Math.max(0, view.distanceRemainingKm!).toFixed(1);
+      text(distanceValue, km);
+      distance.setAttribute('aria-label', `${km} kilometers left`);
+    }
     const nav = ridingGuidance(view), warning = action ? urgentFeedback(view.message) : '';
-    show(guidance, action && !!(nav.text || warning || nav.progress !== undefined || view.escort));
+    const lesson = action && view.mode === 'action' && !!view.teachSpikeSwipe && view.abilities?.blades.state === 'ready'
+      && !nav.text && !warning && nav.progress === undefined && !view.escort;
+    show(spikeLesson, lesson); show(navigationCue, !lesson);
+    show(guidance, action && !!(lesson || nav.text || warning || nav.progress !== undefined || view.escort));
     text(nextMove, nav.text); text(arrow, nav.arrow);
     guidance.dataset.alert = String(!!warning);
     text(feedback, warning); show(feedback, !!warning);

@@ -142,6 +142,8 @@ export function mountGame() {
   let drafting = false;
   let chaseZoom = 1.6;
   const gesture = new RideGesture();
+  let spikeSwipeQueued = false, spikeSwipeLearned = false;
+  try { spikeSwipeLearned = localStorage.getItem('bastrop37-spike-swipe-learned') === 'true'; } catch {}
   const gestureControls = () => !encounterFixture && !mechanicsFixture && !m2Fixture && (matchMedia('(pointer: coarse)').matches || canvas.clientWidth <= 600);
   let rivals: RoadRival[] = [], rivalSerial = 0, knockouts = 0;
   let obstacles: { id: number; x: number; z: number; w: number; kind: 'barricade' | 'pothole'; contacted: boolean; warned: boolean }[] = [];
@@ -244,7 +246,7 @@ export function mountGame() {
     if (state === 'playing') canvas.focus({ preventScroll: true });
   });
   function setMessage(text: string, seconds = 1) { feedbackText = text; feedbackTime = seconds; }
-  function clearInput() { gesture.end(); keys.clear(); pressed.clear(); sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
+  function clearInput() { gesture.end(); keys.clear(); pressed.clear(); spikeSwipeQueued = false; sliding = false; document.querySelectorAll('.held').forEach(b => b.classList.remove('held')); }
   function resetPhysical() {
     roadRace = null; raceBeat = ''; roadCenters.fill(0); drafting = false;
     rivals = []; obstacles = []; rivalSerial = knockouts = hitGrace = spikePulse = spikeCooldown = 0; condition = 3;
@@ -860,7 +862,7 @@ export function mountGame() {
     const action = gesture.move(event.pointerId, event.clientX, event.clientY, canvas.clientWidth);
     if (mission.mode !== 'action') return;
     if (action === 'jump') pressed.add('AltLeft');
-    if (action === 'spikes') pressed.add('ControlLeft');
+    if (action === 'spikes') { pressed.add('ControlLeft'); spikeSwipeQueued = true; }
   });
   const endGesture = (event: PointerEvent) => gesture.end(event.pointerId);
   canvas.addEventListener('pointerup', endGesture);
@@ -1167,7 +1169,13 @@ export function mountGame() {
     else roadBaseRatio += ((safeCruise ? storyBaseRatio() : .84)-roadBaseRatio)*(1-Math.exp(-3*dt));
     const input = gesture.pointer !== null ? clamp((gesture.targetX-x)/32, -1, 1) : Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
     spikePulse = Math.max(0, spikePulse-dt); spikeCooldown = Math.max(0, spikeCooldown-dt);
-    if (action && (racing || gestureControls()) && pressed.has('ControlLeft') && spikeCooldown === 0) { spikePulse = .7; spikeCooldown = 1.1; }
+    if (action && (racing || gestureControls()) && pressed.has('ControlLeft') && spikeCooldown === 0) {
+      spikePulse = .7; spikeCooldown = 1.1;
+      if (spikeSwipeQueued && !spikeSwipeLearned) {
+        spikeSwipeLearned = true;
+        try { localStorage.setItem('bastrop37-spike-swipe-learned', 'true'); } catch {}
+      }
+    }
     boost = Math.max(0, boost-dt);
     overdrive.tick(dt);
     jumpCooldown = Math.max(0,jumpCooldown-dt);
@@ -1182,7 +1190,7 @@ export function mountGame() {
     if(action && pressed.has('AltLeft') && height===0 && jumpWindup===0 && jumpCooldown===0) {
       jumpWindup=.12; jumpCooldown=1.25; sound('jump');setMessage('SPRING LOADED',.12);
     }
-    pressed.clear();
+    pressed.clear(); spikeSwipeQueued = false;
     if(jumpWindup>0) {
       jumpWindup=Math.max(0,jumpWindup-dt);
       if(jumpWindup===0) { verticalSpeed=190; setMessage('AIRBORNE / CLEAR LOW TRAFFIC',.8); }
@@ -1945,6 +1953,7 @@ export function mountGame() {
       retryLabel: racing ? 'RETRY SECTOR' : state === 'error' && (checkpoint === 'CP-L1-COMPLETE' || checkpoint === 'CP-L2-COMPLETE' || checkpoint?.startsWith('CP-L3-') || checkpoint?.startsWith('CP-L4-') || checkpoint?.startsWith('CP-L5-') || checkpoint === 'CP-CAMPAIGN-COMPLETE') ? 'RETRY LOAD' : replayActive && !checkpoint ? 'RESTART REPLAY' : 'RETRY CHECKPOINT',
       objective: mission.objective, routeCue: racing ? roadRace!.cue : mission.routeCue,
       speed: Math.round(speed), energy: charge,
+      distanceRemainingKm: racing ? Math.max(0, roadRace!.length - roadRace!.position) / 3600 : undefined,
       turbo: mission.mode !== 'action' ? 'unavailable' : boost > 0 && overdrive.active === 0 ? 'active' : charge >= .4 ? 'ready' : 'charging',
       dialogue: mission.dialogue, dialogueIndex: mission.dialogueIndex,
       dialogueCount: mission.dialogueCount, log: mission.log,
@@ -1995,6 +2004,7 @@ export function mountGame() {
     const junction = activeJunction();
     if (junction && mission.mode === 'action') {
       view.controller = undefined;
+      view.distanceRemainingKm = junction.selected ? Math.max(0, junction.destination - junction.position) / 3600 : undefined;
       view.routeCue = junction.cue;
       view.missionMeter = { label: junction.selected ? 'RIGHT EXIT · '+junction.destinationName : junction.phase === 'return' ? 'RETURN ROAD' : 'JUNCTION · RIGHT EXIT',
         value: junction.position/junction.destination, detail: junction.selected ? `${((junction.destination-junction.position)/3600).toFixed(1)} KM TO DESTINATION` : junction.phase === 'return' ? 'FOLLOW THE ROAD BACK TO THE SIGNED FORK' : 'DRAG / STEER RIGHT ONTO THE BRANCH' };
@@ -2003,6 +2013,7 @@ export function mountGame() {
     view.roadCombat = racing ? { condition, knockouts } : undefined;
     view.driveLabel = gestureControls() && mission.mode === 'action' ? gesture.pointer !== null ? 'THROTTLE ON' : 'PRESS TO RIDE' : undefined;
     const gestureMode = gestureControls();
+    view.teachSpikeSwipe = gestureMode && !spikeSwipeLearned;
     document.querySelector<HTMLElement>('#bastrop-game')!.dataset.controls = gestureMode ? 'gestures' : 'buttons';
     if (view.abilities && gestureMode) { view.abilities.blades.binding = 'SWIPE ↓'; view.abilities.jump.binding = 'SWIPE ↑'; }
     if (view.abilities && (racing || gestureMode)) {

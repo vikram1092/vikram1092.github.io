@@ -62,7 +62,7 @@ for (const [width,height] of [[320,568],[390,844],[844,390],[1024,768],[1440,900
     await ride(page);
     // The full-width road between the first 88 and last 100 pixels is HUD-free.
     const road = {x:0,y:88,width,height:height-188};
-    const controls = ['#guidance','#velocity','.boost-control','#pause'];
+    const controls = ['#distance-remaining','#guidance','#velocity','.boost-control','#pause'];
     const boxes=[]; let area=0;
     for(const selector of controls){
       if (!await page.locator(selector).isVisible()) continue;
@@ -80,6 +80,8 @@ for (const [width,height] of [[320,568],[390,844],[844,390],[1024,768],[1440,900
     await expect(page.locator('#task-progress')).toBeHidden();
     await expect(page.locator('#feedback')).toBeHidden();
     await expect(page.locator('#comms')).toBeHidden();
+    await expect(page.locator('#distance-remaining')).toBeVisible();
+    await expect(page.locator('#spike-lesson')).toBeVisible({ visible: mobile });
     const hitTargets=await page.evaluate(({width,height})=>[.25,.5,.75].flatMap(x=>[.3,.5,.7].map(y=>document.elementFromPoint(width*x,height*y)?.id)),{width,height});
     expect(hitTargets.every(id=>id==='game'),'road gesture was intercepted').toBe(true);
     expect((await page.locator('#turbo-trigger').boundingBox())!.height).toBeGreaterThanOrEqual(44);
@@ -95,6 +97,7 @@ for (const [width,height] of [[320,568],[390,844],[844,390],[1024,768],[1440,900
     await enterLockdown(page); await page.locator('#advance').click(); await page.clock.runFor(250);
     await expect(page.locator('#comms')).toHaveAttribute('data-speaker','system');
     await expect(page.locator('#riding-hud')).toBeHidden();
+    await expect(page.locator('#distance-remaining')).toBeHidden();
     await page.locator('#advance').click(); await page.clock.runFor(250);
     const caption=(await page.locator('#comms').boundingBox())!, words=(await page.locator('#dialogue-text').boundingBox())!;
     expect(caption.y).toBeGreaterThanOrEqual(0);expect(caption.y+caption.height).toBeLessThanOrEqual(height);
@@ -110,6 +113,31 @@ test('reduced motion disables subtitle and charge animation',async({page})=>{
   await expect(page.locator('#comms')).toBeVisible();
   expect(await page.locator('#comms').evaluate(el=>el.getAnimations({subtree:true}).length)).toBe(0);
   await expect(page.locator('#boost-charge')).toHaveCSS('transition-duration','0s');
+  await page.setViewportSize({width:390,height:844});
+  for(let i=0;i<5;i++)await page.keyboard.press('Enter');
+  await expect(page.locator('#spike-lesson')).toBeVisible();
+  expect(await page.locator('#spike-lesson').evaluate(el=>el.getAnimations({subtree:true}).length)).toBe(0);
+});
+
+test('mobile riding rejects browser selection and callouts while menu links remain usable',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.clock.install(); await page.goto('/bastrop37/'); await page.locator('#start').click();
+  for(const selector of ['#game','#dialogue-text','#advance','#speed','#spike-lesson']) {
+    await expect(page.locator(selector)).toHaveCSS('user-select','none');
+  }
+  // Selection and long-press context menus are cancelled even when they start on subtitles.
+  const cancelled=await page.locator('#dialogue-text').evaluate(el=>['selectstart','contextmenu'].map(type=>
+    !el.dispatchEvent(new Event(type,{bubbles:true,cancelable:true}))));
+  expect(cancelled).toEqual([true,true]);
+  await page.locator('#dialogue-text').dblclick(); await page.clock.runFor(32);
+  expect(await page.evaluate(()=>window.getSelection()?.toString())).toBe('');
+  await page.locator('#pause').click();
+  await expect(page.locator('#controls-details')).toBeVisible();
+  await page.locator('#controls-details summary').click();
+  await expect(page.locator('.control-guide')).toBeVisible();
+  const menuContextAllowed=await page.locator('.site-link').evaluate(el=>
+    el.dispatchEvent(new Event('contextmenu',{bubbles:true,cancelable:true})));
+  expect(menuContextAllowed).toBe(true);
 });
 
 test('earned overdrive works from the single boost control at zero energy',async({page})=>{
