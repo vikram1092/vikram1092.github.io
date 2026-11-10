@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { ROAD_COURSES, RoadRace } from '../src/scripts/bastrop37/race';
 
 test.use({ launchOptions: { executablePath: process.env.CHROME_PATH || undefined, args: ['--no-sandbox', '--disable-gpu'] } });
 
@@ -46,7 +47,7 @@ async function driver(page: Page) {
   });
 }
 
-test('real route lasts over three minutes, bends flow, pause freezes it and encounters resume', async ({ page }) => {
+test('compact route keeps bends, pause and sector retry, then resumes the encounter', async ({ page }) => {
   test.setTimeout(480000);
   await page.setViewportSize({ width: 960, height: 640 });
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
@@ -63,22 +64,25 @@ test('real route lasts over three minutes, bends flow, pause freezes it and enco
   await page.locator('#resume').click();
   await page.clock.runFor(7000);
   await expect(game).toHaveAttribute('data-state', 'playing');
-  expect(Number(await game.getAttribute('data-curvature'))).toBeGreaterThan(.2);
+  expect(Math.abs(Number(await game.getAttribute('data-curvature')))).toBeGreaterThan(.2);
   expect(Number(await game.getAttribute('data-knockouts'))).toBeGreaterThan(0);
   await page.screenshot({ path: 'test-results/racing-desktop.png' });
+  const course = new RoadRace(ROAD_COURSES['L1.02']);
+  const sectorStart = course.locate(Number(await game.getAttribute('data-race-position'))).start;
   await page.keyboard.press('KeyP');
   await page.locator('#retry').click();
   await page.clock.runFor(32);
-  expect(Number(await game.getAttribute('data-race-position'))).toBeGreaterThanOrEqual(4200);
-  expect(Number(await game.getAttribute('data-race-position'))).toBeLessThan(4250);
+  expect(Number(await game.getAttribute('data-race-position'))).toBeGreaterThanOrEqual(sectorStart);
+  expect(Number(await game.getAttribute('data-race-position'))).toBeLessThan(sectorStart + 50);
   await expect(game).toHaveAttribute('data-traffic-count', '0');
-  for (let i = 0; i < 240; i++) {
+  for (let i = 0; i < 120; i++) {
     await page.clock.runFor(1000);
     await expect(game).toHaveAttribute('data-state', 'playing');
     if (await game.getAttribute('data-race-active') === 'false') break;
   }
   await expect(game).toHaveAttribute('data-race-active', 'false');
-  expect(Number(await game.getAttribute('data-race-position'))).toBeGreaterThanOrEqual(50000);
+  expect(Number(await game.getAttribute('data-race-position'))).toBe(course.length);
+  expect(Number(await game.getAttribute('data-race-length'))).toBe(course.length);
   await expect(game).toHaveAttribute('data-beat', 'L1.02');
   expect(errors).toEqual([]);
 });

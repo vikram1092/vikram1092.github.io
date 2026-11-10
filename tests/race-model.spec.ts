@@ -2,9 +2,10 @@ import { test, expect } from '@playwright/test';
 import { RoadRace, ROAD_COURSES } from '../src/scripts/bastrop37/race';
 
 for (const [beat, course] of Object.entries(ROAD_COURSES)) {
-  test(`${beat}: full-length route, continuous bends, readable traffic and a clean finish`, () => {
+  test(`${beat}: compact route, continuous bends, readable traffic and a clean finish`, () => {
     const race = new RoadRace(course);
-    expect(race.length / 300).toBeGreaterThanOrEqual(160);
+    expect(race.length / 285).toBeGreaterThanOrEqual(85);
+    expect(race.length / 285).toBeLessThanOrEqual(100);
     expect(new Set(course.sectors.map(s => s.traffic)).size).toBeGreaterThanOrEqual(3);
     let boundary = 0;
     for (const sector of course.sectors) {
@@ -12,8 +13,10 @@ for (const [beat, course] of Object.entries(ROAD_COURSES)) {
       boundary += sector.length;
     }
     let waves = 0;
+    const challenges = new Set<string>();
     while (race.position < race.length) {
       const cars = race.tick(.1, 30, false);
+      race.challenges.forEach(challenge => challenges.add(challenge.kind));
       if (cars.length) {
         waves++;
         expect(cars.length).toBeLessThanOrEqual(3);
@@ -26,6 +29,7 @@ for (const [beat, course] of Object.entries(ROAD_COURSES)) {
       expect(center.every(Number.isFinite)).toBe(true);
     }
     expect(waves).toBeGreaterThan(12);
+    expect([...challenges].sort()).toEqual(['barricade', 'drone', 'pothole', 'rival']);
     expect(race.complete).toBe(false);
     expect(race.tick(1, 300, true)).toEqual([]);
     expect(race.complete).toBe(true);
@@ -35,17 +39,18 @@ for (const [beat, course] of Object.entries(ROAD_COURSES)) {
 
 test('sector retry gives a clear run-up, retains the timer, and cannot finish early', () => {
   const race = new RoadRace(ROAD_COURSES['L1.02']);
-  race.tick(20, 6000, false);
+  race.tick(10, 3000, false);
   race.retrySector();
-  expect(race.position).toBe(4200);
-  expect(race.seconds).toBe(20);
+  expect(race.position).toBe(2100);
+  expect(race.seconds).toBe(10);
   expect(race.tick(1, 300, true)).toEqual([]);
   expect(race.complete).toBe(false);
   expect(race.tick(2, 600, false).length).toBeGreaterThan(0);
 });
 
-test('road drones are spaced between rival waves and stop before the finish', () => {
-  const race = new RoadRace(ROAD_COURSES['L1.02']);
+test('road drones stay spaced on longer routes and stop before the finish', () => {
+  const course = ROAD_COURSES['L1.02'];
+  const race = new RoadRace({ ...course, sectors: [...course.sectors, ...course.sectors] });
   const positions: number[] = [];
   while (race.position < race.length) {
     race.tick(.1, 30, false);

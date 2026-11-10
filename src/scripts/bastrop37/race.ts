@@ -1,35 +1,37 @@
-/** Authored road legs. Route units match the shared simulation's speed × seconds. */
+/** Road legs target 85–100 seconds at 285 units/sec before traffic clears.
+ * Keep every district and bend; trim travel without speeding up combat or story.
+ * Route units match the shared simulation's speed × seconds. */
 export type RoadSector = { name: string; length: number; bend: number; traffic: 'flow' | 'weave' | 'freight' | 'sprint'; };
 export type RoadCourse = { name: string; sectors: RoadSector[] };
 const sector = (name: string, length: number, bend: number, traffic: RoadSector['traffic']): RoadSector => ({ name, length, bend, traffic });
 export const ROAD_COURSES: Record<string, RoadCourse> = {
   'L1.02': { name: 'INTAKE EXPRESS', sectors: [
-    sector('OUTBOUND AVENUE', 4200, 0, 'flow'), sector('CANAL SWEEP', 4800, .65, 'flow'),
-    sector('FREIGHT QUARTER', 4200, -.45, 'freight'), sector('SWITCHBACK WEST', 3600, -.95, 'weave'),
-    sector('SWITCHBACK EAST', 3600, .95, 'weave'), sector('INTAKE STRAIGHT', 4800, 0, 'sprint'),
+    sector('OUTBOUND AVENUE', 2100, 0, 'flow'), sector('CANAL SWEEP', 2400, .65, 'flow'),
+    sector('FREIGHT QUARTER', 2100, -.45, 'freight'), sector('SWITCHBACK WEST', 1800, -.95, 'weave'),
+    sector('SWITCHBACK EAST', 1800, .95, 'weave'), sector('INTAKE STRAIGHT', 2400, 0, 'sprint'),
   ] },
   'L2.03': { name: 'RECOVERY RUN', sectors: [
-    sector('INTAKE BREAKOUT', 3800, .45, 'sprint'), sector('OUTER RING', 5400, -.65, 'flow'),
-    sector('INTERCHANGE', 3800, 1, 'weave'), sector('LOWER EXPRESS', 4800, -.8, 'freight'),
-    sector('NORTHBOUND CUT', 3600, .9, 'weave'), sector('PURSUIT STRAIGHT', 6200, 0, 'sprint'),
+    sector('INTAKE BREAKOUT', 1900, .45, 'sprint'), sector('OUTER RING', 2700, -.65, 'flow'),
+    sector('INTERCHANGE', 1900, 1, 'weave'), sector('LOWER EXPRESS', 2400, -.8, 'freight'),
+    sector('NORTHBOUND CUT', 1800, .9, 'weave'), sector('PURSUIT STRAIGHT', 3100, 0, 'sprint'),
   ] },
   'L3.02': { name: 'RELAY CROSSING', sectors: [
-    sector('PUBLIC APPROACH', 4000, 0, 'flow'), sector('EAST AQUEDUCT', 5200, .75, 'freight'),
-    sector('RELAY SWITCHBACK', 3600, -.95, 'weave'), sector('VIADUCT', 5400, 0, 'sprint'),
-    sector('WEST AQUEDUCT', 5200, -.7, 'flow'), sector('RELAY ACCESS', 4200, .45, 'weave'),
+    sector('PUBLIC APPROACH', 2000, 0, 'flow'), sector('EAST AQUEDUCT', 2600, .75, 'freight'),
+    sector('RELAY SWITCHBACK', 1800, -.95, 'weave'), sector('VIADUCT', 2700, 0, 'sprint'),
+    sector('WEST AQUEDUCT', 2600, -.7, 'flow'), sector('RELAY ACCESS', 2100, .45, 'weave'),
   ] },
   'L4.02': { name: 'RESERVOIR RUN', sectors: [
-    sector('RESERVOIR EDGE', 4800, -.65, 'flow'), sector('SPILLWAY', 4400, .9, 'weave'),
-    sector('EVACUATION TRAFFIC', 5600, 0, 'freight'), sector('DAM SWITCHBACK', 3600, -1, 'weave'),
-    sector('UPPER RESERVOIR', 5200, .8, 'flow'), sector('BUS ROAD APPROACH', 4200, 0, 'sprint'),
+    sector('RESERVOIR EDGE', 2400, -.65, 'flow'), sector('SPILLWAY', 2200, .9, 'weave'),
+    sector('EVACUATION TRAFFIC', 2800, 0, 'freight'), sector('DAM SWITCHBACK', 1800, -1, 'weave'),
+    sector('UPPER RESERVOIR', 2600, .8, 'flow'), sector('BUS ROAD APPROACH', 2100, 0, 'sprint'),
   ] },
   'L5.02': { name: 'CIVIC DESCENT', sectors: [
-    sector('CIVIC EXPRESS', 5000, 0, 'sprint'), sector('ARCHIVE BEND', 4200, .95, 'weave'),
-    sector('GOVERNMENT FREIGHT', 5000, -.6, 'freight'), sector('SOUTH SWITCHBACK', 3600, -1, 'weave'),
-    sector('NORTH SWITCHBACK', 3600, 1, 'weave'), sector('PUBLIC MILE', 7000, 0, 'sprint'),
+    sector('CIVIC EXPRESS', 2500, 0, 'sprint'), sector('ARCHIVE BEND', 2100, .95, 'weave'),
+    sector('GOVERNMENT FREIGHT', 2500, -.6, 'freight'), sector('SOUTH SWITCHBACK', 1800, -1, 'weave'),
+    sector('NORTH SWITCHBACK', 1800, 1, 'weave'), sector('PUBLIC MILE', 3500, 0, 'sprint'),
   ] },
 };
-// Each chapter adds a second district, rather than stretching a single bend.
+// Keep the second district compact while preserving its road and traffic variety.
 const DISTRICTS: Record<string, string[]> = {
   'L1.02': ['WAREHOUSE RUN', 'MARKET APPROACH', 'MARKET S-BEND', 'CANAL UNDERPASS', 'EAST FREIGHT', 'INTAKE VIADUCT'],
   'L2.03': ['LOWER RING', 'DEPOT EAST', 'DEPOT WEST', 'RAIL UNDERPASS', 'CARGO BYPASS', 'NORTH VIADUCT'],
@@ -39,9 +41,9 @@ const DISTRICTS: Record<string, string[]> = {
 };
 for (const [beat, names] of Object.entries(DISTRICTS)) {
   const extra = [
-    sector(names[0], 4800, 0, 'sprint'), sector(names[1], 3600, .7, 'flow'),
-    sector(names[2], 3600, -.7, 'weave'), sector(names[3], 4200, 0, 'flow'),
-    sector(names[4], 4800, -.4, 'freight'), sector(names[5], 4800, .55, 'sprint'),
+    sector(names[0], 2400, 0, 'sprint'), sector(names[1], 1800, .7, 'flow'),
+    sector(names[2], 1800, -.7, 'weave'), sector(names[3], 2100, 0, 'flow'),
+    sector(names[4], 2400, -.4, 'freight'), sector(names[5], 2400, .55, 'sprint'),
   ];
   ROAD_COURSES[beat].sectors.splice(5, 0, ...extra);
 }
