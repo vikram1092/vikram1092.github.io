@@ -1,0 +1,112 @@
+---
+import '@fontsource-variable/manrope';
+import '../../styles/justyna34.css';
+import { birthdayRevision, memories } from '../../data/justyna34';
+
+const heart = 'M12 20.3S3 14.8 3 8.9C3 5.2 7.6 3.2 12 7.4c4.4-4.2 9-2.2 9 1.5 0 5.9-9 11.4-9 11.4Z';
+const photoEntries = [
+  { memory: memories[memories.length - 1], index: memories.length - 1, clone: true },
+  ...memories.map((memory, index) => ({ memory, index, clone: false })),
+  { memory: memories[0], index: 0, clone: true },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#faf9f2" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Happy 34th birthday, Justyna." />
+    <title>happy 34th birthday — Justyna</title>
+    <link rel="icon" href="/justyna34/heart.svg" type="image/svg+xml" />
+    <link rel="preload" href="/justyna34/fonts/cormorant-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/justyna34/fonts/cormorant-italic.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <symbol id="heart" viewBox="0 0 24 24"><path d={heart} /></symbol>
+        <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></symbol>
+        <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7" /></symbol>
+        <symbol id="retry" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1.6 7M4 4v6h6" /></symbol>
+      </defs>
+    </svg>
+    <main class="birthday" id="birthday" data-revision={birthdayRevision}>
+      <header class="birthday-heading">
+        <button class="little-heart" type="button" aria-label="Send a little love" data-love>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#heart" /></svg>
+        </button>
+        <h1><span class="title-happy">happy</span><span class="title-birthday"><em>34th</em> birthday</span></h1>
+        <svg class="title-flourish" viewBox="0 0 180 16" fill="none" aria-hidden="true"><path d="M3 10C42 4 116 3 176 8M54 12c22-3 46-3 68-2" /></svg>
+      </header>
+
+      <section class="album" aria-label="Photos and birthday questions" aria-roledescription="carousel">
+        <div class="photo-stage" id="photo-stage" aria-label="Birthday photos">
+          {photoEntries.map(({ memory, index, clone }) => (
+            <div class:list={['photo-slot', { 'is-current': index === 0 }]} data-photo-index={index} data-clone={clone ? 'true' : undefined}>
+              <button class="photo-print" type="button" tabindex={clone ? '-1' : undefined} aria-label={index === 0 ? 'Enlarge photo 1' : `Show photo ${index + 1}`} style={`--photo-position: ${memory.position ?? '50% 50%'}; --print-turn: ${[-3, 5, -5, 4, -4][index % 5]}deg;`}>
+                <span class="photo-window">
+                  <img src={memory.photo} alt={memory.alt} width="1100" height="733" loading={index < 2 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} decoding="async" draggable="false" />
+                  <span class="photo-zoom" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4" /></svg></span>
+                </span>
+                <span class="print-footer" aria-hidden="true"><span>{String(index + 1).padStart(2, '0')}</span><svg viewBox="0 0 24 24"><use href="#heart" /></svg></span>
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div class="album-controls">
+          <button class="round-button previous" type="button" aria-label="Previous photo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#arrow" /></svg></button>
+          <div class="photo-count" aria-hidden="true"><span id="current-number">01</span><span class="count-line"></span><span>{String(memories.length).padStart(2, '0')}</span></div>
+          <button class="round-button next" type="button" aria-label="Next photo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#arrow" /></svg></button>
+        </div>
+
+        <div class="question-space">
+          {memories.map((memory, index) => (
+            <section class="question" id={`question-${index}`} data-question-index={index} aria-labelledby={`question-title-${index}`} hidden={index !== 0}>
+              <h2 id={`question-title-${index}`}>{memory.question}</h2>
+              <div class="answers" role="group" aria-labelledby={`question-title-${index}`}>
+                {memory.options.map((option, optionIndex) => (
+                  <button class="answer" type="button" data-option={option.id} aria-pressed="false">
+                    <span class="answer-letter" aria-hidden="true">{String.fromCharCode(65 + optionIndex)}</span>
+                    <span>{option.label}</span>
+                    <svg class="answer-heart" viewBox="0 0 24 24" aria-hidden="true"><use href="#heart" /></svg>
+                    <svg class="answer-retry" viewBox="0 0 24 24" aria-hidden="true"><use href="#retry" /></svg>
+                  </button>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+
+        <nav class="memory-strip" aria-label="Choose a photo">
+          {memories.map((memory, index) => (
+            <button class:list={['memory-thumb', { 'is-current': index === 0 }]} type="button" data-memory-index={index} aria-label={`Photo ${index + 1}`} aria-current={index === 0 ? 'true' : undefined}>
+              <img src={memory.photo} alt="" width="1100" height="733" loading="lazy" draggable="false" />
+              <span class="thumb-complete" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#check" /></svg></span>
+            </button>
+          ))}
+        </nav>
+        <div class="album-ending">
+          <div class="progress-hearts" role="img" aria-label={`0 of ${memories.length} questions answered`}>
+            {memories.map((_, index) => <svg viewBox="0 0 24 24" data-progress-index={index} aria-hidden="true"><use href="#heart" /></svg>)}
+          </div>
+          <button class="round-button reset" type="button" aria-label="Start the quiz again" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#retry" /></svg></button>
+        </div>
+      </section>
+      <div class="sr-only" role="status" aria-live="polite" id="birthday-status"></div>
+    </main>
+
+    <dialog class="photo-dialog" aria-label="Enlarged birthday photo">
+      <button class="round-button dialog-close" type="button" aria-label="Close enlarged photo" autofocus><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6" /></svg></button>
+      <img id="enlarged-photo" alt="" />
+    </dialog>
+    <div class="love-particles" aria-hidden="true"></div>
+    <script id="birthday-data" type="application/json" set:html={JSON.stringify(memories).replace(/</g, '\\u003c')} />
+    <script>
+      import '../../scripts/justyna34';
+    </script>
+  </body>
+</html>
