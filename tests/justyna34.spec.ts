@@ -61,7 +61,7 @@ test('photos enlarge from their position, close with Escape, and support mouse d
   await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.locator('#enlarged-photo')).toHaveAttribute('src', '/justyna34/photos/coast.jpg');
-  await expect(page.getByRole('dialog')).toHaveCSS('padding', '0px');
+  await expect(page.getByRole('dialog')).toHaveCSS('padding', '12px');
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toBeHidden();
   await expect(photo).toBeFocused();
@@ -158,7 +158,7 @@ test('storage fallback, rounded mobile layouts, loaded images, and text contrast
     for (const answer of answers) expect((await answer.boundingBox())!.height).toBeGreaterThanOrEqual(44);
     const surface = currentPhoto(page).locator('button');
     expect(await surface.evaluate((button) => parseFloat(getComputedStyle(button).borderRadius))).toBeGreaterThanOrEqual(22);
-    await expect(surface).toHaveCSS('padding', '0px');
+    await expect(surface).toHaveCSS('padding', width <= 650 ? '9px' : '12px');
     await expect(surface).toHaveCSS('border-top-width', '0px');
     await centered(page, 0);
     await page.screenshot({ path: `test-results/justyna34-${width}.png`, fullPage: true });
@@ -173,11 +173,69 @@ test('storage fallback, rounded mobile layouts, loaded images, and text contrast
       });
       return .2126 * rgb[0] + .7152 * rgb[1] + .0722 * rgb[2];
     };
-    const text = luminance(getComputedStyle(document.documentElement).color);
-    const background = luminance(getComputedStyle(document.documentElement).backgroundColor);
-    const selected = luminance(getComputedStyle(document.querySelector('.answer[aria-pressed="true"]')!).backgroundColor);
-    return { normal: (background + .05) / (text + .05), selected: (selected + .05) / (text + .05) };
+    const ratio = (element: Element) => {
+      const style = getComputedStyle(element);
+      const text = luminance(style.color);
+      const background = luminance(style.backgroundColor);
+      return (Math.max(text, background) + .05) / (Math.min(text, background) + .05);
+    };
+    return {
+      normal: ratio(document.documentElement),
+      selected: ratio(document.querySelector('.answer[aria-pressed="true"]')!),
+      answer: ratio(document.querySelector('.answer[aria-pressed="false"]')!),
+    };
   });
   expect(contrast.normal).toBeGreaterThan(4.5);
   expect(contrast.selected).toBeGreaterThan(4.5);
+  expect(contrast.answer).toBeGreaterThan(4.5);
+});
+
+test('3D balloons animate, fit small screens, and rest when hidden or motion is reduced', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto(route);
+  const balloons = page.locator('#birthday-balloons');
+  await expect(balloons).toHaveAttribute('data-renderer', 'webgl');
+  await expect(balloons).toHaveAttribute('data-motion', 'running');
+  await expect(balloons.locator('canvas')).toHaveCSS('opacity', '1');
+  await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
+  const before = await balloons.screenshot();
+  await page.waitForTimeout(1000);
+  expect((await balloons.screenshot()).equals(before)).toBeFalsy();
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect.poll(() => balloons.locator('canvas').evaluate((canvas) => canvas.getBoundingClientRect().width)).toBe(Math.min(width, 1060));
+    await centered(page, 0);
+    await page.screenshot({ path: `test-results/justyna34-balloons-${width}.png`, fullPage: true });
+    await centered(page, 0);
+  }
+  await page.setViewportSize({ width: 390, height: 400 });
+  await page.locator('.question:visible').scrollIntoViewIfNeeded();
+  await expect(balloons).toHaveAttribute('data-motion', 'paused');
+  await page.evaluate(() => scrollTo(0, 0));
+  await expect(balloons).toHaveAttribute('data-motion', 'running');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(balloons).toHaveAttribute('data-motion', 'reduced');
+  const still = await balloons.screenshot();
+  await page.waitForTimeout(200);
+  expect((await balloons.screenshot()).equals(still)).toBeTruthy();
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await expect(balloons).toHaveAttribute('data-motion', 'running');
+  expect(errors).toEqual([]);
+});
+
+test('balloons keep their illustrated fallback without WebGL, and the quiz remains usable', async ({ page }) => {
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type: string, ...args: any[]) {
+      if (type === 'webgl2') return null;
+      return original.call(this, type as any, ...args);
+    } as typeof original;
+  });
+  await page.goto(route);
+  await expect(page.locator('.balloon-fallback--left')).toBeVisible();
+  await expect(page.locator('.balloon-fallback--right')).toBeVisible();
+  await expect(page.locator('#birthday-balloons')).toHaveAttribute('data-renderer', 'fallback');
+  await page.getByRole('button', { name: 'Answer one' }).click();
+  await centered(page, 1);
 });

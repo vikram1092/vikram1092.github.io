@@ -18,6 +18,7 @@ let answers: Record<string, string> = {};
 let questionAnimations: Animation[] = [];
 let scrollFrame = 0;
 let navigating = false;
+let resizing = false;
 let navigationTimer: ReturnType<typeof setTimeout>;
 let advanceTimer: ReturnType<typeof setTimeout>;
 
@@ -108,6 +109,7 @@ stage.addEventListener('scroll', () => {
   });
 }, { passive: true });
 function settleScroll() {
+  if (resizing) return;
   navigating = false;
   const closest = closestSlot();
   if (closest.dataset.clone) goTo(Number(closest.dataset.photoIndex), false);
@@ -161,7 +163,7 @@ stage.addEventListener('click', (event) => {
 }, true);
 
 // A little physical depth follows the pointer; touch gets a light wash and
-// press response. No idle JavaScript animation loop or device sensors needed.
+// press response. These photo interactions need no idle rendering loop.
 slots.forEach((slot) => {
   const button = slot.querySelector<HTMLButtonElement>('button')!;
   const index = Number(slot.dataset.photoIndex);
@@ -329,10 +331,61 @@ reducedMotion.addEventListener('change', () => {
   });
   document.querySelectorAll('.answer-ripple').forEach((ripple) => ripple.remove());
 });
-let resizeTimer: ReturnType<typeof setTimeout>;
+let resizeFrame = 0;
 window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => goTo(active, false), 100);
+  // Layout itself can emit scroll events. Keep the user's photo selected while
+  // the carousel adapts, then center that same photo at the new width.
+  navigating = true;
+  resizing = true;
+  cancelAnimationFrame(scrollFrame);
+  scrollFrame = 0;
+  clearTimeout(settleTimer);
+  clearTimeout(navigationTimer);
+  cancelAnimationFrame(resizeFrame);
+  goTo(active, false);
+  resizeFrame = requestAnimationFrame(() => {
+    goTo(active, false);
+    resizing = false;
+  });
 });
 renderAnswers();
 goTo(0, false);
+
+// Align the visible ink, rather than the unequal line boxes of the large
+// italic numerals and small words. Recalculate after the local font loads.
+const heading = document.querySelector<HTMLElement>('.birthday-heading h1')!;
+const age = heading.querySelector<HTMLElement>('.title-age')!;
+const textMeasure = document.createElement('canvas').getContext('2d');
+function centerAge() {
+  if (!textMeasure) return;
+  function inkOffset(element: HTMLElement) {
+    const style = getComputedStyle(element);
+    textMeasure!.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    const metrics = textMeasure!.measureText(element.textContent!.trim());
+    return (metrics.fontBoundingBoxAscent - metrics.fontBoundingBoxDescent + metrics.actualBoundingBoxDescent - metrics.actualBoundingBoxAscent) / 2;
+  }
+  const wordOffset = (inkOffset(heading.querySelector<HTMLElement>('.title-happy')!) + inkOffset(heading.querySelector<HTMLElement>('.title-birthday')!)) / 2;
+  const offset = wordOffset - inkOffset(age);
+  if (Number.isFinite(offset)) age.style.setProperty('--age-offset', `${offset.toFixed(2)}px`);
+}
+document.fonts.ready.then(centerAge);
+new ResizeObserver(centerAge).observe(heading);
+
+// The album stays usable while the optional 3D scene loads. Reduced-motion
+// visitors start with the static, matching SVG illustration and no WebGL.
+const balloons = document.querySelector<HTMLElement>('#birthday-balloons')!;
+let loadingBalloons = false;
+async function startBalloons() {
+  if (reducedMotion.matches || loadingBalloons) return;
+  loadingBalloons = true;
+  try {
+    const { mountBalloons } = await import('./justyna34-balloons');
+    if (!reducedMotion.matches) mountBalloons(balloons);
+    else loadingBalloons = false;
+  } catch {
+    balloons.dataset.renderer = 'fallback';
+  }
+}
+balloons.dataset.renderer = 'fallback';
+reducedMotion.addEventListener('change', startBalloons);
+startBalloons();

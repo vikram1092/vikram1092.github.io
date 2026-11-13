@@ -13,8 +13,8 @@
   font-display: swap;
 }
 
-/* Verified Radix Gold + Bronze. Bronze 11 text has >4.5:1 contrast on both
-   the cream ground and the selected-answer background. */
+/* Radix Gold + Bronze foundation with champagne, rose, and sage accents.
+   Page text and filled answer states are checked for >4.5:1 contrast. */
 :root {
   color-scheme: light;
   --cream: #faf9f2;
@@ -22,6 +22,8 @@
   --blush: #f6edea;
   --blush-pressed: #efe4df;
   --bronze-border: #dfcdc5;
+  --rose-fill: #e7d9d3;
+  --frame-fill: linear-gradient(135deg, #e1dccf 0%, #cbc0aa 18%, #b9a88d 48%, #dfcdc5 72%, #cbc0aa 100%);
   --bronze: #7d5e54;
   --bronze-deep: #43302b;
   --ease-soft: cubic-bezier(.22, 1, .36, 1);
@@ -40,29 +42,43 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 .svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
-/* Slow sunlight, with no particles or additional foreground decoration. Only
-   opacity and transforms animate, and these pause offscreen or in a hidden tab. */
+/* Three broad washes drift and crossfade through champagne, rose, and sage.
+   Their colors are fixed; composited opacity and transforms create the shift. */
 .ambient-light { position: fixed; z-index: 0; inset: 0; pointer-events: none; overflow: hidden; }
-.ambient-light > div { position: absolute; width: min(85vw, 1000px); aspect-ratio: 1; border-radius: 50%; opacity: .48; background: radial-gradient(ellipse, #eae6db 0%, transparent 67%); animation: sunlight-drift 24s ease-in-out infinite alternate; }
-.ambient-light > div:first-child { top: -45%; left: -20%; }
-.ambient-light > div:last-child { bottom: -55%; right: -22%; background: radial-gradient(ellipse, #efe4df 0%, transparent 67%); animation-delay: -13s; animation-direction: alternate-reverse; }
-.birthday { position: relative; z-index: 1; min-height: 100svh; padding: clamp(38px, 5.5vh, 64px) 0 max(64px, env(safe-area-inset-bottom)); overflow: clip; }
-.birthday-heading { width: fit-content; max-width: 100%; margin: 0 auto; text-align: center; }
-h1 { display: flex; align-items: center; justify-content: center; gap: .24em; margin: 0; font: 400 clamp(36px, 3.6vw, 52px)/1 'Birthday Serif', Georgia, serif; letter-spacing: -.035em; }
+.ambient-light > div { position: absolute; width: min(110vw, 1450px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(ellipse, #e8d7ad 0%, transparent 67%); opacity: .24; animation: sunlight-drift 22s ease-in-out infinite alternate, color-breathe 30s ease-in-out infinite; }
+.ambient-light > div:nth-child(1) { top: -55%; left: -25%; }
+.ambient-light > div:nth-child(2) { top: 10%; right: -40%; background: radial-gradient(ellipse, #e5c6cd 0%, transparent 67%); animation-delay: -9s, -10s; animation-direction: alternate-reverse, normal; }
+.ambient-light > div:nth-child(3) { bottom: -70%; left: -30%; background: radial-gradient(ellipse, #d2dbc8 0%, transparent 67%); animation-delay: -15s, -20s; }
+.birthday { position: relative; z-index: 1; min-height: 100svh; padding: clamp(18px, 3vh, 36px) 0 max(64px, env(safe-area-inset-bottom)); overflow: clip; }
+.birthday-heading { position: relative; display: grid; place-items: center; width: min(1060px, 100%); height: 200px; margin: 0 auto; text-align: center; }
+h1 { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: .24em; margin: 0; font: 400 clamp(36px, 3.6vw, 52px)/1 'Birthday Serif', Georgia, serif; letter-spacing: -.035em; }
 .title-happy, .title-birthday { display: block; animation: title-arrive 1200ms 120ms var(--ease-soft) both; }
 .title-birthday { animation-delay: 320ms; }
-.title-age { font-size: 3em; font-weight: 400; line-height: .9; letter-spacing: -.065em; padding-right: .04em; animation: title-arrive 1500ms 200ms var(--ease-soft) both; }
-.album { --photo-width: min(58vw, 620px); --photo-gap: 30px; margin: 24px auto 0; }
+.title-age { font-size: 3em; font-weight: 400; line-height: .9; letter-spacing: -.065em; padding-right: .04em; }
+.title-age > span { display: block; translate: 0 var(--age-offset, -.13em); animation: title-arrive 1500ms 200ms var(--ease-soft) both; }
+.birthday-balloons { position: absolute; inset: 0; pointer-events: none; }
+.birthday-balloons canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 700ms; }
+.birthday-balloons.is-ready canvas { opacity: 1; }
+.balloon-fallback { position: absolute; top: 0; width: 145px; height: 200px; stroke: none; transition: opacity 500ms; }
+.balloon-fallback--left { left: 16%; transform: translateX(-50%); }
+.balloon-fallback--right { right: 16%; transform: translateX(50%) scaleX(-1); }
+.birthday-balloons.is-ready .balloon-fallback { opacity: 0; }
+.balloon-string { fill: none; stroke: #978365; stroke-width: 1; opacity: .65; }
+.fallback-balloon { transform-box: fill-box; transform-origin: 50% 100%; animation: balloon-sway 7s ease-in-out infinite alternate; }
+.fallback-balloon--rose { animation-delay: -2s; }
+.fallback-balloon--sage { animation-delay: -4s; }
+.album { --photo-width: min(58vw, 620px); --photo-gap: 30px; margin: 12px auto 0; }
 .photo-stage { display: flex; align-items: center; gap: var(--photo-gap); overflow-x: auto; overflow-y: hidden; padding: 24px max(0px, calc((100% - var(--photo-width)) / 2)) 48px; scroll-snap-type: x mandatory; scroll-padding-inline: max(0px, calc((100% - var(--photo-width)) / 2)); scrollbar-width: none; overscroll-behavior-x: contain; touch-action: pan-x pan-y pinch-zoom; -webkit-overflow-scrolling: touch; animation: photo-arrive 1600ms 100ms var(--ease-soft) both; }
 .photo-stage::-webkit-scrollbar { display: none; }
 .photo-slot { flex: 0 0 var(--photo-width); min-width: 0; scroll-snap-align: center; }
 .photo-drift { animation: photo-float 14s var(--drift-delay, 0s) ease-in-out infinite alternate; }
-.photo-surface { position: relative; display: block; width: 100%; padding: 0; border: 0; border-radius: 30px; background: var(--cream-shade); box-shadow: 0 20px 45px -25px rgb(67 48 43 / 30%); transform: perspective(1100px) translateY(8px) scale(.9); opacity: .68; transition: transform 1000ms var(--ease-soft), opacity 800ms, box-shadow 800ms; }
-.photo-slot.is-current .photo-surface { transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); opacity: 1; box-shadow: 0 24px 50px -26px rgb(67 48 43 / 34%); }
-.photo-window { display: block; position: relative; overflow: hidden; aspect-ratio: 1.5; border-radius: inherit; transform: translateZ(0); }
+.photo-surface { position: relative; display: block; width: 100%; padding: 12px; border: 0; border-radius: 36px; background: var(--frame-fill); box-shadow: inset 0 1px 1px rgb(255 255 255 / 80%), inset 0 -2px 3px rgb(67 48 43 / 18%), 0 20px 45px -25px rgb(67 48 43 / 30%); transform: perspective(1100px) translateY(8px) scale(.9); opacity: .68; transition: transform 1000ms var(--ease-soft), opacity 800ms, box-shadow 800ms; }
+.photo-slot.is-current .photo-surface { transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); opacity: 1; box-shadow: inset 0 1px 1px rgb(255 255 255 / 80%), inset 0 -2px 3px rgb(67 48 43 / 18%), 0 24px 50px -26px rgb(67 48 43 / 34%); }
+.photo-surface::before { content: ''; position: absolute; inset: 4px; border: 1px solid rgb(67 48 43 / 16%); border-radius: 32px; pointer-events: none; box-shadow: 0 1px 0 rgb(255 255 255 / 50%); }
+.photo-window { display: block; position: relative; overflow: hidden; aspect-ratio: 1.5; border-radius: 24px; box-shadow: 0 0 0 1px rgb(67 48 43 / 20%), 0 2px 3px rgb(67 48 43 / 18%); transform: translateZ(0); }
 .photo-window img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--photo-position); animation: photo-breathe 20s ease-in-out infinite alternate paused; transform-origin: 50% 55%; }
 .photo-slot.is-current img { animation-play-state: running; }
-.photo-light { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; opacity: 0; background: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 40%), rgb(255 250 235 / 35%), transparent 65%); mix-blend-mode: soft-light; transition: opacity 800ms; }
+.photo-light { position: absolute; inset: 12px; pointer-events: none; border-radius: 24px; opacity: 0; background: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 40%), rgb(255 250 235 / 35%), transparent 65%); mix-blend-mode: soft-light; transition: opacity 800ms; }
 .photo-slot.is-current .photo-surface.is-touched .photo-light { opacity: .8; }
 .photo-slot.is-current .photo-surface:active { transform: perspective(1100px) scale(.982); transition-duration: 200ms; }
 .photo-surface:active { transform: scale(.88); transition-duration: 200ms; }
@@ -75,52 +91,61 @@ h1 { display: flex; align-items: center; justify-content: center; gap: .24em; ma
 .question { text-align: center; }
 .question h2 { margin: 0 0 24px; font: 400 34px/1.12 'Birthday Serif', Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
 .answers { display: flex; justify-content: center; gap: 10px; }
-.answer { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; flex: 1; min-height: 52px; padding: 14px 28px; overflow: hidden; background: transparent; border: 1px solid var(--bronze-border); border-radius: 999px; font-size: 12px; line-height: 1.5; transition: background 450ms, border-color 450ms, transform 500ms var(--ease-soft), box-shadow 500ms; }
+.answer { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; flex: 1; min-height: 52px; padding: 14px 28px; overflow: hidden; color: var(--bronze-deep); background: var(--rose-fill); border: 0; border-radius: 999px; box-shadow: 0 3px 8px rgb(67 48 43 / 5%); font-size: 12px; line-height: 1.5; transition: background 450ms, border-color 450ms, transform 500ms var(--ease-soft), box-shadow 500ms; }
 .answer-check { position: absolute; right: 13px; width: 15px; height: 15px; opacity: 0; transform: scale(.75); stroke-dasharray: 24; stroke-dashoffset: 24; transition: opacity 350ms, transform 550ms var(--ease-soft), stroke-dashoffset 600ms var(--ease-soft); }
-.answer[aria-pressed='true'] { border-color: var(--bronze); background: var(--blush); }
+.answer[aria-pressed='true'] { color: var(--cream); background: var(--bronze); box-shadow: 0 4px 12px rgb(67 48 43 / 12%); }
 .answer[aria-pressed='true'] .answer-check { opacity: 1; transform: scale(1); stroke-dashoffset: 0; }
-.answer.is-retry { border-style: dashed; background: var(--cream-shade); }
-.answer:active { transform: scale(.97); background: var(--blush-pressed); }
+.answer.is-retry { color: var(--bronze-deep); background: #d8d0bf; }
+.answer:active { transform: scale(.97); }
 .answer-ripple { position: absolute; z-index: -1; width: 24px; height: 24px; border-radius: 50%; background: var(--bronze-border); pointer-events: none; animation: answer-ripple 1100ms var(--ease-soft) both; }
 
-/* The full photo is frameless too. Its opening and closing motions are anchored
+/* The full photo shares the gently rounded champagne frame. Its opening and closing motions are anchored
    to the photograph that was tapped, rather than arriving from nowhere. */
-.photo-dialog { position: fixed; margin: auto; width: fit-content; max-width: calc(100vw - 36px); max-height: calc(100svh - 72px); padding: 0; overflow: visible; border: 0; border-radius: 28px; background: transparent; box-shadow: 0 30px 100px rgb(67 48 43 / 20%); }
+.photo-dialog { position: fixed; margin: auto; width: fit-content; max-width: calc(100vw - 36px); max-height: calc(100svh - 72px); padding: 12px; overflow: visible; border: 0; border-radius: 34px; background: var(--frame-fill); box-shadow: 0 30px 100px rgb(67 48 43 / 20%); }
 .photo-dialog::backdrop { background: rgb(67 48 43 / 38%); backdrop-filter: blur(16px); animation: veil-in 650ms var(--ease-soft); }
 .photo-dialog.is-closing::backdrop { animation: veil-out 420ms var(--ease-soft) both; }
-.photo-dialog > img { display: block; width: auto; height: auto; max-width: min(1100px, calc(100vw - 36px)); max-height: calc(100svh - 72px); object-fit: contain; border-radius: inherit; }
-.round-button { display: grid; place-items: center; width: 44px; height: 44px; padding: 12px; border: 0; border-radius: 50%; background: var(--cream); transition: transform 400ms var(--ease-soft), background 300ms; }
+.photo-dialog > img { display: block; width: auto; height: auto; max-width: min(1100px, calc(100vw - 60px)); max-height: calc(100svh - 96px); object-fit: contain; border-radius: 22px; }
+.round-button { display: grid; place-items: center; width: 44px; height: 44px; padding: 12px; border: 0; border-radius: 50%; color: var(--cream); background: var(--bronze); transition: transform 400ms var(--ease-soft), background 300ms; }
 .round-button svg { width: 20px; height: 20px; }
-.round-button:active { transform: scale(.9); background: var(--blush-pressed); }
-.dialog-close { position: absolute; z-index: 1; top: 12px; right: 12px; box-shadow: 0 2px 12px rgb(67 48 43 / 10%); }
+.round-button:active { transform: scale(.9); background: var(--bronze-deep); }
+.dialog-close { position: absolute; z-index: 1; top: 22px; right: 22px; box-shadow: 0 2px 12px rgb(67 48 43 / 10%); }
 body:has(.photo-dialog[open]) { overflow: hidden; }
-.motion-paused .ambient-light > div, .motion-paused .photo-drift, .motion-paused .photo-window img { animation-play-state: paused !important; }
+.motion-paused .ambient-light > div, .motion-paused .photo-drift, .motion-paused .photo-window img, .motion-paused .fallback-balloon { animation-play-state: paused !important; }
 
 @media (hover: hover) and (pointer: fine) {
   .photo-slot:not(.is-current) .photo-surface:hover { opacity: .95; transform: perspective(1100px) scale(.94); }
   .photo-slot.is-current .photo-surface:hover .photo-light { opacity: .65; }
-  .answer:hover { background: var(--blush); border-color: var(--bronze); transform: translateY(-2px); }
+  .answer:hover { background: var(--bronze-border); transform: translateY(-2px); }
+  .answer[aria-pressed='true']:hover { background: var(--bronze-deep); }
   .round-button:hover { transform: scale(1.06); }
 }
 @media (min-width: 1600px) { .album { --photo-width: 700px; --photo-gap: 44px; } }
 @media (max-width: 650px) {
-  .birthday { padding-top: max(36px, env(safe-area-inset-top)); padding-bottom: max(48px, env(safe-area-inset-bottom)); }
-  h1 { font-size: clamp(24px, 7.5vw, 40px); }
-  .album { --photo-width: min(80vw, 420px); --photo-gap: 12px; margin-top: 28px; }
+  .birthday { padding-top: max(14px, env(safe-area-inset-top)); padding-bottom: max(48px, env(safe-area-inset-bottom)); }
+  .birthday-heading { height: 150px; }
+  h1 { font-size: clamp(23px, 7.2vw, 38px); }
+  .balloon-fallback { top: 12px; width: 65px; height: 125px; }
+  .balloon-fallback--left { left: 11%; }
+  .balloon-fallback--right { right: 11%; }
+  .album { --photo-width: min(80vw, 420px); --photo-gap: 12px; margin-top: 6px; }
   .photo-stage { padding-top: 18px; padding-bottom: 38px; }
-  .photo-surface { border-radius: 26px; }
+  .photo-surface { padding: 9px; border-radius: 32px; }
+  .photo-surface::before { inset: 3px; border-radius: 29px; }
+  .photo-light { inset: 9px; border-radius: 23px; }
   .photo-slot:not(.is-current) .photo-surface { transform: perspective(1100px) translateY(6px) scale(.96); }
   .photo-slot:not(.is-current) .photo-surface:active { transform: scale(.93); }
-  .photo-window { aspect-ratio: 1; }
+  .photo-window { aspect-ratio: 1; border-radius: 23px; }
   .question-space { max-width: 420px; padding: 0 30px; }
   .question h2 { font-size: 29px; margin-bottom: 22px; }
   .answers { flex-direction: column; gap: 10px; }
   .answer { min-height: 52px; font-size: 12px; padding: 14px 38px; }
   .answer-check { right: 20px; }
-  .photo-dialog { border-radius: 22px; }
-  .ambient-light > div { width: 160vw; }
-  .ambient-light > div:first-child { top: -18%; left: -65%; }
-  .ambient-light > div:last-child { bottom: -18%; right: -65%; }
+  .photo-dialog { border-radius: 30px; }
+  .photo-dialog > img { border-radius: 18px; }
+  .ambient-light > div { width: 190vw; }
+  .ambient-light > div:nth-child(1) { top: -20%; left: -70%; }
+  .ambient-light > div:nth-child(2) { top: 15%; right: -85%; }
+  .ambient-light > div:nth-child(3) { bottom: -40%; left: -65%; }
 }
 @media (max-width: 340px) {
   .question-space { padding: 0 24px; }
@@ -129,7 +154,9 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
 @keyframes title-arrive { from { opacity: 0; transform: translateY(12px); filter: blur(3px); } to { opacity: 1; transform: none; filter: blur(0); } }
 @keyframes photo-arrive { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 @keyframes question-arrive { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-@keyframes sunlight-drift { from { transform: translate3d(-5%, -3%, 0) scale(.95); opacity: .35; } to { transform: translate3d(15%, 12%, 0) scale(1.15); opacity: .6; } }
+@keyframes sunlight-drift { from { transform: translate3d(-5%, -3%, 0) scale(.95); } to { transform: translate3d(15%, 12%, 0) scale(1.15); } }
+@keyframes color-breathe { 0%, 100% { opacity: .13; } 50% { opacity: .36; } }
+@keyframes balloon-sway { from { transform: translateY(2px) rotate(-3deg); } to { transform: translateY(-4px) rotate(3deg); } }
 @keyframes photo-float { from { transform: translateY(3px); } to { transform: translateY(-4px); } }
 @keyframes photo-breathe { from { transform: scale(1.025) translate(-.25%, .15%); } to { transform: scale(1.055) translate(.25%, -.35%); } }
 @keyframes answer-ripple { from { opacity: .65; transform: translate(-50%, -50%) scale(0); } to { opacity: 0; transform: translate(-50%, -50%) scale(28); } }

@@ -24,7 +24,7 @@ const photoEntries = [
     <link rel="preload" href="/justyna34/fonts/cormorant-italic.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
-    <div class="ambient-light" aria-hidden="true"><div></div><div></div></div>
+    <div class="ambient-light" aria-hidden="true"><div></div><div></div><div></div></div>
     <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <defs>
         <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7" /></symbol>
@@ -32,7 +32,30 @@ const photoEntries = [
     </svg>
     <main class="birthday" id="birthday" data-revision={birthdayRevision}>
       <header class="birthday-heading">
-        <h1><span class="title-happy">happy</span> <em class="title-age">34</em> <span class="title-birthday">birthday</span></h1>
+        <div class="birthday-balloons" id="birthday-balloons" aria-hidden="true">
+          {['left', 'right'].map((side) => (
+            <svg class={`balloon-fallback balloon-fallback--${side}`} viewBox="0 0 160 220" fill="none">
+              <defs>
+                <radialGradient id={`balloon-gold-${side}`} cx="28%" cy="22%" r="80%"><stop stop-color="#f6e6ba" /><stop offset=".35" stop-color="#d9ba7d" /><stop offset="1" stop-color="#a5804c" /></radialGradient>
+                <radialGradient id={`balloon-rose-${side}`} cx="28%" cy="22%" r="80%"><stop stop-color="#f8dce1" /><stop offset=".35" stop-color="#d8a0ad" /><stop offset="1" stop-color="#aa737d" /></radialGradient>
+                <radialGradient id={`balloon-sage-${side}`} cx="28%" cy="22%" r="80%"><stop stop-color="#e3e8d9" /><stop offset=".35" stop-color="#b1bba3" /><stop offset="1" stop-color="#839078" /></radialGradient>
+              </defs>
+              <g class="fallback-balloon fallback-balloon--gold">
+                <path class="balloon-string" d="M55 103c-15 28 19 51 3 90" />
+                <path fill={`url(#balloon-gold-${side})`} d="M55 103C45 94 21 74 21 47 21 2 87 2 89 47 90 73 67 94 55 103Zm0 0-5 8h10Z" />
+              </g>
+              <g class="fallback-balloon fallback-balloon--rose">
+                <path class="balloon-string" d="M109 124c18 25-16 52-6 79" />
+                <path fill={`url(#balloon-rose-${side})`} d="M109 124c-13-10-34-30-34-57 0-45 66-45 68 0 1 27-22 48-34 57Zm0 0-5 8h10Z" />
+              </g>
+              <g class="fallback-balloon fallback-balloon--sage">
+                <path class="balloon-string" d="M66 151c-8 25 13 43 7 58" />
+                <path fill={`url(#balloon-sage-${side})`} d="M66 151c-10-8-28-25-28-47 0-37 54-37 56 0 0 22-18 40-28 47Zm0 0-4 7h8Z" />
+              </g>
+            </svg>
+          ))}
+        </div>
+        <h1><span class="title-happy">happy</span> <em class="title-age"><span>34</span></em> <span class="title-birthday">birthday</span></h1>
       </header>
 
       <section class="album" aria-label="Photos and birthday questions" aria-roledescription="carousel">
