@@ -6,7 +6,7 @@ test('the album supports answers, revisiting, completion, reload, and replay', a
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(route);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('happy34th birthday');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('happy 34 birthday');
   await expect(page.locator('.question:visible')).toHaveCount(1);
   await expect(page.locator('.photo-slot.is-current:not([data-clone])')).toHaveAttribute('data-photo-index', '0');
   await page.getByRole('button', { name: 'Answer two' }).click();
