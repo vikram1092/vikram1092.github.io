@@ -5,7 +5,6 @@
   font-weight: 400;
   font-display: swap;
 }
-
 @font-face {
   font-family: 'Birthday Serif';
   src: url('/justyna34/fonts/cormorant-italic.woff2') format('woff2');
@@ -14,186 +13,131 @@
   font-display: swap;
 }
 
-/* Radix Colors, Gold + Bronze. Text and focus contrast are checked in the page tests.
-   https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale */
+/* Verified Radix Gold + Bronze. Bronze 11 text has >4.5:1 contrast on both
+   the cream ground and the selected-answer background. */
 :root {
   color-scheme: light;
   --cream: #faf9f2;
-  --paper: #fdfdfc;
   --cream-shade: #f2f0e7;
   --blush: #f6edea;
   --blush-pressed: #efe4df;
   --bronze-border: #dfcdc5;
   --bronze: #7d5e54;
   --bronze-deep: #43302b;
-  --bronze-light: #a18072;
   --ease-soft: cubic-bezier(.22, 1, .36, 1);
   font-family: 'Manrope Variable', sans-serif;
   color: var(--bronze);
   background: var(--cream);
   -webkit-tap-highlight-color: transparent;
 }
-
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 280px; }
-button { color: inherit; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+button { color: inherit; font: inherit; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 button, img { -webkit-user-select: none; user-select: none; }
-button:focus-visible { outline: 2px solid var(--bronze); outline-offset: 5px; }
-button:disabled { cursor: default; }
+button:focus-visible { outline: 2px solid var(--bronze); outline-offset: 6px; }
 [hidden] { display: none !important; }
 svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
-/* A quiet paper ground. The grain is decorative and never overlays text. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: .17;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%237d5e54' opacity='.16' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
-  z-index: -1;
-}
-
-.birthday { min-height: 100svh; padding: 28px 0 max(36px, env(safe-area-inset-bottom)); overflow: clip; }
-.birthday-heading { position: relative; z-index: 1; width: fit-content; max-width: 100%; margin: 0 auto; text-align: center; animation: arrive 1000ms var(--ease-soft) both; }
-.little-heart { width: 44px; height: 44px; display: grid; place-items: center; margin: 0 auto 2px; border: 0; padding: 10px; background: transparent; transition: transform 500ms var(--ease-soft), color 250ms; }
-.little-heart svg { width: 24px; height: 24px; stroke-width: 1.15; transform: rotate(-10deg); transition: fill 250ms, transform 500ms var(--ease-soft); }
-.little-heart:active { transform: scale(.8); }
-.little-heart.is-loved svg { fill: var(--bronze-light); transform: rotate(4deg) scale(1.12); }
+/* Slow sunlight, with no particles or additional foreground decoration. Only
+   opacity and transforms animate, and these pause offscreen or in a hidden tab. */
+.ambient-light { position: fixed; z-index: 0; inset: 0; pointer-events: none; overflow: hidden; }
+.ambient-light > div { position: absolute; width: min(85vw, 1000px); aspect-ratio: 1; border-radius: 50%; opacity: .48; background: radial-gradient(ellipse, #eae6db 0%, transparent 67%); animation: sunlight-drift 24s ease-in-out infinite alternate; }
+.ambient-light > div:first-child { top: -45%; left: -20%; }
+.ambient-light > div:last-child { bottom: -55%; right: -22%; background: radial-gradient(ellipse, #efe4df 0%, transparent 67%); animation-delay: -13s; animation-direction: alternate-reverse; }
+.birthday { position: relative; z-index: 1; min-height: 100svh; padding: clamp(38px, 5.5vh, 64px) 0 max(64px, env(safe-area-inset-bottom)); overflow: clip; }
+.birthday-heading { width: fit-content; max-width: 100%; margin: 0 auto; text-align: center; }
 h1 { display: flex; align-items: center; justify-content: center; gap: .24em; margin: 0; font: 400 clamp(36px, 3.6vw, 52px)/1 'Birthday Serif', Georgia, serif; letter-spacing: -.035em; }
-.title-happy, .title-birthday { display: block; }
-.title-age { font-size: 3em; font-weight: 400; line-height: .9; letter-spacing: -.065em; padding-right: .04em; }
-.title-flourish { display: block; width: 170px; height: 16px; margin: 10px auto 0; stroke: var(--bronze-light); stroke-width: .75; opacity: .6; }
-.album { --print-width: 420px; --print-gap: 34px; position: relative; margin: 12px auto 0; }
-.photo-stage { display: flex; align-items: center; gap: var(--print-gap); overflow-x: auto; overflow-y: hidden; padding: 34px max(0px, calc((100% - var(--print-width)) / 2)) 40px; scroll-snap-type: x mandatory; scroll-padding-inline: max(0px, calc((100% - var(--print-width)) / 2)); scrollbar-width: none; overscroll-behavior-x: contain; touch-action: pan-x pan-y pinch-zoom; -webkit-overflow-scrolling: touch; animation: album-arrive 1200ms var(--ease-soft) both; }
+.title-happy, .title-birthday { display: block; animation: title-arrive 1200ms 120ms var(--ease-soft) both; }
+.title-birthday { animation-delay: 320ms; }
+.title-age { font-size: 3em; font-weight: 400; line-height: .9; letter-spacing: -.065em; padding-right: .04em; animation: title-arrive 1500ms 200ms var(--ease-soft) both; }
+.album { --photo-width: min(58vw, 620px); --photo-gap: 30px; margin: 24px auto 0; }
+.photo-stage { display: flex; align-items: center; gap: var(--photo-gap); overflow-x: auto; overflow-y: hidden; padding: 24px max(0px, calc((100% - var(--photo-width)) / 2)) 48px; scroll-snap-type: x mandatory; scroll-padding-inline: max(0px, calc((100% - var(--photo-width)) / 2)); scrollbar-width: none; overscroll-behavior-x: contain; touch-action: pan-x pan-y pinch-zoom; -webkit-overflow-scrolling: touch; animation: photo-arrive 1600ms 100ms var(--ease-soft) both; }
 .photo-stage::-webkit-scrollbar { display: none; }
-.photo-slot { flex: 0 0 var(--print-width); min-width: 0; scroll-snap-align: center; }
-.photo-print { display: block; width: 100%; position: relative; padding: 14px 14px 0; border: 1px solid rgb(67 48 43 / 7%); background: var(--paper); transform: rotate(var(--print-turn)) scale(.9); box-shadow: 0 3px 5px rgb(67 48 43 / 5%), 0 12px 25px -12px rgb(67 48 43 / 22%); transition: transform 700ms var(--ease-soft), box-shadow 500ms, filter 500ms; }
-.photo-slot.is-current .photo-print { transform: rotate(-2deg); box-shadow: 0 4px 6px rgb(67 48 43 / 5%), 0 18px 34px -13px rgb(67 48 43 / 27%); }
-.photo-print::before { content: ''; position: absolute; z-index: 2; width: 100px; height: 27px; left: calc(50% - 50px); top: -13px; transform: rotate(4deg); background: rgb(216 208 191 / 57%); backdrop-filter: blur(3px); clip-path: polygon(2% 0, 98% 2%, 96% 14%, 100% 23%, 97% 34%, 100% 44%, 97% 59%, 100% 68%, 96% 83%, 99% 98%, 0 100%, 2% 85%, 0 74%, 3% 62%, 0 48%, 3% 38%, 0 25%, 3% 13%); }
-.photo-window { display: block; position: relative; overflow: hidden; aspect-ratio: 1.33; background: var(--cream-shade); }
-.photo-window::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 30px rgb(67 48 43 / 5%); pointer-events: none; }
-.photo-window img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--photo-position); transition: transform 1100ms var(--ease-soft); }
-.print-footer { display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 5px; font-size: 10px; letter-spacing: .12em; }
-.print-footer svg { width: 25px; height: 25px; stroke-width: 1; transform: rotate(12deg); }
-.photo-zoom { position: absolute; right: 10px; bottom: 10px; width: 30px; height: 30px; display: grid; place-items: center; background: var(--paper); border-radius: 50%; opacity: 0; transform: translateY(5px); transition: opacity 300ms, transform 400ms; }
-.photo-zoom svg { width: 17px; height: 17px; }
-.photo-slot.is-current .photo-print:active { transform: rotate(-1deg) scale(.975); }
-.photo-print:active { transform: rotate(0deg) scale(.87); }
+.photo-slot { flex: 0 0 var(--photo-width); min-width: 0; scroll-snap-align: center; }
+.photo-drift { animation: photo-float 14s var(--drift-delay, 0s) ease-in-out infinite alternate; }
+.photo-surface { position: relative; display: block; width: 100%; padding: 0; border: 0; border-radius: 30px; background: var(--cream-shade); box-shadow: 0 20px 45px -25px rgb(67 48 43 / 30%); transform: perspective(1100px) translateY(8px) scale(.9); opacity: .68; transition: transform 1000ms var(--ease-soft), opacity 800ms, box-shadow 800ms; }
+.photo-slot.is-current .photo-surface { transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); opacity: 1; box-shadow: 0 24px 50px -26px rgb(67 48 43 / 34%); }
+.photo-window { display: block; position: relative; overflow: hidden; aspect-ratio: 1.5; border-radius: inherit; transform: translateZ(0); }
+.photo-window img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--photo-position); animation: photo-breathe 20s ease-in-out infinite alternate paused; transform-origin: 50% 55%; }
+.photo-slot.is-current img { animation-play-state: running; }
+.photo-light { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; opacity: 0; background: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 40%), rgb(255 250 235 / 35%), transparent 65%); mix-blend-mode: soft-light; transition: opacity 800ms; }
+.photo-slot.is-current .photo-surface.is-touched .photo-light { opacity: .8; }
+.photo-slot.is-current .photo-surface:active { transform: perspective(1100px) scale(.982); transition-duration: 200ms; }
+.photo-surface:active { transform: scale(.88); transition-duration: 200ms; }
 .photo-stage.is-dragging { scroll-snap-type: none; cursor: grabbing; }
-.photo-stage.is-dragging .photo-print { cursor: grabbing; }
+.photo-stage.is-dragging .photo-surface { cursor: grabbing; }
+.photo-stage.is-dragging .photo-drift { animation-play-state: paused; }
+.photo-slot.is-expanded .photo-surface { opacity: .22; }
 
-.album-controls { display: flex; align-items: center; justify-content: center; gap: 27px; margin: -3px 0 14px; animation: arrive 1000ms 150ms var(--ease-soft) both; }
-.round-button { width: 44px; height: 44px; display: grid; place-items: center; padding: 11px; flex: 0 0 auto; border: 1px solid var(--bronze-border); background: transparent; border-radius: 50%; transition: transform 350ms var(--ease-soft), background 250ms, border-color 250ms, opacity 250ms; }
-.round-button svg { width: 20px; height: 20px; }
-.round-button.previous svg { transform: rotate(180deg); }
-.round-button:active:not(:disabled) { transform: scale(.88); background: var(--blush-pressed); }
-.round-button:disabled { opacity: .3; }
-.photo-count { display: flex; align-items: center; gap: 13px; font-size: 10px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: .08em; }
-.count-line { width: 32px; height: 1px; background: var(--bronze-border); }
-.question-space { max-width: 570px; padding: 0 24px; margin: 0 auto; animation: arrive 1000ms 250ms var(--ease-soft) both; }
+.question-space { max-width: 600px; padding: 0 24px; margin: 0 auto; animation: question-arrive 1200ms 450ms var(--ease-soft) both; }
 .question { text-align: center; }
-.question h2 { margin: 0 0 20px; font: 400 32px/1.12 'Birthday Serif', Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
+.question h2 { margin: 0 0 24px; font: 400 34px/1.12 'Birthday Serif', Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
 .answers { display: flex; justify-content: center; gap: 10px; }
-.answer { position: relative; display: flex; align-items: center; justify-content: center; gap: 10px; flex: 1; min-height: 49px; padding: 12px 15px; background: transparent; border: 1px solid var(--bronze-border); border-radius: 6px; font-size: 12px; line-height: 1.5; transition: background 250ms, border-color 250ms, transform 350ms var(--ease-soft), box-shadow 300ms; }
-.answer-letter { font-size: 9px; }
-.answer-heart, .answer-retry { width: 17px; height: 17px; flex: 0 0 17px; display: none; }
-.answer-heart { fill: currentColor; stroke-width: 1; }
-.answer[aria-pressed='true'] { border-color: var(--bronze); background: var(--blush); box-shadow: 0 3px 8px rgb(67 48 43 / 4%); }
-.answer[aria-pressed='true'] .answer-heart { display: block; animation: heart-pop 550ms var(--ease-soft); }
-.answer[aria-pressed='true'] .answer-letter, .answer.is-retry .answer-letter { display: none; }
-.answer.is-retry { background: var(--cream-shade); border-style: dashed; }
-.answer.is-retry .answer-retry { display: block; }
-.answer:active { transform: scale(.96); background: var(--blush-pressed); }
-.memory-strip { display: flex; align-items: center; justify-content: center; gap: 12px; max-width: 100%; overflow-x: auto; padding: 14px 16px 12px; margin: 29px auto 0; scrollbar-width: none; animation: arrive 1000ms 350ms var(--ease-soft) both; }
-.memory-thumb { position: relative; flex: 0 0 54px; height: 62px; padding: 4px 4px 10px; border: 1px solid rgb(67 48 43 / 8%); background: var(--paper); transform: rotate(-5deg); box-shadow: 0 2px 5px rgb(67 48 43 / 10%); transition: transform 450ms var(--ease-soft), box-shadow 300ms; }
-.memory-thumb:nth-child(even) { transform: rotate(5deg); }
-.memory-thumb img { width: 100%; height: 100%; display: block; object-fit: cover; }
-.memory-thumb.is-current { transform: translateY(-5px) rotate(0); box-shadow: 0 4px 10px rgb(67 48 43 / 14%); outline: 1px solid var(--bronze); outline-offset: 3px; }
-.memory-thumb:active { transform: translateY(0) rotate(0) scale(.91); }
-.thumb-complete { position: absolute; width: 18px; height: 18px; right: -6px; bottom: -6px; display: grid; place-items: center; background: var(--bronze); color: var(--paper); border-radius: 50%; opacity: 0; transform: scale(.4); transition: opacity 250ms, transform 500ms var(--ease-soft); }
-.thumb-complete svg { width: 12px; height: 12px; stroke-width: 2; }
-.memory-thumb.is-answered .thumb-complete { opacity: 1; transform: scale(1); }
-.album-ending { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 13px; }
-.progress-hearts { display: flex; gap: 10px; }
-.progress-hearts svg { width: 11px; height: 11px; stroke: var(--bronze-light); stroke-width: 1; transition: fill 400ms, transform 500ms var(--ease-soft); }
-.progress-hearts svg.is-filled { fill: var(--bronze-light); transform: scale(1.13); }
-.reset { width: 38px; height: 38px; padding: 8px; animation: arrive 700ms var(--ease-soft) both; }
-.reset svg { width: 17px; height: 17px; }
-.is-complete .progress-hearts svg { animation: heart-pop 650ms var(--ease-soft); }
+.answer { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; flex: 1; min-height: 52px; padding: 14px 28px; overflow: hidden; background: transparent; border: 1px solid var(--bronze-border); border-radius: 999px; font-size: 12px; line-height: 1.5; transition: background 450ms, border-color 450ms, transform 500ms var(--ease-soft), box-shadow 500ms; }
+.answer-check { position: absolute; right: 13px; width: 15px; height: 15px; opacity: 0; transform: scale(.75); stroke-dasharray: 24; stroke-dashoffset: 24; transition: opacity 350ms, transform 550ms var(--ease-soft), stroke-dashoffset 600ms var(--ease-soft); }
+.answer[aria-pressed='true'] { border-color: var(--bronze); background: var(--blush); }
+.answer[aria-pressed='true'] .answer-check { opacity: 1; transform: scale(1); stroke-dashoffset: 0; }
+.answer.is-retry { border-style: dashed; background: var(--cream-shade); }
+.answer:active { transform: scale(.97); background: var(--blush-pressed); }
+.answer-ripple { position: absolute; z-index: -1; width: 24px; height: 24px; border-radius: 50%; background: var(--bronze-border); pointer-events: none; animation: answer-ripple 1100ms var(--ease-soft) both; }
 
-.photo-dialog { position: fixed; margin: auto; width: fit-content; max-width: calc(100vw - 36px); max-height: calc(100svh - 100px); padding: 10px; overflow: visible; border: 0; background: var(--paper); box-shadow: 0 30px 100px rgb(67 48 43 / 20%); }
-.photo-dialog[open] { animation: photo-open 450ms var(--ease-soft); }
-.photo-dialog::backdrop { background: rgb(67 48 43 / 40%); backdrop-filter: blur(12px); }
-.photo-dialog > img { display: block; width: auto; height: auto; max-width: min(1000px, calc(100vw - 56px)); max-height: calc(100svh - 120px); object-fit: contain; }
-.dialog-close { position: absolute; top: -52px; right: -2px; background: var(--cream); border-color: var(--cream); }
+/* The full photo is frameless too. Its opening and closing motions are anchored
+   to the photograph that was tapped, rather than arriving from nowhere. */
+.photo-dialog { position: fixed; margin: auto; width: fit-content; max-width: calc(100vw - 36px); max-height: calc(100svh - 72px); padding: 0; overflow: visible; border: 0; border-radius: 28px; background: transparent; box-shadow: 0 30px 100px rgb(67 48 43 / 20%); }
+.photo-dialog::backdrop { background: rgb(67 48 43 / 38%); backdrop-filter: blur(16px); animation: veil-in 650ms var(--ease-soft); }
+.photo-dialog.is-closing::backdrop { animation: veil-out 420ms var(--ease-soft) both; }
+.photo-dialog > img { display: block; width: auto; height: auto; max-width: min(1100px, calc(100vw - 36px)); max-height: calc(100svh - 72px); object-fit: contain; border-radius: inherit; }
+.round-button { display: grid; place-items: center; width: 44px; height: 44px; padding: 12px; border: 0; border-radius: 50%; background: var(--cream); transition: transform 400ms var(--ease-soft), background 300ms; }
+.round-button svg { width: 20px; height: 20px; }
+.round-button:active { transform: scale(.9); background: var(--blush-pressed); }
+.dialog-close { position: absolute; z-index: 1; top: 12px; right: 12px; box-shadow: 0 2px 12px rgb(67 48 43 / 10%); }
 body:has(.photo-dialog[open]) { overflow: hidden; }
-.love-particles { position: fixed; z-index: 10; inset: 0; pointer-events: none; overflow: hidden; }
-.love-particle { position: absolute; width: 14px; height: 14px; color: var(--bronze-light); fill: currentColor; stroke-width: 0; animation: love-rise var(--duration, 1000ms) var(--delay, 0ms) var(--ease-soft) both; }
+.motion-paused .ambient-light > div, .motion-paused .photo-drift, .motion-paused .photo-window img { animation-play-state: paused !important; }
 
 @media (hover: hover) and (pointer: fine) {
-  .little-heart:hover { transform: rotate(9deg) scale(1.12); }
-  .photo-slot.is-current .photo-print:hover { transform: rotate(-1deg) translateY(-5px); box-shadow: 0 6px 10px rgb(67 48 43 / 5%), 0 25px 38px -15px rgb(67 48 43 / 25%); }
-  .photo-print:hover img { transform: scale(1.025); }
-  .photo-print:hover .photo-zoom, .photo-print:focus-visible .photo-zoom { opacity: 1; transform: translateY(0); }
-  .photo-slot:not(.is-current) .photo-print:hover { transform: rotate(0deg) scale(.93) translateY(-4px); }
-  .round-button:hover:not(:disabled), .answer:hover { background: var(--blush); border-color: var(--bronze-light); }
-  .round-button:hover:not(:disabled) { transform: translateY(-2px); }
-  .answer:hover { transform: translateY(-2px); }
-  .memory-thumb:hover { transform: translateY(-7px) rotate(0); }
+  .photo-slot:not(.is-current) .photo-surface:hover { opacity: .95; transform: perspective(1100px) scale(.94); }
+  .photo-slot.is-current .photo-surface:hover .photo-light { opacity: .65; }
+  .answer:hover { background: var(--blush); border-color: var(--bronze); transform: translateY(-2px); }
+  .round-button:hover { transform: scale(1.06); }
 }
-
-@media (min-width: 1500px) {
-  .album { --print-width: 460px; --print-gap: 52px; }
-  .birthday { padding-top: 40px; }
-}
-
+@media (min-width: 1600px) { .album { --photo-width: 700px; --photo-gap: 44px; } }
 @media (max-width: 650px) {
-  .birthday { padding-top: max(17px, env(safe-area-inset-top)); padding-bottom: max(26px, env(safe-area-inset-bottom)); }
-  .little-heart { margin-bottom: 0; }
+  .birthday { padding-top: max(36px, env(safe-area-inset-top)); padding-bottom: max(48px, env(safe-area-inset-bottom)); }
   h1 { font-size: clamp(24px, 7.5vw, 40px); }
-  .title-flourish { width: 130px; margin-top: 8px; }
-  .album { --print-width: min(76vw, 340px); --print-gap: 17px; margin-top: 7px; }
-  .photo-stage { padding-top: 25px; padding-bottom: 27px; }
-  .photo-print { padding: 10px 10px 0; }
-  .photo-print::before { width: 78px; height: 23px; left: calc(50% - 39px); top: -11px; }
-  .photo-window { aspect-ratio: 1.03; }
-  .print-footer { height: 41px; padding: 0 3px; }
-  .print-footer svg { width: 23px; height: 23px; }
-  .photo-slot.is-current .photo-zoom { opacity: 1; transform: none; }
-  .album-controls { gap: 25px; margin: 0 0 18px; }
-  .question-space { max-width: 390px; padding: 0 28px; }
-  .question h2 { font-size: 28px; margin-bottom: 18px; }
-  .answers { flex-direction: column; gap: 9px; }
-  .answer { justify-content: flex-start; padding: 12px 17px; min-height: 47px; font-size: 12px; gap: 17px; border-radius: 5px; }
-  .answer-letter { width: 17px; text-align: center; }
-  .answer-heart, .answer-retry { margin-left: auto; }
-  .answer[aria-pressed='true'] .answer-letter, .answer.is-retry .answer-letter { display: block; }
-  .memory-strip { gap: 11px; margin-top: 22px; }
-  .memory-thumb { flex-basis: 46px; height: 54px; padding: 3px 3px 8px; }
-  .album-ending { margin-top: 12px; }
+  .album { --photo-width: min(80vw, 420px); --photo-gap: 12px; margin-top: 28px; }
+  .photo-stage { padding-top: 18px; padding-bottom: 38px; }
+  .photo-surface { border-radius: 26px; }
+  .photo-slot:not(.is-current) .photo-surface { transform: perspective(1100px) translateY(6px) scale(.96); }
+  .photo-slot:not(.is-current) .photo-surface:active { transform: scale(.93); }
+  .photo-window { aspect-ratio: 1; }
+  .question-space { max-width: 420px; padding: 0 30px; }
+  .question h2 { font-size: 29px; margin-bottom: 22px; }
+  .answers { flex-direction: column; gap: 10px; }
+  .answer { min-height: 52px; font-size: 12px; padding: 14px 38px; }
+  .answer-check { right: 20px; }
+  .photo-dialog { border-radius: 22px; }
+  .ambient-light > div { width: 160vw; }
+  .ambient-light > div:first-child { top: -18%; left: -65%; }
+  .ambient-light > div:last-child { bottom: -18%; right: -65%; }
 }
-
 @media (max-width: 340px) {
-  .memory-strip { gap: 8px; }
-  .memory-thumb { flex-basis: 40px; height: 48px; }
-  .question-space { padding: 0 22px; }
-  .question h2 { font-size: 25px; }
+  .question-space { padding: 0 24px; }
+  .question h2 { font-size: 26px; }
 }
-
-@keyframes arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes album-arrive { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
-@keyframes heart-pop { 0% { transform: scale(.7); } 50% { transform: scale(1.25); } 100% { transform: scale(1); } }
-@keyframes photo-open { from { opacity: 0; transform: scale(.93) translateY(12px); } to { opacity: 1; transform: none; } }
-@keyframes love-rise {
-  0% { opacity: 0; transform: translate(0, 0) scale(.5) rotate(0); }
-  15% { opacity: .9; }
-  100% { opacity: 0; transform: translate(var(--drift, 0px), var(--rise, -110px)) scale(var(--size, 1)) rotate(var(--turn, 20deg)); }
-}
-
+@keyframes title-arrive { from { opacity: 0; transform: translateY(12px); filter: blur(3px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes photo-arrive { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+@keyframes question-arrive { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes sunlight-drift { from { transform: translate3d(-5%, -3%, 0) scale(.95); opacity: .35; } to { transform: translate3d(15%, 12%, 0) scale(1.15); opacity: .6; } }
+@keyframes photo-float { from { transform: translateY(3px); } to { transform: translateY(-4px); } }
+@keyframes photo-breathe { from { transform: scale(1.025) translate(-.25%, .15%); } to { transform: scale(1.055) translate(.25%, -.35%); } }
+@keyframes answer-ripple { from { opacity: .65; transform: translate(-50%, -50%) scale(0); } to { opacity: 0; transform: translate(-50%, -50%) scale(28); } }
+@keyframes veil-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes veil-out { from { opacity: 1; } to { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
-  .love-particles { display: none; }
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  .photo-window img { transform: none; }
+  .photo-drift, .photo-slot.is-current .photo-surface { transform: none; }
+  .photo-light { display: none; }
 }

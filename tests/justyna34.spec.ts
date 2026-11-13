@@ -1,67 +1,85 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 const route = '/justyna34/';
+const currentPhoto = (page: Page) => page.locator('.photo-slot.is-current:not([data-clone])');
+async function centered(page: Page, index: number) {
+  await expect(page.locator(`#question-${index}`)).toBeVisible();
+  await expect.poll(() => page.locator(`.photo-slot:not([data-clone])[data-photo-index="${index}"]`).evaluate((slot) => {
+    const box = slot.getBoundingClientRect();
+    return Math.abs(box.left + box.width / 2 - innerWidth / 2);
+  })).toBeLessThan(2);
+}
 
-test('the album supports answers, revisiting, completion, reload, and replay', async ({ page }) => {
+test('minimal album advances after an answer, remembers revisited answers, and completes', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(route);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('happy 34 birthday');
   await expect(page.locator('.question:visible')).toHaveCount(1);
-  await expect(page.locator('.photo-slot.is-current:not([data-clone])')).toHaveAttribute('data-photo-index', '0');
+  await expect(currentPhoto(page)).toHaveAttribute('data-photo-index', '0');
+  await expect(page.locator('.album-controls, .memory-strip, .print-footer, .little-heart, .progress-hearts, .love-particles')).toHaveCount(0);
   await page.getByRole('button', { name: 'Answer two' }).click();
   await expect(page.getByRole('button', { name: 'Answer two' })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByRole('img', { name: '1 of 5 questions answered' })).toBeVisible();
-  await page.getByRole('button', { name: 'Next photo', exact: true }).click();
-  await expect(page.locator('#question-1')).toBeVisible();
-  await page.getByRole('button', { name: 'Previous photo', exact: true }).click();
+  await expect(page.locator('#question-1')).toBeVisible({ timeout: 4000 });
+  await page.keyboard.press('ArrowLeft');
   await expect(page.getByRole('button', { name: 'Answer two' })).toHaveAttribute('aria-pressed', 'true');
+  await page.keyboard.press('ArrowRight');
   for (let index = 1; index < 5; index++) {
-    await page.locator(`[data-memory-index="${index}"]`).click();
-    await expect(page.locator(`#question-${index}`)).toBeVisible();
+    await centered(page, index);
     await page.getByRole('button', { name: 'Answer one' }).click();
+    if (index < 4) await expect(page.locator(`#question-${index + 1}`)).toBeVisible({ timeout: 4000 });
   }
-  await expect(page.getByRole('img', { name: '5 of 5 questions answered' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Start the quiz again' })).toBeVisible();
+  await expect(page.locator('#birthday')).toHaveClass(/is-complete/);
+  await expect(page.getByRole('status')).toHaveText('All memories answered. Happy birthday, Justyna!');
+  await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(5);
   await page.reload();
-  await expect(page.getByRole('img', { name: '5 of 5 questions answered' })).toBeVisible();
-  await page.getByRole('button', { name: 'Start the quiz again' }).click();
-  await expect(page.getByRole('img', { name: '0 of 5 questions answered' })).toBeVisible();
-  await expect(page.locator('#question-0')).toBeVisible();
-  await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(0);
+  await expect(page.locator('#birthday')).toHaveClass(/is-complete/);
+  await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(5);
   expect(errors).toEqual([]);
 });
 
-test('photos enlarge, close with Escape, and navigate by keyboard or mouse drag', async ({ page }) => {
+test('manual navigation cancels an answer advance and neighboring photos remain tappable', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(route);
+  await page.getByRole('button', { name: 'Answer one' }).click();
+  await page.keyboard.press('ArrowLeft');
+  await centered(page, 4);
+  // Longer than the answer's deliberate pause: the user's chosen photo must remain.
+  await page.waitForTimeout(1600);
+  await expect(page.locator('#question-4')).toBeVisible();
+  const neighbor = page.locator('.photo-slot[data-clone][data-photo-index="0"] button');
+  await neighbor.click();
+  await centered(page, 0);
+});
+
+test('photos enlarge from their position, close with Escape, and support mouse drag', async ({ page }) => {
+  await page.goto(route);
+  await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
   const photo = page.locator('.photo-slot:not([data-clone])').first().getByRole('button');
-  await photo.click();
+  // The photo has slow ambient motion: click the visual center, as a user does.
+  let bounds = (await photo.boundingBox())!;
+  await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.locator('#enlarged-photo')).toHaveAttribute('src', '/justyna34/photos/coast.jpg');
+  await expect(page.getByRole('dialog')).toHaveCSS('padding', '0px');
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toBeHidden();
   await expect(photo).toBeFocused();
-  await page.keyboard.press('ArrowRight');
-  await expect(page.locator('#question-1')).toBeVisible();
-  await page.keyboard.press('ArrowLeft');
-  await expect(page.locator('#question-0')).toBeVisible();
-  await expect.poll(async () => {
-    const stage = await page.locator('#photo-stage').boundingBox();
-    const box = await page.locator('.photo-slot:not([data-clone])').first().boundingBox();
-    return Math.abs(box!.x + box!.width / 2 - (stage!.x + stage!.width / 2));
-  }).toBeLessThan(2);
-  const bounds = await photo.boundingBox();
-  await page.mouse.move(bounds!.x + bounds!.width * .8, bounds!.y + 130);
+  await centered(page, 0);
+  bounds = (await photo.boundingBox())!;
+  await page.mouse.move(bounds.x + bounds.width * .8, bounds.y + 130);
   await page.mouse.down();
-  await page.mouse.move(bounds!.x - 120, bounds!.y + 133, { steps: 16 });
+  await page.mouse.move(bounds.x - 180, bounds.y + 133, { steps: 20 });
   await page.mouse.up();
-  await expect(page.locator('#question-1')).toBeVisible();
+  await centered(page, 1);
   await expect(page.getByRole('dialog')).toBeHidden();
 });
 
-test('real touch swipes move memories, loop at the end, and preserve vertical scrolling', async ({ browser }) => {
-  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 1 });
+test('real touch swipes navigate and loop, while vertical scrolling still works', async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 390, height: 700 }, hasTouch: true, isMobile: true, deviceScaleFactor: 1 });
   const page = await context.newPage();
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(`http://127.0.0.1:4321${route}`);
   await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
   const touch = await context.newCDPSession(page);
@@ -72,29 +90,22 @@ test('real touch swipes move memories, loop at the end, and preserve vertical sc
     }
     await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   }
-  await swipe([325, 360], [65, 365]);
-  await expect(page.locator('#question-1')).toBeVisible();
-  await page.locator('[data-memory-index="4"]').tap();
-  await expect(page.locator('#question-4')).toBeVisible();
-  // Wait for the programmatic slide before starting a fresh gesture.
-  await expect.poll(() => page.locator('.photo-slot:not([data-clone])').last().evaluate((slot) => {
-    const box = slot.getBoundingClientRect();
-    return Math.abs(box.left + box.width / 2 - innerWidth / 2);
-  })).toBeLessThan(2);
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await swipe([325, 360], [65, 365]);
-  await expect(page.locator('#question-0')).toBeVisible();
-  await expect.poll(() => page.locator('.photo-slot:not([data-clone])').first().evaluate((slot) => {
-    const box = slot.getBoundingClientRect();
-    return Math.abs(box.left + box.width / 2 - innerWidth / 2);
-  })).toBeLessThan(2);
-  await swipe([190, 470], [190, 210]);
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(50);
+  await swipe([330, 320], [60, 325]);
+  await centered(page, 1);
+  await swipe([60, 320], [330, 325]);
+  await centered(page, 0);
+  await swipe([60, 320], [330, 325]);
+  await centered(page, 4);
+  await swipe([330, 320], [60, 325]);
+  await centered(page, 0);
+  await swipe([190, 450], [190, 210]);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(30);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
+  expect(errors).toEqual([]);
   await context.close();
 });
 
-test('configured correct answers allow gentle retries without awarding progress', async ({ page }) => {
+test('incorrect answers invite a retry and do not advance or save progress', async ({ page }) => {
   await page.route('**/justyna34/', async (request) => {
     const response = await request.fetch();
     const body = (await response.text()).replace('"id":"memory-01",', '"id":"memory-01","correctOption":"b",');
@@ -103,33 +114,57 @@ test('configured correct answers allow gentle retries without awarding progress'
   await page.goto(route);
   await page.getByRole('button', { name: 'Answer one' }).click();
   await expect(page.getByRole('button', { name: 'Answer one' })).toHaveClass(/is-retry/);
-  await expect(page.getByRole('img', { name: '0 of 5 questions answered' })).toBeVisible();
+  await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(0);
   await expect(page.getByRole('status')).toHaveText('Give it another try.');
+  await page.waitForTimeout(1500);
+  await expect(page.locator('#question-0')).toBeVisible();
   await page.getByRole('button', { name: 'Answer two' }).click();
-  await expect(page.getByRole('img', { name: '1 of 5 questions answered' })).toBeVisible();
   await expect(page.locator('.is-retry')).toHaveCount(0);
+  await expect(page.locator('#question-1')).toBeVisible({ timeout: 4000 });
 });
 
-test('reduced motion, unavailable storage, responsive layouts, assets, and text contrast', async ({ page }) => {
+test('motion responds to the pointer, and stops when reduced motion is requested', async ({ page }) => {
+  await page.goto(route);
+  await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
+  const photo = currentPhoto(page).locator('button');
+  const bounds = (await photo.boundingBox())!;
+  await page.mouse.move(bounds.x + bounds.width * .8, bounds.y + bounds.height * .3);
+  await expect.poll(() => photo.evaluate((button) => button.style.getPropertyValue('--tilt-y'))).not.toBe('');
+  const animated = await page.evaluate(() => document.getAnimations().some((a) => a.playState === 'running' && a instanceof CSSAnimation && a.animationName === 'photo-breathe'));
+  expect(animated).toBeTruthy();
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect.poll(() => page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length)).toBe(0);
+  await expect(photo).toHaveCSS('transform', 'none');
+  await photo.click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.getByRole('button', { name: 'Close enlarged photo' }).click();
+  await expect(page.getByRole('dialog')).toBeHidden();
+});
+
+test('storage fallback, rounded mobile layouts, loaded images, and text contrast', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.addInitScript(() => {
     Object.defineProperty(window, 'localStorage', { get() { throw new Error('Storage unavailable'); } });
   });
   await page.goto(route);
   await page.getByRole('button', { name: 'Answer one' }).click();
-  await expect(page.getByRole('img', { name: '1 of 5 questions answered' })).toBeVisible();
-  await expect(page.locator('.love-particle')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Send a little love' }).click();
-  await expect(page.locator('.love-particle')).toHaveCount(0);
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.getByRole('button', { name: 'Answer one' })).toHaveAttribute('aria-pressed', 'true');
   for (const width of [320, 390, 768, 1440]) {
-    await page.setViewportSize({ width, height: 1000 });
+    await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
     const answers = await page.locator('.question:visible .answer').all();
     for (const answer of answers) expect((await answer.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    const surface = currentPhoto(page).locator('button');
+    expect(await surface.evaluate((button) => parseFloat(getComputedStyle(button).borderRadius))).toBeGreaterThanOrEqual(22);
+    await expect(surface).toHaveCSS('padding', '0px');
+    await expect(surface).toHaveCSS('border-top-width', '0px');
+    await centered(page, 0);
     await page.screenshot({ path: `test-results/justyna34-${width}.png`, fullPage: true });
   }
-  const images = await page.locator('.memory-thumb img').evaluateAll((images) => images.every((image) => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0));
-  expect(images).toBeTruthy();
+  const image = currentPhoto(page).locator('img');
+  await expect.poll(() => image.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBeTruthy();
   const contrast = await page.evaluate(() => {
     const luminance = (color: string) => {
       const rgb = color.match(/\d+/g)!.slice(0, 3).map(Number).map((value) => {
@@ -145,5 +180,4 @@ test('reduced motion, unavailable storage, responsive layouts, assets, and text 
   });
   expect(contrast.normal).toBeGreaterThan(4.5);
   expect(contrast.selected).toBeGreaterThan(4.5);
-  console.log('Birthday palette contrast:', contrast);
 });
