@@ -61,7 +61,8 @@ test('photos enlarge from their position, close with Escape, and support mouse d
   await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.locator('#enlarged-photo')).toHaveAttribute('src', '/justyna34/photos/coast.jpg');
-  await expect(page.getByRole('dialog')).toHaveCSS('padding', '12px');
+  await expect(page.getByRole('dialog')).toHaveCSS('padding', '0px');
+  await expect(page.getByRole('dialog')).toHaveCSS('border-radius', '0px');
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toBeHidden();
   await expect(photo).toBeFocused();
@@ -141,7 +142,7 @@ test('motion responds to the pointer, and stops when reduced motion is requested
   await expect(page.getByRole('dialog')).toBeHidden();
 });
 
-test('storage fallback, rounded mobile layouts, loaded images, and text contrast', async ({ page }) => {
+test('storage fallback, square painting frames on mobile, loaded images, and text contrast', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.addInitScript(() => {
     Object.defineProperty(window, 'localStorage', { get() { throw new Error('Storage unavailable'); } });
@@ -157,9 +158,11 @@ test('storage fallback, rounded mobile layouts, loaded images, and text contrast
     const answers = await page.locator('.question:visible .answer').all();
     for (const answer of answers) expect((await answer.boundingBox())!.height).toBeGreaterThanOrEqual(44);
     const surface = currentPhoto(page).locator('button');
-    expect(await surface.evaluate((button) => parseFloat(getComputedStyle(button).borderRadius))).toBeGreaterThanOrEqual(22);
-    await expect(surface).toHaveCSS('padding', width <= 650 ? '9px' : '12px');
-    await expect(surface).toHaveCSS('border-top-width', '0px');
+    await expect(surface).toHaveCSS('border-radius', '0px');
+    await expect(currentPhoto(page).locator('.photo-window')).toHaveCSS('border-radius', '0px');
+    await expect(surface).toHaveCSS('padding', '0px');
+    await expect(surface).toHaveCSS('border-top-width', width <= 650 ? '22px' : '28px');
+    await expect(surface).toHaveCSS('border-image-source', /painting-frame\.svg/);
     await centered(page, 0);
     await page.screenshot({ path: `test-results/justyna34-${width}.png`, fullPage: true });
   }
@@ -190,7 +193,7 @@ test('storage fallback, rounded mobile layouts, loaded images, and text contrast
   expect(contrast.answer).toBeGreaterThan(4.5);
 });
 
-test('3D balloons animate, fit small screens, and rest when hidden or motion is reduced', async ({ page }) => {
+test('3D balloons animate without input, fit small screens, and rest when hidden or motion is reduced', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(route);
@@ -199,9 +202,12 @@ test('3D balloons animate, fit small screens, and rest when hidden or motion is 
   await expect(balloons).toHaveAttribute('data-motion', 'running');
   await expect(balloons.locator('canvas')).toHaveCSS('opacity', '1');
   await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
-  const before = await balloons.screenshot();
+  // Hide unrelated CSS motion so this specifically checks the idle 3D scene.
+  const isolateBalloons = await page.addStyleTag({ content: '.ambient-light, .birthday-heading h1 { visibility: hidden !important; }' });
+  const before = await balloons.screenshot({ path: 'test-results/justyna34-idle-before.png' });
   await page.waitForTimeout(1000);
-  expect((await balloons.screenshot()).equals(before)).toBeFalsy();
+  expect((await balloons.screenshot({ path: 'test-results/justyna34-idle-after.png' })).equals(before)).toBeFalsy();
+  await isolateBalloons.evaluate((style) => style.remove());
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await expect.poll(() => balloons.locator('canvas').evaluate((canvas) => canvas.getBoundingClientRect().width)).toBe(Math.min(width, 1060));

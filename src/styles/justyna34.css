@@ -23,7 +23,7 @@
   --blush-pressed: #efe4df;
   --bronze-border: #dfcdc5;
   --rose-fill: #e7d9d3;
-  --frame-fill: linear-gradient(135deg, #e1dccf 0%, #cbc0aa 18%, #b9a88d 48%, #dfcdc5 72%, #cbc0aa 100%);
+  --frame-size: 28px;
   --bronze: #7d5e54;
   --bronze-deep: #43302b;
   --ease-soft: cubic-bezier(.22, 1, .36, 1);
@@ -64,21 +64,24 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .balloon-fallback--right { right: 16%; transform: translateX(50%) scaleX(-1); }
 .birthday-balloons.is-ready .balloon-fallback { opacity: 0; }
 .balloon-string { fill: none; stroke: #978365; stroke-width: 1; opacity: .65; }
-.fallback-balloon { transform-box: fill-box; transform-origin: 50% 100%; animation: balloon-sway 7s ease-in-out infinite alternate; }
-.fallback-balloon--rose { animation-delay: -2s; }
-.fallback-balloon--sage { animation-delay: -4s; }
+.fallback-balloon { transform-box: fill-box; transform-origin: 50% 100%; animation: balloon-sway 5.5s ease-in-out infinite alternate; }
+.fallback-balloon--rose { animation-duration: 6.3s; animation-delay: -2s; }
+.fallback-balloon--sage { animation-duration: 4.8s; animation-delay: -4s; }
 .album { --photo-width: min(58vw, 620px); --photo-gap: 30px; margin: 12px auto 0; }
 .photo-stage { display: flex; align-items: center; gap: var(--photo-gap); overflow-x: auto; overflow-y: hidden; padding: 24px max(0px, calc((100% - var(--photo-width)) / 2)) 48px; scroll-snap-type: x mandatory; scroll-padding-inline: max(0px, calc((100% - var(--photo-width)) / 2)); scrollbar-width: none; overscroll-behavior-x: contain; touch-action: pan-x pan-y pinch-zoom; -webkit-overflow-scrolling: touch; animation: photo-arrive 1600ms 100ms var(--ease-soft) both; }
 .photo-stage::-webkit-scrollbar { display: none; }
 .photo-slot { flex: 0 0 var(--photo-width); min-width: 0; scroll-snap-align: center; }
 .photo-drift { animation: photo-float 14s var(--drift-delay, 0s) ease-in-out infinite alternate; }
-.photo-surface { position: relative; display: block; width: 100%; padding: 12px; border: 0; border-radius: 36px; background: var(--frame-fill); box-shadow: inset 0 1px 1px rgb(255 255 255 / 80%), inset 0 -2px 3px rgb(67 48 43 / 18%), 0 20px 45px -25px rgb(67 48 43 / 30%); transform: perspective(1100px) translateY(8px) scale(.9); opacity: .68; transition: transform 1000ms var(--ease-soft), opacity 800ms, box-shadow 800ms; }
-.photo-slot.is-current .photo-surface { transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); opacity: 1; box-shadow: inset 0 1px 1px rgb(255 255 255 / 80%), inset 0 -2px 3px rgb(67 48 43 / 18%), 0 24px 50px -26px rgb(67 48 43 / 34%); }
-.photo-surface::before { content: ''; position: absolute; inset: 4px; border: 1px solid rgb(67 48 43 / 16%); border-radius: 32px; pointer-events: none; box-shadow: 0 1px 0 rgb(255 255 255 / 50%); }
-.photo-window { display: block; position: relative; overflow: hidden; aspect-ratio: 1.5; border-radius: 24px; box-shadow: 0 0 0 1px rgb(67 48 43 / 20%), 0 2px 3px rgb(67 48 43 / 18%); transform: translateZ(0); }
+/* A real nine-slice molding: square miters, beadwork, a recessed cove, and
+   carved leaf corners. Border rails repeat without stretching the carving. */
+.photo-surface, .photo-dialog { padding: 0; border: var(--frame-size) solid #a3834d; border-image: url('/justyna34/painting-frame.svg') 48 / 1 / 0 round; border-radius: 0; background: #795c35; }
+.photo-surface { position: relative; display: block; width: 100%; box-shadow: 0 2px 3px rgb(67 48 43 / 22%), 0 20px 45px -25px rgb(67 48 43 / 38%); transform: perspective(1100px) translateY(8px) scale(.9); opacity: .68; transition: transform 1000ms var(--ease-soft), opacity 800ms, box-shadow 800ms; }
+.photo-slot.is-current .photo-surface { transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); opacity: 1; box-shadow: 0 3px 5px rgb(67 48 43 / 24%), 0 24px 50px -24px rgb(67 48 43 / 38%); }
+.photo-surface::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 2px 6px rgb(40 28 17 / 32%); }
+.photo-window { display: block; position: relative; overflow: hidden; aspect-ratio: 1.5; border-radius: 0; transform: translateZ(0); }
 .photo-window img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--photo-position); animation: photo-breathe 20s ease-in-out infinite alternate paused; transform-origin: 50% 55%; }
 .photo-slot.is-current img { animation-play-state: running; }
-.photo-light { position: absolute; inset: 12px; pointer-events: none; border-radius: 24px; opacity: 0; background: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 40%), rgb(255 250 235 / 35%), transparent 65%); mix-blend-mode: soft-light; transition: opacity 800ms; }
+.photo-light { position: absolute; inset: 0; pointer-events: none; border-radius: 0; opacity: 0; background: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 40%), rgb(255 250 235 / 35%), transparent 65%); mix-blend-mode: soft-light; transition: opacity 800ms; }
 .photo-slot.is-current .photo-surface.is-touched .photo-light { opacity: .8; }
 .photo-slot.is-current .photo-surface:active { transform: perspective(1100px) scale(.982); transition-duration: 200ms; }
 .photo-surface:active { transform: scale(.88); transition-duration: 200ms; }
@@ -99,16 +102,16 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .answer:active { transform: scale(.97); }
 .answer-ripple { position: absolute; z-index: -1; width: 24px; height: 24px; border-radius: 50%; background: var(--bronze-border); pointer-events: none; animation: answer-ripple 1100ms var(--ease-soft) both; }
 
-/* The full photo shares the gently rounded champagne frame. Its opening and closing motions are anchored
+/* The full photo shares the square gilt painting frame. Its opening and closing motions are anchored
    to the photograph that was tapped, rather than arriving from nowhere. */
-.photo-dialog { position: fixed; margin: auto; width: fit-content; max-width: calc(100vw - 36px); max-height: calc(100svh - 72px); padding: 12px; overflow: visible; border: 0; border-radius: 34px; background: var(--frame-fill); box-shadow: 0 30px 100px rgb(67 48 43 / 20%); }
+.photo-dialog { position: fixed; margin: auto; width: fit-content; max-width: calc(100vw - 36px); max-height: calc(100svh - 72px); overflow: visible; box-shadow: 0 30px 100px rgb(67 48 43 / 20%); }
 .photo-dialog::backdrop { background: rgb(67 48 43 / 38%); backdrop-filter: blur(16px); animation: veil-in 650ms var(--ease-soft); }
 .photo-dialog.is-closing::backdrop { animation: veil-out 420ms var(--ease-soft) both; }
-.photo-dialog > img { display: block; width: auto; height: auto; max-width: min(1100px, calc(100vw - 60px)); max-height: calc(100svh - 96px); object-fit: contain; border-radius: 22px; }
+.photo-dialog > img { display: block; width: auto; height: auto; max-width: min(1100px, calc(100vw - 36px - 2 * var(--frame-size))); max-height: calc(100svh - 72px - 2 * var(--frame-size)); object-fit: contain; border-radius: 0; }
 .round-button { display: grid; place-items: center; width: 44px; height: 44px; padding: 12px; border: 0; border-radius: 50%; color: var(--cream); background: var(--bronze); transition: transform 400ms var(--ease-soft), background 300ms; }
 .round-button svg { width: 20px; height: 20px; }
 .round-button:active { transform: scale(.9); background: var(--bronze-deep); }
-.dialog-close { position: absolute; z-index: 1; top: 22px; right: 22px; box-shadow: 0 2px 12px rgb(67 48 43 / 10%); }
+.dialog-close { position: absolute; z-index: 1; top: 10px; right: 10px; box-shadow: 0 2px 12px rgb(67 48 43 / 10%); }
 body:has(.photo-dialog[open]) { overflow: hidden; }
 .motion-paused .ambient-light > div, .motion-paused .photo-drift, .motion-paused .photo-window img, .motion-paused .fallback-balloon { animation-play-state: paused !important; }
 
@@ -121,6 +124,7 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
 }
 @media (min-width: 1600px) { .album { --photo-width: 700px; --photo-gap: 44px; } }
 @media (max-width: 650px) {
+  :root { --frame-size: 22px; }
   .birthday { padding-top: max(14px, env(safe-area-inset-top)); padding-bottom: max(48px, env(safe-area-inset-bottom)); }
   .birthday-heading { height: 150px; }
   h1 { font-size: clamp(23px, 7.2vw, 38px); }
@@ -129,19 +133,14 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
   .balloon-fallback--right { right: 11%; }
   .album { --photo-width: min(80vw, 420px); --photo-gap: 12px; margin-top: 6px; }
   .photo-stage { padding-top: 18px; padding-bottom: 38px; }
-  .photo-surface { padding: 9px; border-radius: 32px; }
-  .photo-surface::before { inset: 3px; border-radius: 29px; }
-  .photo-light { inset: 9px; border-radius: 23px; }
   .photo-slot:not(.is-current) .photo-surface { transform: perspective(1100px) translateY(6px) scale(.96); }
   .photo-slot:not(.is-current) .photo-surface:active { transform: scale(.93); }
-  .photo-window { aspect-ratio: 1; border-radius: 23px; }
+  .photo-window { aspect-ratio: 1; }
   .question-space { max-width: 420px; padding: 0 30px; }
   .question h2 { font-size: 29px; margin-bottom: 22px; }
   .answers { flex-direction: column; gap: 10px; }
   .answer { min-height: 52px; font-size: 12px; padding: 14px 38px; }
   .answer-check { right: 20px; }
-  .photo-dialog { border-radius: 30px; }
-  .photo-dialog > img { border-radius: 18px; }
   .ambient-light > div { width: 190vw; }
   .ambient-light > div:nth-child(1) { top: -20%; left: -70%; }
   .ambient-light > div:nth-child(2) { top: 15%; right: -85%; }
@@ -156,7 +155,7 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
 @keyframes question-arrive { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @keyframes sunlight-drift { from { transform: translate3d(-5%, -3%, 0) scale(.95); } to { transform: translate3d(15%, 12%, 0) scale(1.15); } }
 @keyframes color-breathe { 0%, 100% { opacity: .13; } 50% { opacity: .36; } }
-@keyframes balloon-sway { from { transform: translateY(2px) rotate(-3deg); } to { transform: translateY(-4px) rotate(3deg); } }
+@keyframes balloon-sway { from { transform: translate(-4px, 6px) rotate(-6deg); } to { transform: translate(5px, -9px) rotate(7deg); } }
 @keyframes photo-float { from { transform: translateY(3px); } to { transform: translateY(-4px); } }
 @keyframes photo-breathe { from { transform: scale(1.025) translate(-.25%, .15%); } to { transform: scale(1.055) translate(.25%, -.35%); } }
 @keyframes answer-ripple { from { opacity: .65; transform: translate(-50%, -50%) scale(0); } to { opacity: 0; transform: translate(-50%, -50%) scale(28); } }

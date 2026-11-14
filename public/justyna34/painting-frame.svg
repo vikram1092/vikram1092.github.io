@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <!-- Nine-slice gilt molding. The 48px corners retain their proportions;
+       the straight rails repeat, keeping the carving crisp at any photo size. -->
+  <defs>
+    <linearGradient id="molding" x1="0" y1="0" x2="0" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#57432c"/>
+      <stop offset=".025" stop-color="#d4ba82"/>
+      <stop offset=".065" stop-color="#b1925a"/>
+      <stop offset=".10" stop-color="#715334"/>
+      <stop offset=".14" stop-color="#bc9d62"/>
+      <stop offset=".27" stop-color="#a3834d"/>
+      <stop offset=".30" stop-color="#ead5a0"/>
+      <stop offset=".34" stop-color="#c5a36a"/>
+      <stop offset=".39" stop-color="#8b683e"/>
+      <stop offset=".50" stop-color="#987547"/>
+      <stop offset=".66" stop-color="#c7a66c"/>
+      <stop offset=".73" stop-color="#e0c78e"/>
+      <stop offset=".77" stop-color="#80613b"/>
+      <stop offset=".82" stop-color="#59442d"/>
+      <stop offset=".86" stop-color="#b28e54"/>
+      <stop offset=".92" stop-color="#e6ce93"/>
+      <stop offset=".96" stop-color="#a58652"/>
+      <stop offset="1" stop-color="#5e482e"/>
+    </linearGradient>
+    <radialGradient id="pearl" cx="35%" cy="25%" r="75%">
+      <stop stop-color="#ebd6a0"/><stop offset=".45" stop-color="#c6a368"/><stop offset="1" stop-color="#7c5c37"/>
+    </radialGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f0dcaa"/><stop offset=".45" stop-color="#c5a064"/><stop offset="1" stop-color="#80603c"/>
+    </linearGradient>
+    <pattern id="beads" width="12" height="8" patternUnits="userSpaceOnUse">
+      <ellipse cx="6" cy="4.5" rx="3.1" ry="3" fill="#705332" opacity=".65"/>
+      <ellipse cx="5.8" cy="3.9" rx="2.8" ry="2.7" fill="url(#pearl)"/>
+    </pattern>
+    <pattern id="engraving" width="18" height="9" patternUnits="userSpaceOnUse">
+      <path d="M-1 7Q4 0 9 7T19 7" fill="none" stroke="#6e5231" stroke-opacity=".4" stroke-width=".7"/>
+      <path d="M-1 6Q4-1 9 6T19 6" fill="none" stroke="#f2dcaa" stroke-opacity=".5" stroke-width=".7"/>
+    </pattern>
+    <clipPath id="rail-clip"><path d="M0 0H240L192 48H48Z"/></clipPath>
+    <g id="rail" clip-path="url(#rail-clip)">
+      <path d="M0 0H240L192 48H48Z" fill="url(#molding)"/>
+      <path d="M1 1H239M14 14H226M44 44H196" fill="none" stroke="#f0dbad" stroke-opacity=".55" stroke-width=".6"/>
+      <path d="M5 5H235M39 39H201" fill="none" stroke="#4c3823" stroke-opacity=".55" stroke-width=".7"/>
+      <rect x="4" y="5" width="232" height="8" fill="url(#beads)"/>
+      <rect x="18" y="22" width="204" height="9" fill="url(#engraving)" opacity=".6"/>
+    </g>
+    <g id="corner" fill="url(#leaf)" stroke="#7c5b35" stroke-width=".6">
+      <path d="M11 11C24 10 34 16 39 26 26 25 19 20 11 11Z"/>
+      <path d="M11 11C10 24 16 34 26 39 25 26 20 19 11 11Z"/>
+      <path d="M15 15C28 18 34 28 40 40 28 34 18 28 15 15Z"/>
+      <path d="M14 14 39 39M19 17 32 23M17 19 23 32" fill="none" stroke="#f2dba1" stroke-width=".9"/>
+      <circle cx="13" cy="13" r="3" fill="url(#pearl)"/>
+    </g>
+  </defs>
+  <use href="#rail"/>
+  <use href="#rail" transform="rotate(90 120 120)"/>
+  <use href="#rail" transform="rotate(180 120 120)"/>
+  <use href="#rail" transform="rotate(270 120 120)"/>
+  <path d="M0 0 48 48M240 0 192 48M240 240 192 192M0 240 48 192" fill="none" stroke="#60462c" stroke-width=".8" opacity=".65"/>
+  <use href="#corner"/>
+  <use href="#corner" transform="rotate(90 120 120)"/>
+  <use href="#corner" transform="rotate(180 120 120)"/>
+  <use href="#corner" transform="rotate(270 120 120)"/>
+</svg>

@@ -76,8 +76,9 @@ export function mountBalloons(host: HTMLElement) {
       const side = i < 3 ? -1 : 1;
       balloon.radius = radius * [1, .95, .74][index];
       balloon.baseX = side * (width / 2 - sideSpace * .52) + side * [ .45, -.65, .05 ][index] * radius;
-      balloon.baseY = height * .24 - [0, .62, 1.38][index] * radius;
-      balloon.length = height * .28 / balloon.radius;
+      // Leave room above the bouquet for a full, visible idle bob.
+      balloon.baseY = height * .20 - [0, .62, 1.38][index] * radius;
+      balloon.length = height * .23 / balloon.radius;
       balloon.group.scale.setScalar(balloon.radius);
       balloon.group.position.z = index * 12;
     });
@@ -88,20 +89,23 @@ export function mountBalloons(host: HTMLElement) {
     time += dt;
     balloons.forEach((balloon, i) => {
       const { phase, radius, group, thread } = balloon;
-      const targetX = Math.sin(time * .55 + phase) * radius * .11;
-      const targetY = Math.sin(time * .7 + phase * .7) * radius * .10;
-      balloon.vx += ((targetX - balloon.x) * 3.2 - balloon.vx * 2.3) * dt;
-      balloon.vy += ((targetY - balloon.y) * 3.8 - balloon.vy * 2.4) * dt;
-      balloon.x = THREE.MathUtils.clamp(balloon.x + balloon.vx * dt, -radius * .38, radius * .38);
-      balloon.y = THREE.MathUtils.clamp(balloon.y + balloon.vy * dt, -radius * .3, radius * .3);
+      // Independent buoyancy rides a shared slow breeze, even without input.
+      // Springs keep the larger movements soft and let a tap settle naturally.
+      const breeze = Math.sin(time * .36 + .8) * radius * .08;
+      const targetX = Math.sin(time * .75 + phase) * radius * .30 + breeze;
+      const targetY = (Math.sin(time * 1.05 + phase * .7) * .34 + Math.cos(time * .5 + phase) * .06) * radius;
+      balloon.vx += ((targetX - balloon.x) * 3.8 - balloon.vx * 1.9) * dt;
+      balloon.vy += ((targetY - balloon.y) * 4.2 - balloon.vy * 2) * dt;
+      balloon.x = THREE.MathUtils.clamp(balloon.x + balloon.vx * dt, -radius * .65, radius * .65);
+      balloon.y = THREE.MathUtils.clamp(balloon.y + balloon.vy * dt, -radius * .55, radius * .55);
       group.position.x = balloon.baseX + balloon.x;
       group.position.y = balloon.baseY + balloon.y;
-      group.rotation.z = Math.sin(time * .48 + phase) * .045 - balloon.vx * .0015;
-      group.rotation.y = Math.sin(time * .32 + phase) * .12;
+      group.rotation.z = Math.sin(time * .7 + phase) * .11 - balloon.vx * .002;
+      group.rotation.y = Math.sin(time * .45 + phase) * .20;
       const points = thread.attributes.position;
       for (let j = 0; j <= 32; j++) {
         const t = j / 32;
-        const wave = Math.sin(t * Math.PI * 2 + time * .8 + phase) * .13 * Math.sin(t * Math.PI);
+        const wave = Math.sin(t * Math.PI * 2 + time * 1.1 + phase) * .23 * Math.sin(t * Math.PI);
         const trail = -balloon.x / radius * t * .8 + (i < 3 ? -.1 : .1) * t;
         points.setXYZ(j, wave + trail, -1.34 - t * balloon.length, -.06);
       }
