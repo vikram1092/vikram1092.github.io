@@ -1,8 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
+import { memories } from '../src/data/justyna34';
 
 const route = '/justyna34/';
 const memoryCount = 35;
 const lastMemory = memoryCount - 1;
+const videoIndex = memories.findIndex((memory) => memory.video);
 const currentPhoto = (page: Page) => page.locator('.photo-slot.is-current:not([data-clone])');
 async function centered(page: Page, index: number) {
   await expect(page.locator(`#question-${index}`)).toBeVisible();
@@ -63,7 +65,7 @@ test('photos enlarge from their position, close with Escape, and support mouse d
   let bounds = (await photo.boundingBox())!;
   await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await expect(page.getByRole('dialog')).toBeVisible();
-  await expect(page.locator('#enlarged-photo')).toHaveAttribute('src', '/justyna34/photos/memory-01.webp');
+  await expect(page.locator('#enlarged-photo')).toHaveAttribute('src', memories[0].photo);
   await expect(page.getByRole('dialog')).toHaveCSS('padding', '0px');
   await expect(page.getByRole('dialog')).toHaveCSS('border-radius', '0px');
   await page.keyboard.press('Escape');
@@ -148,7 +150,7 @@ test('mobile enlargement matches the source rectangle and reverses without a jum
 test('incorrect answers invite a retry and do not advance or save progress', async ({ page }) => {
   await page.route('**/justyna34/', async (request) => {
     const response = await request.fetch();
-    const body = (await response.text()).replace('"id":"memory-01",', '"id":"memory-01","correctOption":"b",');
+    const body = (await response.text()).replace(`"id":"${memories[0].id}",`, `"id":"${memories[0].id}","correctOption":"b",`);
     await request.fulfill({ response, body });
   });
   await page.goto(route);
@@ -360,16 +362,16 @@ test('video autoplays muted inline, pauses away, and has controls when enlarged'
   const video = page.locator('.photo-slot:not([data-clone]) video');
   // No video download on the landing photo.
   await expect(video).not.toHaveAttribute('src');
-  for (let index = 1; index <= 5; index++) await page.keyboard.press('ArrowRight');
-  await centered(page, 5);
+  for (let index = 1; index <= videoIndex; index++) await page.keyboard.press('ArrowRight');
+  await centered(page, videoIndex);
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused && v.currentTime > 0)).toBeTruthy();
   expect(await video.evaluate((v: HTMLVideoElement) => v.muted && v.playsInline && v.loop)).toBeTruthy();
   expect(await video.evaluate((v: HTMLVideoElement) => v.videoWidth / v.videoHeight)).toBeCloseTo(720 / 1280);
   await page.keyboard.press('ArrowRight');
-  await centered(page, 6);
+  await centered(page, videoIndex + 1);
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.paused)).toBeTruthy();
   await page.keyboard.press('ArrowLeft');
-  await centered(page, 5);
+  await centered(page, videoIndex);
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused)).toBeTruthy();
   await currentPhoto(page).locator('button').click();
   const enlarged = page.locator('#enlarged-video');
