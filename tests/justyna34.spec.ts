@@ -106,6 +106,42 @@ test('real touch swipes navigate and loop, while vertical scrolling still works'
   await context.close();
 });
 
+test('mobile enlargement matches the source rectangle and reverses without a jump', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(route);
+  await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
+  const photo = currentPhoto(page).locator('button');
+  const box = (await photo.boundingBox())!;
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  const initial = await dialog.evaluate((element) => {
+    const animation = element.getAnimations()[0];
+    animation.pause();
+    animation.currentTime = 0;
+    const modal = element.getBoundingClientRect();
+    const source = document.querySelector('.photo-slot.is-expanded button')!.getBoundingClientRect();
+    return { width: Math.abs(modal.width - source.width), height: Math.abs(modal.height - source.height), x: Math.abs(modal.x - source.x), y: Math.abs(modal.y - source.y) };
+  });
+  for (const error of Object.values(initial)) expect(error).toBeLessThan(2);
+  const halfway = await dialog.evaluate((element) => {
+    element.getAnimations()[0].currentTime = 250;
+    const box = element.getBoundingClientRect();
+    return { x: box.x, y: box.y, width: box.width, height: box.height };
+  });
+  await page.keyboard.press('Escape');
+  const reversal = await dialog.evaluate((element) => {
+    const animation = element.getAnimations()[0];
+    animation.pause();
+    animation.currentTime = 0;
+    const box = element.getBoundingClientRect();
+    animation.play();
+    return { x: box.x, y: box.y, width: box.width, height: box.height };
+  });
+  for (const key of ['x', 'y', 'width', 'height'] as const) expect(Math.abs(reversal[key] - halfway[key])).toBeLessThan(2);
+  await expect(dialog).toBeHidden();
+});
+
 test('incorrect answers invite a retry and do not advance or save progress', async ({ page }) => {
   await page.route('**/justyna34/', async (request) => {
     const response = await request.fetch();

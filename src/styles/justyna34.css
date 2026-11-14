@@ -89,6 +89,7 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .photo-stage.is-dragging .photo-surface { cursor: grabbing; }
 .photo-stage.is-dragging .photo-drift { animation-play-state: paused; }
 .photo-slot.is-expanded .photo-surface { opacity: .22; }
+.photo-slot.is-expanded .photo-drift, .photo-slot.is-expanded img { animation-play-state: paused; }
 
 .question-space { max-width: 600px; padding: 0 24px; margin: 0 auto; animation: question-arrive 1200ms 450ms var(--ease-soft) both; }
 .question { text-align: center; }

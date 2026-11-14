@@ -217,7 +217,7 @@ let dialogAnimation: Animation | undefined;
 function photoTransform(source: DOMRect, target: DOMRect) {
   const x = source.x + source.width / 2 - target.x - target.width / 2;
   const y = source.y + source.height / 2 - target.y - target.height / 2;
-  return `translate(${x}px, ${y}px) scale(${source.width / target.width})`;
+  return `translate(${x}px, ${y}px) scale(${source.width / target.width}, ${source.height / target.height})`;
 }
 async function openPhoto(button: HTMLButtonElement, index: number) {
   if (opening || dialog.open) return;
@@ -227,11 +227,12 @@ async function openPhoto(button: HTMLButtonElement, index: number) {
   try { await enlarged.decode(); } catch { /* Keep the image's alt text available on failure. */ }
   opening = false;
   if (active !== index) return;
+  // Hold the source still while the modal is borrowing its visible position.
+  button.closest('.photo-slot')!.classList.add('is-expanded');
   const sourceBounds = button.getBoundingClientRect();
   photoSource = button;
   dialog.showModal();
   const targetBounds = dialog.getBoundingClientRect();
-  button.closest('.photo-slot')!.classList.add('is-expanded');
   dialogAnimation = animate(dialog, [
     { transform: photoTransform(sourceBounds, targetBounds), opacity: .3 },
     { transform: 'translate(0, 0) scale(1)', opacity: 1 },
@@ -240,12 +241,16 @@ async function openPhoto(button: HTMLButtonElement, index: number) {
 async function closePhoto() {
   if (!dialog.open || closing) return;
   closing = true;
+  // Escape can arrive mid-opening. Start the return from the currently drawn
+  // frame, rather than snapping to the fully enlarged rectangle first.
+  const currentTransform = getComputedStyle(dialog).transform;
+  const currentOpacity = getComputedStyle(dialog).opacity;
   dialogAnimation?.cancel();
   dialog.classList.add('is-closing');
   if (photoSource) {
     const destination = photoSource.getBoundingClientRect();
     dialogAnimation = animate(dialog, [
-      { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+      { transform: currentTransform, opacity: currentOpacity },
       { transform: photoTransform(destination, dialog.getBoundingClientRect()), opacity: 0 },
     ], { duration: 420, easing: 'cubic-bezier(.4, 0, .2, 1)', fill: 'forwards' });
     await dialogAnimation?.finished.catch(() => undefined);
