@@ -166,16 +166,43 @@ test('motion responds to the pointer, and stops when reduced motion is requested
   const photo = currentPhoto(page).locator('button');
   const bounds = (await photo.boundingBox())!;
   await page.mouse.move(bounds.x + bounds.width * .8, bounds.y + bounds.height * .3);
-  await expect.poll(() => photo.evaluate((button) => button.style.getPropertyValue('--tilt-y'))).not.toBe('');
+  await expect.poll(() => photo.evaluate((button) => button.style.getPropertyValue('--light-x'))).not.toBe('');
   const animated = await page.evaluate(() => document.getAnimations().some((a) => a.playState === 'running' && a instanceof CSSAnimation && a.animationName === 'photo-breathe'));
   expect(animated).toBeTruthy();
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect.poll(() => page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length)).toBe(0);
   await expect(photo).toHaveCSS('transform', 'none');
+  for (const frame of await page.locator('.photo-surface').all()) await expect(frame).toHaveCSS('transform', 'none');
   await photo.click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.getByRole('button', { name: 'Close enlarged photo' }).click();
   await expect(page.getByRole('dialog')).toBeHidden();
+});
+
+test('hover and press do not resize carousel frames or fight their centered size', async ({ page }) => {
+  await page.goto(route);
+  await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
+  const photo = currentPhoto(page).locator('button');
+  const box = (await photo.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(300);
+  expect(Math.abs((await photo.boundingBox())!.width - box.width)).toBeLessThan(1);
+  await page.mouse.up();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toBeHidden();
+  const neighbor = page.locator('.photo-slot:not([data-clone])[data-photo-index="1"] button');
+  const before = (await neighbor.boundingBox())!;
+  await page.mouse.move(Math.min(1420, before.x + before.width / 2), before.y + before.height / 2);
+  await page.waitForTimeout(400);
+  expect(Math.abs((await neighbor.boundingBox())!.width - before.width)).toBeLessThan(1);
+  await page.keyboard.press('ArrowRight');
+  await centered(page, 1);
+  const focusedWidth = (await neighbor.boundingBox())!.width;
+  await page.mouse.move(10, 10);
+  await page.waitForTimeout(1100);
+  expect(Math.abs((await neighbor.boundingBox())!.width - focusedWidth)).toBeLessThan(1);
 });
 
 test('storage fallback, square painting frames on mobile, loaded images, and text contrast', async ({ page }) => {

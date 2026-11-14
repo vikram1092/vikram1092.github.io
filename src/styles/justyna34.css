@@ -67,7 +67,7 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .fallback-balloon { transform-box: fill-box; transform-origin: 50% 100%; animation: balloon-sway 5.5s ease-in-out infinite alternate; }
 .fallback-balloon--rose { animation-duration: 6.3s; animation-delay: -2s; }
 .fallback-balloon--sage { animation-duration: 4.8s; animation-delay: -4s; }
-.album { --photo-width: min(58vw, 620px); --photo-gap: 30px; margin: 12px auto 0; }
+.album { --rest-scale: .9; --rest-lift: 8px; --photo-width: min(58vw, 620px); --photo-gap: 30px; margin: 12px auto 0; }
 .photo-stage { display: flex; align-items: center; gap: var(--photo-gap); overflow-x: auto; overflow-y: hidden; padding: 24px max(0px, calc((100% - var(--photo-width)) / 2)) 48px; scroll-snap-type: x mandatory; scroll-padding-inline: max(0px, calc((100% - var(--photo-width)) / 2)); scrollbar-width: none; overscroll-behavior-x: contain; touch-action: pan-x pan-y pinch-zoom; -webkit-overflow-scrolling: touch; animation: photo-arrive 1600ms 100ms var(--ease-soft) both; }
 .photo-stage::-webkit-scrollbar { display: none; }
 .photo-slot { flex: 0 0 var(--photo-width); min-width: 0; scroll-snap-align: center; }
@@ -75,16 +75,14 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 /* A real nine-slice molding: square miters, beadwork, a recessed cove, and
    carved leaf corners. Border rails repeat without stretching the carving. */
 .photo-surface, .photo-dialog { padding: 0; border: var(--frame-size) solid #a3834d; border-image: url('/justyna34/painting-frame.svg') 48 / 1 / 0 round; border-radius: 0; background: #795c35; }
-.photo-surface { position: relative; display: block; width: 100%; box-shadow: 0 2px 3px rgb(67 48 43 / 22%), 0 20px 45px -25px rgb(67 48 43 / 38%); transform: perspective(1100px) translateY(8px) scale(.9); opacity: .68; transition: transform 1000ms var(--ease-soft), opacity 800ms, box-shadow 800ms; }
-.photo-slot.is-current .photo-surface { transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); opacity: 1; box-shadow: 0 3px 5px rgb(67 48 43 / 24%), 0 24px 50px -24px rgb(67 48 43 / 38%); }
+.photo-surface { position: relative; display: block; width: 100%; box-shadow: 0 2px 3px rgb(67 48 43 / 22%), 0 20px 45px -25px rgb(67 48 43 / 38%); transform: translate3d(0, calc(var(--rest-lift) * (1 - var(--photo-focus, 0))), 0) scale(calc(var(--rest-scale) + (1 - var(--rest-scale)) * var(--photo-focus, 0))); opacity: calc(.68 + .32 * var(--photo-focus, 0)); will-change: transform; transition: box-shadow 600ms; }
+.photo-slot.is-current .photo-surface { box-shadow: 0 3px 5px rgb(67 48 43 / 24%), 0 24px 50px -24px rgb(67 48 43 / 38%); }
 .photo-surface::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 2px 6px rgb(40 28 17 / 32%); }
 .photo-window { display: block; position: relative; overflow: hidden; aspect-ratio: 1.5; border-radius: 0; transform: translateZ(0); }
 .photo-window img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--photo-position); animation: photo-breathe 20s ease-in-out infinite alternate paused; transform-origin: 50% 55%; }
 .photo-slot.is-current img { animation-play-state: running; }
 .photo-light { position: absolute; inset: 0; pointer-events: none; border-radius: 0; opacity: 0; background: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 40%), rgb(255 250 235 / 35%), transparent 65%); mix-blend-mode: soft-light; transition: opacity 800ms; }
 .photo-slot.is-current .photo-surface.is-touched .photo-light { opacity: .8; }
-.photo-slot.is-current .photo-surface:active { transform: perspective(1100px) scale(.982); transition-duration: 200ms; }
-.photo-surface:active { transform: scale(.88); transition-duration: 200ms; }
 .photo-stage.is-dragging { scroll-snap-type: none; cursor: grabbing; }
 .photo-stage.is-dragging .photo-surface { cursor: grabbing; }
 .photo-stage.is-dragging .photo-drift { animation-play-state: paused; }
@@ -117,7 +115,6 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
 .motion-paused .ambient-light > div, .motion-paused .photo-drift, .motion-paused .photo-window img, .motion-paused .fallback-balloon { animation-play-state: paused !important; }
 
 @media (hover: hover) and (pointer: fine) {
-  .photo-slot:not(.is-current) .photo-surface:hover { opacity: .95; transform: perspective(1100px) scale(.94); }
   .photo-slot.is-current .photo-surface:hover .photo-light { opacity: .65; }
   .answer:hover { background: var(--bronze-border); transform: translateY(-2px); }
   .answer[aria-pressed='true']:hover { background: var(--bronze-deep); }
@@ -132,10 +129,8 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
   .balloon-fallback { top: 12px; width: 65px; height: 125px; }
   .balloon-fallback--left { left: 11%; }
   .balloon-fallback--right { right: 11%; }
-  .album { --photo-width: min(80vw, 420px); --photo-gap: 12px; margin-top: 6px; }
+  .album { --rest-scale: .96; --rest-lift: 6px; --photo-width: min(80vw, 420px); --photo-gap: 12px; margin-top: 6px; }
   .photo-stage { padding-top: 18px; padding-bottom: 38px; }
-  .photo-slot:not(.is-current) .photo-surface { transform: perspective(1100px) translateY(6px) scale(.96); }
-  .photo-slot:not(.is-current) .photo-surface:active { transform: scale(.93); }
   .photo-window { aspect-ratio: 1; }
   .question-space { max-width: 420px; padding: 0 30px; }
   .question h2 { font-size: 29px; margin-bottom: 22px; }
@@ -165,6 +160,6 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   .photo-window img { transform: none; }
-  .photo-drift, .photo-slot.is-current .photo-surface { transform: none; }
+  .photo-drift, .photo-surface { transform: none; }
   .photo-light { display: none; }
 }

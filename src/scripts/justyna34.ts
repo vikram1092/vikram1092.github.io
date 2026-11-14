@@ -83,6 +83,18 @@ function select(index: number, announce = true) {
 function centeredScroll(index: number) {
   return stage.scrollLeft + originals[index].getBoundingClientRect().left - stage.getBoundingClientRect().left - (stage.clientWidth - originals[index].clientWidth) / 2;
 }
+// Visual emphasis follows the actual scroll position, not the selected index.
+// Selection, hover, and pointer presses must never compete over frame size.
+function updatePhotoFocus() {
+  const middle = stage.getBoundingClientRect().left + stage.clientWidth / 2;
+  const boxes = slots.map((slot) => slot.getBoundingClientRect());
+  const stride = boxes.length > 1 ? boxes[1].left - boxes[0].left : boxes[0].width;
+  slots.forEach((slot, index) => {
+    const distance = Math.min(1, Math.abs(boxes[index].left + boxes[index].width / 2 - middle) / Math.max(1, stride));
+    const focus = (1 + Math.cos(Math.PI * distance)) / 2;
+    slot.style.setProperty('--photo-focus', focus.toFixed(5));
+  });
+}
 function goTo(index: number, smooth = true) {
   cancelAdvance();
   index = (index + memories.length) % memories.length;
@@ -90,6 +102,7 @@ function goTo(index: number, smooth = true) {
   navigating = true;
   select(index);
   stage.scrollTo({ left: centeredScroll(index), behavior: smooth && !reducedMotion.matches ? 'smooth' : 'instant' });
+  updatePhotoFocus();
   navigationTimer = setTimeout(() => { navigating = false; }, 900);
 }
 function closestSlot() {
@@ -101,11 +114,12 @@ function closestSlot() {
   });
 }
 stage.addEventListener('scroll', () => {
-  if (navigating || scrollFrame) return;
-  cancelAdvance();
+  if (scrollFrame) return;
+  if (!navigating) cancelAdvance();
   scrollFrame = requestAnimationFrame(() => {
     scrollFrame = 0;
-    select(Number(closestSlot().dataset.photoIndex));
+    updatePhotoFocus();
+    if (!navigating) select(Number(closestSlot().dataset.photoIndex));
   });
 }, { passive: true });
 function settleScroll() {
@@ -113,6 +127,7 @@ function settleScroll() {
   navigating = false;
   const closest = closestSlot();
   if (closest.dataset.clone) goTo(Number(closest.dataset.photoIndex), false);
+  else { select(Number(closest.dataset.photoIndex)); updatePhotoFocus(); }
 }
 stage.addEventListener('scrollend', settleScroll);
 let settleTimer: ReturnType<typeof setTimeout>;
@@ -162,8 +177,8 @@ stage.addEventListener('click', (event) => {
   if (suppressClick) { event.preventDefault(); event.stopPropagation(); suppressClick = false; }
 }, true);
 
-// A little physical depth follows the pointer; touch gets a light wash and
-// press response. These photo interactions need no idle rendering loop.
+// Pointer and touch feedback stays in the light overlay, leaving the frame's
+// position-based scale untouched as it crosses under the pointer.
 slots.forEach((slot) => {
   const button = slot.querySelector<HTMLButtonElement>('button')!;
   const index = Number(slot.dataset.photoIndex);
@@ -172,8 +187,6 @@ slots.forEach((slot) => {
   function neutral() {
     cancelAnimationFrame(pointerFrame);
     pointerFrame = 0;
-    button.style.removeProperty('--tilt-x');
-    button.style.removeProperty('--tilt-y');
   }
   button.addEventListener('pointermove', (event) => {
     if (reducedMotion.matches || !finePointer.matches || drag?.moved || active !== index || event.buttons) return;
@@ -183,8 +196,6 @@ slots.forEach((slot) => {
       const bounds = slot.getBoundingClientRect();
       const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
       const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
-      button.style.setProperty('--tilt-x', `${(y - .5) * -3}deg`);
-      button.style.setProperty('--tilt-y', `${(x - .5) * 3}deg`);
       button.style.setProperty('--light-x', `${x * 100}%`);
       button.style.setProperty('--light-y', `${y * 100}%`);
     });
@@ -330,10 +341,6 @@ document.addEventListener('visibilitychange', () => { cancelAdvance(); syncMotio
 reducedMotion.addEventListener('change', () => {
   if (!reducedMotion.matches) return;
   runningAnimations.forEach((animation) => animation.cancel());
-  document.querySelectorAll<HTMLElement>('.photo-surface').forEach((button) => {
-    button.style.removeProperty('--tilt-x');
-    button.style.removeProperty('--tilt-y');
-  });
   document.querySelectorAll('.answer-ripple').forEach((ripple) => ripple.remove());
 });
 let resizeFrame = 0;
