@@ -4,9 +4,9 @@ Standalone route: `/justyna34/`. The page is intentionally unlinked from the por
 
 ## Adding the birthday content
 
-Edit `src/data/justyna34.ts`. Each memory has a stable ID, a local photo path, descriptive alt text, an optional crop position, a question, and answer options. Add `correctOption` with the correct option ID for a factual quiz question; omit it for questions with no wrong answer. Update `birthdayRevision` when replacing the preview content so stored demo answers are discarded. Put photos in this directory's `photos/` folder. The enlarged view always shows the uncropped image.
+Edit `src/data/justyna34.ts`. Each memory has a stable ID, a local photo/poster path, its displayed width and height, descriptive alt text, an optional MP4 video path, a question, and answer options. Add `correctOption` with the correct option ID for a factual quiz question; omit it for questions with no wrong answer. Update `birthdayRevision` when replacing the preview content so stored demo answers are discarded. Put photos in this directory's `photos/` folder. The enlarged view always shows the uncropped image.
 
-The current five scenic photographs and question/answer labels are placeholders, not personal memories. The preview accepts every answer. All imagery and fonts are served locally; there is no remote service, tracking, or form submission. Progress is saved only in the visitor's browser, with an in-memory fallback when storage is unavailable.
+All 35 items from the supplied shared album are included: 34 photographs and one 10-second video. Live Photos use their still image. Only the question/answer labels remain placeholders; the preview accepts every answer. All imagery and fonts are served locally; there is no remote service, tracking, or form submission. Progress is saved only in the visitor's browser, with an in-memory fallback when storage is unavailable.
 
 ## Verified palette and font
 
@@ -14,23 +14,17 @@ The foundation uses [Radix Colors](https://www.radix-ui.com/colors/docs/palette-
 
 Cormorant Garamond is self-hosted from Google Fonts under the SIL Open Font License in `fonts/OFL.txt`. The sans-serif is the site's existing self-hosted Manrope.
 
-## Temporary photos
+## Imported album
 
-Downloaded from Unsplash under the [Unsplash license](https://unsplash.com/license). Source identifiers are retained here so the placeholders can be traced and removed when personal photos arrive:
+The assets are local WebP images (up to 1800 pixels on the long edge, preserving smaller originals) and an H.264/AAC MP4 at 720 × 1280 with fast-start playback. Camera orientation is applied and location/camera metadata is removed from the web copies. The original archive stays outside the repository. Memory IDs follow the shared-album archive order; no signed iCloud media URLs are embedded in the page.
 
-| File | Unsplash image ID |
-| --- | --- |
-| `coast.jpg` | `photo-1476514525535-07fb3b4ae5f1` |
-| `flowers.jpg` | `photo-1490750967868-88aa4486c946` |
-| `sea.jpg` | `photo-1518837695005-2083093ee35b` |
-| `mountains.jpg` | `photo-1464822759023-fed622ff2c3b` |
-| `sunset.jpg` | `photo-1500534623283-312aade485b7` |
+Every frame follows its media's intrinsic aspect ratio on both desktop and mobile, with no cropping or image zoom. A stable gallery height prevents the question from jumping when switching between portrait and landscape. Frame widths vary within the available viewport. The video is downloaded only when selected, plays inline on mute, loops, and pauses while another memory is selected, the gallery is offscreen, the tab is hidden, or the enlarged view is open. Tapping the video opens a larger player with native pause, seek, and audio controls, initially muted. Browsers that block autoplay still expose playback through these controls.
 
 ## Presentation and motion
 
 Keep the composition minimal: lowercase title with an optically centered large `34`, a balloon bouquet on each side, square antique-gold painting frames, then the question and filled answer choices. No tape, counters, carousel arrows, thumbnails, or hearts. Swipe, mouse drag, tap a neighboring photograph, or use the left/right keyboard keys to navigate. Tap the current photograph to enlarge it in a matching frame. The local `painting-frame.svg` uses a repeating nine-slice border with mitered corners, beading, engraved molding, and carved leaf details; it keeps square edges and crisp ornament at every size. Title alignment uses the loaded font's visible glyph bounds rather than its line box.
 
-Broad champagne, rose, and sage background washes slowly drift and crossfade. Subtle photograph drift/zoom gives the page a quiet resting state. Frame emphasis follows distance from the carousel center continuously, with no selected-state, hover, or press scale overrides. Pointer movement adds reflected light; pressing a photograph adds a soft light wash. The enlarged photo opens from and returns to the tapped photo's position. Answer selection uses a gentle ripple and check; a newly accepted answer advances to the next unanswered memory after 1.35 seconds. Manual navigation, opening a photo, or hiding the tab cancels that scheduled advance. Completion stays on the last answer without adding a results panel. Answers remain editable and saved in the visitor's browser.
+Broad champagne, rose, and sage background washes slowly drift and crossfade. Subtle frame drift gives the page a quiet resting state while the entire photograph stays visible. Frame emphasis follows distance from the carousel center continuously, with no selected-state, hover, or press scale overrides. Pointer movement adds reflected light; pressing a photograph adds a soft light wash. The enlarged photo opens from and returns to the tapped photo's position. Answer selection uses a gentle ripple and check; a newly accepted answer advances to the next unanswered memory after 1.35 seconds. Manual navigation, opening a photo, or hiding the tab cancels that scheduled advance. Completion stays on the last answer without adding a results panel. Answers remain editable and saved in the visitor's browser.
 
 The optional, dynamically loaded Three.js header renders six satin balloons with soft studio reflections, small knots, and flexible strings. Each balloon continuously rises, dips, and leans on its own, with independent buoyancy cycles riding a shared slow breeze. Spring motion also responds to nearby pointer movement or touch, and the strings trail the stronger sway. Rendering is capped at 30 fps and 1.5 device-pixel ratio, and pauses when the header is offscreen or the tab is hidden. Resize, context loss/recovery, and page teardown are handled. Matching inline SVG balloons sway on their own while loading or if WebGL is unavailable.
 
@@ -38,4 +32,4 @@ Reduced motion disables ambient animations, ripples, and animated transitions, a
 
 ## Verification
 
-`npm run build` and `npx playwright test tests/justyna34.spec.ts` cover production output, touch and mouse swipes, circular navigation, anchored photo enlargement and keyboard dismissal, quiz persistence and completion, automatic advance and its cancellation, factual-answer retries, unavailable storage, pointer motion, live reduced-motion changes, responsive frames and balloons, offscreen rendering pause, WebGL fallback, touch targets, image availability, and palette contrast. Publish with the repository's normal `master` push and GitHub Pages workflow.
+`npm run build` and `npx playwright test tests/justyna34.spec.ts` cover production output, touch and mouse swipes, circular navigation, anchored photo enlargement and keyboard dismissal, quiz persistence and completion, automatic advance and its cancellation, factual-answer retries, unavailable storage, pointer motion, live reduced-motion changes, responsive frames and balloons, offscreen rendering pause, WebGL fallback, touch targets, availability of every album asset, intrinsic portrait/landscape ratios, muted inline video playback and pause behavior, enlarged video controls, and palette contrast. Publish with the repository's normal `master` push and GitHub Pages workflow.

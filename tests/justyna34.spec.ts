@@ -1,6 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const route = '/justyna34/';
+const memoryCount = 35;
+const lastMemory = memoryCount - 1;
 const currentPhoto = (page: Page) => page.locator('.photo-slot.is-current:not([data-clone])');
 async function centered(page: Page, index: number) {
   await expect(page.locator(`#question-${index}`)).toBeVisible();
@@ -24,17 +26,18 @@ test('minimal album advances after an answer, remembers revisited answers, and c
   await page.keyboard.press('ArrowLeft');
   await expect(page.getByRole('button', { name: 'Answer two' })).toHaveAttribute('aria-pressed', 'true');
   await page.keyboard.press('ArrowRight');
-  for (let index = 1; index < 5; index++) {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (let index = 1; index < memoryCount; index++) {
     await centered(page, index);
     await page.getByRole('button', { name: 'Answer one' }).click();
-    if (index < 4) await expect(page.locator(`#question-${index + 1}`)).toBeVisible({ timeout: 4000 });
+    if (index < lastMemory) await page.keyboard.press('ArrowRight');
   }
   await expect(page.locator('#birthday')).toHaveClass(/is-complete/);
   await expect(page.getByRole('status')).toHaveText('All memories answered. Happy birthday, Justyna!');
-  await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(5);
+  await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(memoryCount);
   await page.reload();
   await expect(page.locator('#birthday')).toHaveClass(/is-complete/);
-  await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(5);
+  await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(memoryCount);
   expect(errors).toEqual([]);
 });
 
@@ -43,10 +46,10 @@ test('manual navigation cancels an answer advance and neighboring photos remain 
   await page.goto(route);
   await page.getByRole('button', { name: 'Answer one' }).click();
   await page.keyboard.press('ArrowLeft');
-  await centered(page, 4);
+  await centered(page, lastMemory);
   // Longer than the answer's deliberate pause: the user's chosen photo must remain.
   await page.waitForTimeout(1600);
-  await expect(page.locator('#question-4')).toBeVisible();
+  await expect(page.locator(`#question-${lastMemory}`)).toBeVisible();
   const neighbor = page.locator('.photo-slot[data-clone][data-photo-index="0"] button');
   await neighbor.click();
   await centered(page, 0);
@@ -60,7 +63,7 @@ test('photos enlarge from their position, close with Escape, and support mouse d
   let bounds = (await photo.boundingBox())!;
   await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await expect(page.getByRole('dialog')).toBeVisible();
-  await expect(page.locator('#enlarged-photo')).toHaveAttribute('src', '/justyna34/photos/coast.jpg');
+  await expect(page.locator('#enlarged-photo')).toHaveAttribute('src', '/justyna34/photos/memory-01.webp');
   await expect(page.getByRole('dialog')).toHaveCSS('padding', '0px');
   await expect(page.getByRole('dialog')).toHaveCSS('border-radius', '0px');
   await page.keyboard.press('Escape');
@@ -96,7 +99,7 @@ test('real touch swipes navigate and loop, while vertical scrolling still works'
   await swipe([60, 320], [330, 325]);
   await centered(page, 0);
   await swipe([60, 320], [330, 325]);
-  await centered(page, 4);
+  await centered(page, lastMemory);
   await swipe([330, 320], [60, 325]);
   await centered(page, 0);
   await swipe([190, 450], [190, 210]);
@@ -167,7 +170,7 @@ test('motion responds to the pointer, and stops when reduced motion is requested
   const bounds = (await photo.boundingBox())!;
   await page.mouse.move(bounds.x + bounds.width * .8, bounds.y + bounds.height * .3);
   await expect.poll(() => photo.evaluate((button) => button.style.getPropertyValue('--light-x'))).not.toBe('');
-  const animated = await page.evaluate(() => document.getAnimations().some((a) => a.playState === 'running' && a instanceof CSSAnimation && a.animationName === 'photo-breathe'));
+  const animated = await page.evaluate(() => document.getAnimations().some((a) => a.playState === 'running' && a instanceof CSSAnimation && a.animationName === 'photo-float'));
   expect(animated).toBeTruthy();
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect.poll(() => page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length)).toBe(0);
@@ -307,4 +310,83 @@ test('balloons keep their illustrated fallback without WebGL, and the quiz remai
   await expect(page.locator('#birthday-balloons')).toHaveAttribute('data-renderer', 'fallback');
   await page.getByRole('button', { name: 'Answer one' }).click();
   await centered(page, 1);
+});
+
+test('all 34 photos and one video retain their own proportions at every screen size', async ({ page, request }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(route);
+  const originals = page.locator('.photo-slot:not([data-clone])');
+  await expect(originals).toHaveCount(memoryCount);
+  await expect(originals.locator('img')).toHaveCount(34);
+  await expect(originals.locator('video')).toHaveCount(1);
+  const media = await page.locator('#birthday-data').evaluate((data) => JSON.parse(data.textContent!));
+  for (const item of media) {
+    expect((await request.get(item.photo)).ok()).toBeTruthy();
+    if (item.video) expect((await request.get(item.video)).ok()).toBeTruthy();
+  }
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    await expect(originals.first().locator('button')).toHaveCSS('border-top-width', width <= 650 ? '22px' : '28px');
+    await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+    await centered(page, 0);
+    const ratios = await originals.locator('.photo-window').evaluateAll((windows) => windows.map((window) => {
+      const media = window.querySelector('img, video')!;
+      const bounds = window.getBoundingClientRect();
+      return {
+        expected: Number(media.getAttribute('width')) / Number(media.getAttribute('height')),
+        actual: bounds.width / bounds.height,
+        fit: getComputedStyle(media).objectFit,
+        transform: getComputedStyle(media).transform,
+      };
+    }));
+    for (const ratio of ratios) {
+      expect(Math.abs(ratio.actual - ratio.expected)).toBeLessThan(.002);
+      expect(ratio.fit).toBe('contain');
+      expect(ratio.transform).toBe('none');
+    }
+    const stageHeight = await page.locator('.photo-stage').evaluate((stage) => stage.clientHeight);
+    await page.keyboard.press('ArrowRight');
+    await centered(page, 1);
+    expect(await page.locator('.photo-stage').evaluate((stage) => stage.clientHeight)).toBe(stageHeight);
+    await page.screenshot({ path: `test-results/justyna34-landscape-${width}.png`, fullPage: true });
+    await page.keyboard.press('ArrowLeft');
+  }
+});
+
+test('video autoplays muted inline, pauses away, and has controls when enlarged', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(route);
+  const video = page.locator('.photo-slot:not([data-clone]) video');
+  // No video download on the landing photo.
+  await expect(video).not.toHaveAttribute('src');
+  for (let index = 1; index <= 5; index++) await page.keyboard.press('ArrowRight');
+  await centered(page, 5);
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused && v.currentTime > 0)).toBeTruthy();
+  expect(await video.evaluate((v: HTMLVideoElement) => v.muted && v.playsInline && v.loop)).toBeTruthy();
+  expect(await video.evaluate((v: HTMLVideoElement) => v.videoWidth / v.videoHeight)).toBeCloseTo(720 / 1280);
+  await page.keyboard.press('ArrowRight');
+  await centered(page, 6);
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.paused)).toBeTruthy();
+  await page.keyboard.press('ArrowLeft');
+  await centered(page, 5);
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused)).toBeTruthy();
+  await currentPhoto(page).locator('button').click();
+  const enlarged = page.locator('#enlarged-video');
+  await expect(enlarged).toBeVisible();
+  await expect(page.locator('#enlarged-photo')).toBeHidden();
+  await expect.poll(() => enlarged.evaluate((v: HTMLVideoElement) => !v.paused && v.currentTime > 0)).toBeTruthy();
+  expect(await enlarged.evaluate((v: HTMLVideoElement) => v.muted && v.controls && v.playsInline)).toBeTruthy();
+  expect(await video.evaluate((v: HTMLVideoElement) => v.paused)).toBeTruthy();
+  await page.screenshot({ path: 'test-results/justyna34-video-mobile.png' });
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toBeHidden();
+  expect(await enlarged.evaluate((v: HTMLVideoElement) => v.paused)).toBeTruthy();
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused)).toBeTruthy();
+  // A real viewport intersection change must stop the clip too.
+  await page.setViewportSize({ width: 390, height: 300 });
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.paused)).toBeTruthy();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused)).toBeTruthy();
 });

@@ -9,11 +9,16 @@ const questions = Array.from(document.querySelectorAll<HTMLElement>('[data-quest
 const status = document.querySelector<HTMLElement>('#birthday-status')!;
 const dialog = document.querySelector<HTMLDialogElement>('.photo-dialog')!;
 const enlarged = document.querySelector<HTMLImageElement>('#enlarged-photo')!;
+const enlargedVideo = document.querySelector<HTMLVideoElement>('#enlarged-video')!;
+const albumVideos = Array.from(stage.querySelectorAll<HTMLVideoElement>('video'));
+const visibleVideos = new Set<HTMLVideoElement>();
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
 const storageKey = `justyna34:${root.dataset.revision}`;
 const runningAnimations = new Set<Animation>();
 let active = 0;
+let stageVisible = true;
+let resumeDialogVideo = false;
 let answers: Record<string, string> = {};
 let questionAnimations: Animation[] = [];
 let scrollFrame = 0;
@@ -56,6 +61,29 @@ function renderAnswers() {
   root.classList.toggle('is-complete', Object.keys(answers).length === memories.length);
 }
 
+function playSilently(video: HTMLVideoElement) {
+  video.muted = true;
+  void video.play().catch(() => { /* A tap opens native playback controls if autoplay is unavailable. */ });
+}
+function syncPlayback() {
+  albumVideos.forEach((video) => {
+    const slot = video.closest<HTMLElement>('.photo-slot')!;
+    const shouldPlay = !document.hidden && stageVisible && visibleVideos.has(video) && !dialog.open &&
+      !slot.dataset.clone && Number(slot.dataset.photoIndex) === active;
+    if (shouldPlay) {
+      if (!video.getAttribute('src')) video.src = video.dataset.src!;
+      if (video.paused) playSilently(video);
+    } else video.pause();
+  });
+  if (document.hidden) {
+    resumeDialogVideo = resumeDialogVideo || !enlargedVideo.paused;
+    enlargedVideo.pause();
+  } else if (dialog.open && !enlargedVideo.hidden && resumeDialogVideo) {
+    resumeDialogVideo = false;
+    playSilently(enlargedVideo);
+  }
+}
+
 function select(index: number, announce = true) {
   if (index < 0 || index >= memories.length) return;
   const changed = active !== index;
@@ -64,9 +92,11 @@ function select(index: number, announce = true) {
   slots.forEach((slot) => {
     const i = Number(slot.dataset.photoIndex);
     slot.classList.toggle('is-current', i === index);
-    slot.querySelector('button')!.setAttribute('aria-label', i === index ? `Enlarge photo ${i + 1}` : `Show photo ${i + 1}`);
+    const kind = memories[i].video ? 'video' : 'photo';
+    slot.querySelector('button')!.setAttribute('aria-label', `${i === index ? 'Enlarge' : 'Show'} ${kind} ${i + 1}`);
   });
   questions.forEach((question, i) => { question.hidden = i !== index; });
+  syncPlayback();
   if (changed) {
     questionAnimations.forEach((animation) => animation.cancel());
     questionAnimations = [];
@@ -77,7 +107,7 @@ function select(index: number, announce = true) {
       ], { duration: 650, delay: i * 55, fill: 'backwards', easing: 'cubic-bezier(.22, 1, .36, 1)' });
       if (animation) questionAnimations.push(animation);
     });
-    if (announce) status.textContent = `Photo ${index + 1} of ${memories.length}. ${memories[index].question}`;
+    if (announce) status.textContent = `${memories[index].video ? 'Video' : 'Photo'} ${index + 1} of ${memories.length}. ${memories[index].question}`;
   }
 }
 function centeredScroll(index: number) {
@@ -88,9 +118,13 @@ function centeredScroll(index: number) {
 function updatePhotoFocus() {
   const middle = stage.getBoundingClientRect().left + stage.clientWidth / 2;
   const boxes = slots.map((slot) => slot.getBoundingClientRect());
-  const stride = boxes.length > 1 ? boxes[1].left - boxes[0].left : boxes[0].width;
   slots.forEach((slot, index) => {
-    const distance = Math.min(1, Math.abs(boxes[index].left + boxes[index].width / 2 - middle) / Math.max(1, stride));
+    const center = boxes[index].left + boxes[index].width / 2;
+    // Portrait and landscape frames have different widths. Use the neighboring
+    // center in the direction of travel, keeping emphasis continuous for both.
+    const neighbor = boxes[index + (center < middle ? 1 : -1)];
+    const stride = neighbor ? Math.abs(neighbor.left + neighbor.width / 2 - center) : boxes[index].width;
+    const distance = Math.min(1, Math.abs(center - middle) / Math.max(1, stride));
     const focus = (1 + Math.cos(Math.PI * distance)) / 2;
     slot.style.setProperty('--photo-focus', focus.toFixed(5));
   });
@@ -233,9 +267,28 @@ function photoTransform(source: DOMRect, target: DOMRect) {
 async function openPhoto(button: HTMLButtonElement, index: number) {
   if (opening || dialog.open) return;
   opening = true;
-  enlarged.src = memories[index].photo;
-  enlarged.alt = memories[index].alt;
-  try { await enlarged.decode(); } catch { /* Keep the image's alt text available on failure. */ }
+  const memory = memories[index];
+  const video = button.querySelector('video');
+  enlarged.hidden = !!memory.video;
+  enlargedVideo.hidden = !memory.video;
+  dialog.style.setProperty('--media-ratio', String(memory.width / memory.height));
+  dialog.setAttribute('aria-label', `Enlarged birthday ${memory.video ? 'video' : 'photo'}`);
+  document.querySelector('.dialog-close')!.setAttribute('aria-label', `Close enlarged ${memory.video ? 'video' : 'photo'}`);
+  if (memory.video) {
+    enlargedVideo.src = memory.video;
+    enlargedVideo.poster = memory.photo;
+    enlargedVideo.width = memory.width;
+    enlargedVideo.height = memory.height;
+    enlargedVideo.setAttribute('aria-label', memory.alt);
+    const time = video?.currentTime ?? 0;
+    enlargedVideo.addEventListener('loadedmetadata', () => { enlargedVideo.currentTime = time; }, { once: true });
+  } else {
+    enlarged.src = memory.photo;
+    enlarged.alt = memory.alt;
+    enlarged.width = memory.width;
+    enlarged.height = memory.height;
+    try { await enlarged.decode(); } catch { /* Keep alt text available on failure. */ }
+  }
   opening = false;
   if (active !== index) return;
   // Hold the source still while the modal is borrowing its visible position.
@@ -243,6 +296,8 @@ async function openPhoto(button: HTMLButtonElement, index: number) {
   const sourceBounds = button.getBoundingClientRect();
   photoSource = button;
   dialog.showModal();
+  syncPlayback();
+  if (memory.video) playSilently(enlargedVideo);
   const targetBounds = dialog.getBoundingClientRect();
   dialogAnimation = animate(dialog, [
     { transform: photoTransform(sourceBounds, targetBounds), opacity: .3 },
@@ -252,6 +307,10 @@ async function openPhoto(button: HTMLButtonElement, index: number) {
 async function closePhoto() {
   if (!dialog.open || closing) return;
   closing = true;
+  enlargedVideo.pause();
+  resumeDialogVideo = false;
+  const sourceVideo = photoSource?.querySelector('video');
+  if (sourceVideo && Number.isFinite(enlargedVideo.currentTime)) sourceVideo.currentTime = enlargedVideo.currentTime;
   // Escape can arrive mid-opening. Start the return from the currently drawn
   // frame, rather than snapping to the fully enlarged rectangle first.
   const currentTransform = getComputedStyle(dialog).transform;
@@ -271,6 +330,7 @@ async function closePhoto() {
   dialog.classList.remove('is-closing');
   photoSource?.closest('.photo-slot')!.classList.remove('is-expanded');
   closing = false;
+  syncPlayback();
 }
 document.querySelector('.dialog-close')!.addEventListener('click', () => void closePhoto());
 dialog.addEventListener('cancel', (event) => { event.preventDefault(); void closePhoto(); });
@@ -334,9 +394,20 @@ questions.forEach((question, index) => {
   });
 });
 
-let stageVisible = true;
-function syncMotion() { document.body.classList.toggle('motion-paused', document.hidden || !stageVisible); }
-new IntersectionObserver(([entry]) => { stageVisible = entry.isIntersecting; syncMotion(); }, { rootMargin: '80px' }).observe(stage);
+function syncMotion() {
+  document.body.classList.toggle('motion-paused', document.hidden || !stageVisible);
+  syncPlayback();
+}
+new IntersectionObserver(([entry]) => { stageVisible = entry.isIntersecting; syncMotion(); }).observe(stage);
+const videoVisibility = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    const video = entry.target as HTMLVideoElement;
+    if (entry.isIntersecting && entry.intersectionRatio >= .05) visibleVideos.add(video);
+    else visibleVideos.delete(video);
+  });
+  syncPlayback();
+}, { threshold: [0, .05] });
+albumVideos.forEach((video) => videoVisibility.observe(video));
 document.addEventListener('visibilitychange', () => { cancelAdvance(); syncMotion(); });
 reducedMotion.addEventListener('change', () => {
   if (!reducedMotion.matches) return;
