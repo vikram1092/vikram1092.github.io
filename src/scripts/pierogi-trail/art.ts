@@ -527,26 +527,37 @@ export function scene(
     );
   }
   if (g.mode === "finished") {
+    const headline = Math.min(72, W / 10, H * 0.12),
+      detail = Math.min(38, W / 18, H * 0.065),
+      replay = Math.min(30, W / 22, H * 0.052),
+      top = H * 0.28;
     text(
       c,
-      "All seven caves. What a ride!",
+      "All seven caves.",
       W / 2,
-      H * 0.35,
-      Math.min(42, W / 19),
+      top,
+      headline,
+    );
+    text(
+      c,
+      "What a ride!",
+      W / 2,
+      top + headline * 1.05,
+      headline,
     );
     text(
       c,
       `${g.count} pierogi in the saddlebag`,
       W / 2,
-      H * 0.35 + 44,
-      Math.min(25, W / 27),
+      top + headline * 2.15,
+      detail,
     );
     text(
       c,
       "Tap anywhere to ride again",
       W / 2,
-      H * 0.35 + 85,
-      Math.min(19, W / 31),
+      top + headline * 2.15 + detail * 1.5,
+      replay,
     );
   }
   return { ground, playerX, caveAlpha, weights };
