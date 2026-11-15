@@ -39,8 +39,8 @@ function animate(element: Element, frames: Keyframe[], options: KeyframeAnimatio
   return animation;
 }
 function cancelAdvance() { clearTimeout(advanceTimer); }
-function accepted(memory: BirthdayMemory, option: string) {
-  return memory.options.some(({ id }) => id === option) && (!memory.correctOption || memory.correctOption === option);
+function validOption(memory: BirthdayMemory, option: string) {
+  return memory.options.some(({ id }) => id === option);
 }
 // Optional persistence: private browsing and disabled storage remain usable.
 try {
@@ -48,7 +48,7 @@ try {
   if (saved && typeof saved === 'object') {
     for (const memory of memories) {
       const option = (saved as Record<string, unknown>)[memory.id];
-      if (typeof option === 'string' && accepted(memory, option)) answers[memory.id] = option;
+      if (typeof option === 'string' && validOption(memory, option)) answers[memory.id] = option;
     }
   }
 } catch { /* Start with a fresh album. */ }
@@ -372,22 +372,17 @@ document.addEventListener('keydown', (event) => {
 questions.forEach((question, index) => {
   question.querySelectorAll<HTMLButtonElement>('.answer').forEach((button) => {
     button.addEventListener('click', (event) => {
+      if (!started || active !== index || dialog.open) return;
       cancelAdvance();
       const memory = memories[index];
       const option = button.dataset.option!;
-      question.querySelectorAll('.is-retry').forEach((retry) => retry.classList.remove('is-retry'));
-      if (!accepted(memory, option)) {
-        button.classList.add('is-retry');
-        status.textContent = 'Give it another try.';
-        animate(button, [{ transform: 'scale(1)' }, { transform: 'scale(.985)' }, { transform: 'scale(1)' }], { duration: 500 });
-        return;
-      }
+      if (!validOption(memory, option)) return;
       const changed = answers[memory.id] !== option;
       answers[memory.id] = option;
       save();
       renderAnswers();
       const count = Object.keys(answers).length;
-      status.textContent = count === questionCount ? 'All questions answered. Happy birthday, Justyna!' : `${memory.correctOption ? 'That’s right.' : 'Answer saved.'} ${count} of ${questionCount} questions answered.`;
+      status.textContent = count === questionCount ? 'All questions answered. Happy birthday, Justyna!' : `Answer saved. ${count} of ${questionCount} questions answered.`;
       if (changed && !reducedMotion.matches) {
         button.querySelectorAll('.answer-ripple').forEach((ripple) => ripple.remove());
         const ripple = document.createElement('span');
@@ -404,16 +399,16 @@ questions.forEach((question, index) => {
           });
         }
       }
-      // A deliberate pause lets the selected answer land before the next memory.
+      // Briefly show the selection, then advance on every tap, including repeats.
       // Any manual navigation, enlargement, or hidden tab cancels this move.
-      if (changed && index < memories.length - 1) {
+      if (index < memories.length - 1) {
         advanceTimer = setTimeout(() => {
           if (active !== index || dialog.open || document.hidden) return;
           const next = index + 1;
           const focusAnswer = question.contains(document.activeElement);
           goTo(next);
           if (focusAnswer) focusMemory(next);
-        }, 1350);
+        }, 250);
       }
     });
   });

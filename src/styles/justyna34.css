@@ -120,7 +120,6 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .answer-check { position: absolute; right: 13px; width: 15px; height: 15px; opacity: 0; transform: scale(.75); stroke-dasharray: 24; stroke-dashoffset: 24; transition: opacity 350ms, transform 550ms var(--ease-soft), stroke-dashoffset 600ms var(--ease-soft); }
 .answer[aria-pressed='true'] { color: var(--cream); background: var(--bronze); box-shadow: 0 4px 12px rgb(67 48 43 / 12%); }
 .answer[aria-pressed='true'] .answer-check { opacity: 1; transform: scale(1); stroke-dashoffset: 0; }
-.answer.is-retry { color: var(--bronze-deep); background: #d8d0bf; }
 .answer:active { transform: scale(.97); }
 .answer-ripple { position: absolute; z-index: -1; width: 24px; height: 24px; border-radius: 50%; background: var(--bronze-border); pointer-events: none; animation: answer-ripple 1100ms var(--ease-soft) both; }
 

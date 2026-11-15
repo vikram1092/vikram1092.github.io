@@ -193,19 +193,40 @@ test('mobile enlargement matches the source rectangle and reverses without a jum
   await expect(dialog).toBeHidden();
 });
 
-test('incorrect answers invite a retry and do not advance or save progress', async ({ page }) => {
-  await page.goto(route);
-  await openAlbum(page);
-  await visit(page, 3);
-  await page.getByRole('button', { name: 'Greece', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Greece', exact: true })).toHaveClass(/is-retry/);
-  await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(0);
-  await expect(page.getByRole('status')).toHaveText('Give it another try.');
-  await page.waitForTimeout(1500);
-  await centered(page, 3);
-  await page.getByRole('button', { name: 'Krakow', exact: true }).click();
-  await expect(page.locator('.is-retry')).toHaveCount(0);
-  await centered(page, 4);
+test.describe('option taps', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+
+  test('every option advances one memory, including saved and repeated choices', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(route);
+    await openAlbum(page);
+    for (let index = 0; index < memoryCount; index++) {
+      for (const option of memories[index].options) {
+        await visit(page, index);
+        const button = page.locator(`#question-${index} [data-option="${option.id}"]`);
+        await button.tap();
+        await expect(button).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.locator(`#question-${index + 1}`)).toBeVisible({ timeout: 1000 });
+        await centered(page, index + 1);
+      }
+    }
+    await expect(page.locator('#birthday')).toHaveClass(/is-complete/);
+    await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(7);
+
+    // Previously incorrect choices survive a reload and remain tappable.
+    await page.reload();
+    await openAlbum(page);
+    await visit(page, 3);
+    const saved = page.getByRole('button', { name: 'Greece', exact: true });
+    await expect(saved).toHaveAttribute('aria-pressed', 'true');
+    await saved.tap();
+    await centered(page, 4);
+    await visit(page, 3);
+    await saved.tap();
+    await centered(page, 4);
+    await page.waitForTimeout(500);
+    await centered(page, 4);
+  });
 });
 
 test('motion responds to the pointer, and stops when reduced motion is requested', async ({ page }) => {
