@@ -73,8 +73,8 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .fallback-balloon { transform-box: fill-box; transform-origin: 50% 100%; animation: balloon-sway 5.5s ease-in-out infinite alternate; }
 .fallback-balloon--rose { animation-duration: 6.3s; animation-delay: -2s; }
 .fallback-balloon--sage { animation-duration: 4.8s; animation-delay: -4s; }
-/* The bottom panel owns its space; the photos fit the remaining viewport. */
-.album { --rest-scale: .9; --rest-lift: 8px; --photo-width: min(72vw, 900px); --photo-height: 50svh; --photo-gap: 30px; display: grid; grid-template-rows: minmax(0, 1fr) auto; height: 100%; padding-top: max(64px, env(safe-area-inset-top)); opacity: 0; visibility: hidden; transition: opacity 1000ms 250ms var(--ease-soft); }
+/* Photos keep the same viewport-sized stage behind the independent text layer. */
+.album { --rest-scale: .9; --rest-lift: 8px; --photo-width: min(72vw, 900px); --photo-height: 50svh; --photo-gap: 30px; position: relative; height: 100%; padding-top: max(64px, env(safe-area-inset-top)); opacity: 0; visibility: hidden; transition: opacity 1000ms 250ms var(--ease-soft); }
 .is-started .album { opacity: 1; visibility: visible; }
 .photo-stage { display: flex; align-items: center; gap: var(--photo-gap); overflow-x: auto; overflow-y: hidden; height: 100%; min-height: 0; padding-block: 24px 32px; padding-left: max(0px, calc((100% - min(var(--photo-width), var(--photo-height) * var(--leading-ratio) + 2 * var(--frame-size))) / 2)); padding-right: max(0px, calc((100% - min(var(--photo-width), var(--photo-height) * var(--trailing-ratio) + 2 * var(--frame-size))) / 2)); scroll-snap-type: x mandatory; scroll-padding-inline: 0; scrollbar-width: none; overscroll-behavior-x: contain; touch-action: pan-x pinch-zoom; -webkit-overflow-scrolling: touch; }
 .photo-stage::-webkit-scrollbar { display: none; }
@@ -108,11 +108,14 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .photo-slot.is-expanded .photo-surface { opacity: .22; }
 .photo-slot.is-expanded .photo-drift, .photo-slot.is-expanded img { animation-play-state: paused; }
 
-.question-space { position: relative; z-index: 1; width: 100%; padding: 24px max(24px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left)); background: linear-gradient(to top, var(--cream) 45%, rgb(250 249 242 / 97%)); }
-.question-space::before { content: ''; position: absolute; inset: auto 0 100%; height: 12px; pointer-events: none; background: linear-gradient(to top, rgb(250 249 242 / 97%), rgb(250 249 242 / 0%)); }
+.question-space { position: absolute; z-index: 1; isolation: isolate; inset: auto 0 0; width: 100%; padding: 24px max(24px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left)); pointer-events: none; }
+/* Reveal an aligned copy of the page background, including its moving colors.
+   A mask fades the photos into that same background without a cream-colored seam. */
+.question-backdrop { position: absolute; z-index: -1; inset: -80px 0 0; overflow: hidden; mask-image: linear-gradient(to bottom, transparent, #000 80px); }
+.question-backdrop > .ambient-light { position: absolute; inset: auto 0 0; height: 100svh; height: 100dvh; background: var(--cream); }
 .question { max-width: 620px; margin: 0 auto; text-align: center; }
 .question h2 { margin: 0; font: 400 34px/1.12 'Birthday Serif', Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
-.answers { display: flex; justify-content: center; gap: 10px; margin-top: 22px; }
+.answers { display: flex; justify-content: center; gap: 10px; margin-top: 22px; pointer-events: auto; }
 .answer { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; flex: 1; min-height: 52px; padding: 14px 28px; overflow: hidden; color: var(--bronze-deep); background: var(--rose-fill); border: 0; border-radius: 999px; box-shadow: 0 3px 8px rgb(67 48 43 / 5%); font-size: 12px; line-height: 1.5; transition: background 450ms, border-color 450ms, transform 500ms var(--ease-soft), box-shadow 500ms; }
 .answer-check { position: absolute; right: 13px; width: 15px; height: 15px; opacity: 0; transform: scale(.75); stroke-dasharray: 24; stroke-dashoffset: 24; transition: opacity 350ms, transform 550ms var(--ease-soft), stroke-dashoffset 600ms var(--ease-soft); }
 .answer[aria-pressed='true'] { color: var(--cream); background: var(--bronze); box-shadow: 0 4px 12px rgb(67 48 43 / 12%); }

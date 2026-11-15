@@ -114,7 +114,6 @@ function select(index: number, announce = true) {
     slot.querySelector('button')!.setAttribute('aria-label', `${i === index ? 'Enlarge' : 'Show'} ${kind} ${i + 1}`);
   });
   questions.forEach((question, i) => { question.hidden = i !== index; });
-  fitPhotos();
   syncPlayback();
   if (changed) {
     questionAnimations.forEach((animation) => animation.cancel());
@@ -400,7 +399,9 @@ questions.forEach((question, index) => {
         button.append(ripple);
         setTimeout(() => ripple.remove(), 1200);
         if (count === questionCount) {
-          animate(document.querySelector('.ambient-light')!, [{ opacity: 1 }, { opacity: .15, offset: .35 }, { opacity: 1 }], { duration: 2200, easing: 'ease-in-out' });
+          document.querySelectorAll('.ambient-light').forEach((light) => {
+            animate(light, [{ opacity: 1 }, { opacity: .15, offset: .35 }, { opacity: 1 }], { duration: 2200, easing: 'ease-in-out' });
+          });
         }
       }
       // A deliberate pause lets the selected answer land before the next memory.
@@ -443,6 +444,7 @@ function resizeAlbum() {
   clearTimeout(settleTimer);
   clearTimeout(navigationTimer);
   cancelAnimationFrame(resizeFrame);
+  fitPhotos();
   goTo(active, false);
   resizeFrame = requestAnimationFrame(() => {
     goTo(active, false);
@@ -463,6 +465,7 @@ introNext.addEventListener('click', () => {
   syncMotion();
 });
 renderAnswers();
+fitPhotos();
 goTo(0, false);
 
 // Align the visible ink, rather than the unequal line boxes of the large

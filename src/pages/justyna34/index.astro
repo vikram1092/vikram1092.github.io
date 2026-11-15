@@ -77,6 +77,7 @@ import FrameOrnaments from '../../components/justyna34/FrameOrnaments.astro';
         </div>
 
         <div class="question-space">
+          <div class="question-backdrop" aria-hidden="true"><div class="ambient-light"><div></div><div></div><div></div></div></div>
           {memories.map((memory, index) => (
             <section class="question" id={`question-${index}`} data-question-index={index} aria-labelledby={`question-title-${index}`} hidden={index !== 0}>
               <h2 id={`question-title-${index}`}>{memory.question}</h2>

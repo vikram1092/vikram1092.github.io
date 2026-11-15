@@ -58,7 +58,7 @@ test('the birthday story keeps all captions, saves seven quiz answers, and stops
     }
   }
   expect(quizIndices).toEqual([3, 6, 8, 13, 15, 17, 25]);
-  expect(quizIndices.map((index) => memories[index].options.find((option) => option.id === memories[index].correctOption)!.label)).toEqual(['Krakow', 'the VA', 'soldier', 'Washington', 'Ojcow', 'Yes', 'San Diego']);
+  expect(quizIndices.map((index) => memories[index].options.find((option) => option.id === memories[index].correctOption)!.label)).toEqual(['Krakow', 'The VA', 'Soldier', 'Washington', 'Ojcow', 'Yes', 'San Diego']);
   await expect(page.locator('#birthday')).toHaveClass(/is-complete/);
   await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(7);
   await expect(page.locator('#question-34 h2')).toHaveText('Here’s to the next 34 years of success. Happy birthday my love ❤️');
@@ -420,7 +420,7 @@ test('all 34 photos and one video retain their own proportions at every screen s
     }
     await expect(page.locator('.photo-caption')).toHaveCount(0);
     await expect(page.locator('#question-0 h2')).toBeVisible();
-    await expect(page.locator('.question-space')).toHaveCSS('background-image', /linear-gradient/);
+    await expect(page.locator('.question-backdrop')).toHaveCSS('mask-image', /linear-gradient/);
     const stageHeight = await page.locator('.photo-stage').evaluate((stage) => stage.clientHeight);
     await page.keyboard.press('ArrowRight');
     await centered(page, 1);
@@ -497,13 +497,19 @@ test('intro centers the title and arrow, then releases the viewport to the album
   await page.screenshot({ path: 'test-results/justyna34-open-mobile.png' });
 });
 
-test('every memory keeps its full frame, caption, and options on screen without vertical scrolling', async ({ page }) => {
+test('captions overlay the photos without resizing them and keep all options on screen', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(route);
   await openAlbum(page);
   for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 667 }, { width: 390, height: 844 }, { width: 844, height: 390 }, { width: 1440, height: 900 }]) {
     await page.setViewportSize(viewport);
     await visit(page, 0);
+    const originalFrames = await page.locator('.photo-surface').evaluateAll((frames) => frames.map((frame) => {
+      const box = frame.getBoundingClientRect();
+      return { width: box.width, height: box.height };
+    }));
+    const stageHeight = await page.locator('.photo-stage').evaluate((stage) => stage.clientHeight);
+    let overlaps = 0;
     for (let index = 0; index < memoryCount; index++) {
       await visit(page, index);
       const layout = await page.evaluate(() => {
@@ -515,15 +521,19 @@ test('every memory keeps its full frame, caption, and options on screen without 
           const box = button.getBoundingClientRect();
           return { top: box.top, bottom: box.bottom, height: box.height };
         });
-        return { top: frame.top, bottom: frame.bottom, left: frame.left, right: frame.right, panelTop: panel.top, panelBottom: panel.bottom, textTop: text.top, textBottom: text.bottom, options, scrollHeight: document.documentElement.scrollHeight, scrollWidth: document.documentElement.scrollWidth };
+        return { width: frame.width, height: frame.height, top: frame.top, bottom: frame.bottom, left: frame.left, right: frame.right, panelTop: panel.top, panelBottom: panel.bottom, textTop: text.top, textBottom: text.bottom, options, scrollHeight: document.documentElement.scrollHeight, scrollWidth: document.documentElement.scrollWidth };
       });
       expect(layout.scrollHeight).toBe(viewport.height);
       expect(layout.scrollWidth).toBe(viewport.width);
       expect(layout.top).toBeGreaterThan(8);
       expect(layout.left).toBeGreaterThan(8);
       expect(layout.right).toBeLessThan(viewport.width - 8);
-      expect(layout.bottom + 8).toBeLessThan(layout.panelTop);
-      expect(layout.textTop).toBeGreaterThan(layout.bottom);
+      expect(layout.bottom).toBeLessThan(viewport.height);
+      expect(layout.width).toBeCloseTo(originalFrames[index].width, 1);
+      expect(layout.height).toBeCloseTo(originalFrames[index].height, 1);
+      expect(await page.locator('.photo-stage').evaluate((stage) => stage.clientHeight)).toBe(stageHeight);
+      if (layout.bottom > layout.panelTop) overlaps++;
+      expect(layout.textTop).toBeGreaterThan(0);
       expect(layout.textBottom).toBeLessThan(viewport.height);
       expect(layout.panelBottom).toBe(viewport.height);
       for (const option of layout.options) {
@@ -533,5 +543,12 @@ test('every memory keeps its full frame, caption, and options on screen without 
       }
       if ([0, 3, 17, 34].includes(index)) await page.screenshot({ path: `test-results/justyna34-fit-${viewport.width}x${viewport.height}-${index}.png` });
     }
+    expect(overlaps).toBeGreaterThan(0);
+    // Both layers share viewport coordinates and colors, so the fade has no seam.
+    const backgrounds = await page.locator('.ambient-light').evaluateAll((layers) => layers.map((layer) => {
+      const box = layer.getBoundingClientRect();
+      return { top: box.top, left: box.left, width: box.width, height: box.height, colors: Array.from(layer.children).map((wash) => getComputedStyle(wash).backgroundImage) };
+    }));
+    expect(backgrounds[1]).toEqual(backgrounds[0]);
   }
 });
