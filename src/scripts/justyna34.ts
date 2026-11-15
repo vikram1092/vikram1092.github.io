@@ -16,13 +16,12 @@ const enlargedVideo = document.querySelector<HTMLVideoElement>('#enlarged-video'
 const albumVideos = Array.from(stage.querySelectorAll<HTMLVideoElement>('video'));
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
-const storageKey = `justyna34:${root.dataset.revision}`;
 const runningAnimations = new Set<Animation>();
 let active = 0;
 let started = false;
 let stageVisible = true;
 let resumeDialogVideo = false;
-let answers: Record<string, string> = {};
+const answers: Record<string, string> = {};
 let questionAnimations: Animation[] = [];
 let scrollFrame = 0;
 let navigating = false;
@@ -44,19 +43,6 @@ function validOption(memory: BirthdayMemory, option: string) {
 }
 function accepted(memory: BirthdayMemory, option: string) {
   return validOption(memory, option) && (memory.correctOption === undefined || option === memory.correctOption);
-}
-// Optional persistence: private browsing and disabled storage remain usable.
-try {
-  const saved: unknown = JSON.parse(localStorage.getItem(storageKey) || '{}');
-  if (saved && typeof saved === 'object') {
-    for (const memory of memories) {
-      const option = (saved as Record<string, unknown>)[memory.id];
-      if (typeof option === 'string' && accepted(memory, option)) answers[memory.id] = option;
-    }
-  }
-} catch { /* Start with a fresh album. */ }
-function save() {
-  try { localStorage.setItem(storageKey, JSON.stringify(answers)); } catch { /* Optional persistence. */ }
 }
 function renderAnswers() {
   memories.forEach((memory, index) => {
@@ -395,7 +381,6 @@ questions.forEach((question, index) => {
       }
       const changed = answers[memory.id] !== option;
       answers[memory.id] = option;
-      save();
       renderAnswers();
       const count = Object.keys(answers).length;
       status.textContent = count === questionCount ? 'All questions answered. Happy birthday, Justyna!' : `That’s right. ${count} of ${questionCount} questions answered.`;
@@ -415,7 +400,7 @@ questions.forEach((question, index) => {
           });
         }
       }
-      // Only a correct tap advances, including a previously saved correct choice.
+      // Only a correct tap advances, including a correct choice made earlier in this visit.
       // Any manual navigation, enlargement, or hidden tab cancels this move.
       if (index < memories.length - 1) {
         advanceTimer = setTimeout(() => {

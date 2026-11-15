@@ -26,7 +26,7 @@ async function visit(page: Page, index: number) {
   await centered(page, index);
 }
 
-test('the birthday story keeps all captions, saves seven quiz answers, and stops at both ends', async ({ page }) => {
+test('the birthday story keeps all captions, tracks seven quiz answers until reload, and stops at both ends', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -67,8 +67,9 @@ test('the birthday story keeps all captions, saves seven quiz answers, and stops
   await page.reload();
   await openAlbum(page);
   await centered(page, 0);
-  await expect(page.locator('#birthday')).toHaveClass(/is-complete/);
-  await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(7);
+  await expect(page.locator('#birthday')).not.toHaveClass(/is-complete/);
+  await expect(page.locator('.answer[aria-pressed="true"], .answer.is-revealed')).toHaveCount(0);
+  expect(await page.evaluate(() => localStorage.length)).toBe(0);
   expect(errors).toEqual([]);
 });
 
@@ -215,8 +216,6 @@ test.describe('option taps', () => {
         await expect(page.getByRole('status')).toHaveText(`The correct answer is ${memory.options.find(({ id }) => id === memory.correctOption)!.label}. Tap it to continue.`);
         await page.waitForTimeout(500);
         await centered(page, index);
-        const saved = await page.evaluate(({ key, id }) => JSON.parse(localStorage.getItem(key) || '{}')[id], { key: `justyna34:${birthdayRevision}`, id: memory.id });
-        expect(saved).toBeUndefined();
       }
       await correct.tap();
       await expect(correct).toHaveAttribute('aria-pressed', 'true');
@@ -231,8 +230,8 @@ test.describe('option taps', () => {
     await page.reload();
     await openAlbum(page);
     await visit(page, 3);
-    await expect(page.getByRole('button', { name: 'Krakow', exact: true })).toHaveAttribute('aria-pressed', 'true');
-    // Even after a question was answered, a wrong tap must stay on this memory.
+    await expect(page.locator('.answer[aria-pressed="true"], .answer.is-revealed')).toHaveCount(0);
+    // After reloading, a wrong tap still reveals the answer and stays here.
     await page.getByRole('button', { name: 'Greece', exact: true }).tap();
     await page.waitForTimeout(500);
     await centered(page, 3);
@@ -240,16 +239,16 @@ test.describe('option taps', () => {
     await centered(page, 4);
   });
 
-  test('old saved wrong answers are ignored while correct progress is preserved', async ({ page }) => {
+  test('old saved answers never reveal correct options on a fresh visit', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.addInitScript(({ key, answers }) => localStorage.setItem(key, JSON.stringify(answers)), {
       key: `justyna34:${birthdayRevision}`,
-      answers: { [memories[3].id]: '2', [memories[6].id]: memories[6].correctOption },
+      answers: Object.fromEntries(memories.filter((memory) => memory.options.length).map((memory) => [memory.id, memory.correctOption])),
     });
     await page.goto(route);
     await openAlbum(page);
-    await expect(page.locator('#question-3 .answer[aria-pressed="true"]')).toHaveCount(0);
-    await expect(page.locator(`#question-6 [data-option="${memories[6].correctOption}"]`)).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('.answer[aria-pressed="true"], .answer.is-revealed')).toHaveCount(0);
+    await expect(page.locator('#birthday')).not.toHaveClass(/is-complete/);
     await visit(page, 6);
     await page.getByRole('button', { name: 'The VA', exact: true }).tap();
     await centered(page, 7);
