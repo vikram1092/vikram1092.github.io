@@ -42,13 +42,16 @@ function cancelAdvance() { clearTimeout(advanceTimer); }
 function validOption(memory: BirthdayMemory, option: string) {
   return memory.options.some(({ id }) => id === option);
 }
+function accepted(memory: BirthdayMemory, option: string) {
+  return validOption(memory, option) && (memory.correctOption === undefined || option === memory.correctOption);
+}
 // Optional persistence: private browsing and disabled storage remain usable.
 try {
   const saved: unknown = JSON.parse(localStorage.getItem(storageKey) || '{}');
   if (saved && typeof saved === 'object') {
     for (const memory of memories) {
       const option = (saved as Record<string, unknown>)[memory.id];
-      if (typeof option === 'string' && validOption(memory, option)) answers[memory.id] = option;
+      if (typeof option === 'string' && accepted(memory, option)) answers[memory.id] = option;
     }
   }
 } catch { /* Start with a fresh album. */ }
@@ -377,12 +380,25 @@ questions.forEach((question, index) => {
       const memory = memories[index];
       const option = button.dataset.option!;
       if (!validOption(memory, option)) return;
+      question.querySelectorAll('.is-revealed, .is-retry').forEach((answer) => {
+        answer.classList.remove('is-revealed', 'is-retry');
+        answer.removeAttribute('aria-description');
+      });
+      if (!accepted(memory, option)) {
+        const correct = question.querySelector<HTMLButtonElement>(`[data-option="${memory.correctOption}"]`)!;
+        correct.classList.add('is-revealed');
+        correct.setAttribute('aria-description', 'Correct answer');
+        button.classList.add('is-retry');
+        const label = memory.options.find(({ id }) => id === memory.correctOption)!.label;
+        status.textContent = `The correct answer is ${label}. Tap it to continue.`;
+        return;
+      }
       const changed = answers[memory.id] !== option;
       answers[memory.id] = option;
       save();
       renderAnswers();
       const count = Object.keys(answers).length;
-      status.textContent = count === questionCount ? 'All questions answered. Happy birthday, Justyna!' : `Answer saved. ${count} of ${questionCount} questions answered.`;
+      status.textContent = count === questionCount ? 'All questions answered. Happy birthday, Justyna!' : `That’s right. ${count} of ${questionCount} questions answered.`;
       if (changed && !reducedMotion.matches) {
         button.querySelectorAll('.answer-ripple').forEach((ripple) => ripple.remove());
         const ripple = document.createElement('span');
@@ -399,7 +415,7 @@ questions.forEach((question, index) => {
           });
         }
       }
-      // Briefly show the selection, then advance on every tap, including repeats.
+      // Only a correct tap advances, including a previously saved correct choice.
       // Any manual navigation, enlargement, or hidden tab cancels this move.
       if (index < memories.length - 1) {
         advanceTimer = setTimeout(() => {

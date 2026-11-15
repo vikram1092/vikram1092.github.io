@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { memories } from '../src/data/justyna34';
+import { birthdayRevision, memories } from '../src/data/justyna34';
 
 const route = '/justyna34/';
 const memoryCount = 35;
@@ -196,36 +196,63 @@ test('mobile enlargement matches the source rectangle and reverses without a jum
 test.describe('option taps', () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
 
-  test('every option advances one memory, including saved and repeated choices', async ({ page }) => {
+  test('wrong choices reveal the correct answer and stay; correct taps advance, including repeats', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(route);
     await openAlbum(page);
     for (let index = 0; index < memoryCount; index++) {
-      for (const option of memories[index].options) {
-        await visit(page, index);
-        const button = page.locator(`#question-${index} [data-option="${option.id}"]`);
-        await button.tap();
-        await expect(button).toHaveAttribute('aria-pressed', 'true');
-        await expect(page.locator(`#question-${index + 1}`)).toBeVisible({ timeout: 1000 });
-        await centered(page, index + 1);
+      const memory = memories[index];
+      if (!memory.options.length) continue;
+      await visit(page, index);
+      const correct = page.locator(`#question-${index} [data-option="${memory.correctOption}"]`);
+      for (const option of memory.options.filter(({ id }) => id !== memory.correctOption)) {
+        const wrong = page.locator(`#question-${index} [data-option="${option.id}"]`);
+        await wrong.tap();
+        await expect(wrong).toHaveAttribute('aria-pressed', 'false');
+        await expect(correct).toHaveAttribute('aria-pressed', 'false');
+        await expect(correct).toHaveClass(/is-revealed/);
+        await expect(correct.locator('.answer-check')).toHaveCSS('opacity', '1');
+        await expect(page.getByRole('status')).toHaveText(`The correct answer is ${memory.options.find(({ id }) => id === memory.correctOption)!.label}. Tap it to continue.`);
+        await page.waitForTimeout(500);
+        await centered(page, index);
+        const saved = await page.evaluate(({ key, id }) => JSON.parse(localStorage.getItem(key) || '{}')[id], { key: `justyna34:${birthdayRevision}`, id: memory.id });
+        expect(saved).toBeUndefined();
       }
+      await correct.tap();
+      await expect(correct).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.locator(`#question-${index + 1}`)).toBeVisible({ timeout: 1000 });
+      await centered(page, index + 1);
+      await visit(page, index);
+      await correct.tap();
+      await centered(page, index + 1);
     }
     await expect(page.locator('#birthday')).toHaveClass(/is-complete/);
     await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(7);
-
-    // Previously incorrect choices survive a reload and remain tappable.
     await page.reload();
     await openAlbum(page);
     await visit(page, 3);
-    const saved = page.getByRole('button', { name: 'Greece', exact: true });
-    await expect(saved).toHaveAttribute('aria-pressed', 'true');
-    await saved.tap();
-    await centered(page, 4);
-    await visit(page, 3);
-    await saved.tap();
-    await centered(page, 4);
+    await expect(page.getByRole('button', { name: 'Krakow', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    // Even after a question was answered, a wrong tap must stay on this memory.
+    await page.getByRole('button', { name: 'Greece', exact: true }).tap();
     await page.waitForTimeout(500);
+    await centered(page, 3);
+    await page.getByRole('button', { name: 'Krakow', exact: true }).tap();
     await centered(page, 4);
+  });
+
+  test('old saved wrong answers are ignored while correct progress is preserved', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.addInitScript(({ key, answers }) => localStorage.setItem(key, JSON.stringify(answers)), {
+      key: `justyna34:${birthdayRevision}`,
+      answers: { [memories[3].id]: '2', [memories[6].id]: memories[6].correctOption },
+    });
+    await page.goto(route);
+    await openAlbum(page);
+    await expect(page.locator('#question-3 .answer[aria-pressed="true"]')).toHaveCount(0);
+    await expect(page.locator(`#question-6 [data-option="${memories[6].correctOption}"]`)).toHaveAttribute('aria-pressed', 'true');
+    await visit(page, 6);
+    await page.getByRole('button', { name: 'The VA', exact: true }).tap();
+    await centered(page, 7);
   });
 });
 
