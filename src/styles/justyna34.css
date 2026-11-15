@@ -37,7 +37,7 @@ html, body { height: 100%; overflow: hidden; }
 body { margin: 0; min-width: 280px; }
 button { color: inherit; font: inherit; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 button, img { -webkit-user-select: none; user-select: none; }
-button:focus-visible { outline: 2px solid var(--bronze); outline-offset: 6px; }
+button:focus-visible, .trail-link:focus-visible { outline: 2px solid var(--bronze); outline-offset: 6px; }
 [hidden] { display: none !important; }
 svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
@@ -116,12 +116,14 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .question { max-width: 620px; margin: 0 auto; text-align: center; }
 .question h2 { margin: 0; font: 400 34px/1.12 'Birthday Serif', Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
 .answers { display: flex; justify-content: center; gap: 10px; margin-top: 22px; pointer-events: auto; }
-.answer { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; flex: 1; min-height: 52px; padding: 14px 28px; overflow: hidden; color: var(--bronze-deep); background: var(--rose-fill); border: 0; border-radius: 999px; box-shadow: 0 3px 8px rgb(67 48 43 / 5%); font-size: 12px; line-height: 1.5; transition: background 450ms, border-color 450ms, transform 500ms var(--ease-soft), box-shadow 500ms; }
+.answer, .trail-link { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; flex: 1; min-height: 52px; padding: 14px 28px; overflow: hidden; color: var(--bronze-deep); background: var(--rose-fill); border: 0; border-radius: 999px; box-shadow: 0 3px 8px rgb(67 48 43 / 5%); font-size: 12px; line-height: 1.5; transition: background 450ms, border-color 450ms, transform 500ms var(--ease-soft), box-shadow 500ms; }
+.trail-link { width: min(100%, 360px); margin: 22px auto 0; gap: 12px; color: var(--cream); background: var(--bronze); text-decoration: none; pointer-events: auto; touch-action: manipulation; }
+.trail-link svg { width: 18px; height: 18px; flex: none; }
 .answer-check { position: absolute; right: 13px; width: 15px; height: 15px; opacity: 0; transform: scale(.75); stroke-dasharray: 24; stroke-dashoffset: 24; transition: opacity 350ms, transform 550ms var(--ease-soft), stroke-dashoffset 600ms var(--ease-soft); }
 .answer[aria-pressed='true'], .answer.is-revealed { color: var(--cream); background: var(--bronze); box-shadow: 0 4px 12px rgb(67 48 43 / 12%); }
 .answer[aria-pressed='true'] .answer-check, .answer.is-revealed .answer-check { opacity: 1; transform: scale(1); stroke-dashoffset: 0; }
 .answer.is-retry { color: var(--bronze-deep); background: #d8d0bf; }
-.answer:active { transform: scale(.97); }
+.answer:active, .trail-link:active { transform: scale(.97); }
 .answer-ripple { position: absolute; z-index: -1; width: 24px; height: 24px; border-radius: 50%; background: var(--bronze-border); pointer-events: none; animation: answer-ripple 1100ms var(--ease-soft) both; }
 
 /* The full photo shares the square gilt painting frame. Its opening and closing motions are anchored
@@ -141,6 +143,7 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
   .photo-slot.is-current .photo-surface:hover .photo-light { opacity: .65; }
   .answer:hover { background: var(--bronze-border); transform: translateY(-2px); }
   .answer[aria-pressed='true']:hover, .answer.is-revealed:hover { background: var(--bronze-deep); }
+  .trail-link:hover { background: var(--bronze-deep); transform: translateY(-2px); }
   .round-button:hover { transform: scale(1.06); }
 }
 @media (min-width: 1600px) { .album { --photo-width: 1100px; --photo-gap: 44px; } }

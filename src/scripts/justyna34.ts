@@ -121,7 +121,7 @@ function select(index: number, announce = true) {
   if (changed) {
     questionAnimations.forEach((animation) => animation.cancel());
     questionAnimations = [];
-    questions[index].querySelectorAll('h2, .answer').forEach((element, i) => {
+    questions[index].querySelectorAll('h2, .answer, .trail-link').forEach((element, i) => {
       const animation = animate(element, [
         { opacity: 0, transform: `translate(${direction * 8}px, 8px)` },
         { opacity: 1, transform: 'translate(0, 0)' },
