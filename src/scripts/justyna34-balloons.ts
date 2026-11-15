@@ -3,8 +3,8 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 /** Small, decorative scene. The SVG underneath is also the no-WebGL fallback. */
 export function mountBalloons(host: HTMLElement) {
-  const header = host.parentElement!;
-  const title = header.querySelector('h1')!;
+  const root = host.parentElement!;
+  const title = root.querySelector('h1')!;
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('webgl2', { alpha: true, antialias: true, powerPreference: 'low-power' });
@@ -55,31 +55,36 @@ export function mountBalloons(host: HTMLElement) {
     line.frustumCulled = false;
     group.add(line);
     scene.add(group);
-    return { group, thread, phase: i * 1.9, baseX: 0, baseY: 0, radius: 1, length: 1, x: 0, y: 0, vx: 0, vy: 0 };
+    return { group, thread, phase: i * 1.9, baseX: 0, baseY: 0, introX: 0, introY: 0, cornerX: 0, cornerY: 0, introRadius: 1, cornerRadius: 1, radius: 1, length: 1, x: 0, y: 0, vx: 0, vy: 0 };
   });
   let width = 1, height = 1, visible = true, disposed = false, contextLost = false;
   let frame = 0, last = 0, time = 0;
+  let departure = root.classList.contains('is-started') ? performance.now() - 1600 : 0;
 
   function layout() {
     if (disposed || contextLost) return;
-    const box = header.getBoundingClientRect();
+    const box = host.getBoundingClientRect();
     width = box.width;
     height = box.height;
     renderer.setSize(width, height, false);
     camera.left = -width / 2; camera.right = width / 2;
     camera.top = height / 2; camera.bottom = -height / 2;
     camera.updateProjectionMatrix();
-    const sideSpace = Math.max(32, (width - title.getBoundingClientRect().width) / 2);
-    const radius = Math.min(32, sideSpace * .19);
+    const mobile = width <= 650;
+    const radius = mobile ? Math.min(24, width * .06) : 32;
+    const cornerRadius = mobile ? 14 : 24;
+    const safeTop = parseFloat(getComputedStyle(root.querySelector('.album')!).paddingTop);
     balloons.forEach((balloon, i) => {
       const index = i % 3;
       const side = i < 3 ? -1 : 1;
-      balloon.radius = radius * [1, .95, .74][index];
-      balloon.baseX = side * (width / 2 - sideSpace * .52) + side * [ .45, -.65, .05 ][index] * radius;
-      // Leave room above the bouquet for a full, visible idle bob.
-      balloon.baseY = height * .20 - [0, .62, 1.38][index] * radius;
-      balloon.length = height * .23 / balloon.radius;
-      balloon.group.scale.setScalar(balloon.radius);
+      const spread = side * [.45, -.65, .05][index];
+      balloon.introRadius = radius * [1, .95, .74][index];
+      balloon.cornerRadius = cornerRadius * [1, .95, .74][index];
+      balloon.introX = side * (mobile ? width * .29 : Math.min(width / 2 - 70, title.getBoundingClientRect().width / 2 + 85)) + spread * radius;
+      balloon.introY = (mobile ? 108 : 46) - [0, .62, 1.38][index] * radius;
+      balloon.cornerX = side * (width / 2 - cornerRadius * 2.6) + spread * cornerRadius;
+      // Keep the idle bob and strings inside the viewport, including the notch.
+      balloon.cornerY = height / 2 - Math.max(cornerRadius * 2.2 + 12, safeTop - 28) - [0, .62, 1.38][index] * cornerRadius;
       balloon.group.position.z = index * 12;
     });
     draw(0);
@@ -87,7 +92,15 @@ export function mountBalloons(host: HTMLElement) {
   }
   function draw(dt: number) {
     time += dt;
+    const progress = departure ? (motion.matches ? 1 : Math.min(1, (performance.now() - departure) / 1600)) : 0;
+    const travel = motion.matches ? (departure ? 1 : 0) : 1 - (1 - progress) ** 3;
+    host.dataset.position = progress === 1 ? 'corners' : departure ? 'departing' : 'intro';
     balloons.forEach((balloon, i) => {
+      balloon.radius = THREE.MathUtils.lerp(balloon.introRadius, balloon.cornerRadius, travel);
+      balloon.baseX = THREE.MathUtils.lerp(balloon.introX, balloon.cornerX, travel);
+      balloon.baseY = THREE.MathUtils.lerp(balloon.introY, balloon.cornerY, travel);
+      balloon.length = 2.4;
+      balloon.group.scale.setScalar(balloon.radius);
       const { phase, radius, group, thread } = balloon;
       // Independent buoyancy rides a shared slow breeze, even without input.
       // Springs keep the larger movements soft and let a tap settle naturally.
@@ -126,11 +139,12 @@ export function mountBalloons(host: HTMLElement) {
     last = 0;
     const paused = motion.matches || document.hidden || !visible || contextLost || disposed;
     host.dataset.motion = motion.matches ? 'reduced' : paused ? 'paused' : 'running';
+    if (motion.matches && !contextLost && !disposed) { draw(0); renderer.render(scene, camera); }
     if (!paused) frame = requestAnimationFrame(tick);
   }
   function nudge(event: PointerEvent) {
     if (motion.matches || disposed || contextLost) return;
-    const box = header.getBoundingClientRect();
+    const box = host.getBoundingClientRect();
     const x = event.clientX - box.left - width / 2;
     const y = height / 2 - (event.clientY - box.top);
     const press = event.type === 'pointerdown';
@@ -144,14 +158,18 @@ export function mountBalloons(host: HTMLElement) {
     });
   }
   const resize = new ResizeObserver(layout);
-  resize.observe(header);
+  resize.observe(host);
   resize.observe(title);
   const intersection = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
-  intersection.observe(header);
+  intersection.observe(host);
+  const state = new MutationObserver(() => {
+    if (!departure && root.classList.contains('is-started')) { departure = performance.now(); sync(); }
+  });
+  state.observe(root, { attributes: true, attributeFilter: ['class'] });
   document.addEventListener('visibilitychange', sync);
   motion.addEventListener('change', sync);
-  header.addEventListener('pointermove', nudge, { passive: true });
-  header.addEventListener('pointerdown', nudge, { passive: true });
+  root.addEventListener('pointermove', nudge, { passive: true });
+  root.addEventListener('pointerdown', nudge, { passive: true });
   canvas.addEventListener('webglcontextlost', (event) => {
     event.preventDefault();
     contextLost = true;
@@ -170,11 +188,11 @@ export function mountBalloons(host: HTMLElement) {
     if (event.persisted) return;
     disposed = true;
     sync();
-    resize.disconnect(); intersection.disconnect();
+    resize.disconnect(); intersection.disconnect(); state.disconnect();
     document.removeEventListener('visibilitychange', sync);
     motion.removeEventListener('change', sync);
-    header.removeEventListener('pointermove', nudge);
-    header.removeEventListener('pointerdown', nudge);
+    root.removeEventListener('pointermove', nudge);
+    root.removeEventListener('pointerdown', nudge);
     window.removeEventListener('pagehide', cleanup);
     balloons.forEach(({ thread }) => thread.dispose());
     materials.forEach((material) => material.dispose());

@@ -6,6 +6,10 @@ const memoryCount = 35;
 const lastMemory = memoryCount - 1;
 const videoIndex = memories.findIndex((memory) => memory.video);
 const currentPhoto = (page: Page) => page.locator('.photo-slot.is-current:not([data-clone])');
+async function openAlbum(page: Page) {
+  await page.getByRole('button', { name: 'Open your birthday memories' }).click();
+  await expect(page.locator('.album')).toHaveCSS('opacity', '1');
+}
 async function centered(page: Page, index: number) {
   await expect(page.locator(`#question-${index}`)).not.toHaveAttribute('hidden');
   await expect.poll(() => page.locator(`.photo-slot:not([data-clone])[data-photo-index="${index}"]`).evaluate((slot) => {
@@ -27,7 +31,8 @@ test('the birthday story keeps all captions, saves seven quiz answers, and stops
   page.on('pageerror', (error) => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(route);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('happy 34 birthday');
+  await openAlbum(page);
+  await expect(page.locator('h1')).toHaveText('happy 34 birthday');
   await expect(page.locator('.photo-slot')).toHaveCount(35);
   await expect(page.locator('[data-clone], .album-controls, .memory-strip')).toHaveCount(0);
   await expect(page.locator('#question-0 h2')).toHaveText('Once in my life…');
@@ -60,6 +65,7 @@ test('the birthday story keeps all captions, saves seven quiz answers, and stops
   await page.keyboard.press('ArrowRight');
   await centered(page, lastMemory);
   await page.reload();
+  await openAlbum(page);
   await centered(page, 0);
   await expect(page.locator('#birthday')).toHaveClass(/is-complete/);
   await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(7);
@@ -69,6 +75,7 @@ test('the birthday story keeps all captions, saves seven quiz answers, and stops
 test('manual navigation cancels an answer advance and neighboring photos remain tappable', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(route);
+  await openAlbum(page);
   await visit(page, 3);
   await page.getByRole('button', { name: 'Krakow', exact: true }).click();
   await page.keyboard.press('ArrowLeft');
@@ -82,6 +89,7 @@ test('manual navigation cancels an answer advance and neighboring photos remain 
 
 test('photos enlarge from their position, close with Escape, and support mouse drag', async ({ page }) => {
   await page.goto(route);
+  await openAlbum(page);
   await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
   const photo = page.locator('.photo-slot:not([data-clone])').first().getByRole('button');
   // The photo has slow ambient motion: click the visual center, as a user does.
@@ -114,12 +122,13 @@ test('photos enlarge from their position, close with Escape, and support mouse d
   await expect(page.getByRole('dialog')).toBeHidden();
 });
 
-test('real touch swipes stop at both ends, while vertical scrolling still works', async ({ browser }) => {
+test('real touch swipes stop at both ends and the page stays within the viewport', async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 390, height: 700 }, hasTouch: true, isMobile: true, deviceScaleFactor: 1 });
   const page = await context.newPage();
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(`http://127.0.0.1:4321${route}`);
+  await openAlbum(page);
   await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
   const touch = await context.newCDPSession(page);
   async function swipe(from: [number, number], to: [number, number]) {
@@ -141,7 +150,7 @@ test('real touch swipes stop at both ends, while vertical scrolling still works'
   await centered(page, lastMemory);
   await visit(page, 3);
   await swipe([190, 450], [190, 210]);
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(30);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
   expect(errors).toEqual([]);
   await context.close();
@@ -150,6 +159,7 @@ test('real touch swipes stop at both ends, while vertical scrolling still works'
 test('mobile enlargement matches the source rectangle and reverses without a jump', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(route);
+  await openAlbum(page);
   await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
   const photo = currentPhoto(page).locator('button');
   const box = (await photo.boundingBox())!;
@@ -185,6 +195,7 @@ test('mobile enlargement matches the source rectangle and reverses without a jum
 
 test('incorrect answers invite a retry and do not advance or save progress', async ({ page }) => {
   await page.goto(route);
+  await openAlbum(page);
   await visit(page, 3);
   await page.getByRole('button', { name: 'Greece', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Greece', exact: true })).toHaveClass(/is-retry/);
@@ -199,6 +210,7 @@ test('incorrect answers invite a retry and do not advance or save progress', asy
 
 test('motion responds to the pointer, and stops when reduced motion is requested', async ({ page }) => {
   await page.goto(route);
+  await openAlbum(page);
   await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
   const photo = currentPhoto(page).locator('button');
   const bounds = (await photo.boundingBox())!;
@@ -218,6 +230,7 @@ test('motion responds to the pointer, and stops when reduced motion is requested
 
 test('hover and press do not resize carousel frames or fight their centered size', async ({ page }) => {
   await page.goto(route);
+  await openAlbum(page);
   await expect(page.locator('.photo-stage')).toHaveCSS('opacity', '1');
   const photo = currentPhoto(page).locator('button');
   const box = (await photo.boundingBox())!;
@@ -248,6 +261,7 @@ test('storage fallback, square painting frames on mobile, loaded images, and tex
     Object.defineProperty(window, 'localStorage', { get() { throw new Error('Storage unavailable'); } });
   });
   await page.goto(route);
+  await openAlbum(page);
   await visit(page, 3);
   await page.getByRole('button', { name: 'Krakow', exact: true }).click();
   await page.keyboard.press('ArrowRight');
@@ -301,6 +315,7 @@ test('3D balloons animate without input, fit small screens, and rest when hidden
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(route);
+  await openAlbum(page);
   const balloons = page.locator('#birthday-balloons');
   await expect(balloons).toHaveAttribute('data-renderer', 'webgl');
   await expect(balloons).toHaveAttribute('data-motion', 'running');
@@ -314,15 +329,18 @@ test('3D balloons animate without input, fit small screens, and rest when hidden
   await isolateBalloons.evaluate((style) => style.remove());
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    await expect.poll(() => balloons.locator('canvas').evaluate((canvas) => canvas.getBoundingClientRect().width)).toBe(Math.min(width, 1060));
+    await expect.poll(() => balloons.locator('canvas').evaluate((canvas) => canvas.getBoundingClientRect().width)).toBe(width);
     await centered(page, 0);
     await page.screenshot({ path: `test-results/justyna34-balloons-${width}.png`, fullPage: true });
     await centered(page, 0);
   }
   await page.setViewportSize({ width: 390, height: 400 });
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect(balloons).toHaveAttribute('data-motion', 'running');
+  await expect(balloons).toHaveAttribute('data-position', 'corners');
+  await balloons.evaluate((host: HTMLElement) => { host.style.display = 'none'; });
   await expect(balloons).toHaveAttribute('data-motion', 'paused');
-  await page.evaluate(() => scrollTo(0, 0));
+  await balloons.evaluate((host: HTMLElement) => { host.style.display = ''; });
   await expect(balloons).toHaveAttribute('data-motion', 'running');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(balloons).toHaveAttribute('data-motion', 'reduced');
@@ -343,6 +361,7 @@ test('balloons keep their illustrated fallback without WebGL, and the quiz remai
     } as typeof original;
   });
   await page.goto(route);
+  await openAlbum(page);
   await expect(page.locator('.balloon-fallback--left')).toBeVisible();
   await expect(page.locator('.balloon-fallback--right')).toBeVisible();
   await expect(page.locator('#birthday-balloons')).toHaveAttribute('data-renderer', 'fallback');
@@ -354,6 +373,7 @@ test('balloons keep their illustrated fallback without WebGL, and the quiz remai
 test('all 34 photos and one video retain their own proportions at every screen size', async ({ page, request }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(route);
+  await openAlbum(page);
   const originals = page.locator('.photo-slot:not([data-clone])');
   await expect(originals).toHaveCount(memoryCount);
   await expect(originals.locator('img')).toHaveCount(34);
@@ -398,24 +418,13 @@ test('all 34 photos and one video retain their own proportions at every screen s
       expect(ratio.fit).toBe('contain');
       expect(ratio.transform).toBe('none');
     }
-    if (width <= 650) {
-      for (const window of await originals.locator('.photo-window').all()) {
-        const layout = await window.evaluate((window) => {
-          const media = window.getBoundingClientRect();
-          const caption = window.querySelector('.photo-caption')!;
-          const text = caption.querySelector('span')!.getBoundingClientRect();
-          return { width: media.width, textInPhoto: text.left >= media.left && text.right <= media.right && text.top >= media.top && text.bottom <= media.bottom, gradient: getComputedStyle(caption, '::before').backgroundImage };
-        });
-        expect(layout.width).toBeCloseTo(width * .8 - 56, 0);
-        expect(layout.textInPhoto).toBeTruthy();
-        expect(layout.gradient).toContain('linear-gradient');
-      }
-    } else await expect(originals.first().locator('.photo-caption')).toBeHidden();
+    await expect(page.locator('.photo-caption')).toHaveCount(0);
+    await expect(page.locator('#question-0 h2')).toBeVisible();
+    await expect(page.locator('.question-space')).toHaveCSS('background-image', /linear-gradient/);
     const stageHeight = await page.locator('.photo-stage').evaluate((stage) => stage.clientHeight);
     await page.keyboard.press('ArrowRight');
     await centered(page, 1);
-    if (width > 650) expect(await page.locator('.photo-stage').evaluate((stage) => stage.clientHeight)).toBe(stageHeight);
-    else await expect.poll(() => page.locator('.photo-stage').evaluate((stage) => stage.clientHeight)).toBeLessThan(stageHeight);
+    expect(await page.locator('.photo-stage').evaluate((stage) => stage.clientHeight)).toBe(stageHeight);
     await page.screenshot({ path: `test-results/justyna34-landscape-${width}.png`, fullPage: true });
     await page.keyboard.press('ArrowLeft');
   }
@@ -423,7 +432,7 @@ test('all 34 photos and one video retain their own proportions at every screen s
   for (const index of [3, 17, 34]) {
     await visit(page, index);
     await expect.poll(() => currentPhoto(page).locator('img').evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBeTruthy();
-    await expect.poll(() => page.locator('.photo-stage').evaluate((stage) => stage.clientHeight)).toBe(Math.round((312 - 56) / (memories[index].width / memories[index].height) + 112));
+    expect((await currentPhoto(page).boundingBox())!.height).toBeLessThan((await page.locator('.photo-stage').boundingBox())!.height);
     await page.screenshot({ path: `test-results/justyna34-story-${index + 1}-mobile.png`, fullPage: true });
   }
 });
@@ -432,6 +441,7 @@ test('video autoplays muted inline, pauses away, and has controls when enlarged'
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(route);
+  await openAlbum(page);
   const video = page.locator('.photo-slot:not([data-clone]) video');
   // No video download on the landing photo.
   await expect(video).not.toHaveAttribute('src');
@@ -458,12 +468,70 @@ test('video autoplays muted inline, pauses away, and has controls when enlarged'
   await expect(page.getByRole('dialog')).toBeHidden();
   expect(await enlarged.evaluate((v: HTMLVideoElement) => v.paused)).toBeTruthy();
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused)).toBeTruthy();
-  // Text-only slides end just below their photo. Add test-only scroll space
-  // so the entire clip can leave the viewport, then verify playback resumes.
-  await page.addStyleTag({ content: '.birthday { padding-bottom: 110vh; }' });
-  await page.setViewportSize({ width: 390, height: 300 });
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  // Playback still stops if the stage is moved outside the viewport.
+  await page.locator('.photo-stage').evaluate((stage: HTMLElement) => { stage.style.transform = 'translateY(-110vh)'; });
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.paused)).toBeTruthy();
-  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.locator('.photo-stage').evaluate((stage: HTMLElement) => { stage.style.transform = ''; });
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused)).toBeTruthy();
+});
+
+test('intro centers the title and arrow, then releases the viewport to the album', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(route);
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Open your birthday memories' })).toBeVisible();
+  await expect(page.locator('.album')).toBeHidden();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('#birthday')).not.toHaveClass(/is-started/);
+  const title = (await page.locator('h1').boundingBox())!;
+  const arrow = (await page.locator('.intro-next').boundingBox())!;
+  expect(Math.abs(title.x + title.width / 2 - 195)).toBeLessThan(2);
+  expect(Math.abs(title.y + title.height / 2 - 422)).toBeLessThan(40);
+  expect(arrow.y).toBeGreaterThan(title.y + title.height);
+  await page.screenshot({ path: 'test-results/justyna34-intro-mobile.png' });
+  await openAlbum(page);
+  await expect(page.locator('.birthday-heading')).toBeHidden();
+  await expect(page.locator('#birthday-balloons')).toHaveAttribute('data-position', 'corners');
+  await expect(page.locator('#birthday-balloons')).toHaveAttribute('data-motion', 'running');
+  await expect(currentPhoto(page).locator('button')).toBeFocused();
+  await page.screenshot({ path: 'test-results/justyna34-open-mobile.png' });
+});
+
+test('every memory keeps its full frame, caption, and options on screen without vertical scrolling', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(route);
+  await openAlbum(page);
+  for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 667 }, { width: 390, height: 844 }, { width: 844, height: 390 }, { width: 1440, height: 900 }]) {
+    await page.setViewportSize(viewport);
+    await visit(page, 0);
+    for (let index = 0; index < memoryCount; index++) {
+      await visit(page, index);
+      const layout = await page.evaluate(() => {
+        const frame = document.querySelector('.photo-slot.is-current button')!.getBoundingClientRect();
+        const panel = document.querySelector('.question-space')!.getBoundingClientRect();
+        const question = document.querySelector('.question:not([hidden])')!;
+        const text = question.querySelector('h2')!.getBoundingClientRect();
+        const options = Array.from(question.querySelectorAll('.answer')).map((button) => {
+          const box = button.getBoundingClientRect();
+          return { top: box.top, bottom: box.bottom, height: box.height };
+        });
+        return { top: frame.top, bottom: frame.bottom, left: frame.left, right: frame.right, panelTop: panel.top, panelBottom: panel.bottom, textTop: text.top, textBottom: text.bottom, options, scrollHeight: document.documentElement.scrollHeight, scrollWidth: document.documentElement.scrollWidth };
+      });
+      expect(layout.scrollHeight).toBe(viewport.height);
+      expect(layout.scrollWidth).toBe(viewport.width);
+      expect(layout.top).toBeGreaterThan(8);
+      expect(layout.left).toBeGreaterThan(8);
+      expect(layout.right).toBeLessThan(viewport.width - 8);
+      expect(layout.bottom + 8).toBeLessThan(layout.panelTop);
+      expect(layout.textTop).toBeGreaterThan(layout.bottom);
+      expect(layout.textBottom).toBeLessThan(viewport.height);
+      expect(layout.panelBottom).toBe(viewport.height);
+      for (const option of layout.options) {
+        expect(option.top).toBeGreaterThan(layout.textBottom);
+        expect(option.bottom).toBeLessThan(viewport.height);
+        expect(option.height).toBeGreaterThanOrEqual(44);
+      }
+      if ([0, 3, 17, 34].includes(index)) await page.screenshot({ path: `test-results/justyna34-fit-${viewport.width}x${viewport.height}-${index}.png` });
+    }
+  }
 });

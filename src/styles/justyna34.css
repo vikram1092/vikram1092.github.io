@@ -33,6 +33,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 * { box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; }
 body { margin: 0; min-width: 280px; }
 button { color: inherit; font: inherit; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 button, img { -webkit-user-select: none; user-select: none; }
@@ -49,26 +50,33 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 .ambient-light > div:nth-child(1) { top: -55%; left: -25%; }
 .ambient-light > div:nth-child(2) { top: 10%; right: -40%; background: radial-gradient(ellipse, #e5c6cd 0%, transparent 67%); animation-delay: -9s, -10s; animation-direction: alternate-reverse, normal; }
 .ambient-light > div:nth-child(3) { bottom: -70%; left: -30%; background: radial-gradient(ellipse, #d2dbc8 0%, transparent 67%); animation-delay: -15s, -20s; }
-.birthday { position: relative; z-index: 1; min-height: 100svh; padding: clamp(18px, 3vh, 36px) 0 max(64px, env(safe-area-inset-bottom)); overflow: clip; }
-.birthday-heading { position: relative; display: grid; place-items: center; width: min(1060px, 100%); height: 200px; margin: 0 auto; text-align: center; }
+.birthday { position: relative; z-index: 1; height: 100svh; height: 100dvh; overflow: clip; }
+.birthday-heading { position: absolute; z-index: 3; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; text-align: center; transition: opacity 650ms var(--ease-soft), transform 850ms var(--ease-soft), visibility 0s 650ms; }
+.birthday.is-started .birthday-heading { opacity: 0; transform: translateY(-24px); visibility: hidden; pointer-events: none; }
+.round-button.intro-next { flex: 0 0 auto; width: 52px; height: 52px; animation: title-arrive 1200ms 650ms var(--ease-soft) both; }
 h1 { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: .24em; margin: 0; font: 400 clamp(36px, 3.6vw, 52px)/1 'Birthday Serif', Georgia, serif; letter-spacing: -.035em; }
 .title-happy, .title-birthday { display: block; animation: title-arrive 1200ms 120ms var(--ease-soft) both; }
 .title-birthday { animation-delay: 320ms; }
 .title-age { font-size: 3em; font-weight: 400; line-height: .9; letter-spacing: -.065em; padding-right: .04em; }
 .title-age > span { display: block; translate: 0 var(--age-offset, -.13em); animation: title-arrive 1500ms 200ms var(--ease-soft) both; }
-.birthday-balloons { position: absolute; inset: 0; pointer-events: none; }
+.birthday-balloons { position: absolute; z-index: 2; inset: 0; pointer-events: none; }
 .birthday-balloons canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 700ms; }
 .birthday-balloons.is-ready canvas { opacity: 1; }
-.balloon-fallback { position: absolute; top: 0; width: 145px; height: 200px; stroke: none; transition: opacity 500ms; }
-.balloon-fallback--left { left: 16%; transform: translateX(-50%); }
-.balloon-fallback--right { right: 16%; transform: translateX(50%) scaleX(-1); }
+.balloon-fallback { position: absolute; top: calc(50% - 130px); width: 145px; height: 200px; stroke: none; transition: opacity 500ms, top 1600ms var(--ease-soft), left 1600ms var(--ease-soft), right 1600ms var(--ease-soft), width 1600ms var(--ease-soft), height 1600ms var(--ease-soft); }
+.balloon-fallback--left { left: max(16px, calc(50% - 430px)); }
+.balloon-fallback--right { right: max(16px, calc(50% - 430px)); transform: scaleX(-1); }
+.is-started .balloon-fallback { top: max(12px, env(safe-area-inset-top)); width: 105px; height: 150px; }
+.is-started .balloon-fallback--left { left: 12px; }
+.is-started .balloon-fallback--right { right: 12px; }
 .birthday-balloons.is-ready .balloon-fallback { opacity: 0; }
 .balloon-string { fill: none; stroke: #978365; stroke-width: 1; opacity: .65; }
 .fallback-balloon { transform-box: fill-box; transform-origin: 50% 100%; animation: balloon-sway 5.5s ease-in-out infinite alternate; }
 .fallback-balloon--rose { animation-duration: 6.3s; animation-delay: -2s; }
 .fallback-balloon--sage { animation-duration: 4.8s; animation-delay: -4s; }
-.album { --rest-scale: .9; --rest-lift: 8px; --photo-width: min(72vw, 740px); --photo-height: min(54svh, 460px); --photo-gap: 30px; margin: 12px auto 0; }
-.photo-stage { display: flex; align-items: center; gap: var(--photo-gap); overflow-x: auto; overflow-y: hidden; height: calc(var(--photo-height) + 2 * var(--frame-size) + 72px); padding-block: 24px 48px; padding-left: max(0px, calc((100% - min(var(--photo-width), var(--photo-height) * var(--leading-ratio) + 2 * var(--frame-size))) / 2)); padding-right: max(0px, calc((100% - min(var(--photo-width), var(--photo-height) * var(--trailing-ratio) + 2 * var(--frame-size))) / 2)); scroll-snap-type: x mandatory; scroll-padding-inline: 0; scrollbar-width: none; overscroll-behavior-x: contain; touch-action: pan-x pan-y pinch-zoom; -webkit-overflow-scrolling: touch; animation: photo-arrive 1600ms 100ms var(--ease-soft) both; }
+/* The bottom panel owns its space; the photos fit the remaining viewport. */
+.album { --rest-scale: .9; --rest-lift: 8px; --photo-width: min(72vw, 900px); --photo-height: 50svh; --photo-gap: 30px; display: grid; grid-template-rows: minmax(0, 1fr) auto; height: 100%; padding-top: max(64px, env(safe-area-inset-top)); opacity: 0; visibility: hidden; transition: opacity 1000ms 250ms var(--ease-soft); }
+.is-started .album { opacity: 1; visibility: visible; }
+.photo-stage { display: flex; align-items: center; gap: var(--photo-gap); overflow-x: auto; overflow-y: hidden; height: 100%; min-height: 0; padding-block: 24px 32px; padding-left: max(0px, calc((100% - min(var(--photo-width), var(--photo-height) * var(--leading-ratio) + 2 * var(--frame-size))) / 2)); padding-right: max(0px, calc((100% - min(var(--photo-width), var(--photo-height) * var(--trailing-ratio) + 2 * var(--frame-size))) / 2)); scroll-snap-type: x mandatory; scroll-padding-inline: 0; scrollbar-width: none; overscroll-behavior-x: contain; touch-action: pan-x pinch-zoom; -webkit-overflow-scrolling: touch; }
 .photo-stage::-webkit-scrollbar { display: none; }
 .photo-slot { flex: 0 0 auto; width: min(var(--photo-width), calc(var(--photo-height) * var(--photo-ratio) + 2 * var(--frame-size))); min-width: 0; scroll-snap-align: center; }
 .photo-drift { animation: photo-float 14s var(--drift-delay, 0s) ease-in-out infinite alternate; }
@@ -92,7 +100,6 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .photo-window { display: block; position: relative; overflow: hidden; aspect-ratio: var(--photo-ratio); border-radius: 0; transform: translateZ(0); }
 .photo-window img, .photo-window video { display: block; width: 100%; height: 100%; object-fit: contain; }
 .photo-window video { pointer-events: none; }
-.photo-caption { display: none; }
 .photo-light { position: absolute; inset: 0; pointer-events: none; border-radius: 0; opacity: 0; background: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 40%), rgb(255 250 235 / 35%), transparent 65%); mix-blend-mode: soft-light; transition: opacity 800ms; }
 .photo-slot.is-current .photo-surface.is-touched .photo-light { opacity: .8; }
 .photo-stage.is-dragging { scroll-snap-type: none; cursor: grabbing; }
@@ -101,10 +108,11 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .photo-slot.is-expanded .photo-surface { opacity: .22; }
 .photo-slot.is-expanded .photo-drift, .photo-slot.is-expanded img { animation-play-state: paused; }
 
-.question-space { max-width: 600px; padding: 0 24px; margin: 0 auto; animation: question-arrive 1200ms 450ms var(--ease-soft) both; }
-.question { text-align: center; }
-.question h2 { margin: 0 0 24px; font: 400 34px/1.12 'Birthday Serif', Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
-.answers { display: flex; justify-content: center; gap: 10px; }
+.question-space { position: relative; z-index: 1; width: 100%; padding: 24px max(24px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left)); background: linear-gradient(to top, var(--cream) 45%, rgb(250 249 242 / 97%)); }
+.question-space::before { content: ''; position: absolute; inset: auto 0 100%; height: 12px; pointer-events: none; background: linear-gradient(to top, rgb(250 249 242 / 97%), rgb(250 249 242 / 0%)); }
+.question { max-width: 620px; margin: 0 auto; text-align: center; }
+.question h2 { margin: 0; font: 400 34px/1.12 'Birthday Serif', Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
+.answers { display: flex; justify-content: center; gap: 10px; margin-top: 22px; }
 .answer { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; flex: 1; min-height: 52px; padding: 14px 28px; overflow: hidden; color: var(--bronze-deep); background: var(--rose-fill); border: 0; border-radius: 999px; box-shadow: 0 3px 8px rgb(67 48 43 / 5%); font-size: 12px; line-height: 1.5; transition: background 450ms, border-color 450ms, transform 500ms var(--ease-soft), box-shadow 500ms; }
 .answer-check { position: absolute; right: 13px; width: 15px; height: 15px; opacity: 0; transform: scale(.75); stroke-dasharray: 24; stroke-dashoffset: 24; transition: opacity 350ms, transform 550ms var(--ease-soft), stroke-dashoffset 600ms var(--ease-soft); }
 .answer[aria-pressed='true'] { color: var(--cream); background: var(--bronze); box-shadow: 0 4px 12px rgb(67 48 43 / 12%); }
@@ -132,41 +140,48 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
   .answer[aria-pressed='true']:hover { background: var(--bronze-deep); }
   .round-button:hover { transform: scale(1.06); }
 }
-@media (min-width: 1600px) { .album { --photo-width: 820px; --photo-height: 500px; --photo-gap: 44px; } }
+@media (min-width: 1600px) { .album { --photo-width: 1100px; --photo-gap: 44px; } }
 @media (max-width: 650px) {
   :root { --frame-size: 28px; }
-  .birthday { padding-top: max(14px, env(safe-area-inset-top)); padding-bottom: max(48px, env(safe-area-inset-bottom)); }
-  .birthday-heading { height: 150px; }
+  .birthday-heading { padding-top: 100px; gap: 36px; }
   h1 { font-size: clamp(23px, 7.2vw, 38px); }
-  .balloon-fallback { top: 12px; width: 65px; height: 125px; }
-  .balloon-fallback--left { left: 11%; }
-  .balloon-fallback--right { right: 11%; }
-  .album { --rest-scale: .96; --rest-lift: 6px; --photo-width: min(80vw, 420px); --photo-gap: 12px; margin-top: 6px; }
-  /* Use all the existing horizontal space, even for the tallest portraits.
-     The track follows the active aspect ratio instead of reserving blank space. */
-  .photo-stage { align-items: flex-start; height: calc((var(--photo-width) - 2 * var(--frame-size)) / var(--active-ratio) + 2 * var(--frame-size) + 56px); padding: 18px calc((100% - var(--photo-width)) / 2) 38px; transition: height 650ms var(--ease-soft); }
-  .photo-slot { width: var(--photo-width); }
-  .photo-caption { display: block; position: absolute; z-index: 1; inset: auto 0 0; padding: 0 12px 16px; color: var(--bronze-deep); background: linear-gradient(to top, var(--cream), rgb(250 249 242 / 97%)); font: 400 clamp(22px, 6.4vw, 30px)/1.08 'Birthday Serif', Georgia, serif; letter-spacing: -.02em; text-align: center; text-wrap: balance; pointer-events: none; }
-  .photo-caption::before { content: ''; position: absolute; inset: auto 0 100%; height: 64px; background: linear-gradient(to top, rgb(250 249 242 / 97%), rgb(250 249 242 / 65%) 40%, rgb(250 249 242 / 0%)); }
-  .photo-caption > span { position: relative; }
-  .question-space { max-width: 420px; padding: 0 30px; }
-  /* Keep one accessible heading; its visual counterpart is on the photograph. */
-  .question h2 { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-  .answers { flex-direction: column; gap: 10px; }
-  .answer { min-height: 52px; font-size: 12px; padding: 14px 38px; }
-  .answer-check { right: 20px; }
+  .balloon-fallback { top: calc(50% - 150px); width: 85px; height: 130px; }
+  .balloon-fallback--left { left: 12%; }
+  .balloon-fallback--right { right: 12%; }
+  .is-started .balloon-fallback { width: 64px; height: 106px; }
+  .is-started .balloon-fallback--left { left: 4px; }
+  .is-started .balloon-fallback--right { right: 4px; }
+  .album { --rest-scale: .96; --rest-lift: 6px; --photo-width: min(84vw, 460px); --photo-gap: 16px; padding-top: max(72px, env(safe-area-inset-top)); }
+  .photo-stage { padding-block: 18px 28px; }
+  .question-space { padding: 16px max(26px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(26px, env(safe-area-inset-left)); }
+  .question { max-width: 420px; }
+  .question h2 { font-size: clamp(25px, 7vw, 30px); line-height: 1.08; }
+  .answers { flex-direction: column; gap: 8px; margin-top: 18px; }
+  .answer { flex: none; min-height: 48px; font-size: 12px; padding: 12px 34px; }
+  .answer-check { right: 16px; }
   .ambient-light > div { width: 190vw; }
   .ambient-light > div:nth-child(1) { top: -20%; left: -70%; }
   .ambient-light > div:nth-child(2) { top: 15%; right: -85%; }
   .ambient-light > div:nth-child(3) { bottom: -40%; left: -65%; }
 }
-@media (max-width: 340px) {
-  .question-space { padding: 0 24px; }
-  .question h2 { font-size: 26px; }
+@media (max-height: 680px) and (max-width: 650px) {
+  .album { padding-top: max(50px, env(safe-area-inset-top)); }
+  .question-space { padding-top: 10px; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  .question h2 { font-size: 25px; }
+  .answers { gap: 6px; margin-top: 12px; }
+  .answer { min-height: 44px; padding-block: 10px; }
+}
+@media (max-height: 500px) and (min-width: 651px) {
+  :root { --frame-size: 22px; }
+  .album { padding-top: max(16px, env(safe-area-inset-top)); }
+  .photo-stage { padding-block: 16px 24px; }
+  .question-space { padding-top: 8px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+  .question { max-width: 720px; }
+  .question h2 { font-size: 25px; }
+  .answers { margin-top: 10px; }
+  .answer { min-height: 44px; padding-block: 10px; }
 }
 @keyframes title-arrive { from { opacity: 0; transform: translateY(12px); filter: blur(3px); } to { opacity: 1; transform: none; filter: blur(0); } }
-@keyframes photo-arrive { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
-@keyframes question-arrive { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @keyframes sunlight-drift { from { transform: translate3d(-5%, -3%, 0) scale(.95); } to { transform: translate3d(15%, 12%, 0) scale(1.15); } }
 @keyframes color-breathe { 0%, 100% { opacity: .13; } 50% { opacity: .36; } }
 @keyframes balloon-sway { from { transform: translate(-4px, 6px) rotate(-6deg); } to { transform: translate(5px, -9px) rotate(7deg); } }

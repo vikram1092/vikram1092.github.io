@@ -3,6 +3,9 @@ import type { BirthdayMemory } from '../data/justyna34';
 const root = document.querySelector<HTMLElement>('#birthday')!;
 const memories: BirthdayMemory[] = JSON.parse(document.querySelector('#birthday-data')!.textContent!);
 const stage = document.querySelector<HTMLElement>('#photo-stage')!;
+const album = document.querySelector<HTMLElement>('.album')!;
+const intro = document.querySelector<HTMLElement>('.birthday-heading')!;
+const introNext = document.querySelector<HTMLButtonElement>('.intro-next')!;
 const slots = Array.from(document.querySelectorAll<HTMLElement>('[data-photo-index]'));
 const questionCount = memories.filter((memory) => memory.options.length > 0).length;
 const questions = Array.from(document.querySelectorAll<HTMLElement>('[data-question-index]'));
@@ -16,6 +19,7 @@ const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
 const storageKey = `justyna34:${root.dataset.revision}`;
 const runningAnimations = new Set<Animation>();
 let active = 0;
+let started = false;
 let stageVisible = true;
 let resumeDialogVideo = false;
 let answers: Record<string, string> = {};
@@ -76,7 +80,7 @@ function videoIsVisible(video: HTMLVideoElement) {
 function syncPlayback() {
   albumVideos.forEach((video) => {
     const slot = video.closest<HTMLElement>('.photo-slot')!;
-    const shouldPlay = !document.hidden && !dialog.open && Number(slot.dataset.photoIndex) === active && videoIsVisible(video);
+    const shouldPlay = started && !document.hidden && !dialog.open && Number(slot.dataset.photoIndex) === active && videoIsVisible(video);
     if (shouldPlay) {
       if (!video.getAttribute('src')) video.src = video.dataset.src!;
       if (video.paused) playSilently(video);
@@ -91,12 +95,18 @@ function syncPlayback() {
   }
 }
 
+function fitPhotos() {
+  const style = getComputedStyle(stage);
+  const frame = parseFloat(getComputedStyle(slots[0].querySelector('button')!).borderTopWidth);
+  const height = Math.max(1, stage.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom) - frame * 2);
+  stage.style.setProperty('--photo-height', `${height}px`);
+}
+
 function select(index: number, announce = true) {
   if (index < 0 || index >= memories.length) return;
   const changed = active !== index;
   const direction = index > active ? 1 : -1;
   active = index;
-  stage.style.setProperty('--active-ratio', String(memories[index].width / memories[index].height));
   slots.forEach((slot) => {
     const i = Number(slot.dataset.photoIndex);
     slot.classList.toggle('is-current', i === index);
@@ -104,6 +114,7 @@ function select(index: number, announce = true) {
     slot.querySelector('button')!.setAttribute('aria-label', `${i === index ? 'Enlarge' : 'Show'} ${kind} ${i + 1}`);
   });
   questions.forEach((question, i) => { question.hidden = i !== index; });
+  fitPhotos();
   syncPlayback();
   if (changed) {
     questionAnimations.forEach((animation) => animation.cancel());
@@ -180,7 +191,7 @@ stage.addEventListener('scroll', () => {
   settleTimer = setTimeout(settleScroll, 180);
 }, { passive: true });
 
-// Native touch scrolling preserves vertical scrolling and pinch-to-zoom.
+// Native touch scrolling preserves horizontal swipes and pinch-to-zoom.
 // The same photographs can be picked up and dragged with a mouse.
 let drag: { id: number; x: number; scroll: number; moved: boolean } | undefined;
 let suppressClick = false;
@@ -351,7 +362,7 @@ function focusMemory(index: number) {
   target.focus({ preventScroll: true });
 }
 document.addEventListener('keydown', (event) => {
-  if (dialog.open || event.altKey || event.metaKey || event.ctrlKey) return;
+  if (!started || dialog.open || event.altKey || event.metaKey || event.ctrlKey) return;
   if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
   const focusedAnswer = document.activeElement?.closest('.answers');
   event.preventDefault();
@@ -408,7 +419,7 @@ questions.forEach((question, index) => {
 });
 
 function syncMotion() {
-  document.body.classList.toggle('motion-paused', document.hidden || !stageVisible);
+  document.body.classList.toggle('motion-paused', document.hidden || (started && !stageVisible));
   syncPlayback();
 }
 new IntersectionObserver(([entry]) => { stageVisible = entry.isIntersecting; syncMotion(); }).observe(stage);
@@ -422,7 +433,7 @@ reducedMotion.addEventListener('change', () => {
   document.querySelectorAll('.answer-ripple').forEach((ripple) => ripple.remove());
 });
 let resizeFrame = 0;
-window.addEventListener('resize', () => {
+function resizeAlbum() {
   // Layout itself can emit scroll events. Keep the user's photo selected while
   // the carousel adapts, then center that same photo at the new width.
   navigating = true;
@@ -437,6 +448,19 @@ window.addEventListener('resize', () => {
     goTo(active, false);
     resizing = false;
   });
+}
+window.addEventListener('resize', resizeAlbum);
+new ResizeObserver(resizeAlbum).observe(stage);
+introNext.addEventListener('click', () => {
+  if (started) return;
+  started = true;
+  root.classList.add('is-started');
+  intro.inert = true;
+  album.inert = false;
+  goTo(0, false);
+  slots[0].querySelector<HTMLButtonElement>('button')!.focus({ preventScroll: true });
+  status.textContent = `Photo 1 of ${memories.length}. ${memories[0].question}`;
+  syncMotion();
 });
 renderAnswers();
 goTo(0, false);
