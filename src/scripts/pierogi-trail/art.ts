@@ -11,6 +11,14 @@ export type Art = {
   caves: Record<CaveId, HTMLImageElement>;
 };
 export const PIEROGI_WIDTH = 56;
+// About 16 seconds per cave, including 11 seconds at full opacity. Enter
+// earlier so even Sonora has a complete visit before the trail finishes.
+export const CAVE_VIEW = {
+  approach: 4400,
+  departure: 2200,
+  fade: 900,
+  parallax: 0.1,
+};
 export const clamp = (n: number, a = 0, b = 1) => Math.max(a, Math.min(b, n));
 export const smooth = (a: number, b: number, x: number) => {
   const t = clamp((x - a) / (b - a));
@@ -47,13 +55,15 @@ export async function loadArt(): Promise<Art> {
   return { ...Object.fromEntries(result), caves: Object.fromEntries(caves) } as Art;
 }
 export function caveAt(x: number) {
-  const cave = CAVES.find((cave) => Math.abs(x - cave.x) < 1550);
+  const cave = CAVES.find(
+    (cave) => x > cave.x - CAVE_VIEW.approach && x < cave.x + CAVE_VIEW.departure,
+  );
   if (!cave) return null;
   return {
     cave,
     alpha:
-      smooth(cave.x - 1550, cave.x - 700, x) *
-      (1 - smooth(cave.x + 650, cave.x + 1550, x)),
+      smooth(cave.x - CAVE_VIEW.approach, cave.x - CAVE_VIEW.approach + CAVE_VIEW.fade, x) *
+      (1 - smooth(cave.x + CAVE_VIEW.departure - CAVE_VIEW.fade, cave.x + CAVE_VIEW.departure, x)),
   };
 }
 export function backdropWeights(x: number) {
@@ -430,7 +440,7 @@ export function scene(
       art.caves[cv.id],
       W,
       ground,
-      (g.x - cv.x) * 0.24,
+      (g.x - cv.x) * CAVE_VIEW.parallax,
       caveAlpha,
       CAVE_ART[cv.id].focus,
     );
@@ -445,7 +455,7 @@ export function scene(
     { x: 650, title: "NASA ROAD 1", small: "WEBSTER · TEXAS" },
     { x: 4100, title: "HOUSTON", small: "THE BAYOU CITY" },
     ...CAVES.map((cv) => ({
-      x: cv.x - 1100,
+      x: cv.x - CAVE_VIEW.approach + 400,
       title: cv.short.toUpperCase(),
       small: "TEXAS CAVE TRAIL",
     })),

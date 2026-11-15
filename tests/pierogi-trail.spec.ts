@@ -11,19 +11,32 @@ import {
   backdropWeights,
   tilePositions,
   caveAt,
+  CAVE_VIEW,
 } from "../src/scripts/pierogi-trail/art";
 import { CAVE_ART } from "../src/scripts/pierogi-trail/cave-art";
 
 test("each cave has a separate swappable painting and continuous entrance and exit", () => {
   expect(new Set(CAVES.map(cave => CAVE_ART[cave.id].src)).size).toBe(7);
+  const { approach, departure, fade, parallax } = CAVE_VIEW;
+  expect((approach + departure) / SPEED).toBeGreaterThanOrEqual(15);
+  expect((approach + departure - 2 * fade) / SPEED).toBeGreaterThanOrEqual(11);
+  expect(parallax).toBeLessThanOrEqual(0.12);
+  expect(CAVES.at(-1)!.x + departure).toBeLessThanOrEqual(FINISH);
+  for (let i = 1; i < CAVES.length; i++) {
+    expect(CAVES[i].x - approach - (CAVES[i - 1].x + departure)).toBeGreaterThan(2000);
+  }
   for (const cave of CAVES) {
     expect(caveAt(cave.x)?.cave.id).toBe(cave.id);
     expect(caveAt(cave.x)?.alpha).toBe(1);
-    expect(caveAt(cave.x - 1550)).toBeNull();
-    expect(caveAt(cave.x + 1550)).toBeNull();
+    expect(caveAt(cave.x - approach)).toBeNull();
+    expect(caveAt(cave.x + departure)).toBeNull();
     let previous = 0;
-    for (let x = cave.x - 1550; x <= cave.x + 1550; x += 10) {
+    for (let x = cave.x - approach; x <= cave.x + departure; x += 10) {
       const alpha = caveAt(x)?.alpha ?? 0;
+      if (x >= cave.x - approach + fade && x <= cave.x + departure - fade) {
+        expect(caveAt(x)?.cave.id).toBe(cave.id);
+        expect(alpha).toBe(1);
+      }
       expect(Math.abs(alpha - previous)).toBeLessThan(0.02);
       previous = alpha;
     }
