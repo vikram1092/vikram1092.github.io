@@ -1,72 +1,46 @@
-# The Pierogi Trail
+# The Pierogi Trail — revision 2
 
-Standalone route: `/pierogi-trail/`. An original pixel-art, modern Texas western, inspired by the approachable side-scrolling rhythm of early platform games. One continuous level, approximately three minutes long. Unlinked from the portfolio and marked `noindex, nofollow`; the published page is still public.
+Live route: `/pierogi-trail/`.
 
-## The ride
+The page is now only the game. It fills the viewport without a website header, title, start card, footer, field-guide dialog, separate passport section, toolbar, or jump button. The seven cave stamps, current region, pierogi total, and a thin route-progress line sit across the top as a read-only game HUD. Play starts when the art is loaded. Tap anywhere, including the top tracker, to jump. Arrow Up, Space, W, and Enter also work. P / Escape pauses; a screen tap resumes. Hiding the tab pauses rather than allowing the horse to finish unseen. The ending is drawn inside the game, with tap-anywhere replay. No lives, damage, lost collectibles, or game over.
 
-The woman from the supplied reference is interpreted as an original small pixel sprite: long golden-blonde hair with darker roots and light streaks, a dark green jacket, a smiling profile, dark trousers, and riding boots. She always remains seated on a chestnut horse with a cream blaze, leather bridle, reins, stirrups, and a stitched green saddle blanket. The source photo is not uploaded or included in the site.
+## Faster, still easy
 
-The horse automatically gallops at 155 world pixels per second along a 26,700-pixel trail. Arrow Up, Space, W, tapping the scene, or the large Jump button launches a jump. Gravity is 1,000 px/s² and takeoff velocity is 500 px/s: roughly a one-second arc with a 123-pixel apex. Jump requests in the final 180 ms before landing are buffered. There is no midair double jump. P / Escape or the toolbar pauses and resumes. Hiding the tab pauses the ride; returning requires an explicit resume. The route guide pauses an active ride while open and restores it when closed.
+Galloping increased from 155 to **420 world pixels per second**. A longer 72,000-pixel trail preserves a roughly three-minute ride. Jumps are quicker: 650 px/s takeoff and 1,500 px/s² gravity, for a roughly 140-pixel arc lasting 0.86 seconds. Jump buffering remains 180 ms. Obstacles occur roughly four seconds apart. Missing a jump now causes only 0.32 seconds at 78% speed, followed by immediate recovery. Collection radius and pierogi arcs are tuned for the faster gallop. Tests clear every obstacle with jumps initiated 110, 155, and 210 pixels ahead, and verify that doing nothing also reaches all seven caves.
 
-Pierogi appear in easy ground trails and five-piece arcs over obstacles. The pickup region is intentionally generous. There is no target score and no requirement to collect every pierogi. Logs, shallow creeks, hay bales, limestone rocks, and native prickly pear are spaced more than four seconds apart. There are no enemies, weapons, damage, lives, bottomless pits, or fail states. Hitting an obstacle causes a gentle automatic step-over and 0.65 seconds at 52% speed. Food is never removed and progress never resets. The first two stumbles explain this behavior. A brief jump prompt helps with the first few jumps.
+## Character and artwork
 
-Each cave is part of the same scrolling world. Riding through its interior automatically stamps the passport, plays a short optional chime, and shows one line about the cave. No scene loading, manual entry, or dismounting. The final cave leads to a finish card with pierogi total, all seven stamps, elapsed riding time, successful jumps over obstacles, and a replay button. Replay resets the entire run.
+The rider was rebuilt using the user's supplied photo as an identity reference: the same warm smile, dark-rooted golden-blonde hair, and dark green jacket, with jeans, tan western boots, and a detailed turquoise saddle blanket. A six-frame atlas gives the chestnut horse a complete gallop cycle. The rider stays mounted in every frame, jump, pause, and finish. The source photograph is not shipped in the page.
 
-## Route and interpretation
+The built-in image-generation tool produced the sprite sheets and landscape panoramas; no API/CLI fallback was used. The transparent atlases retain real alpha, including around hair, tails, and between legs. Their alpha and six-frame geometry are checked by browser tests. Runtime code selects atlas rectangles; it does not draw a rectangular backdrop behind the rider. WebP encoding packages the generated artwork for delivery. Full prompts are in [ART-PROMPTS.md](ART-PROMPTS.md).
 
-The seven classic show caves are ordered by approximate **straight-line distance from downtown Houston**, not driving distance, nor distance between consecutive caves:
+| Final asset path | Content |
+| --- | --- |
+| `public/pierogi-trail/art/rider-gallop-v2.webp` | 1536 × 1024, six 512-square mounted-rider frames, lossless alpha |
+| `public/pierogi-trail/art/props-v2.webp` | Starship, pierogi, log, hay bale, limestone boulder, flowering prickly pear; lossless alpha |
+| `public/pierogi-trail/art/houston-v2.webp` | Webster houses, live oak, water tower, Saturn V garden, NASA campus, Houston skyline and bayou |
+| `public/pierogi-trail/art/hill-country-v2.webp` | Bluebonnets, limestone hills, ranch, barn, fences, windmill and native cactus |
+| `public/pierogi-trail/art/desert-v2.webp` | Rust-colored mesas, sunset, sagebrush, yucca, prickly pear and western ranch terrain |
+| `public/pierogi-trail/art/cave-v2.webp` | Textured limestone chambers, columns, formations, lanterns, crystal clusters, underground pool and waterfall |
 
-| Stop | Cave | Area | Approx. miles from Houston | Visual signature |
-| --- | --- | --- | --- | --- |
-| 1 | Inner Space Cavern | Georgetown | 150 | Mint limestone columns |
-| 2 | Wonder World Cave | San Marcos | 155 | Jagged Balcones Fault passage |
-| 3 | Natural Bridge Caverns | New Braunfels area | 179 | Broad limestone bridge |
-| 4 | Longhorn Cavern | Burnet | 189 | Smooth water-carved hall and river bands |
-| 5 | Cave Without a Name | Boerne | 195 | Tall, lavender-lit cathedral columns |
-| 6 | Cascade Caverns | Boerne | 198 | Animated teal waterfall and pool |
-| 7 | Caverns of Sonora | Sonora | 330 | Pink and ivory crystal formations |
+There is no longer a scenery group that vanishes at a hard distance threshold. Background tiles are positioned in continuous world coordinates, with mirrored matching edges to avoid gaps. Houston blends into Hill Country across 7,000 world pixels; the western sunset arrives across 7,500 pixels. Cave entrances and exits use smooth fades over 850–900 pixels, marked by physical cave signs. Individual caves use different framing of the cave panorama. Signs leave the viewport by ordinary scrolling. Starship passes overhead during 10 seconds of every 29-second cycle. Terrain scrolls at full gallop speed; the distant panorama scrolls at 19% of it.
 
-The scenery compresses Texas freely: Webster and the Johnson Space Center neighborhood; Houston's skyline; bluebonnet ranches and live oaks; limestone Hill Country; then a warm western desert sunset approaching Sonora. Sonora is a transition between Hill Country and desert; the exaggerated mesas are an intentional game fantasy. Cave passages are invented accessible horseback tunnels, not representations of real visitor access.
+## Cave order
 
-Sources, checked November 15, 2026:
+The route remains the seven classic Texas show caves, ordered by approximate **straight-line distance from downtown Houston**, not road mileage or distance from the previous stop:
 
-- [Texas Speleological Survey show cave directory](https://www.texasspeleologicalsurvey.org/showcaves/index.php): seven-cave selection, regional locations, and geology. The individual cave pages substantiate the short descriptions.
-- [The Cave Guide: caves near Houston](https://thecaveguide.com/caves-near/houston-tx): first six approximate straight-line distances and their ordering.
-- [Caverns of Sonora contact page](https://www.cavernsofsonora.com/contact): published GPS coordinates 30°33.297′ N, 100°48.733′ W. Haversine distance from downtown Houston (29.7604, −95.3698) is approximately 329.7 miles.
+1. Inner Space Cavern — Georgetown, ~150 mi.
+2. Wonder World Cave — San Marcos, ~155 mi.
+3. Natural Bridge Caverns — New Braunfels area, ~179 mi.
+4. Longhorn Cavern — Burnet, ~189 mi.
+5. Cave Without a Name — Boerne, ~195 mi.
+6. Cascade Caverns — Boerne, ~198 mi.
+7. Caverns of Sonora — Sonora, ~330 mi.
 
-The in-page field guide links the sources and each cave's official website. It explicitly explains the distance convention and compressed scenery.
+The game's geography is deliberately compressed, with exaggerated desert scenery. Horse-accessible cave passages are fiction, not a representation of actual visitor access. Sources checked November 15, 2026: [Texas Speleological Survey](https://www.texasspeleologicalsurvey.org/showcaves/index.php), [The Cave Guide's Houston distances](https://thecaveguide.com/caves-near/houston-tx), and [Sonora's official GPS coordinates](https://www.cavernsofsonora.com/contact). Sonora's 329.7-mile estimate uses the published GPS point and downtown Houston (29.7604, −95.3698).
 
-## Sprites and scenery
+## Implementation and checks
 
-All visuals are original and drawn locally in Canvas 2D. There are no downloaded art packs, generated sprite sheets, external image requests, or copied game sprites.
+`model.ts` owns deterministic physics and progression; `art.ts` owns loading, sprite sampling, scenery placement, and rendering; `game.ts` owns the loop, whole-screen input, pause, replay, and the top HUD. Audio is off by default; M optionally toggles synthesized collection/jump/cave sounds. Reduced motion disables decorative particles. Paused, finished, or hidden views avoid needless redraws. Asset errors show a short in-game retry message; a screen tap retries loading.
 
-- **Horse and rider:** layered pixel shapes; four independently phased legs; dark hooves; tail swing; head, mane, ears, white blaze and eye; body bob; airborne tucked-leg pose; rider hair highlights, face, jacket, sleeve, hand, boot, reins, saddle, woven blanket, and stirrup. Rider and horse are one attached visual hierarchy.
-- **Collectible:** a crescent-shaped golden pierogi with a dark toasted edge, pale dough highlight, and crimped seam. A lightweight matching SVG is the favicon and HUD icon.
-- **Obstacles:** bark-striped log with exposed rings and branch; rippling shallow creek; bound hay bale; layered limestone boulder; flowering prickly pear pads. Their rendered heights agree with collision bounds.
-- **Webster / NASA:** neighborhood houses, water tower labeled Webster, NASA Road 1 sign, a simplified Johnson Space Center building, Saturn V-inspired rocket garden.
-- **Houston:** parallax skyscrapers with stepped crowns, sloping roofs, window patterns, and a Houston roadside sign.
-- **Hill Country:** layered hills, live oak canopies, rail fences, scattered bluebonnets and grass, textured soil, cave signs and lamps.
-- **West Texas:** a gradual warm-sky transition, setting sun, mesas, turning ranch windmills, prickly pear, and dusty golden terrain. No saguaro cactus.
-- **Caves:** rocky outer facade, dark interior, layered limestone, stalactites and stalagmites, lamps, sparkles, plus the distinct signature in the table above.
-- **Starship:** silver horizontal body, pointed nose, darker underside, forward and aft flaps, and warm exhaust. Flies overhead for 12 seconds of each 32-second cycle. It is decorative and never collides with the rider; it does not imply a real flight path over the caves.
-- **Feedback:** collection sparkles, landing dust, gentle stumble particles, cave celebrations, compact notifications, and passport checkmarks.
-
-The canvas uses a responsive logical resolution with pixelated scaling. Portrait mode preserves a readable horse and about two seconds of obstacle visibility; landscape and desktop show farther ahead. The mobile intro leaves the rider visible. Supported browsers can expand the game into fullscreen. Pause, sound, and jump controls remain reachable.
-
-## Sound and accessibility
-
-Sound starts off. Enabling it creates a Web Audio context from the user gesture. All audio is synthesized locally: a quiet original pentatonic trail melody, hoofbeats, jump tones, pierogi plinks, and a cave/finish arpeggio. Pause and mute silence the master gain. No audio files or third-party music.
-
-Native keyboard-accessible buttons, visible focus, labeled canvas controls, semantic route list, modal field guide, polite checkpoint announcements, and focus management for start/pause/finish. Space on an ordinary button retains native activation. Reduced motion freezes the attract-screen animation and removes decorative particles/trails; essential gameplay motion remains. Canvas-unavailable and JavaScript-disabled messages are supplied. Progress is session-only; there are no cookies, analytics, saves, accounts, remote APIs, or additional runtime dependencies.
-
-## Files and verification
-
-- `src/pages/pierogi-trail/index.astro`: standalone markup, passport, guide, metadata.
-- `src/styles/pierogi-trail.css`: cream-and-forest-green page, game controls, responsive layouts.
-- `src/scripts/pierogi-trail/model.ts`: deterministic physics, obstacles, collectibles, cave order, and win condition.
-- `src/scripts/pierogi-trail/art.ts`: pixel renderer, sprites, environments, cave features, Starship.
-- `src/scripts/pierogi-trail/game.ts`: fixed-step loop, input, UI, sound, pause, particles, and lifecycle.
-- `public/pierogi-trail/pierogi.svg`: original favicon / HUD collectible.
-- `tests/pierogi-trail.spec.ts`: full no-input completion, all-obstacle jumpability, pause and input buffering, desktop controls and cave stamping, mobile taps and layout, full browser completion and clean replay.
-
-Validate with `npm run build` and `npx playwright test tests/pierogi-trail.spec.ts`. Publish using a normal commit and push to `master`, then verify the GitHub Pages workflow and the live route.
+`npm run build` and `npx playwright test tests/pierogi-trail.spec.ts` cover full completion, permissive jump timing, pause/buffering, continuous scenery weights and tile coverage, automatic play, no buttons or surrounding page UI, mobile taps over the tracker and lower corners, viewport fitting, real sprite alpha, full browser completion, and tap-to-replay. Browser visual inspection includes desktop, portrait phone, landscape phone, cave interiors, and western scenery. Publish with a normal commit and push to `master`, then check GitHub Pages and the live route.

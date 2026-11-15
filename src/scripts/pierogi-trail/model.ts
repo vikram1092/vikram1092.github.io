@@ -1,8 +1,8 @@
 /** One continuous, forgiving ride. All coordinates are logical canvas pixels. */
-export const SPEED = 155;
-export const FINISH = 26700;
-export const GRAVITY = 1000;
-export const JUMP_SPEED = 500;
+export const SPEED = 420;
+export const FINISH = 72000;
+export const GRAVITY = 1500;
+export const JUMP_SPEED = 650;
 
 export const CAVES = [
   {
@@ -10,7 +10,7 @@ export const CAVES = [
     short: "Inner Space",
     place: "Georgetown",
     miles: 150,
-    x: 4100,
+    x: 11070,
     color: "#8dc9b7",
     fact: "A hidden world discovered by a highway drilling crew.",
     feature: "columns",
@@ -21,7 +21,7 @@ export const CAVES = [
     short: "Wonder World",
     place: "San Marcos",
     miles: 155,
-    x: 7500,
+    x: 20250,
     color: "#dfb88f",
     fact: "A passage through the great Balcones Fault.",
     feature: "fault",
@@ -32,7 +32,7 @@ export const CAVES = [
     short: "Natural Bridge",
     place: "New Braunfels area",
     miles: 179,
-    x: 10800,
+    x: 29160,
     color: "#dbb563",
     fact: "A limestone bridge shelters a whole world below.",
     feature: "bridge",
@@ -43,7 +43,7 @@ export const CAVES = [
     short: "Longhorn",
     place: "Burnet",
     miles: 189,
-    x: 14100,
+    x: 38070,
     color: "#a5b9cc",
     fact: "Ancient water carved these sweeping limestone halls.",
     feature: "river",
@@ -54,7 +54,7 @@ export const CAVES = [
     short: "Without a Name",
     place: "Boerne",
     miles: 195,
-    x: 17400,
+    x: 46980,
     color: "#ceaae2",
     fact: "An underground cathedral, too lovely for just one name.",
     feature: "cathedral",
@@ -65,7 +65,7 @@ export const CAVES = [
     short: "Cascade",
     place: "Boerne",
     miles: 198,
-    x: 20700,
+    x: 55890,
     color: "#81bec3",
     fact: "Follow the sparkle to an underground waterfall.",
     feature: "waterfall",
@@ -76,7 +76,7 @@ export const CAVES = [
     short: "Sonora",
     place: "Sonora",
     miles: 330,
-    x: 25800,
+    x: 69660,
     color: "#efb8c3",
     fact: "A glittering finale among delicate crystal formations.",
     feature: "crystals",
@@ -120,28 +120,28 @@ export type Game = {
 export function makeGame(): Game {
   const obstacles: Obstacle[] = [];
   const kinds: Obstacle["kind"][] = ["log", "creek", "hay", "rock", "cactus"];
-  for (let x = 1450, i = 0; x < FINISH - 1200; x += 640 + (i++ % 3) * 95) {
-    if (CAVES.some((c) => Math.abs(c.x - x) < 470)) continue;
+  for (let x = 2300, i = 0; x < FINISH - 2500; x += 1550 + (i++ % 3) * 165) {
+    if (CAVES.some((c) => Math.abs(c.x - x) < 1150)) continue;
     const kind = kinds[i % kinds.length];
     obstacles.push({
       x,
       kind,
-      width: kind === "creek" ? 76 : 38,
-      height: kind === "creek" ? 9 : kind === "cactus" ? 35 : 25,
+      width: kind === "creek" ? 110 : 58,
+      height: kind === "creek" ? 10 : kind === "cactus" ? 48 : 35,
       bumped: false,
       cleared: false,
     });
   }
   const pierogi: Pierogi[] = [];
-  for (let x = 320; x < FINISH - 140; x += 115) {
-    if (!obstacles.some((o) => Math.abs(x - o.x) < 175))
-      pierogi.push({ x, y: 42, collected: false });
+  for (let x = 400; x < FINISH - 140; x += 190) {
+    if (!obstacles.some((o) => Math.abs(x - o.x) < 270))
+      pierogi.push({ x, y: 64, collected: false });
   }
   for (const o of obstacles) {
     for (let i = 0; i < 5; i++)
       pierogi.push({
-        x: o.x - 100 + i * 48,
-        y: 65 + Math.sin((i / 4) * Math.PI) * 90,
+        x: o.x - 160 + i * 80,
+        y: 85 + Math.sin((i / 4) * Math.PI) * 115,
         collected: false,
       });
   }
@@ -188,7 +188,7 @@ export function step(g: Game, dt: number) {
     if (wasAirborne) g.events.push({ type: "land" });
     g.vy = 0;
   }
-  g.x += SPEED * (g.slow > 0 ? 0.52 : 1) * dt;
+  g.x += SPEED * (g.slow > 0 ? 0.78 : 1) * dt;
   for (const o of g.obstacles) {
     if (
       !o.bumped &&
@@ -198,10 +198,10 @@ export function step(g: Game, dt: number) {
     ) {
       o.bumped = true;
       g.bumps++;
-      g.slow = 0.65;
+      g.slow = 0.32;
       g.grace = 1.1;
       // The horse gently steps over a missed obstacle. No damage, lost food, or reset.
-      g.vy = 260;
+      g.vy = 340;
       g.y = Math.max(g.y, 8);
       g.events.push({ type: "bump" });
     }
@@ -216,8 +216,8 @@ export function step(g: Game, dt: number) {
   for (const p of g.pierogi) {
     if (
       !p.collected &&
-      Math.abs(p.x - g.x) < 48 &&
-      Math.abs(p.y - (g.y + 43)) < 62
+      Math.abs(p.x - g.x) < 65 &&
+      Math.abs(p.y - (g.y + 64)) < 78
     ) {
       p.collected = true;
       g.count++;
@@ -236,9 +236,9 @@ export function step(g: Game, dt: number) {
 }
 
 export function region(x: number): string {
-  if (x < 1250) return "Webster · NASA neighborhood";
-  if (x < 3100) return "Houston · the bayou city";
-  if (x < 10000) return "Bluebonnets & Hill Country";
-  if (x < 21000) return "Limestone country";
+  if (x < 3200) return "Webster · NASA neighborhood";
+  if (x < 9000) return "Houston · the bayou city";
+  if (x < 29000) return "Bluebonnets & Hill Country";
+  if (x < 56000) return "Limestone country";
   return "Westward · the Texas sunset";
 }
