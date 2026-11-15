@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" viewBox="0 0 384 384">
+  <defs>
+    <linearGradient id="molding" x2="0" y2="72" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#816450"/><stop offset=".025" stop-color="#eddbb4"/>
+      <stop offset=".07" stop-color="#d8c49b"/><stop offset=".12" stop-color="#a68a62"/>
+      <stop offset=".16" stop-color="#f2e4c5"/><stop offset=".23" stop-color="#d8c8a6"/>
+      <stop offset=".28" stop-color="#a58a66"/><stop offset=".3" stop-color="#90735e"/>
+      <stop offset=".33" stop-color="#c7aaa2"/><stop offset=".42" stop-color="#ddc5bb"/>
+      <stop offset=".56" stop-color="#e7d5c9"/><stop offset=".64" stop-color="#cdb3a8"/>
+      <stop offset=".68" stop-color="#b49180"/><stop offset=".71" stop-color="#8d7053"/>
+      <stop offset=".74" stop-color="#f4e5bc"/><stop offset=".8" stop-color="#bda47c"/>
+      <stop offset=".84" stop-color="#e5d3ad"/><stop offset=".88" stop-color="#8d7051"/>
+      <stop offset=".92" stop-color="#e8d8b5"/><stop offset=".95" stop-color="#f8ecd0"/>
+      <stop offset="1" stop-color="#8e7257"/>
+    </linearGradient>
+    <linearGradient id="leaf" x2=".3" y2="1"><stop stop-color="#fff1cf"/><stop offset=".4" stop-color="#ddc89b"/><stop offset="1" stop-color="#a58b60"/></linearGradient>
+    <radialGradient id="pearl" cx="30%" cy="24%" r="80%"><stop stop-color="#fff9e4"/><stop offset=".5" stop-color="#eadbb8"/><stop offset="1" stop-color="#a38b66"/></radialGradient>
+    <pattern id="beads" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="3.3" fill="#a18964"/><circle cx="4.2" cy="4.1" r="2.9" fill="url(#pearl)"/></pattern>
+    <pattern id="ribbon" width="24" height="8" patternUnits="userSpaceOnUse"><path d="m0 7 12-6 12 6" fill="none" stroke="#a28b66" stroke-width="1"/><path d="m0 5 12-5 12 5" fill="none" stroke="#f6e9c6" stroke-width="1"/></pattern>
+    <pattern id="laurel" width="44" height="24" patternUnits="userSpaceOnUse">
+      <path d="M0 15Q20 5 44 15" fill="none" stroke="#9c8266" stroke-width="1.2"/>
+      <g fill="url(#leaf)" stroke="#ac9274" stroke-width=".6"><path d="M6 12C5 4 10 2 15 1 14 7 12 11 6 12Z"/><path d="M17 10C19 3 25 2 29 3 26 8 23 10 17 10Z"/><path d="M28 11C32 5 38 7 41 9 36 12 32 13 28 11Z"/><path d="M6 13C9 21 15 23 20 21 16 15 12 13 6 13Z"/><path d="M21 12C25 21 32 22 35 19 30 13 26 12 21 12Z"/></g>
+      <path d="m8 10 4-6M20 8l5-3M10 16l6 4M25 15l6 3" stroke="#fff0ce" stroke-width=".7"/>
+    </pattern>
+    <clipPath id="clip"><path d="M0 0H384L312 72H72Z"/></clipPath>
+    <g id="rail" clip-path="url(#clip)">
+      <path d="M0 0H384L312 72H72Z" fill="url(#molding)"/>
+      <path d="M1 1H383M11 11H373M21 21H363M53 53H331M68 68H316" stroke="#fff3d6" stroke-width=".8" opacity=".85"/>
+      <path d="M7 7H377M23 23H361M51 51H333M63 63H321" stroke="#927756" stroke-width=".8"/>
+      <g transform="translate(0 12)"><path d="M0 0H384V8H0Z" fill="url(#ribbon)"/></g>
+      <g transform="translate(0 25)"><path d="M0 0H384V24H0Z" fill="url(#laurel)"/></g>
+      <g transform="translate(0 54)"><path d="M0 0H384V9H0Z" fill="url(#beads)"/></g>
+    </g>
+  </defs>
+  <use href="#rail"/><use href="#rail" transform="rotate(90 192 192)"/><use href="#rail" transform="rotate(180 192 192)"/><use href="#rail" transform="rotate(270 192 192)"/>
+  <path d="m0 0 72 72M384 0l-72 72M384 384l-72-72M0 384l72-72" stroke="#a68a70" stroke-width=".7"/>
+</svg>

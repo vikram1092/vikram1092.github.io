@@ -269,6 +269,7 @@ async function openPhoto(button: HTMLButtonElement, index: number) {
   opening = true;
   const memory = memories[index];
   const video = button.querySelector('video');
+  dialog.dataset.frame = button.dataset.frame;
   enlarged.hidden = !!memory.video;
   enlargedVideo.hidden = !memory.video;
   dialog.style.setProperty('--media-ratio', String(memory.width / memory.height));

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" viewBox="0 0 384 384">
+  <!-- Original nine-slice carving; the transparent aperture begins at 72px. -->
+  <defs>
+    <linearGradient id="gilt" x2="0" y2="72" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6d5036"/><stop offset=".025" stop-color="#edd9a9"/>
+      <stop offset=".065" stop-color="#b48e56"/><stop offset=".1" stop-color="#785735"/>
+      <stop offset=".14" stop-color="#d6b579"/><stop offset=".2" stop-color="#f1dbab"/>
+      <stop offset=".25" stop-color="#b58e55"/><stop offset=".3" stop-color="#7d5e40"/>
+      <stop offset=".35" stop-color="#a7814e"/><stop offset=".47" stop-color="#c4a16a"/>
+      <stop offset=".56" stop-color="#d1b47e"/><stop offset=".64" stop-color="#e4cca0"/>
+      <stop offset=".7" stop-color="#a48452"/><stop offset=".73" stop-color="#765838"/>
+      <stop offset=".77" stop-color="#ead3a1"/><stop offset=".82" stop-color="#b18b53"/>
+      <stop offset=".86" stop-color="#604630"/><stop offset=".9" stop-color="#b89964"/>
+      <stop offset=".94" stop-color="#f2ddaf"/><stop offset="1" stop-color="#7a593b"/>
+    </linearGradient>
+    <linearGradient id="leaf" x2=".3" y2="1">
+      <stop stop-color="#f4e2b7"/><stop offset=".4" stop-color="#d7b87d"/><stop offset="1" stop-color="#927047"/>
+    </linearGradient>
+    <radialGradient id="pearl" cx="32%" cy="24%" r="80%"><stop stop-color="#fff0c7"/><stop offset=".48" stop-color="#d9bc83"/><stop offset="1" stop-color="#88633e"/></radialGradient>
+    <pattern id="pearls" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="3.6" fill="#795736"/><circle cx="4.7" cy="4.6" r="3.1" fill="url(#pearl)"/></pattern>
+    <pattern id="acanthus" width="40" height="28" patternUnits="userSpaceOnUse">
+      <path d="M0 25C11 23 12 10 22 6 29 2 38 4 37 11 36 17 28 16 29 11 31 15 35 12 33 9 28 5 21 12 20 19 26 12 32 18 39 15 35 25 25 26 17 23 11 28 6 28 0 27Z" fill="url(#leaf)" stroke="#8c683f" stroke-width=".8"/>
+      <path d="M2 25C12 22 14 10 24 7M19 22Q27 18 34 19" fill="none" stroke="#f8e5b5" stroke-width=".8"/>
+    </pattern>
+    <pattern id="darts" width="14" height="8" patternUnits="userSpaceOnUse"><path d="M2 1Q7 12 12 1M0 1V7" fill="none" stroke="#755534" stroke-width="1"/><path d="M3 1Q7 9 11 1" fill="none" stroke="#f0dba9" stroke-width="1"/></pattern>
+    <clipPath id="clip"><path d="M0 0H384L312 72H72Z"/></clipPath>
+    <g id="rail" clip-path="url(#clip)">
+      <path d="M0 0H384L312 72H72Z" fill="url(#gilt)"/>
+      <path d="M1 1H383M19 19H365M54 54H330M68 68H316" stroke="#fff0c6" stroke-opacity=".65" stroke-width=".7"/>
+      <path d="M7 7H377M22 22H362M62 62H322" stroke="#57402d" stroke-opacity=".6" stroke-width=".8"/>
+      <path d="M0 10H384V20H0Z" fill="url(#pearls)"/>
+      <g transform="translate(0 25)"><path d="M0 0H384V28H0Z" fill="url(#acanthus)"/></g>
+      <g transform="translate(0 55)"><path d="M0 0H384V8H0Z" fill="url(#darts)"/></g>
+    </g>
+  </defs>
+  <use href="#rail"/><use href="#rail" transform="rotate(90 192 192)"/><use href="#rail" transform="rotate(180 192 192)"/><use href="#rail" transform="rotate(270 192 192)"/>
+  <path d="m0 0 72 72M384 0l-72 72M384 384l-72-72M0 384l72-72" stroke="#795a3b" stroke-width=".8" opacity=".7"/>
+</svg>

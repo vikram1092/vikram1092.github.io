@@ -23,7 +23,7 @@
   --blush-pressed: #efe4df;
   --bronze-border: #dfcdc5;
   --rose-fill: #e7d9d3;
-  --frame-size: 28px;
+  --frame-size: 38px;
   --bronze: #7d5e54;
   --bronze-deep: #43302b;
   --ease-soft: cubic-bezier(.22, 1, .36, 1);
@@ -72,9 +72,20 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .photo-stage::-webkit-scrollbar { display: none; }
 .photo-slot { flex: 0 0 auto; width: min(var(--photo-width), calc(var(--photo-height) * var(--photo-ratio) + 2 * var(--frame-size))); min-width: 0; scroll-snap-align: center; }
 .photo-drift { animation: photo-float 14s var(--drift-delay, 0s) ease-in-out infinite alternate; }
-/* A real nine-slice molding: square miters, beadwork, a recessed cove, and
-   carved leaf corners. Border rails repeat without stretching the carving. */
-.photo-surface, .photo-dialog { padding: 0; border: var(--frame-size) solid #a3834d; border-image: url('/justyna34/painting-frame.svg') 48 / 1 / 0 round; border-radius: 0; background: #795c35; }
+/* Repeating carved rails and separate, proportionate corner/crest appliqués.
+   Both frames share geometry so alternating finishes never shift the photo. */
+[data-frame='rococo'] { --frame-rail: url('/justyna34/frames/rococo-rail.svg'); --frame-corner: url('/justyna34/frames/rococo-corner.svg'); --frame-crest: url('/justyna34/frames/rococo-crest.svg'); }
+[data-frame='laurel'] { --frame-rail: url('/justyna34/frames/laurel-rail.svg'); --frame-corner: url('/justyna34/frames/laurel-corner.svg'); --frame-crest: url('/justyna34/frames/laurel-crest.svg'); }
+.photo-surface, .photo-dialog { padding: 0; border: var(--frame-size) solid #b1925a; border-image: var(--frame-rail) 72 / 1 / 0 round; border-radius: 0; background: #795c35; }
+.frame-ornaments { position: absolute; z-index: 2; inset: calc(-1 * var(--frame-size)); pointer-events: none; filter: drop-shadow(0 1px 1px rgb(67 48 43 / 28%)); }
+.frame-corner { position: absolute; width: calc(var(--frame-size) * 2.35); aspect-ratio: 1; background: var(--frame-corner) center / contain no-repeat; }
+.frame-corner--tl { top: -5px; left: -5px; }
+.frame-corner--tr { top: -5px; right: -5px; transform: rotate(90deg); }
+.frame-corner--br { bottom: -5px; right: -5px; transform: rotate(180deg); }
+.frame-corner--bl { bottom: -5px; left: -5px; transform: rotate(270deg); }
+.frame-crest { position: absolute; left: 50%; width: calc(var(--frame-size) * 3); height: calc(var(--frame-size) * 1.18); background: var(--frame-crest) center / contain no-repeat; }
+.frame-crest--top { top: -9px; transform: translateX(-50%); }
+.frame-crest--bottom { bottom: -9px; transform: translateX(-50%) rotate(180deg); }
 .photo-surface { position: relative; display: block; width: 100%; box-shadow: 0 2px 3px rgb(67 48 43 / 22%), 0 20px 45px -25px rgb(67 48 43 / 38%); transform: translate3d(0, calc(var(--rest-lift) * (1 - var(--photo-focus, 0))), 0) scale(calc(var(--rest-scale) + (1 - var(--rest-scale)) * var(--photo-focus, 0))); opacity: calc(.68 + .32 * var(--photo-focus, 0)); will-change: transform; transition: box-shadow 600ms; }
 .photo-slot.is-current .photo-surface { box-shadow: 0 3px 5px rgb(67 48 43 / 24%), 0 24px 50px -24px rgb(67 48 43 / 38%); }
 .photo-surface::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 2px 6px rgb(40 28 17 / 32%); }
@@ -110,7 +121,7 @@ h1 { position: relative; z-index: 1; display: flex; align-items: center; justify
 .round-button { display: grid; place-items: center; width: 44px; height: 44px; padding: 12px; border: 0; border-radius: 50%; color: var(--cream); background: var(--bronze); transition: transform 400ms var(--ease-soft), background 300ms; }
 .round-button svg { width: 20px; height: 20px; }
 .round-button:active { transform: scale(.9); background: var(--bronze-deep); }
-.dialog-close { position: absolute; z-index: 1; top: 10px; right: 10px; box-shadow: 0 2px 12px rgb(67 48 43 / 10%); }
+.dialog-close { position: absolute; z-index: 3; top: 10px; right: 10px; box-shadow: 0 2px 12px rgb(67 48 43 / 10%); }
 body:has(.photo-dialog[open]) { overflow: hidden; }
 .motion-paused .ambient-light > div, .motion-paused .photo-drift, .motion-paused .photo-window img, .motion-paused .fallback-balloon { animation-play-state: paused !important; }
 
@@ -122,7 +133,7 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
 }
 @media (min-width: 1600px) { .album { --photo-width: 820px; --photo-height: 500px; --photo-gap: 44px; } }
 @media (max-width: 650px) {
-  :root { --frame-size: 22px; }
+  :root { --frame-size: 28px; }
   .birthday { padding-top: max(14px, env(safe-area-inset-top)); padding-bottom: max(48px, env(safe-area-inset-bottom)); }
   .birthday-heading { height: 150px; }
   h1 { font-size: clamp(23px, 7.2vw, 38px); }

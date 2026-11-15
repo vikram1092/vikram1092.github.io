@@ -66,6 +66,8 @@ test('photos enlarge from their position, close with Escape, and support mouse d
   await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.locator('#enlarged-photo')).toHaveAttribute('src', memories[0].photo);
+  await expect(page.getByRole('dialog')).toHaveAttribute('data-frame', 'rococo');
+  await expect(page.getByRole('dialog')).toHaveCSS('border-image-source', /rococo-rail\.svg/);
   await expect(page.getByRole('dialog')).toHaveCSS('padding', '0px');
   await expect(page.getByRole('dialog')).toHaveCSS('border-radius', '0px');
   await page.keyboard.press('Escape');
@@ -78,6 +80,14 @@ test('photos enlarge from their position, close with Escape, and support mouse d
   await page.mouse.move(bounds.x - 180, bounds.y + 133, { steps: 20 });
   await page.mouse.up();
   await centered(page, 1);
+  await expect(page.getByRole('dialog')).toBeHidden();
+  bounds = (await currentPhoto(page).locator('button').boundingBox())!;
+  await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  await expect(page.getByRole('dialog')).toHaveAttribute('data-frame', 'laurel');
+  await expect(page.getByRole('dialog')).toHaveCSS('border-image-source', /laurel-rail\.svg/);
+  await expect(page.getByRole('dialog').locator('.frame-corner').first()).toHaveCSS('background-image', /laurel-corner\.svg/);
+  await expect(page.locator('#enlarged-photo')).toHaveAttribute('src', memories[1].photo);
+  await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toBeHidden();
 });
 
@@ -229,8 +239,8 @@ test('storage fallback, square painting frames on mobile, loaded images, and tex
     await expect(surface).toHaveCSS('border-radius', '0px');
     await expect(currentPhoto(page).locator('.photo-window')).toHaveCSS('border-radius', '0px');
     await expect(surface).toHaveCSS('padding', '0px');
-    await expect(surface).toHaveCSS('border-top-width', width <= 650 ? '22px' : '28px');
-    await expect(surface).toHaveCSS('border-image-source', /painting-frame\.svg/);
+    await expect(surface).toHaveCSS('border-top-width', width <= 650 ? '28px' : '38px');
+    await expect(surface).toHaveCSS('border-image-source', /frames\/rococo-rail\.svg/);
     await centered(page, 0);
     await page.screenshot({ path: `test-results/justyna34-${width}.png`, fullPage: true });
   }
@@ -321,6 +331,20 @@ test('all 34 photos and one video retain their own proportions at every screen s
   await expect(originals).toHaveCount(memoryCount);
   await expect(originals.locator('img')).toHaveCount(34);
   await expect(originals.locator('video')).toHaveCount(1);
+  // Clones carry their memory's finish, including around the circular boundary.
+  for (const slot of await page.locator('.photo-slot').all()) {
+    const index = Number(await slot.getAttribute('data-photo-index'));
+    const finish = index % 2 === 0 ? 'rococo' : 'laurel';
+    await expect(slot.locator('button')).toHaveAttribute('data-frame', finish);
+    await expect(slot.locator('.frame-corner')).toHaveCount(4);
+  }
+  for (const finish of ['rococo', 'laurel']) {
+    for (const part of ['rail', 'corner', 'crest']) {
+      const asset = await request.get(`/justyna34/frames/${finish}-${part}.svg`);
+      expect(asset.ok()).toBeTruthy();
+      expect(asset.headers()['content-type']).toContain('image/svg+xml');
+    }
+  }
   const media = await page.locator('#birthday-data').evaluate((data) => JSON.parse(data.textContent!));
   for (const item of media) {
     expect((await request.get(item.photo)).ok()).toBeTruthy();
@@ -328,7 +352,7 @@ test('all 34 photos and one video retain their own proportions at every screen s
   }
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 844 });
-    await expect(originals.first().locator('button')).toHaveCSS('border-top-width', width <= 650 ? '22px' : '28px');
+    await expect(originals.first().locator('button')).toHaveCSS('border-top-width', width <= 650 ? '28px' : '38px');
     await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
     await centered(page, 0);
     const ratios = await originals.locator('.photo-window').evaluateAll((windows) => windows.map((window) => {
