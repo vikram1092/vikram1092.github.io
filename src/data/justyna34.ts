@@ -7,6 +7,7 @@ export interface BirthdayMemory {
   height: number;
   alt: string;
   question: string;
+  /** Empty for captions and open-ended prompts without answer choices. */
   options: { id: string; label: string }[];
   /** Omit for a question with no wrong answers; otherwise use one of the option IDs. */
   correctOption?: string;
@@ -17,9 +18,52 @@ export interface BirthdayMemory {
 // Capture dates come from original EXIF/QuickTime metadata, with iCloud Date
 // Captured for memories 12, 26, 27, 32, and 35. Dates are omitted from page data.
 // Live Photos use their still image.
-// Questions are placeholders until the birthday quiz is supplied.
 // Bump the revision when changing questions to discard old preview answers.
-export const birthdayRevision = 'album-1';
+export const birthdayRevision = 'birthday-story-1';
+
+type BirthdayCopy = Pick<BirthdayMemory, 'question'> & Partial<Pick<BirthdayMemory, 'options' | 'correctOption'>>;
+function quiz(question: string, labels: string[], correctIndex: number): BirthdayCopy {
+  return { question, options: labels.map((label, index) => ({ id: String(index), label })), correctOption: String(correctIndex) };
+}
+
+// Copy is attached to stable media IDs in the supplied chronological story order.
+const birthdayCopy: Record<string, BirthdayCopy> = {
+  'memory-03': { question: 'Once in my life…' },
+  'memory-16': { question: 'I met a very special person,' },
+  'memory-15': { question: 'A horse whisperer,' },
+  'memory-11': quiz('Who could fall asleep anywhere, like here', ['Krakow', 'jaisalmer', 'Greece'], 0),
+  'memory-27': { question: 'Who bites me often' },
+  'memory-24': { question: 'And scratches me at times' },
+  'memory-30': quiz('And was the secretary of', ['med school', 'residency', 'the VA'], 2),
+  'memory-02': { question: 'Sometimes a brat,' },
+  'memory-32': quiz('a brave little', ['soldier', 'engineer', 'doctor'], 0),
+  'memory-26': { question: 'My dearest friend,' },
+  'memory-19': { question: 'And the funniest too.' },
+  'memory-06': { question: 'Do you remember why you were crying?' },
+  'memory-23': { question: 'My Waaaiiff' },
+  'memory-12': quiz('Where was this taken?', ['Switzerland', 'Washington', 'California'], 1),
+  'memory-17': { question: 'Do you remember how you felt in this moment?' },
+  'memory-01': quiz('Where was this?', ['Krakow', 'Ojcow', 'zakopane'], 1),
+  'memory-08': { question: 'Do you remember the breakfast place on this day?' },
+  'memory-31': quiz('Will you marry me?', ['Yes', 'no', 'you have reached the voicemail box of Justyna'], 0),
+  'memory-29': { question: 'Because whether we go to canyons,' },
+  'memory-04': { question: 'Or deserts,' },
+  'memory-33': { question: 'Or exotic monuments,' },
+  'memory-20': { question: 'I can’t imagine my life without you.' },
+  'memory-14': { question: 'You’ll never cook as well as I do,' },
+  'memory-10': { question: 'And I’ll never make desserts as well as you do,' },
+  'memory-25': { question: 'So please make me Chmórka.' },
+  'memory-28': quiz('Remember this place?', ['Sam Francisco', 'San Diego', 'San Jose'], 1),
+  'memory-34': { question: 'You are naturally an art piece,' },
+  'memory-09': { question: 'And you light up my world.' },
+  'memory-05': { question: 'I should have supported you more during residency,' },
+  'memory-22': { question: 'Tulipanowiec.' },
+  'memory-21': { question: 'Almost 13 years of fun,' },
+  'memory-18': { question: 'And you getting more beautiful,' },
+  'memory-35': { question: 'Never letting me work,' },
+  'memory-07': { question: 'And taking on ambitious goals,' },
+  'memory-13': { question: 'Here’s to the next 34 years of success. Happy birthday my love ❤️' },
+};
 
 export const memories: BirthdayMemory[] = [
   {"id": "memory-01", "capturedAt": "2017-11-04T13:15:58", "photo": "/justyna34/photos/memory-01.webp", "width": 1350, "height": 1800, "alt": "A couple smiling in front of autumn hills"},
@@ -57,12 +101,8 @@ export const memories: BirthdayMemory[] = [
   {"id": "memory-33", "capturedAt": "2019-01-08T12:06:45", "photo": "/justyna34/photos/memory-33.webp", "width": 1350, "height": 1800, "alt": "A woman standing in an ornate tiled doorway"},
   {"id": "memory-34", "capturedAt": "2020-07-19T20:41:38", "photo": "/justyna34/photos/memory-34.webp", "width": 1350, "height": 1800, "alt": "A woman relaxing on a bed with a green book"},
   {"id": "memory-35", "capturedAt": "2024-03-13T13:42:00", "photo": "/justyna34/photos/memory-35.webp", "width": 1306, "height": 1211, "alt": "Two people together at a desk by a window"},
-].sort((a, b) => a.capturedAt.localeCompare(b.capturedAt)).map(({ capturedAt: _capturedAt, ...memory }) => ({
-  ...memory,
-  question: 'Your question goes here',
-  options: [
-    { id: 'a', label: 'Answer one' },
-    { id: 'b', label: 'Answer two' },
-    { id: 'c', label: 'Answer three' },
-  ],
-}));
+].sort((a, b) => a.capturedAt.localeCompare(b.capturedAt)).map(({ capturedAt: _capturedAt, ...memory }) => {
+  const copy = birthdayCopy[memory.id];
+  if (!copy) throw new Error(`Missing birthday copy for ${memory.id}`);
+  return { ...memory, ...copy, options: copy.options ?? [] };
+});

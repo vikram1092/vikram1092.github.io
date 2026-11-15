@@ -4,14 +4,13 @@ const root = document.querySelector<HTMLElement>('#birthday')!;
 const memories: BirthdayMemory[] = JSON.parse(document.querySelector('#birthday-data')!.textContent!);
 const stage = document.querySelector<HTMLElement>('#photo-stage')!;
 const slots = Array.from(document.querySelectorAll<HTMLElement>('[data-photo-index]'));
-const originals = slots.filter((slot) => !slot.dataset.clone);
+const questionCount = memories.filter((memory) => memory.options.length > 0).length;
 const questions = Array.from(document.querySelectorAll<HTMLElement>('[data-question-index]'));
 const status = document.querySelector<HTMLElement>('#birthday-status')!;
 const dialog = document.querySelector<HTMLDialogElement>('.photo-dialog')!;
 const enlarged = document.querySelector<HTMLImageElement>('#enlarged-photo')!;
 const enlargedVideo = document.querySelector<HTMLVideoElement>('#enlarged-video')!;
 const albumVideos = Array.from(stage.querySelectorAll<HTMLVideoElement>('video'));
-const visibleVideos = new Set<HTMLVideoElement>();
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
 const storageKey = `justyna34:${root.dataset.revision}`;
@@ -58,18 +57,26 @@ function renderAnswers() {
       button.setAttribute('aria-pressed', String(button.dataset.option === answers[memory.id]));
     });
   });
-  root.classList.toggle('is-complete', Object.keys(answers).length === memories.length);
+  root.classList.toggle('is-complete', questionCount > 0 && Object.keys(answers).length === questionCount);
 }
 
 function playSilently(video: HTMLVideoElement) {
   video.muted = true;
   void video.play().catch(() => { /* A tap opens native playback controls if autoplay is unavailable. */ });
 }
+function videoIsVisible(video: HTMLVideoElement) {
+  // Read the current clipped rectangle: a fast swipe or a track-height change
+  // can reach a video before IntersectionObserver delivers its next entry.
+  const bounds = video.getBoundingClientRect();
+  const track = stage.getBoundingClientRect();
+  const width = Math.max(0, Math.min(bounds.right, track.right, innerWidth) - Math.max(bounds.left, track.left, 0));
+  const height = Math.max(0, Math.min(bounds.bottom, track.bottom, innerHeight) - Math.max(bounds.top, track.top, 0));
+  return bounds.width * bounds.height > 0 && width * height >= bounds.width * bounds.height * .05;
+}
 function syncPlayback() {
   albumVideos.forEach((video) => {
     const slot = video.closest<HTMLElement>('.photo-slot')!;
-    const shouldPlay = !document.hidden && stageVisible && visibleVideos.has(video) && !dialog.open &&
-      !slot.dataset.clone && Number(slot.dataset.photoIndex) === active;
+    const shouldPlay = !document.hidden && !dialog.open && Number(slot.dataset.photoIndex) === active && videoIsVisible(video);
     if (shouldPlay) {
       if (!video.getAttribute('src')) video.src = video.dataset.src!;
       if (video.paused) playSilently(video);
@@ -89,6 +96,7 @@ function select(index: number, announce = true) {
   const changed = active !== index;
   const direction = index > active ? 1 : -1;
   active = index;
+  stage.style.setProperty('--active-ratio', String(memories[index].width / memories[index].height));
   slots.forEach((slot) => {
     const i = Number(slot.dataset.photoIndex);
     slot.classList.toggle('is-current', i === index);
@@ -111,7 +119,7 @@ function select(index: number, announce = true) {
   }
 }
 function centeredScroll(index: number) {
-  return stage.scrollLeft + originals[index].getBoundingClientRect().left - stage.getBoundingClientRect().left - (stage.clientWidth - originals[index].clientWidth) / 2;
+  return stage.scrollLeft + slots[index].getBoundingClientRect().left - stage.getBoundingClientRect().left - (stage.clientWidth - slots[index].clientWidth) / 2;
 }
 // Visual emphasis follows the actual scroll position, not the selected index.
 // Selection, hover, and pointer presses must never compete over frame size.
@@ -131,12 +139,13 @@ function updatePhotoFocus() {
 }
 function goTo(index: number, smooth = true) {
   cancelAdvance();
-  index = (index + memories.length) % memories.length;
+  index = Math.max(0, Math.min(memories.length - 1, index));
   clearTimeout(navigationTimer);
   navigating = true;
   select(index);
   stage.scrollTo({ left: centeredScroll(index), behavior: smooth && !reducedMotion.matches ? 'smooth' : 'instant' });
   updatePhotoFocus();
+  syncPlayback();
   navigationTimer = setTimeout(() => { navigating = false; }, 900);
 }
 function closestSlot() {
@@ -154,14 +163,15 @@ stage.addEventListener('scroll', () => {
     scrollFrame = 0;
     updatePhotoFocus();
     if (!navigating) select(Number(closestSlot().dataset.photoIndex));
+    else syncPlayback();
   });
 }, { passive: true });
 function settleScroll() {
   if (resizing) return;
   navigating = false;
   const closest = closestSlot();
-  if (closest.dataset.clone) goTo(Number(closest.dataset.photoIndex), false);
-  else { select(Number(closest.dataset.photoIndex)); updatePhotoFocus(); }
+  select(Number(closest.dataset.photoIndex));
+  updatePhotoFocus();
 }
 stage.addEventListener('scrollend', settleScroll);
 let settleTimer: ReturnType<typeof setTimeout>;
@@ -202,7 +212,7 @@ function endDrag(event: PointerEvent) {
   if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
   if (moved) {
     const nearest = closestSlot();
-    goTo(Number(nearest.dataset.photoIndex), !nearest.dataset.clone);
+    goTo(Number(nearest.dataset.photoIndex));
   }
 }
 stage.addEventListener('pointerup', endDrag);
@@ -336,13 +346,17 @@ async function closePhoto() {
 document.querySelector('.dialog-close')!.addEventListener('click', () => void closePhoto());
 dialog.addEventListener('cancel', (event) => { event.preventDefault(); void closePhoto(); });
 dialog.addEventListener('click', (event) => { if (event.target === dialog) void closePhoto(); });
+function focusMemory(index: number) {
+  const target = questions[index].querySelector<HTMLButtonElement>('.answer') ?? slots[index].querySelector<HTMLButtonElement>('.photo-surface')!;
+  target.focus({ preventScroll: true });
+}
 document.addEventListener('keydown', (event) => {
   if (dialog.open || event.altKey || event.metaKey || event.ctrlKey) return;
   if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
   const focusedAnswer = document.activeElement?.closest('.answers');
   event.preventDefault();
   goTo(active + (event.key === 'ArrowRight' ? 1 : -1));
-  if (focusedAnswer) questions[active].querySelector<HTMLButtonElement>('.answer')!.focus({ preventScroll: true });
+  if (focusedAnswer) focusMemory(active);
 });
 
 questions.forEach((question, index) => {
@@ -363,7 +377,7 @@ questions.forEach((question, index) => {
       save();
       renderAnswers();
       const count = Object.keys(answers).length;
-      status.textContent = count === memories.length ? 'All memories answered. Happy birthday, Justyna!' : `${memory.correctOption ? 'That’s right.' : 'Answer saved.'} ${count} of ${memories.length} questions answered.`;
+      status.textContent = count === questionCount ? 'All questions answered. Happy birthday, Justyna!' : `${memory.correctOption ? 'That’s right.' : 'Answer saved.'} ${count} of ${questionCount} questions answered.`;
       if (changed && !reducedMotion.matches) {
         button.querySelectorAll('.answer-ripple').forEach((ripple) => ripple.remove());
         const ripple = document.createElement('span');
@@ -374,21 +388,19 @@ questions.forEach((question, index) => {
         ripple.style.top = `${event.detail ? event.clientY - bounds.y : bounds.height / 2}px`;
         button.append(ripple);
         setTimeout(() => ripple.remove(), 1200);
-        if (count === memories.length) {
+        if (count === questionCount) {
           animate(document.querySelector('.ambient-light')!, [{ opacity: 1 }, { opacity: .15, offset: .35 }, { opacity: 1 }], { duration: 2200, easing: 'ease-in-out' });
         }
       }
       // A deliberate pause lets the selected answer land before the next memory.
       // Any manual navigation, enlargement, or hidden tab cancels this move.
-      if (changed && count < memories.length) {
+      if (changed && index < memories.length - 1) {
         advanceTimer = setTimeout(() => {
           if (active !== index || dialog.open || document.hidden) return;
-          const next = Array.from({ length: memories.length - 1 }, (_, offset) => (index + offset + 1) % memories.length)
-            .find((i) => !answers[memories[i].id]);
-          if (next === undefined) return;
+          const next = index + 1;
           const focusAnswer = question.contains(document.activeElement);
           goTo(next);
-          if (focusAnswer) questions[next].querySelector<HTMLButtonElement>('.answer')!.focus({ preventScroll: true });
+          if (focusAnswer) focusMemory(next);
         }, 1350);
       }
     });
@@ -400,15 +412,9 @@ function syncMotion() {
   syncPlayback();
 }
 new IntersectionObserver(([entry]) => { stageVisible = entry.isIntersecting; syncMotion(); }).observe(stage);
-const videoVisibility = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    const video = entry.target as HTMLVideoElement;
-    if (entry.isIntersecting && entry.intersectionRatio >= .05) visibleVideos.add(video);
-    else visibleVideos.delete(video);
-  });
-  syncPlayback();
-}, { threshold: [0, .05] });
+const videoVisibility = new IntersectionObserver(syncPlayback, { threshold: [0, .05] });
 albumVideos.forEach((video) => videoVisibility.observe(video));
+window.addEventListener('scroll', syncPlayback, { passive: true });
 document.addEventListener('visibilitychange', () => { cancelAdvance(); syncMotion(); });
 reducedMotion.addEventListener('change', () => {
   if (!reducedMotion.matches) return;

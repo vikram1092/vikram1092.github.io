@@ -4,11 +4,6 @@ import '../../styles/justyna34.css';
 import { birthdayRevision, memories } from '../../data/justyna34';
 import FrameOrnaments from '../../components/justyna34/FrameOrnaments.astro';
 
-const photoEntries = [
-  { memory: memories[memories.length - 1], index: memories.length - 1, clone: true },
-  ...memories.map((memory, index) => ({ memory, index, clone: false })),
-  { memory: memories[0], index: 0, clone: true },
-];
 ---
 
 <!doctype html>
@@ -60,17 +55,18 @@ const photoEntries = [
       </header>
 
       <section class="album" aria-label="Photos and birthday questions" aria-roledescription="carousel">
-        <div class="photo-stage" id="photo-stage" role="group" aria-label="Birthday photos. Swipe, drag, or use the left and right arrow keys to explore." style={`--leading-ratio: ${memories.at(-1)!.width / memories.at(-1)!.height}; --trailing-ratio: ${memories[0].width / memories[0].height};`}>
-          {photoEntries.map(({ memory, index, clone }) => (
-            <div class:list={['photo-slot', { 'is-current': index === 0 }]} data-photo-index={index} data-clone={clone ? 'true' : undefined} style={`--photo-ratio: ${memory.width / memory.height};`}>
+        <div class="photo-stage" id="photo-stage" role="group" aria-label="Birthday photos. Swipe, drag, or use the left and right arrow keys to explore." style={`--leading-ratio: ${memories[0].width / memories[0].height}; --trailing-ratio: ${memories.at(-1)!.width / memories.at(-1)!.height}; --active-ratio: ${memories[0].width / memories[0].height};`}>
+          {memories.map((memory, index) => (
+            <div class:list={['photo-slot', { 'is-current': index === 0 }]} data-photo-index={index} style={`--photo-ratio: ${memory.width / memory.height};`}>
               <div class="photo-drift" style={`--drift-delay: ${-index * 3}s;`}>
-                <button class="photo-surface" data-frame={index % 2 === 0 ? 'rococo' : 'laurel'} type="button" tabindex={clone ? '-1' : undefined} aria-label={`${index === 0 ? 'Enlarge' : 'Show'} ${memory.video ? 'video' : 'photo'} ${index + 1}`}>
+                <button class="photo-surface" data-frame={index % 2 === 0 ? 'rococo' : 'laurel'} type="button" aria-label={`${index === 0 ? 'Enlarge' : 'Show'} ${memory.video ? 'video' : 'photo'} ${index + 1}`}>
                   <span class="photo-window">
                     {memory.video ? (
                       <video data-src={memory.video} poster={memory.photo} width={memory.width} height={memory.height} autoplay muted loop playsinline preload="none" aria-label={memory.alt}></video>
                     ) : (
-                      <img src={memory.photo} alt={memory.alt} width={memory.width} height={memory.height} loading={index < 2 || clone ? 'eager' : 'lazy'} fetchpriority={index === 0 && !clone ? 'high' : 'auto'} decoding="async" draggable="false" />
+                      <img src={memory.photo} alt={memory.alt} width={memory.width} height={memory.height} loading={index < 2 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} decoding="async" draggable="false" />
                     )}
+                    <span class="photo-caption" aria-hidden="true"><span>{memory.question}</span></span>
                   </span>
                   <span class="photo-light" aria-hidden="true"></span>
                   <FrameOrnaments />
@@ -84,14 +80,14 @@ const photoEntries = [
           {memories.map((memory, index) => (
             <section class="question" id={`question-${index}`} data-question-index={index} aria-labelledby={`question-title-${index}`} hidden={index !== 0}>
               <h2 id={`question-title-${index}`}>{memory.question}</h2>
-              <div class="answers" role="group" aria-labelledby={`question-title-${index}`}>
+              {memory.options.length > 0 && <div class="answers" role="group" aria-labelledby={`question-title-${index}`}>
                 {memory.options.map((option) => (
                   <button class="answer" type="button" data-option={option.id} aria-pressed="false">
                     <span>{option.label}</span>
                     <svg class="answer-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#check" /></svg>
                   </button>
                 ))}
-              </div>
+              </div>}
             </section>
           ))}
         </div>
