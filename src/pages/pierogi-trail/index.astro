@@ -1,0 +1,78 @@
+---
+import '@fontsource-variable/manrope';
+import '../../styles/pierogi-trail.css';
+import { CAVES } from '../../scripts/pierogi-trail/model';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f5f0e5" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="One woman, one horse, a pocketful of pierogi. A little pixel-art adventure through Texas." />
+    <title>The Pierogi Trail · A little Texas adventure</title>
+    <link rel="icon" href="/pierogi-trail/pierogi.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <main class="trail-page">
+      <header class="masthead"><span><span class="brand-star" aria-hidden="true">✦</span> LITTLE TEXAS ADVENTURES</span><span class="edition">NO. 01 <span> / </span> THE HORSEBACK EDITION</span></header>
+      <div class="page-heading">
+        <div><p class="eyebrow">A LONE STAR STATE OF MIND</p><h1>The Pierogi Trail<span>.</span></h1></div>
+        <p class="heading-note">One woman. One horse. Seven caves.<br />And absolutely no shortage of pierogi.</p>
+      </div>
+
+      <section class="game-shell" aria-label="The Pierogi Trail game">
+        <div class="game-toolbar">
+          <div class="location"><span class="live-dot" aria-hidden="true"></span><span id="region">Webster · NASA neighborhood</span></div>
+          <div class="game-tools">
+            <button id="sound" aria-label="Turn sound on" aria-pressed="false" title="Toggle sound"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Zm5 4 5 6m0-6-5 6" /></svg><span>Sound off</span></button>
+            <button id="pause" aria-label="Pause ride" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14" /></svg><span>Pause</span></button>
+            <button id="fullscreen" aria-label="Enter fullscreen" title="Fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5" /></svg></button>
+          </div>
+        </div>
+        <div class="game-stage" id="stage">
+          <canvas id="trail" tabindex="0" aria-label="Horseback game. Press Arrow Up or Space to jump; P or Escape to pause. On touch screens tap the scene or the Jump button." aria-describedby="controls-note">Your browser needs Canvas to play this game. Use a current browser with JavaScript enabled.</canvas>
+          <div class="in-game-hud"><div class="score"><img src="/pierogi-trail/pierogi.svg" alt="" /><span id="score">000</span><small>PIEROGI</small></div><div class="cave-count"><span id="cave-count">0 / 7</span><small>CAVES FOUND</small></div></div>
+          <div class="toast" id="toast" role="status" aria-live="polite"></div>
+          <div class="intro-panel" id="intro">
+            <span class="little-label">A THREE-MINUTE TRAIL RIDE</span>
+            <h2>A little wild.<br />A lot of pierogi.</h2>
+            <p>Follow the dumplings from NASA country to the caverns of West Texas. Your horse knows the way.</p>
+            <button class="primary-button" id="start">Saddle up <span aria-hidden="true">→</span></button>
+            <span class="easy-note">Easy jumps. No lives to lose. Just a good ride.</span>
+          </div>
+          <div class="center-panel" id="paused" hidden>
+            <span class="little-label">TAKE YOUR TIME</span><h2>Just horsing around.</h2><p>The trail will be right here.</p><button class="primary-button" id="resume">Keep riding <span aria-hidden="true">→</span></button>
+          </div>
+          <div class="center-panel finish-panel" id="finish" hidden>
+            <span class="little-label">SEVEN CAVES. ONE HAPPY HORSE.</span><h2>What a lovely ride.</h2><p>You made it all the way to Sonora.</p>
+            <div class="finish-stats"><div><strong id="final-pierogi">0</strong><span>pierogi packed</span></div><div><strong>7 / 7</strong><span>caves explored</span></div><div><strong id="final-time">3:00</strong><span>on the trail</span></div></div>
+            <p class="finish-message" id="finish-message"></p><button class="primary-button" id="replay">One more ride <span aria-hidden="true">↻</span></button>
+          </div>
+          <div class="jump-cue" id="jump-cue" hidden>↑ A little hop!</div>
+          <button class="jump-button" id="jump" aria-label="Jump horse" hidden><span aria-hidden="true">↑</span> JUMP</button>
+        </div>
+        <div class="game-bottom"><p id="controls-note"><kbd>↑</kbd> <kbd>SPACE</kbd><span> to jump <span class="control-divider">/</span> or tap the scene</span></p><span id="ride-note">A gentle ride, at your own pace.</span></div>
+        <noscript><p class="no-script">Enable JavaScript to saddle up. This little game runs entirely in your browser.</p></noscript>
+      </section>
+
+      <section class="trail-passport" aria-labelledby="passport-title">
+        <div class="passport-heading"><h2 id="passport-title">Your cave passport</h2><span id="passport-progress">SEVEN LITTLE WONDERS AHEAD</span></div>
+        <ol class="cave-route">
+          {CAVES.map((cave, i) => <li data-cave={i}><span class="route-dot"><span>{String(i + 1).padStart(2, '0')}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4 10-10" /></svg></span><span class="route-name">{cave.short}</span><span class="route-town">{cave.place}</span></li>)}
+        </ol>
+      </section>
+      <footer class="page-footer"><span>MADE FOR THE JOY OF THE JOURNEY <span aria-hidden="true">✦</span></span><button id="route-info">The route & little details <span aria-hidden="true">↗</span></button></footer>
+    </main>
+    <dialog id="route-dialog" aria-labelledby="route-title">
+      <button class="dialog-close" id="close-route" aria-label="Close route details">×</button>
+      <p class="eyebrow">YOUR POCKET FIELD GUIDE</p><h2 id="route-title">Seven caves. All Texas.</h2>
+      <p>One playful, continuous trail through the seven classic Texas show caves. Stops are ordered by approximate <strong>straight-line distance from downtown Houston</strong>, not driving distance. The scenery and riding distances are happily compressed.</p>
+      <ol>{CAVES.map(cave => <li><div><a href={cave.url} target="_blank" rel="noopener noreferrer">{cave.name} ↗</a><span>~{cave.miles} mi</span></div><p>{cave.fact}</p></li>)}</ol>
+      <p class="source-note">Cave selection and geology: <a href="https://www.texasspeleologicalsurvey.org/showcaves/index.php" target="_blank" rel="noopener noreferrer">Texas Speleological Survey</a>. Distance ordering: <a href="https://thecaveguide.com/caves-near/houston-tx" target="_blank" rel="noopener noreferrer">The Cave Guide</a>, with Sonora estimated from its <a href="https://www.cavernsofsonora.com/contact" target="_blank" rel="noopener noreferrer">published GPS location</a>. This is an imaginary horseback trail, with a little extra desert and the occasional Starship cameo.</p>
+      <div class="field-guide"><h3>Small things to look for</h3><p>NASA Road 1, the rocket garden, Houston’s skyline, bluebonnets, live oaks, windmills, prickly pear, cave crystals, and a silver Starship crossing the sky.</p><p>Collect pierogi along the trail. Jump logs, shallow creeks, hay bales, rocks, and prickly pear. A missed jump only slows you for a moment. Cave stamps are automatic; you always stay on your horse.</p></div>
+    </dialog>
+    <script>import '../../scripts/pierogi-trail/game';</script>
+  </body>
+</html>
