@@ -10,7 +10,25 @@ import {
 import {
   backdropWeights,
   tilePositions,
+  caveAt,
 } from "../src/scripts/pierogi-trail/art";
+import { CAVE_ART } from "../src/scripts/pierogi-trail/cave-art";
+
+test("each cave has a separate swappable painting and continuous entrance and exit", () => {
+  expect(new Set(CAVES.map(cave => CAVE_ART[cave.id].src)).size).toBe(7);
+  for (const cave of CAVES) {
+    expect(caveAt(cave.x)?.cave.id).toBe(cave.id);
+    expect(caveAt(cave.x)?.alpha).toBe(1);
+    expect(caveAt(cave.x - 1550)).toBeNull();
+    expect(caveAt(cave.x + 1550)).toBeNull();
+    let previous = 0;
+    for (let x = cave.x - 1550; x <= cave.x + 1550; x += 10) {
+      const alpha = caveAt(x)?.alpha ?? 0;
+      expect(Math.abs(alpha - previous)).toBeLessThan(0.02);
+      previous = alpha;
+    }
+  }
+});
 
 test("the faster hands-off ride still completes every cave in about three minutes", () => {
   const g = makeGame();
@@ -156,7 +174,7 @@ test("mobile taps anywhere, including the top tracker, jump with no button or sc
   await context.close();
 });
 
-test("generated rider has real transparent margins and all six artwork assets decode", async ({
+test("generated rider has real transparent margins and all artwork assets decode", async ({
   page,
 }) => {
   await page.goto("/pierogi-trail/");
@@ -198,6 +216,21 @@ test("a full ride reaches the ending and a screen tap resets all seven stamps", 
   test.setTimeout(120000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  // Observe actual image sampling by the renderer, including its resize cache.
+  // This catches loading seven files but accidentally reusing one for every cave.
+  await page.addInitScript(() => {
+    const drawn: string[] = [];
+    Object.assign(window, { drawnCaveArtwork: drawn });
+    const draw = CanvasRenderingContext2D.prototype.drawImage;
+    CanvasRenderingContext2D.prototype.drawImage = function (...args: unknown[]) {
+      const image = args[0];
+      if (image instanceof HTMLImageElement && image.src.includes("/art/caves/")) {
+        const path = new URL(image.src).pathname;
+        if (!drawn.includes(path)) drawn.push(path);
+      }
+      return Reflect.apply(draw, this, args);
+    } as typeof draw;
+  });
   await page.clock.install();
   await page.goto("/pierogi-trail/");
   await expect(page.locator("#stage")).toHaveAttribute("data-assets", "ready");
@@ -209,6 +242,9 @@ test("a full ride reaches the ending and a screen tap resets all seven stamps", 
   await page.clock.runFor(47000);
   await expect(page.locator("#stage")).toHaveAttribute("data-mode", "finished");
   await expect(page.locator("[data-cave].found")).toHaveCount(7);
+  expect(await page.evaluate(() =>
+    (window as unknown as { drawnCaveArtwork: string[] }).drawnCaveArtwork,
+  )).toEqual(CAVES.map(cave => CAVE_ART[cave.id].src));
   expect(Number(await page.locator("#score").textContent())).toBeGreaterThan(
     200,
   );

@@ -1,6 +1,8 @@
-# The Pierogi Trail — revision 2
+# The Pierogi Trail — revision 3
 
 Live route: `/pierogi-trail/`.
+
+Revision 3 gives every cave its own original painting based on documented real-world formations, plus a matching stone floor. Pierogi are 56 pixels wide instead of 34, about 65% bigger. The seven asset paths and crop settings live in `src/scripts/pierogi-trail/cave-art.ts`, so swapping an image does not require engine changes. See [CAVE-ART.md](CAVE-ART.md) for the file list, replacement instructions, references and full generation prompts.
 
 The page is now only the game. It fills the viewport without a website header, title, start card, footer, field-guide dialog, separate passport section, toolbar, or jump button. The seven cave stamps, current region, pierogi total, and a thin route-progress line sit across the top as a read-only game HUD. Play starts when the art is loaded. Tap anywhere, including the top tracker, to jump. Arrow Up, Space, W, and Enter also work. P / Escape pauses; a screen tap resumes. Hiding the tab pauses rather than allowing the horse to finish unseen. The ending is drawn inside the game, with tap-anywhere replay. No lives, damage, lost collectibles, or game over.
 
@@ -21,9 +23,9 @@ The built-in image-generation tool produced the sprite sheets and landscape pano
 | `public/pierogi-trail/art/houston-v2.webp` | Webster houses, live oak, water tower, Saturn V garden, NASA campus, Houston skyline and bayou |
 | `public/pierogi-trail/art/hill-country-v2.webp` | Bluebonnets, limestone hills, ranch, barn, fences, windmill and native cactus |
 | `public/pierogi-trail/art/desert-v2.webp` | Rust-colored mesas, sunset, sagebrush, yucca, prickly pear and western ranch terrain |
-| `public/pierogi-trail/art/cave-v2.webp` | Textured limestone chambers, columns, formations, lanterns, crystal clusters, underground pool and waterfall |
+| `public/pierogi-trail/art/caves/*.webp` | Seven individual cave paintings: flowstone, fault fractures, giant columns, smooth river-carved walls, draperies, wet solution domes and branching helictites; details in [CAVE-ART.md](CAVE-ART.md) |
 
-There is no longer a scenery group that vanishes at a hard distance threshold. Background tiles are positioned in continuous world coordinates, with mirrored matching edges to avoid gaps. Houston blends into Hill Country across 7,000 world pixels; the western sunset arrives across 7,500 pixels. Cave entrances and exits use smooth fades over 850–900 pixels, marked by physical cave signs. Individual caves use different framing of the cave panorama. Signs leave the viewport by ordinary scrolling. Starship passes overhead during 10 seconds of every 29-second cycle. Terrain scrolls at full gallop speed; the distant panorama scrolls at 19% of it.
+There is no longer a scenery group that vanishes at a hard distance threshold. Background tiles are positioned in continuous world coordinates, with mirrored matching edges to avoid gaps. Houston blends into Hill Country across 7,000 world pixels; the western sunset arrives across 7,500 pixels. Cave entrances and exits use smooth fades over 850–900 pixels, marked by physical cave signs. Every cave loads a separate painting and its own floor texture. The outdoor vegetation fades out with the ground as the cave appears. Signs leave the viewport by ordinary scrolling. Starship passes overhead during 10 seconds of every 29-second cycle. Terrain scrolls at full gallop speed; outdoor panoramas scroll at 19%, and cave panoramas at 24%. Paintings are resized once per viewport size and cached for smooth rendering.
 
 ## Cave order
 

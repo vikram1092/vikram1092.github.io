@@ -1,4 +1,5 @@
-import { CAVES, type Game, type Obstacle } from "./model";
+import { CAVES, type CaveId, type Game, type Obstacle } from "./model";
+import { CAVE_ART } from "./cave-art";
 
 type Ctx = CanvasRenderingContext2D;
 export type Art = {
@@ -7,8 +8,9 @@ export type Art = {
   houston: HTMLImageElement;
   hills: HTMLImageElement;
   desert: HTMLImageElement;
-  cave: HTMLImageElement;
+  caves: Record<CaveId, HTMLImageElement>;
 };
+export const PIEROGI_WIDTH = 56;
 export const clamp = (n: number, a = 0, b = 1) => Math.max(a, Math.min(b, n));
 export const smooth = (a: number, b: number, x: number) => {
   const t = clamp((x - a) / (b - a));
@@ -25,17 +27,34 @@ export async function loadArt(): Promise<Art> {
     houston: "houston-v2",
     hills: "hill-country-v2",
     desert: "desert-v2",
-    cave: "cave-v2",
   };
-  const result = await Promise.all(
-    Object.entries(names).map(async ([key, name]) => {
-      const image = new Image();
-      image.src = `/pierogi-trail/art/${name}.webp`;
-      await image.decode();
-      return [key, image];
-    }),
-  );
-  return Object.fromEntries(result) as Art;
+  const imageAt = async (src: string) => {
+    const image = new Image();
+    image.src = src;
+    await image.decode();
+    return image;
+  };
+  const [result, caves] = await Promise.all([
+    Promise.all(
+      Object.entries(names).map(async ([key, name]) => [
+        key, await imageAt(`/pierogi-trail/art/${name}.webp`),
+      ]),
+    ),
+    Promise.all(
+      CAVES.map(async (cave) => [cave.id, await imageAt(CAVE_ART[cave.id].src)]),
+    ),
+  ]);
+  return { ...Object.fromEntries(result), caves: Object.fromEntries(caves) } as Art;
+}
+export function caveAt(x: number) {
+  const cave = CAVES.find((cave) => Math.abs(x - cave.x) < 1550);
+  if (!cave) return null;
+  return {
+    cave,
+    alpha:
+      smooth(cave.x - 1550, cave.x - 700, x) *
+      (1 - smooth(cave.x + 650, cave.x + 1550, x)),
+  };
 }
 export function backdropWeights(x: number) {
   const hill = smooth(4500, 11500, x),
@@ -70,11 +89,13 @@ function panorama(
   ground: number,
   camera: number,
   alpha = 1,
+  focus?: number,
 ) {
   if (alpha <= 0) return;
   const height = Math.ceil(Math.max(ground + 25, W * 0.6)),
     width = Math.ceil((height * image.width) / image.height),
     painted = scaledArtwork(image, width, height);
+  if (focus !== undefined) camera += width * focus - W / 2;
   c.save();
   c.globalAlpha = alpha;
   for (const tile of tilePositions(camera, width, W)) {
@@ -229,7 +250,7 @@ function prop(
   );
 }
 function pierogi(c: Ctx, art: Art, x: number, y: number, t: number) {
-  prop(c, art, 1, x, y + 10 + Math.sin(t) * 2, 34);
+  prop(c, art, 1, x, y + 17 + Math.sin(t) * 2, PIEROGI_WIDTH);
 }
 function obstacle(
   c: Ctx,
@@ -295,26 +316,36 @@ function groundLayer(
   ground: number,
   x: number,
   desert: number,
+  cave?: { image: HTMLImageElement; terrainStart: number; alpha: number },
 ) {
-  const source = art.desert;
-  // Sample actual painted terrain instead of a broad flat-color floor.
-  const tw = 900,
-    sy = source.height * 0.82,
-    sh = source.height * 0.18,
-    terrain = scaledArtwork(source, tw, H - ground + 10, sy, sh);
-  for (const tile of tilePositions(x, tw, W)) {
-    if (tile.x >= W || tile.x + tw <= 0) continue;
+  // Blend each cave's own mineral floor with its background. Outdoor plants
+  // and red dirt should never persist inside a fully entered cave.
+  const terrain = (source: HTMLImageElement, start: number, alpha: number) => {
+    if (alpha <= 0) return;
+    const tw = 900,
+      sy = source.height * start,
+      painted = scaledArtwork(source, tw, H - ground + 10, sy, source.height - sy);
     c.save();
-    c.translate(tile.x + (tile.flipped ? tw : 0), ground - 7);
-    if (tile.flipped) c.scale(-1, 1);
-    c.drawImage(terrain, 0, 0);
+    c.globalAlpha = alpha;
+    for (const tile of tilePositions(x, tw, W)) {
+      if (tile.x >= W || tile.x + tw <= 0) continue;
+      c.save();
+      c.translate(tile.x + (tile.flipped ? tw : 0), ground - 7);
+      if (tile.flipped) c.scale(-1, 1);
+      c.drawImage(painted, 0, 0);
+      c.restore();
+    }
     c.restore();
-  }
+  };
+  if (!cave || cave.alpha < 1) terrain(art.desert, 0.82, 1);
+  if (cave) terrain(cave.image, cave.terrainStart, cave.alpha);
   const shadow = c.createLinearGradient(0, ground, 0, ground + 48);
   shadow.addColorStop(0, "#493b2d60");
   shadow.addColorStop(1, "#493b2d00");
   c.fillStyle = shadow;
   c.fillRect(0, ground, W, 48);
+  c.save();
+  c.globalAlpha = 1 - (cave?.alpha ?? 0);
   for (let i = Math.floor(x / 38) - 1; i < (x + W) / 38 + 1; i++) {
     const xx = i * 38 - x,
       n = noise(i);
@@ -340,6 +371,7 @@ function groundLayer(
       line(c, color, [xx - 4, ground - 7, xx, ground, xx + 5, ground - 9], 1);
     }
   }
+  c.restore();
 }
 function horse(
   c: Ctx,
@@ -389,22 +421,25 @@ export function scene(
     panorama(c, art.hills, W, ground, g.x * 0.19, 1 - weights.houston);
   panorama(c, art.desert, W, ground, g.x * 0.19, weights.desert);
   starship(c, art, W, H, g.time);
-  const cv = CAVES.find((cv) => Math.abs(g.x - cv.x) < 1550);
-  let caveAlpha = 0;
+  const location = caveAt(g.x),
+    cv = location?.cave,
+    caveAlpha = location?.alpha ?? 0;
   if (cv) {
-    caveAlpha =
-      smooth(cv.x - 1550, cv.x - 700, g.x) *
-      (1 - smooth(cv.x + 650, cv.x + 1550, g.x));
     panorama(
       c,
-      art.cave,
+      art.caves[cv.id],
       W,
       ground,
-      (g.x - cv.x) * 0.48 + CAVES.indexOf(cv) * 230,
+      (g.x - cv.x) * 0.24,
       caveAlpha,
+      CAVE_ART[cv.id].focus,
     );
   }
-  groundLayer(c, art, W, H, ground, g.x, weights.desert);
+  groundLayer(c, art, W, H, ground, g.x, weights.desert, cv ? {
+    image: art.caves[cv.id],
+    terrainStart: CAVE_ART[cv.id].terrainStart,
+    alpha: caveAlpha,
+  } : undefined);
   // Physical signs leave the camera naturally; never culled by region changes.
   const signs = [
     { x: 650, title: "NASA ROAD 1", small: "WEBSTER · TEXAS" },
@@ -425,7 +460,7 @@ export function scene(
   }
   for (const p of g.pierogi) {
     const xx = p.x - g.x + playerX;
-    if (!p.collected && xx > -25 && xx < W + 25)
+    if (!p.collected && xx > -PIEROGI_WIDTH / 2 && xx < W + PIEROGI_WIDTH / 2)
       pierogi(c, art, xx, ground - p.y, reduced ? 0 : g.time * 4 + p.x);
   }
   c.save();

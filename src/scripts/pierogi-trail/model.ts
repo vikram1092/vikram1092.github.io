@@ -6,6 +6,7 @@ export const JUMP_SPEED = 650;
 
 export const CAVES = [
   {
+    id: "inner-space",
     name: "Inner Space Cavern",
     short: "Inner Space",
     place: "Georgetown",
@@ -17,6 +18,7 @@ export const CAVES = [
     url: "https://innerspacecavern.com/",
   },
   {
+    id: "wonder-world",
     name: "Wonder World Cave",
     short: "Wonder World",
     place: "San Marcos",
@@ -28,6 +30,7 @@ export const CAVES = [
     url: "https://www.wonderworldpark.com/",
   },
   {
+    id: "natural-bridge",
     name: "Natural Bridge Caverns",
     short: "Natural Bridge",
     place: "New Braunfels area",
@@ -39,6 +42,7 @@ export const CAVES = [
     url: "https://naturalbridgecaverns.com/",
   },
   {
+    id: "longhorn",
     name: "Longhorn Cavern",
     short: "Longhorn",
     place: "Burnet",
@@ -50,6 +54,7 @@ export const CAVES = [
     url: "https://tpwd.texas.gov/state-parks/longhorn-cavern",
   },
   {
+    id: "without-a-name",
     name: "Cave Without a Name",
     short: "Without a Name",
     place: "Boerne",
@@ -61,6 +66,7 @@ export const CAVES = [
     url: "https://www.cavewithoutaname.com/",
   },
   {
+    id: "cascade",
     name: "Cascade Caverns",
     short: "Cascade",
     place: "Boerne",
@@ -72,6 +78,7 @@ export const CAVES = [
     url: "https://www.cascadecaverns.com/",
   },
   {
+    id: "sonora",
     name: "Caverns of Sonora",
     short: "Sonora",
     place: "Sonora",
@@ -84,6 +91,7 @@ export const CAVES = [
   },
 ] as const;
 export type Cave = (typeof CAVES)[number];
+export type CaveId = Cave["id"];
 export type Obstacle = {
   x: number;
   width: number;
