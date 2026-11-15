@@ -61,7 +61,7 @@ test('the birthday story keeps all captions, tracks seven quiz answers until rel
   expect(quizIndices.map((index) => memories[index].options.find((option) => option.id === memories[index].correctOption)!.label)).toEqual(['Krakow', 'The VA', 'Soldier', 'Washington', 'Ojcow', 'Yes', 'San Diego']);
   await expect(page.locator('#birthday')).toHaveClass(/is-complete/);
   await expect(page.locator('.answer[aria-pressed="true"]')).toHaveCount(7);
-  await expect(page.locator('#question-34 h2')).toHaveText('Here’s to the next 34 years of success. Happy birthday my love ❤️');
+  await expect(page.locator('#question-34 h2')).toHaveText('and you’ll do much more in the next 34 years. Happy birthday my love ❤️');
   await page.keyboard.press('ArrowRight');
   await centered(page, lastMemory);
   await page.reload();
