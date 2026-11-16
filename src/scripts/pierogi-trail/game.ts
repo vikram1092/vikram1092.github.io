@@ -7,7 +7,8 @@ import {
   region,
   type GameEvent,
 } from "./model";
-import { scene, loading, loadArt, type Art, type Message } from "./art";
+import { scene, loading, loadArt, caveAt, type Art, type Message } from "./art";
+import { TrailAudio } from "./audio";
 const get = <T extends HTMLElement>(id: string) =>
   document.getElementById(id) as T;
 const canvas = get<HTMLCanvasElement>("trail"),
@@ -35,51 +36,25 @@ let particles: {
   life: number;
   color: string;
 }[] = [];
-let sound = false,
-  audioContext: AudioContext | undefined,
-  master: GainNode | undefined;
-function initAudio() {
-  try {
-    if (!audioContext) {
-      audioContext = new AudioContext();
-      master = audioContext.createGain();
-      master.gain.value = 0.13;
-      master.connect(audioContext.destination);
-    }
-    if (audioContext.state === "suspended")
-      void audioContext.resume().catch(() => {});
-  } catch {
-    sound = false;
+const audio = new TrailAudio(updateSoundControls);
+function updateSoundControls() {
+  for (const channel of ["music", "sfx"] as const) {
+    const button = get<HTMLButtonElement>(`toggle-${channel}`);
+    const label = channel === "music" ? "Music" : "SFX";
+    button.disabled = !audio.available;
+    button.setAttribute("aria-pressed", String(audio[channel]));
+    button.title = audio.available ? `${label} ${audio[channel] ? "on" : "off"}. M mutes all sound.` : "Audio unavailable in this browser";
+    button.querySelector(".audio-state")!.textContent = audio[channel] ? "on" : "off";
   }
 }
-function tone(frequency: number, duration: number, delay = 0) {
-  if (!sound || !audioContext || !master) return;
-  const osc = audioContext.createOscillator(),
-    gain = audioContext.createGain(),
-    t = audioContext.currentTime + delay;
-  osc.type = "triangle";
-  osc.frequency.value = frequency;
-  gain.gain.setValueAtTime(0, t);
-  gain.gain.linearRampToValueAtTime(0.17, t + 0.008);
-  gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
-  osc.connect(gain);
-  gain.connect(master);
-  osc.start(t);
-  osc.stop(t + duration + 0.02);
-  osc.onended = () => {
-    osc.disconnect();
-    gain.disconnect();
-  };
+updateSoundControls();
+for (const channel of ["music", "sfx"] as const) {
+  get(`toggle-${channel}`).addEventListener("click", () => audio.toggle(channel));
 }
 function syncMode() {
   stage.dataset.mode = game.mode;
   redraw = true;
-  if (master && audioContext)
-    master.gain.setTargetAtTime(
-      sound && game.mode === "playing" ? 0.13 : 0,
-      audioContext.currentTime,
-      0.04,
-    );
+  audio.setMode(game.mode);
 }
 function updateUI() {
   get("score").textContent = String(game.count);
@@ -99,6 +74,7 @@ function updateUI() {
   canvas.dataset.jumps = String(game.jumps);
 }
 function begin() {
+  audio.restart();
   game = makeGame();
   game.mode = document.hidden ? "paused" : "playing";
   accumulator = 0;
@@ -121,7 +97,6 @@ function resume() {
   accumulator = 0;
   last = performance.now();
   syncMode();
-  if (sound) initAudio();
 }
 async function prepare() {
   if (loadingAssets) return;
@@ -148,6 +123,7 @@ async function prepare() {
   }
 }
 function act() {
+  audio.unlock();
   if (failed) {
     void prepare();
     return;
@@ -171,31 +147,42 @@ window.addEventListener(
   "pointerdown",
   (event) => {
     if (!event.isPrimary || event.button !== 0) return;
+    if (event.target instanceof Element && event.target.closest(".audio-controls")) return;
     event.preventDefault();
     canvas.focus({ preventScroll: true });
     act();
   },
   { passive: false },
 );
+// Touch activation is granted on release in browsers with stricter autoplay rules.
+window.addEventListener("pointerup", (event) => {
+  if (event.isPrimary && event.pointerType !== "mouse" &&
+      !(event.target instanceof Element && event.target.closest(".audio-controls"))) audio.unlock();
+});
 window.addEventListener("keydown", (event) => {
+  if (event.target instanceof HTMLButtonElement && ["Space", "Enter"].includes(event.code)) return;
   if (["ArrowUp", "Space", "KeyW", "Enter"].includes(event.code)) {
     event.preventDefault();
     if (!event.repeat) act();
   } else if (["KeyP", "Escape"].includes(event.code)) {
     event.preventDefault();
+    if (event.repeat) return;
     if (game.mode === "playing") pause();
-    else resume();
+    else { audio.unlock(); resume(); }
   } else if (event.code === "KeyM") {
-    sound = !sound;
-    if (sound) initAudio();
-    syncMode();
+    event.preventDefault();
+    if (!event.repeat) audio.toggleMute();
   }
 });
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden) pause();
+  if (document.hidden) {
+    pause();
+    audio.setMode("paused");
+  }
   last = performance.now();
   accumulator = 0;
 });
+window.addEventListener("pagehide", () => { pause(); audio.setMode("paused"); });
 reduced.addEventListener("change", () => {
   redraw = true;
 });
@@ -214,16 +201,10 @@ function burst(x: number, y: number, color: string, count: number) {
 function handle(e: GameEvent) {
   if (e.type === "collect") {
     burst(e.x!, e.y!, "#ffe0a0", 4);
-    tone(740, 0.09);
-  }
-  if (e.type === "jump") {
-    tone(330, 0.09);
-    tone(490, 0.12, 0.05);
   }
   if (e.type === "land") burst(game.x, 3, "#dfbd7b", 7);
   if (e.type === "bump") {
     burst(game.x, 10, "#e8cc91", 9);
-    tone(165, 0.1);
   }
   if (e.type === "cave") {
     const cave = CAVES[e.index!];
@@ -231,7 +212,6 @@ function handle(e: GameEvent) {
     burst(game.x, 125, "#ffe8b1", 24);
     get("announcement").textContent =
       `${game.visited} of 7 caves: ${cave.name}. ${cave.fact}`;
-    [440, 554, 659, 880].forEach((n, i) => tone(n, 0.25, i * 0.08));
     updateUI();
   }
   if (e.type === "finish") {
@@ -242,6 +222,7 @@ function handle(e: GameEvent) {
     get("announcement").textContent =
       `All seven caves explored, with ${game.count} pierogi. Tap anywhere to ride again.`;
   }
+  audio.play(e.type);
 }
 function resize() {
   const box = stage.getBoundingClientRect();
@@ -274,6 +255,7 @@ function frame(now: number) {
       uiTime += dt;
       if (uiTime > 0.09) {
         updateUI();
+        audio.setCave(caveAt(game.x)?.alpha ?? 0);
         uiTime = 0;
       }
       for (const p of particles) {

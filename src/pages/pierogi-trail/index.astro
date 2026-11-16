@@ -24,7 +24,11 @@ import { CAVES } from '../../scripts/pierogi-trail/model';
         <div class="ride-readout"><span id="region">Webster · NASA neighborhood</span><span class="score"><img src="/pierogi-trail/pierogi.svg" alt="Pierogi" /><span id="score">0</span></span><span id="cave-count">0 / 7</span></div>
         <div class="journey-line" aria-hidden="true"><span id="progress"></span></div>
       </div>
-      <div class="sr-only" id="game-instructions">The horse gallops automatically. Tap anywhere on the screen or press Arrow Up, W, or Space to jump. P or Escape pauses. M toggles sound. Missing an obstacle only causes a brief stumble. Collect pierogi and visit all seven caves. Cave order uses approximate straight-line distance from downtown Houston.</div>
+      <div class="audio-controls" role="group" aria-label="Sound settings">
+        <button id="toggle-music" type="button" aria-label="Music" aria-pressed="true"><span aria-hidden="true">♫</span> Music <span class="audio-state" aria-hidden="true">on</span></button>
+        <button id="toggle-sfx" type="button" aria-label="Sound effects" aria-pressed="true">SFX <span class="audio-state" aria-hidden="true">on</span></button>
+      </div>
+      <div class="sr-only" id="game-instructions">The horse gallops automatically. Tap the game or press Arrow Up, W, or Space to jump and start the music. P or Escape pauses. M mutes or restores sound. The Music and SFX buttons toggle each independently. Missing an obstacle only causes a brief stumble. Collect pierogi and visit all seven caves. Cave order uses approximate straight-line distance from downtown Houston.</div>
       <div class="sr-only" id="announcement" role="status" aria-live="polite"></div>
       <noscript><p class="fallback">Enable JavaScript to ride the Pierogi Trail.</p></noscript>
     </main>
