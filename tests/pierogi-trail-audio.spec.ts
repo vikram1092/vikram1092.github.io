@@ -68,9 +68,11 @@ test("native music has audible samples and pauses/resumes without restarting", a
     const samples = buffer.getChannelData(0);
     let peak = 0, squares = 0;
     for (const sample of samples) { peak = Math.max(peak, Math.abs(sample)); squares += sample * sample; }
-    return { duration: buffer.duration, peak, rms: Math.sqrt(squares / samples.length), loop: element.loop };
+    return { src: element.currentSrc, channels: buffer.numberOfChannels, duration: buffer.duration, peak, rms: Math.sqrt(squares / samples.length), loop: element.loop };
   });
-  expect(song.duration).toBeGreaterThan(70);
+  expect(song.src).toContain("/pierogi-trail/audio/cowboy-country-v1.mp3");
+  expect(song.channels).toBe(2);
+  expect(song.duration).toBeCloseTo(106.667, 1);
   expect(song.peak).toBeLessThan(0.8);
   expect(song.rms).toBeGreaterThan(0.045);
   expect(song.rms).toBeLessThan(0.15);
