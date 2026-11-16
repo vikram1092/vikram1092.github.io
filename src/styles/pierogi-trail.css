@@ -174,36 +174,6 @@ canvas:focus-visible {
   white-space: nowrap;
   border: 0;
 }
-.audio-controls {
-  position: absolute;
-  z-index: 3;
-  right: max(12px, env(safe-area-inset-right));
-  bottom: calc(34px + env(safe-area-inset-bottom));
-  display: flex;
-  gap: 4px;
-}
-.audio-controls button {
-  min-height: 44px;
-  padding: 0 12px;
-  border: 1px solid #f5d18d45;
-  border-radius: 7px;
-  background: #183535db;
-  color: #fff3cc;
-  font: 700 11px/1 ui-monospace, "Courier New", monospace;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-.audio-controls button[aria-pressed="false"] {
-  color: #c3cac1;
-  background: #183535b8;
-  border-color: #f5d18d20;
-}
-.audio-controls button:focus-visible {
-  outline: 2px solid #ffe397;
-  outline-offset: 3px;
-}
-.audio-controls button:disabled { opacity: 0.5; cursor: default; }
-.audio-state { font-weight: 400; opacity: 0.8; }
 .fallback {
   position: absolute;
   top: 50%;

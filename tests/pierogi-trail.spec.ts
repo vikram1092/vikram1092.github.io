@@ -134,8 +134,7 @@ test("only the game fills the viewport and play starts automatically", async ({
   await page.goto("/pierogi-trail/");
   await expect(page.locator("#stage")).toHaveAttribute("data-assets", "ready");
   await expect(page.locator("#stage")).toHaveAttribute("data-mode", "playing");
-  await expect(page.getByRole("button")).toHaveCount(2);
-  await expect(page.getByRole("button", { name: "Music", exact: true })).toBeVisible();
+  await expect(page.getByRole("button")).toHaveCount(0);
   await expect(page.locator("header,footer,dialog,h1")).toHaveCount(0);
   const box = await page.locator("canvas").boundingBox();
   expect(box!.x).toBe(0);
@@ -154,7 +153,7 @@ test("only the game fills the viewport and play starts automatically", async ({
   expect(errors).toEqual([]);
 });
 
-test("mobile game taps jump while sound controls do not jump or scroll", async ({
+test("mobile taps anywhere jump with no buttons or scrolling", async ({
   browser,
 }) => {
   const context = await browser.newContext({
@@ -165,14 +164,12 @@ test("mobile game taps jump while sound controls do not jump or scroll", async (
   const page = await context.newPage();
   await page.goto("/pierogi-trail/");
   await expect(page.locator("#stage")).toHaveAttribute("data-assets", "ready");
-  await expect(page.getByRole("button")).toHaveCount(2);
-  await page.getByRole("button", { name: "Sound effects" }).tap();
-  await expect(page.getByRole("button", { name: "Sound effects" })).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByRole("button")).toHaveCount(0);
   await expect(page.locator("canvas")).toHaveAttribute("data-jumps", "0");
   await page.touchscreen.tap(195, 26);
   await expect(page.locator("canvas")).toHaveAttribute("data-jumps", "1");
   await page.waitForTimeout(950);
-  await page.touchscreen.tap(25, 810);
+  await page.touchscreen.tap(365, 810);
   await expect(page.locator("canvas")).toHaveAttribute("data-jumps", "2");
   expect(
     await page.evaluate(

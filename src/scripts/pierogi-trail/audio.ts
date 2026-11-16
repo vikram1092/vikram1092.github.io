@@ -1,91 +1,11 @@
 import type { Game, GameEvent } from "./model";
 
-const STORAGE_KEY = "pierogi-trail-audio-v1";
-const EIGHTH = 60 / 104 / 2;
-const BAR = EIGHTH * 8;
-const SONG_LENGTH = BAR * 32;
 const hz = (midi: number) => 440 * 2 ** ((midi - 69) / 12);
 
-// An original, unhurried G-major trail tune. Zeroes leave room between phrases.
-const MELODY = [
-  [71, 0, 74, 76, 74, 0, 71, 69],
-  [67, 0, 69, 71, 69, 0, 0, 0],
-  [67, 0, 71, 74, 76, 0, 74, 71],
-  [69, 0, 66, 69, 74, 0, 0, 0],
-  [71, 0, 74, 76, 79, 0, 76, 74],
-  [76, 0, 74, 71, 69, 0, 67, 0],
-  [69, 0, 71, 69, 66, 0, 69, 0],
-  [67, 0, 0, 0, 0, 0, 0, 0],
-  [76, 0, 79, 0, 78, 76, 74, 0],
-  [76, 0, 74, 71, 67, 0, 0, 0],
-  [71, 0, 74, 0, 71, 69, 67, 0],
-  [69, 0, 74, 0, 78, 0, 0, 0],
-  [76, 0, 74, 71, 69, 0, 67, 0],
-  [71, 0, 69, 67, 64, 0, 67, 0],
-  [69, 0, 71, 74, 69, 0, 66, 0],
-  [67, 0, 0, 0, 0, 0, 0, 0],
-];
-const CHORDS = [
-  [43, 55, 59, 62], [48, 55, 60, 64], [40, 55, 59, 64], [38, 54, 57, 62],
-  [43, 55, 59, 62], [48, 55, 60, 64], [38, 54, 57, 62], [43, 55, 59, 62],
-  [40, 55, 59, 64], [48, 55, 60, 64], [43, 55, 59, 62], [38, 54, 57, 62],
-  [48, 55, 60, 64], [40, 55, 59, 64], [38, 54, 57, 62], [43, 55, 59, 62],
-];
-
-/** Render once, then use sample-accurate looping without a timer per note. */
-async function makeSong() {
-  const context = new OfflineAudioContext(1, Math.ceil(SONG_LENGTH * 22050), 22050);
-  const filter = context.createBiquadFilter();
-  filter.type = "lowpass";
-  filter.frequency.value = 2100;
-  filter.Q.value = 0.45;
-  filter.connect(context.destination);
-  const pulse = context.createPeriodicWave(
-    new Float32Array(6), new Float32Array([0, 1, 0, 0.22, 0, 0.08]),
-  );
-  function note(midi: number, at: number, length: number, volume: number, lead = false) {
-    const oscillator = context.createOscillator(), gain = context.createGain();
-    if (lead) oscillator.setPeriodicWave(pulse);
-    else oscillator.type = "triangle";
-    oscillator.frequency.value = hz(midi);
-    gain.gain.setValueAtTime(0, at);
-    gain.gain.linearRampToValueAtTime(volume, at + 0.012);
-    gain.gain.exponentialRampToValueAtTime(0.0001, at + length);
-    gain.gain.linearRampToValueAtTime(0, at + length + 0.02);
-    oscillator.connect(gain).connect(filter);
-    oscillator.start(at);
-    oscillator.stop(at + length + 0.025);
-  }
-  for (let bar = 0; bar < 32; bar++) {
-    const chord = CHORDS[bar % 16];
-    const start = bar * BAR;
-    MELODY[bar % 16].forEach((midi, beat) => {
-      if (midi) note(midi, start + beat * EIGHTH, EIGHTH * 1.35, 0.12, true);
-    });
-    // Soft triangle bass and offbeat plucks give a galloping, handheld-game feel.
-    for (const beat of [0, 4])
-      note(chord[0] + (beat === 4 ? 7 : 0), start + beat * EIGHTH, EIGHTH * 1.7, 0.105);
-    for (const beat of [2, 6]) {
-      note(chord[1], start + beat * EIGHTH, EIGHTH * 0.8, 0.035);
-      note(chord[2], start + beat * EIGHTH, EIGHTH * 0.8, 0.028);
-    }
-    // A lighter second pass makes the loop a full 74-second arrangement.
-    if (bar >= 16 && bar % 4 !== 3)
-      note(chord[3] + 12, start + 7 * EIGHTH, EIGHTH * 0.65, 0.026);
-  }
-  return context.startRendering();
-}
-
+/** Native music playback keeps Safari on the media route; Web Audio handles SFX. */
 export class TrailAudio {
-  music = true;
-  sfx = true;
-  available = true;
   private context?: AudioContext;
   private master?: GainNode;
-  private filter?: BiquadFilterNode;
-  private song?: AudioBuffer;
-  private track?: { source: AudioBufferSourceNode; gain: GainNode; started: number };
-  private offset = 0;
   private mode: Game["mode"] = "ready";
   private voices = new Map<OscillatorNode, GainNode>();
   private suspendTimer?: number;
@@ -94,119 +14,70 @@ export class TrailAudio {
   private lastBump = -Infinity;
   private flourishUntil = 0;
   private collectNote = 0;
-  private restore = { music: true, sfx: true };
 
-  constructor(private changed: () => void) {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
-      if (typeof saved?.music === "boolean") this.music = saved.music;
-      if (typeof saved?.sfx === "boolean") this.sfx = saved.sfx;
-    } catch { /* Private browsing may disallow storage. */ }
-  }
+  constructor(private music: HTMLAudioElement) {}
 
-  /** Called synchronously from a real tap or keypress, including mobile Safari. */
+  /** Must call play/resume directly in touchend/click/keydown, without awaiting. */
   unlock() {
-    if (!this.available || (!this.music && !this.sfx)) return;
+    if (document.hidden) return;
+    // Web Audio otherwise defaults to ambient audio on iOS, which can be silent
+    // even while AudioContext.state is running. Native music also supplies the
+    // playback route on Safari versions without the Audio Session API.
+    try {
+      const session = (navigator as Navigator & { audioSession?: { type: string } }).audioSession;
+      if (session) session.type = "playback";
+    } catch { /* Native media still works without Audio Session support. */ }
+    this.playMusic(true);
     try {
       if (!this.context) {
         const context = this.context = new AudioContext();
         this.master = context.createGain();
         this.master.gain.value = 0;
         this.master.connect(context.destination);
-        this.filter = context.createBiquadFilter();
-        this.filter.type = "lowpass";
-        this.filter.frequency.value = 2200;
-        this.filter.Q.value = 0.45;
-        this.filter.connect(this.master);
         context.onstatechange = () => {
-          if (context.state === "running") this.sync();
+          if (context.state === "running") this.syncEffects();
         };
-        void makeSong().then((song) => {
-          this.song = song;
-          this.sync();
-        }).catch(() => this.unavailable());
       }
-      // Cancel a pending pause/mute suspension before requesting resume.
       window.clearTimeout(this.suspendTimer);
-      void this.context.resume().then(() => this.sync()).catch(() => {});
-      this.sync();
-    } catch { this.unavailable(); }
+      void this.context.resume().then(() => this.syncEffects()).catch(() => {});
+      this.syncEffects();
+    } catch { /* Music and the ride continue even when synthesized SFX fail. */ }
   }
 
-  private unavailable() {
-    this.available = false;
-    this.stopMusic();
-    this.stopEffects();
-    void this.context?.suspend().catch(() => {});
-    this.changed();
-  }
-
-  toggle(channel: "music" | "sfx") {
-    this[channel] = !this[channel];
-    this.save();
-    this.unlock();
-    this.sync();
-  }
-
-  toggleMute() {
-    if (this.music || this.sfx) {
-      this.restore = { music: this.music, sfx: this.sfx };
-      this.music = this.sfx = false;
-    } else {
-      this.music = this.restore.music;
-      this.sfx = this.restore.sfx;
-    }
-    this.save();
-    this.unlock();
-    this.sync();
-  }
-
-  private save() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ music: this.music, sfx: this.sfx })); }
-    catch { /* Sound remains usable without storage. */ }
-    this.changed();
+  private playMusic(fromGesture = false) {
+    if (document.hidden || (this.mode !== "playing" && this.mode !== "ready")) return;
+    // Attempt autoplay when allowed, and retry on every genuine interaction.
+    // Rejected autoplay is never remembered as a muted setting.
+    if (fromGesture || this.music.paused) void this.music.play().catch(() => {});
   }
 
   setMode(mode: Game["mode"]) {
     this.mode = mode;
-    // A first tap may arrive while artwork is still loading. Reuse that unlocked
-    // context when loading finishes, even if it was suspended during the wait.
-    if (mode === "playing" && this.context?.state === "suspended") this.unlock();
-    this.sync();
+    if (mode === "playing") {
+      this.playMusic();
+      if (this.context && this.context.state !== "running")
+        void this.context.resume().then(() => this.syncEffects()).catch(() => {});
+    } else this.music.pause();
+    this.syncEffects();
   }
 
   restart() {
-    this.stopMusic();
     this.stopEffects();
-    this.offset = 0;
+    this.music.currentTime = 0;
     this.lastEffect = this.lastCollect = this.lastBump = -Infinity;
     this.flourishUntil = this.collectNote = 0;
   }
 
-  setCave(alpha: number) {
-    if (this.context && this.filter)
-      this.filter.frequency.setTargetAtTime(2200 - alpha * 1250, this.context.currentTime, 0.35);
-  }
-
-  private sync() {
+  private syncEffects() {
     const context = this.context;
-    if (!context || !this.master || !this.available) return;
+    if (!context || !this.master) return;
     window.clearTimeout(this.suspendTimer);
     const playing = this.mode === "playing";
-    this.master.gain.setTargetAtTime(playing ? 0.45 : 0, context.currentTime, 0.025);
-    if (!playing || !this.sfx) this.stopEffects();
-    if (playing && this.music && this.song && !this.track && context.state === "running") {
-      const source = context.createBufferSource(), gain = context.createGain();
-      source.buffer = this.song;
-      source.loop = true;
-      gain.gain.setValueAtTime(0, context.currentTime);
-      gain.gain.setTargetAtTime(0.8, context.currentTime, 0.12);
-      source.connect(gain).connect(this.filter!);
-      source.start(0, this.offset % this.song.duration);
-      this.track = { source, gain, started: context.currentTime };
-      source.onended = () => { source.disconnect(); gain.disconnect(); };
-    } else if (!playing || !this.music) this.stopMusic();
-    if (!playing || (!this.music && !this.sfx)) this.suspendAfter(100);
+    this.master.gain.setTargetAtTime(playing ? 0.75 : 0, context.currentTime, 0.025);
+    if (!playing) {
+      this.stopEffects();
+      this.suspendAfter(100);
+    }
   }
 
   private suspendAfter(ms: number) {
@@ -214,17 +85,6 @@ export class TrailAudio {
     this.suspendTimer = window.setTimeout(() => {
       void this.context?.suspend().catch(() => {});
     }, ms);
-  }
-
-  private stopMusic() {
-    if (!this.track || !this.context) return;
-    const { source, gain, started } = this.track;
-    const now = this.context.currentTime;
-    this.offset += now - started;
-    gain.gain.cancelAndHoldAtTime(now);
-    gain.gain.linearRampToValueAtTime(0, now + 0.04);
-    source.stop(now + 0.05);
-    this.track = undefined;
   }
 
   private stopEffects() {
@@ -261,7 +121,7 @@ export class TrailAudio {
 
   play(type: GameEvent["type"]) {
     const context = this.context;
-    if (!this.available || !this.sfx || context?.state !== "running") return;
+    if (context?.state !== "running") return;
     if (type === "land" || type === "clear") return; // No repetitive hoof/landing chatter.
     if (this.mode !== "playing" && !(type === "finish" && this.mode === "finished")) return;
     const now = context.currentTime;
@@ -271,7 +131,7 @@ export class TrailAudio {
       notes.forEach((midi, i) => this.tone(midi, type === "finish" ? 0.5 : 0.24, 0.07, i * 0.14));
       this.flourishUntil = now + 1.2;
       if (type === "finish") {
-        this.master!.gain.setTargetAtTime(0.45, now, 0.025);
+        this.master!.gain.setTargetAtTime(0.75, now, 0.025);
         this.suspendAfter(1400);
       }
       return;

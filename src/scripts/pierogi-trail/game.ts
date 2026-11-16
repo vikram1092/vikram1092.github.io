@@ -7,7 +7,7 @@ import {
   region,
   type GameEvent,
 } from "./model";
-import { scene, loading, loadArt, caveAt, type Art, type Message } from "./art";
+import { scene, loading, loadArt, type Art, type Message } from "./art";
 import { TrailAudio } from "./audio";
 const get = <T extends HTMLElement>(id: string) =>
   document.getElementById(id) as T;
@@ -36,21 +36,7 @@ let particles: {
   life: number;
   color: string;
 }[] = [];
-const audio = new TrailAudio(updateSoundControls);
-function updateSoundControls() {
-  for (const channel of ["music", "sfx"] as const) {
-    const button = get<HTMLButtonElement>(`toggle-${channel}`);
-    const label = channel === "music" ? "Music" : "SFX";
-    button.disabled = !audio.available;
-    button.setAttribute("aria-pressed", String(audio[channel]));
-    button.title = audio.available ? `${label} ${audio[channel] ? "on" : "off"}. M mutes all sound.` : "Audio unavailable in this browser";
-    button.querySelector(".audio-state")!.textContent = audio[channel] ? "on" : "off";
-  }
-}
-updateSoundControls();
-for (const channel of ["music", "sfx"] as const) {
-  get(`toggle-${channel}`).addEventListener("click", () => audio.toggle(channel));
-}
+const audio = new TrailAudio(get<HTMLAudioElement>("trail-music"));
 function syncMode() {
   stage.dataset.mode = game.mode;
   redraw = true;
@@ -147,20 +133,20 @@ window.addEventListener(
   "pointerdown",
   (event) => {
     if (!event.isPrimary || event.button !== 0) return;
-    if (event.target instanceof Element && event.target.closest(".audio-controls")) return;
     event.preventDefault();
     canvas.focus({ preventScroll: true });
     act();
   },
   { passive: false },
 );
-// Touch activation is granted on release in browsers with stricter autoplay rules.
+// Safari needs playback directly in the native touchend/click handler. Pointer
+// events alone can leave an apparently running AudioContext inaudible on iPhone.
+window.addEventListener("touchend", () => audio.unlock(), { passive: true });
+window.addEventListener("click", () => audio.unlock());
 window.addEventListener("pointerup", (event) => {
-  if (event.isPrimary && event.pointerType !== "mouse" &&
-      !(event.target instanceof Element && event.target.closest(".audio-controls"))) audio.unlock();
+  if (event.isPrimary && event.pointerType !== "mouse") audio.unlock();
 });
 window.addEventListener("keydown", (event) => {
-  if (event.target instanceof HTMLButtonElement && ["Space", "Enter"].includes(event.code)) return;
   if (["ArrowUp", "Space", "KeyW", "Enter"].includes(event.code)) {
     event.preventDefault();
     if (!event.repeat) act();
@@ -169,9 +155,6 @@ window.addEventListener("keydown", (event) => {
     if (event.repeat) return;
     if (game.mode === "playing") pause();
     else { audio.unlock(); resume(); }
-  } else if (event.code === "KeyM") {
-    event.preventDefault();
-    if (!event.repeat) audio.toggleMute();
   }
 });
 document.addEventListener("visibilitychange", () => {
@@ -255,7 +238,6 @@ function frame(now: number) {
       uiTime += dt;
       if (uiTime > 0.09) {
         updateUI();
-        audio.setCave(caveAt(game.x)?.alpha ?? 0);
         uiTime = 0;
       }
       for (const p of particles) {
