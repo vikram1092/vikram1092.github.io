@@ -29,7 +29,7 @@ The simulation uses SI units and a 120 Hz physics step. The initial acceleration
 
 Three.js is bundled locally. There are no external model, shader, texture or CDN runtime dependencies. Geometry is batched by material; road reflections are rendered at 1024×768, and device pixel ratio is capped at 1.5. A bounded particle pool keeps repeated rocket use from creating unbounded scene objects. Web Audio starts on a driving gesture.
 
-Run `npm run build` and `npx playwright test tests/roadster-physics.spec.ts`. The physics checks cover launch time, braking, five minutes of sustained thrust and coasting to rest. Browser QA covers the initial orbit, immediate camera transition, measured acceleration, steering, braking, paint keys, rocket jump / kickflip / landing, and the speed-only production page. Runtime QA telemetry is available on the canvas's `data-telemetry` attribute; it is not rendered as UI.
+Run `npm run build` and `npx playwright test tests/roadster-physics.spec.ts tests/roadster-presentation.spec.ts`. The physics checks cover launch time, braking, five minutes of sustained thrust and coasting to rest. Browser QA covers the initial orbit, immediate camera transition, measured acceleration, steering, braking, paint keys, rocket jump / kickflip / landing, and the speed-only production page. Runtime QA telemetry is available on the canvas's `data-telemetry` attribute; it is not rendered as UI.
 
 ## Section-by-section fidelity revision
 
@@ -48,7 +48,7 @@ The initial generic shell has been replaced by independently surfaced sections. 
 
 ### Visual review
 
-Development builds accept `?inspect=front`, `side`, `rear`, `hero`, or `back`, optionally with zero-based `&paint=0`. These freeze the camera and use neutral lighting to reveal silhouette and surfacing errors. Inspection is enabled only in development; it adds no visible controls. The saved views are renders of our model, not Tesla photographs:
+Development builds accept `?inspect=front`, `side`, `rear`, `hero`, `back`, `reference`, or `profile`, optionally with zero-based `&paint=0`. These freeze the camera and use neutral lighting to reveal silhouette and surfacing errors. Inspection is enabled only in development; it adds no visible controls. The saved views are renders of our model, not Tesla photographs:
 
 - [Front quarter](review/front-quarter.png)
 - [Side profile](review/side.png)
@@ -57,3 +57,19 @@ Development builds accept `?inspect=front`, `side`, `rear`, `hero`, or `back`, o
 Reference comparison used the archived `Roadster-02-Pilot-Desktop`, `Roadster-03-Carousel-Slide-1-Desktop`, `Roadster-03-Carousel-Slide-2-Desktop`, `Roadster-07-Augments-Desktop`, and `Roadster-08-End-Desktop` images. Source photos and third-party meshes are not included in the repository.
 
 Revision validation: production build and type checks pass; all four physics tests pass. Desktop browser review at 1280×720 showed 60 fps, a 0.58333 s launch crossing, functioning steering / braking, paint selection, active aero deployment, rocket lift, kickflip completion and landing. The deployed-wing review caught and fixed an open deck beneath the lifted airfoil. The production DOM still contains only the game canvas and mph readout. Performance is a measurement on the review machine, not a guarantee for all hardware.
+
+
+## Lighting, brake and body refinement
+
+A second photographic comparison used longer-lens front and side review cameras, so perspective distortion would not be mistaken for body-shape differences.
+
+- Swept the outer nose corners rearward, narrowed the rear of the hood, joined the hood/fenders to the curved windshield base, and added reflective headlamp interiors.
+- Lowered the shoulder crease behind the front wheel while keeping the side-glass belt line independent; adjusted the door gaps, straight window divisions, latch, side camera and repeater positions.
+- Rebuilt the rear deck to meet the flush airfoil, removed the excess airfoil crown, and swept the diffuser's lower edge forward. The wing's supports articulate from fixed bases and retract below the deck at rest.
+- Raised the violet paint's base brightness, slightly increased exposure and fill, and replaced small point sources with broad area lights for more readable contours.
+- Replaced the thin tail-light wire with an 18 mm lens. Running emission is 3.2; forward braking raises it to 12 and adds a stronger red pool behind the car. These are renderer values, not physical photometry.
+- Separated forward braking from reversing. Down only tilts the airfoil while slowing forward motion, and low-speed braking cannot push a stowed wing through the deck. Reverse keeps normal running illumination and the wing stowed. Lift/tilt thresholds are game tuning; Tesla's actual control logic is not documented here.
+
+Development-only `&brake=1&speed=30` (speed in m/s) provides a fixed view of the braking state. [Braking review](review/braking.jpg). It does not appear in the production UI.
+
+Validation: production build/type checks and all six physics/presentation tests pass. Browser checks verified reverse at -10 m/s with zero wing lift/tilt and running emission 3.2, deployed braking emission 12, smooth wing retraction, the brighter night finish, and the speed-only production page. The reconstruction remains fitted to exterior photographs rather than factory CAD; unseen mechanical details are interpretive.

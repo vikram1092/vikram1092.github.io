@@ -3,6 +3,8 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+import { vehiclePresentation } from './presentation';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { createCar, box } from './car';
@@ -19,7 +21,7 @@ const state={mode:'orbit',speed:0,x:0,z:0,heading:0,height:0,verticalSpeed:0,ste
 let renderer:T.WebGLRenderer;
 try {renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});}catch(error){console.error('Roadster requires WebGL2.',error);throw error;}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);
-renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
+renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.16;
 renderer.info.autoReset=false;
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;
 const scene=new T.Scene();scene.background=new T.Color(0x050913);scene.fog=new T.FogExp2(0x070d1b,.0038);
@@ -31,12 +33,13 @@ box(environment,[12,.1,1.5],[-1,6,-2],softbox);box(environment,[.1,1.3,12],[-7,2
 box(environment,[.1,1,10],[7,3,1],new T.MeshBasicMaterial({color:new T.Color(.8,.6,1.2)}));
 box(environment,[7,.65,.1],[0,3,-8],softbox);box(environment,[7,.45,.1],[0,2,7],softbox);
 const pmrem=new T.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(environment,.035).texture;pmrem.dispose();
-scene.add(new T.HemisphereLight(0xa1c5ed,0x080511,.8));
-const keyLight=new T.DirectionalLight(0xd9e4ff,2.1);keyLight.position.set(-3,7,-3);keyLight.castShadow=true;keyLight.shadow.mapSize.set(2048,2048);keyLight.shadow.camera.left=-6;keyLight.shadow.camera.right=6;keyLight.shadow.camera.top=6;keyLight.shadow.camera.bottom=-6;keyLight.shadow.camera.near=.1;keyLight.shadow.camera.far=25;keyLight.shadow.radius=2.5;keyLight.shadow.normalBias=.006;keyLight.shadow.bias=-.0001;scene.add(keyLight,keyLight.target);
-const rim=new T.PointLight(0x8651ee,9,13,2);const fill=new T.PointLight(0x8adfff,14,14,2);scene.add(rim,fill);
+scene.add(new T.HemisphereLight(0xa1c5ed,0x080511,.92));
+const keyLight=new T.DirectionalLight(0xd9e4ff,2.65);keyLight.position.set(-3,7,-3);keyLight.castShadow=true;keyLight.shadow.mapSize.set(2048,2048);keyLight.shadow.camera.left=-6;keyLight.shadow.camera.right=6;keyLight.shadow.camera.top=6;keyLight.shadow.camera.bottom=-6;keyLight.shadow.camera.near=.1;keyLight.shadow.camera.far=25;keyLight.shadow.radius=2.5;keyLight.shadow.normalBias=.006;keyLight.shadow.bias=-.0001;scene.add(keyLight,keyLight.target);
+RectAreaLightUniformsLib.init();
+const rim=new T.RectAreaLight(0xb8a4ed,2.8,6,2.5),fill=new T.RectAreaLight(0xc7e7ff,3.6,7,3);scene.add(rim,fill);
 const beforeWorld=new Set(scene.children);
 const world=createWorld(scene),car=createCar();
-if(inspect){for(const object of scene.children)if(!beforeWorld.has(object))object.visible=false;scene.background=new T.Color(0x181a1e);scene.fog=null;const ground=new T.Mesh(new T.PlaneGeometry(200,200),new T.MeshStandardMaterial({color:0x282a2e,roughness:.86}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);rim.color.set(0xffffff);fill.color.set(0xffffff);}
+if(inspect){for(const object of scene.children)if(!beforeWorld.has(object))object.visible=false;scene.background=new T.Color(0x181a1e);scene.fog=null;const ground=new T.Mesh(new T.PlaneGeometry(200,200),new T.MeshStandardMaterial({color:0x282a2e,roughness:.86}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);rim.color.set(0xffffff);fill.color.set(0xffffff);rim.intensity=1.2;fill.intensity=1.4;keyLight.intensity=1.7;}
 scene.add(car.root);
 // Merge static detail by material. Wheels, active aero and rocket assemblies retain their transforms.
 function batchStatic(parent:T.Group) {
@@ -84,7 +87,7 @@ window.addEventListener('blur',pause);window.addEventListener('focus',()=>{state
 canvas.addEventListener('pointerdown',event=>{if(state.mode!=='orbit')return;drag=true;lastX=event.clientX;lastY=event.clientY;canvas.setPointerCapture(event.pointerId);});
 canvas.addEventListener('pointermove',event=>{if(!drag)return;orbitAngle-=(event.clientX-lastX)*.006;orbitElevation=clamp(orbitElevation+(event.clientY-lastY)*.004,.06,1.15);lastX=event.clientX;lastY=event.clientY;manualOrbit=3;});
 canvas.addEventListener('pointerup',()=>{drag=false;});canvas.addEventListener('wheel',event=>{event.preventDefault();orbitRadius=clamp(orbitRadius+event.deltaY*.003,3.5,12);},{passive:false});
-const worldPoint=new T.Vector3(),jetDirection=new T.Vector3();
+const worldPoint=new T.Vector3(),jetDirection=new T.Vector3(),wingAttachment=new T.Vector3(),strutDirection=new T.Vector3(),upAxis=new T.Vector3(0,1,0);
 function collision(strength:number){if(collisionCooldown>0)return;state.crashes++;collisionCooldown=.2;shock=Math.min(1,strength);state.speed*=-.22;for(let j=0;j<24;j++)emit(new T.Vector3(state.x,.5,state.z),new T.Vector3((Math.random()-.5)*12,Math.random()*5,(Math.random()-.5)*12),true);}
 function step(dt:number) {
   collisionCooldown=Math.max(0,collisionCooldown-dt);jumpPulse=Math.max(0,jumpPulse-dt);
@@ -128,13 +131,23 @@ function render(dt:number,time:number) {
   const thrust=throttle&&(Math.abs(state.speed)<30||state.boost),lifting=jumpPulse>0;
   car.root.position.set(state.x,state.height,state.z);car.root.rotation.y=state.heading;
   car.body.rotation.set(0,0,0);car.body.position.y=.55-Math.sin(shock*Math.PI)*.035;
-  const pitch=throttle?-.018:keys.has('ArrowDown')?.027:0;
+  const presentation=vehiclePresentation(inspect?Number(review.get('speed')??state.speed):state.speed,(inspect&&review.has('brake'))||keys.has('ArrowDown')&&driving);
+  const pitch=throttle?-.018:presentation.braking?.027:0;
   car.body.rotation.x=pitch;car.body.rotation.z=-state.steer*Math.min(Math.abs(state.speed)*.001,.045);
   if(state.flip>0)car.body.rotation[state.flipAxis as 'x'|'z']=state.flipDirection*Math.PI*2*(state.flip*state.flip*(3-2*state.flip));
   for(const wheel of car.wheels)wheel.rotation.x-=state.speed*dt/wheel.userData.radius;
   for(const pivot of car.steering)pivot.rotation.y=state.steer*.36/(1+Math.abs(state.speed)*.025);
-  car.wing.position.y=lerp(car.wing.position.y,car.wingRestHeight-.55+(Math.abs(state.speed)>30?.21:0),1-Math.exp(-dt*6));car.wing.rotation.x=keys.has('ArrowDown')?-.32:0;
-  car.red.emissiveIntensity=keys.has('ArrowDown')?3.2:1.6;
+  const aeroBlend=1-Math.exp(-dt*6);
+  car.wing.position.y=lerp(car.wing.position.y,car.wingRestHeight-.55+presentation.wingLift,aeroBlend);
+  car.wing.rotation.x=lerp(car.wing.rotation.x,presentation.wingAngle,aeroBlend);
+  for(const strut of car.wingStruts){
+    strut.visible=car.wing.position.y-(car.wingRestHeight-.55)>.025;
+    wingAttachment.copy(strut.userData.attachment).applyEuler(car.wing.rotation).add(car.wing.position);
+    strutDirection.copy(wingAttachment).sub(strut.position);strut.scale.y=strutDirection.length();
+    strut.quaternion.setFromUnitVectors(upAxis,strutDirection.normalize());
+  }
+  car.red.emissiveIntensity=lerp(car.red.emissiveIntensity,presentation.lampIntensity,1-Math.exp(-dt*22));
+  car.tailSpill.intensity=lerp(car.tailSpill.intensity,presentation.lampSpill,1-Math.exp(-dt*22));
   car.root.updateMatrixWorld(true);
   for(const jet of car.jets) {
     const active=jet.kind==='rear'?thrust:jet.kind==='lift'?lifting:state.flip>0;
@@ -147,6 +160,7 @@ function render(dt:number,time:number) {
   contact.position.set(state.x,.02,state.z);contact.rotation.z=-state.heading;contact.scale.setScalar(1+state.height*.08);contact.material.opacity=Math.max(.12,.8-state.height*.06);
   keyLight.position.set(state.x-4,7+state.height,state.z-4);keyLight.target.position.copy(car.root.position);
   rim.position.set(state.x+4,state.height+2,state.z+2);fill.position.set(state.x-4,state.height+3,state.z-3);
+  worldPoint.set(state.x,state.height+.6,state.z);rim.lookAt(worldPoint);fill.lookAt(worldPoint);
   forward.set(-Math.sin(state.heading),0,-Math.cos(state.heading));right.set(Math.cos(state.heading),0,-Math.sin(state.heading));
   if(!driving){manualOrbit=Math.max(0,manualOrbit-dt);if(!drag&&manualOrbit===0)orbitAngle+=dt*.12;desired.set(state.x+Math.sin(orbitAngle)*orbitRadius, .62+Math.sin(orbitElevation)*orbitRadius,state.z-Math.cos(orbitAngle)*orbitRadius);target.set(state.x,.64,state.z);camera.position.lerp(desired,1-Math.exp(-dt*6));camera.fov=lerp(camera.fov,42,1-Math.exp(-dt*5));}
   else {
@@ -159,7 +173,7 @@ function render(dt:number,time:number) {
     camera.fov=lerp(camera.fov,58+Math.min(v*.16,22)+(state.boost?4:0),1-Math.exp(-dt*7));
     const vibration=(thrust?.018:0)+shock*.10+Math.max(0,v-55)*.0001;camera.position.x+=Math.sin(time*92)*vibration;camera.position.y+=Math.sin(time*71)*vibration;
   }
-  if(inspect&&!driving){const views:Record<string,number[]>={front:[0,.67,-7],side:[7,.64,0],rear:[0,.73,7],hero:[-4.7,2.1,-6.3],back:[-4.7,2.1,6.3]};const view=views[inspect]||views.hero;camera.position.set(view[0],view[1],view[2]);target.set(0,.55,0);camera.fov=35;}
+  if(inspect&&!driving){const views:Record<string,number[]>={front:[0,.76,-18],side:[7,.64,0],rear:[0,.73,7],hero:[-4.7,2.1,-6.3],back:[-4.7,2.1,6.3],reference:[-8,1.85,-15],profile:[-15,.64,0]};const view=views[inspect]||views.hero;camera.position.set(view[0],view[1],view[2]);target.set(0,.55,0);camera.fov=inspect==='reference'?10.5:inspect==='front'?9:inspect==='profile'?12:inspect==='back'?28:35;}
   camera.lookAt(target);camera.updateProjectionMatrix();shock=Math.max(0,shock-dt*2.8);
   speedFX.uniforms.amount.value=clamp(Math.abs(state.speed)/130,0,1);
   speedText.textContent=String(Math.round(Math.abs(state.speed)*2.236936));
@@ -167,7 +181,7 @@ function render(dt:number,time:number) {
   renderer.info.reset();composer.render();
 }
 let last=performance.now(),accumulator=0;
-function animate(now:number){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.08);last=now;if(state.paused||document.hidden)return;accumulator+=dt;while(accumulator>=FIXED_STEP){step(FIXED_STEP);accumulator-=FIXED_STEP;}render(dt,now/1000);frameCount++;frameTime+=dt;if(frameTime>2){averageFPS=frameCount/frameTime;canvas.dataset.telemetry=JSON.stringify({...state,fps:Math.round(averageFPS),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,camera:camera.position.toArray(),car:car.root.position.toArray()});frameCount=0;frameTime=0;}}
+function animate(now:number){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.08);last=now;if(state.paused||document.hidden)return;accumulator+=dt;while(accumulator>=FIXED_STEP){step(FIXED_STEP);accumulator-=FIXED_STEP;}render(dt,now/1000);frameCount++;frameTime+=dt;if(frameTime>2){averageFPS=frameCount/frameTime;canvas.dataset.telemetry=JSON.stringify({...state,wingLift:car.wing.position.y-(car.wingRestHeight-.55),wingAngle:car.wing.rotation.x,tailIntensity:car.red.emissiveIntensity,fps:Math.round(averageFPS),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,camera:camera.position.toArray(),car:car.root.position.toArray()});frameCount=0;frameTime=0;}}
 camera.position.set(-4,2.4,-5);camera.lookAt(0,.6,0);requestAnimationFrame(animate);
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);});
 canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();pause();});canvas.addEventListener('webglcontextrestored',()=>location.reload());

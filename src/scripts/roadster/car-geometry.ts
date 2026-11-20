@@ -80,18 +80,19 @@ export function sample(z: number, rows: number[][], column = 1) {
 // Longitudinal landmarks measured as ratios from the official side photograph.
 // Columns: z, maximum body half-width, shoulder height, centre deck height.
 export const BODY = [
-  [-2.065, .840, .460, .462], [-1.90, .896, .555, .520],
-  [-1.67, .928, .695, .610], [-1.32, .937, .761, .699],
-  [-1.10, .926, .776, .752], [-.78, .914, .779, .767],
-  [-.20, .899, .794, .777], [.50, .914, .827, .811],
-  [1.05, .939, .849, .826], [1.405, .943, .844, .829],
+  [-2.065, .648, .462, .462], [-1.99, .741, .502, .485],
+  [-1.90, .839, .555, .513], [-1.78, .905, .628, .550],
+  [-1.67, .928, .695, .585], [-1.32, .937, .761, .693],
+  [-1.10, .926, .742, .752], [-.78, .914, .663, .767],
+  [-.20, .899, .709, .777], [.50, .914, .771, .811],
+  [1.05, .939, .821, .826], [1.405, .943, .844, .829],
   [1.78, .919, .827, .817], [2.065, .885, .812, .803],
 ];
 export const width = (z: number) => sample(z, BODY, 1);
 export const shoulder = (z: number) => sample(z, BODY, 2);
 export const deck = (z: number) => sample(z, BODY, 3);
 export const wheelStations = [{ z: -1.32, y: .337, radius: .337, width: .246, x: .805 }, { z: 1.405, y: .350, radius: .350, width: .280, x: .803 }];
-export function sill(z: number) { return .185 + .026 * clamp((z + .8) / 2.2, 0, 1); }
+export function sill(z: number) { return .185 + .026 * clamp((z + .8) / 2.2, 0, 1) + .05*(1-T.MathUtils.smoothstep(z,-2.065,-1.65)); }
 export function lowerEdge(z: number) {
   let y = sill(z);
   for (const w of wheelStations) {
@@ -102,8 +103,8 @@ export function lowerEdge(z: number) {
 }
 export function sideX(z: number, y: number) {
   const v = clamp((shoulder(z) - y) / (shoulder(z) - sill(z)), 0, 1);
-  const taper=clamp((z+2.065)/.31,0,1);
-  return width(z) - .067 * v*taper + .018 * Math.sin(v * Math.PI)*taper;
+  const taper=T.MathUtils.smoothstep(z,-2.065,-1.72);
+  return width(z) + .039*v*(1-taper) - .067*v*taper + .018*Math.sin(v*Math.PI)*taper;
 }
 export const CANOPY = [
   [-1.12, .755, .744], [-.92, .812, .726], [-.65, .918, .696],
@@ -113,10 +114,20 @@ export const CANOPY = [
 ];
 export function roof(z: number, f: number): P {
   const front=T.MathUtils.smoothstep(z,-1.12,-.65),rear=1-T.MathUtils.smoothstep(z,1.1,1.52);
-  return [sample(z, CANOPY, 2) * f, sample(z, CANOPY, 1) + (.024*(1-front)-.024*front*rear)*f**2, z];
+  return [sample(z, CANOPY, 2) * f, sample(z, CANOPY, 1) + .045*(1-front)*f**6-.024*front*rear*f**2, z];
 }
 export function sail(z: number, v: number, side: number, offset = 0): P {
   const upper = roof(z, 1), y = mix(upper[1], shoulder(z), v);
   const x = mix(upper[0], width(z), v) + .007 * Math.sin(v * Math.PI);
   return [side * (x + offset), y + offset * .4, z];
+}
+
+// Upper door skin and glazing share one continuous transverse surface.
+export function skinX(z:number,y:number) {
+  if(y<=shoulder(z))return sideX(z,y);
+  const top=roof(z,1),v=clamp((top[1]-y)/Math.max(.001,top[1]-shoulder(z)),0,1);
+  return sail(z,v,1)[0];
+}
+export function sideGlassBase(z:number) {
+  return Math.min(roof(z,1)[1]-.002,sample(z,[[-1.055,.765],[-.65,.758],[-.20,.775],[.35,.817],[.75,.873],[1.12,.927]]));
 }

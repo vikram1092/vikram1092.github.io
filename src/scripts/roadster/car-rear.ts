@@ -7,16 +7,34 @@ export function createRear(body:T.Group,m:Materials){
   const underbody=new T.Group();underbody.name='07 Carbon floor and cold-gas plumbing';body.add(underbody);
   const jets:Jet[]=[],staticGroups:T.Group[]=[rear,underbody];
   const wing=new T.Group();wing.name='Flush active rear airfoil';wing.position.set(0,.817,1.925);body.add(wing);
-  // A flush curved airfoil, not a rectangular plate. Its trailing edge tracks the lamp.
-  patch(wing,(u,v)=>{const f=u*2-1;return [f*(.904-v*.019),-.012*f*f+.014*Math.sin(v*Math.PI),-.137+v*.277-.012*f*f];},m.paint,96,20);
-  loft(wing,[[-.886,-.011,.128],[0,-.006,.142],[.886,-.011,.128]],[[-.884,-.024,.124],[0,-.022,.136],[.884,-.024,.124]],m.carbon,72,6);
-  for(const s of [-1,1])loft(wing,[[s*.49,-.012,-.02],[s*.50,-.10,-.05],[s*.53,-.23,-.085]],[[s*.515,-.012,.04],[s*.525,-.10,.015],[s*.55,-.23,-.015]],m.graphite,32,8);
+  // Match the deck's leading edge exactly; the swept trailing edge follows the lamp.
+  const wingPoint=(u:number,v:number):P=>{const f=u*2-1;return [f*(.918-v*.033),T.MathUtils.lerp(.004+.006*f**4,-.009+.004*f*f,v),-.135+v*.275-.012*f*f*v];};
+  patch(wing,wingPoint,m.paint,96,28);
+  patch(wing,(u,v)=>{const p=wingPoint(u,v);p[1]-=.004;return p;},m.carbon,96,16);
+  for(const edge of [0,1]){
+    patch(wing,(u,v)=>{const p=wingPoint(u,edge);p[1]-=v*.004;return p;},m.paint,96,4);
+    patch(wing,(u,v)=>{const p=wingPoint(edge,u);p[1]-=v*.004;return p;},m.paint,28,4);
+  }
   staticGroups.push(wing);
-  // The deployed airfoil exposes a closed recessed deck and its mounting bed.
-  patch(rear,(u,v)=>{const f=u*2-1;return [f*(.902-v*.017),.785-.011*f*f,1.774+v*.289];},m.paint,72,20);
-  for(const x of [-.53,.53])box(rear,[.085,.018,.13],[x,.788,1.885],m.graphite,.009);
-  const tail=points(t=>{const x=(t*2-1)*.882;return [x,.783+.017*(1-(x/.882)**2),2.067+.018*(1-(x/.882)**2)];});
-  line(rear,tail,.009,m.lens);line(rear,tail.map(([x,y,z])=>[x,y,z+.009]),.0038,m.red);
+  // Independent articulated supports keep their bases attached during lift and tilt.
+  const wingStruts:T.Group[]=[];
+  for(const side of [-1,1]){
+    const strut=new T.Group();strut.position.set(side*.53,.779,1.883);body.add(strut);wingStruts.push(strut);
+    strut.userData.attachment=new T.Vector3(side*.50,-.023,-.02);
+    const profile=(u:number,v:number):P=>[T.MathUtils.lerp(-.015,.015,v)*(1-u*.25),u,-.025-.030*Math.sin(u*Math.PI)];
+    patch(strut,profile,m.carbon,24,4);
+    patch(strut,(u,v)=>{const p=profile(u,v);p[2]+=.055;return p;},m.carbon,24,4);
+    for(const edge of [0,1])patch(strut,(u,v)=>{const p=profile(u,edge);p[2]+=v*.055;return p;},m.carbon,24,4);
+    staticGroups.push(strut);
+  }
+  // Closed recessed mounting bed is visible only when the airfoil deploys.
+  patch(rear,(u,v)=>{const f=u*2-1;return [f*(.902-v*.017),.772-.004*f*f,1.774+v*.289];},m.paint,72,20);
+  for(const x of [-.53,.53])box(rear,[.085,.018,.13],[x,.773,1.883],m.graphite,.009);
+  const tailPoint=(t:number):P=>{const f=t*2-1;return [f*.887,.785+.009*(1-f*f),2.067+.018*(1-f*f)];};
+  line(rear,points(tailPoint),.0125,m.lens);
+  // An 18 mm luminous lens, rather than the previous thin neon-like wire.
+  patch(rear,(u,v)=>{const p=tailPoint(u);p[1]+=(v-.5)*.018;p[2]+=.010+.003*Math.sin(v*Math.PI);return p;},m.red,112,8);
+  const tailSpill=new T.SpotLight(0xff1224,.65,3,.85,.7,2);tailSpill.position.set(0,.60,2.24);tailSpill.target.position.set(0,.02,3.05);body.add(tailSpill,tailSpill.target);
   // Painted rear corners wrap around a single clean carbon centre panel.
   for(const s of [-1,1]){
     line(rear,[[s*.877,.765,2.042],[s*.871,.563,2.043],[s*.834,.367,2.045]],.0014,m.seam);
@@ -34,13 +52,13 @@ export function createRear(body:T.Group,m:Materials){
   box(rear,[1.59,.018,.18],[0,.353,2.001],m.carbon,.005);
   box(rear,[1.59,.254,.022],[0,.224,1.888],m.black,.008);
   for(const x of [-.59,-.197,.197,.59]){
-    const fan=new T.Group();fan.position.set(x,.246,1.992);rear.add(fan);staticGroups.push(fan);
+    const fan=new T.Group();fan.position.set(x,.246,1.999);fan.rotation.x=-.26;rear.add(fan);staticGroups.push(fan);
     cylinder(fan,.113,.012,[0,0,0],m.black,'z');torus(fan,.112,.005,m.graphite,[0,0,.008],'z');
     for(let j=0;j<9;j++){const a=j*Math.PI*2/9;patch(fan,(u,v)=>{const rr=.025+u*.084,aa=a+v*.31+u*.45;return [Math.cos(aa)*rr,Math.sin(aa)*rr,.013+v*.012];},m.graphite,12,6);}
     cylinder(fan,.026,.030,[0,0,.018],m.titanium,'z');torus(fan,.018,.0015,m.machined,[0,0,.034],'z');
   }
-  for(const x of [-.794,-.393,0,.393,.794])panel(rear,[[x,.35,2.08],[x,.35,1.83],[x,.113,1.88],[x,.103,2.115]],m.carbon);
-  loft(rear,[[-.795,.105,2.11],[0,.092,2.118],[.795,.105,2.11]],[[-.785,.124,1.77],[0,.108,1.76],[.785,.124,1.77]],m.carbon,80,12);
+  for(const x of [-.794,-.393,0,.393,.794])panel(rear,[[x,.35,2.08],[x,.35,1.83],[x,.113,1.88],[x,.103,1.975]],m.carbon);
+  loft(rear,[[-.795,.105,1.975],[0,.092,1.987],[.795,.105,1.975]],[[-.785,.124,1.77],[0,.108,1.76],[.785,.124,1.77]],m.carbon,80,12);
   function nozzle(position:P,direction:P,kind:Jet['kind'],radius:number){
     const g=new T.Group();g.position.set(...position);g.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),V(direction));body.add(g);
     const hardware=new T.Group();g.add(hardware);staticGroups.push(hardware);
@@ -57,5 +75,5 @@ export function createRear(body:T.Group,m:Materials){
   box(underbody,[1.53,.024,3.32],[0,.146,.0],m.carbon,.035);
   for(const s of [-1,1])line(underbody,[[s*.70,.125,-1.2],[s*.70,.115,-.7],[s*.65,.115,.5],[s*.69,.135,1.53]],.009,m.titanium);
   for(const z of [-1.1,-.55,.15,.8,1.4])for(const x of [-.68,.68])cylinder(underbody,.006,.004,[x,.132,z],m.machined,'y',8);
-  return {wing,wingRestHeight:.817,jets,staticGroups};
+  return {wing,wingStruts,tailSpill,wingRestHeight:.817,jets,staticGroups};
 }
