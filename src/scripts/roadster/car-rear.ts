@@ -1,5 +1,5 @@
 import * as T from 'three';
-import { box,cylinder,lathe,line,loft,panel,patch,torus,V,upperBody,width,CANOPY_REAR,type P } from './car-geometry';
+import { box,cylinder,lathe,line,loft,panel,patch,torus,V,upperBody,width,rearFascia,rearValance,CANOPY_REAR,type P } from './car-geometry';
 import type { Materials } from './car-materials';
 export type Jet={group:T.Group;kind:'rear'|'lift'|'side';cone:T.Mesh;halo:T.Mesh};
 export function createRear(body:T.Group,m:Materials){
@@ -48,14 +48,11 @@ export function createRear(body:T.Group,m:Materials){
   }
   patch(rear,(u,v)=>{const x=(u*2-1)*.841,h=roundedHeight(x,.841,.009,.008);return tailSurface(x,(v*2-1)*h,.011+.001*Math.sin(v*Math.PI));},m.red,144,8);
   const tailSpill=new T.SpotLight(0xff1224,.65,3,.85,.7,2);tailSpill.position.set(0,.60,2.24);tailSpill.target.position.set(0,.02,3.05);body.add(tailSpill,tailSpill.target);
-  // Painted rear corners wrap around a single clean carbon centre panel.
-  patch(rear,(u,v)=>{
-    const f=u*2-1,a=Math.abs(f),lower=.605+.058*T.MathUtils.smoothstep(a,.30,.61)-.025*T.MathUtils.smoothstep(a,.85,1);
-    return [f*(.879-.011*v),T.MathUtils.lerp(.773,lower,v),2.062+.015*(1-f*f)-.026*v*v];
-  },m.paint,120,28);
-  // Recessed dark bumper surfaces leave the painted upper band and compact
-  // central suction cassette legible in rear three-quarter views.
-  patch(rear,(u,v)=>{const f=u*2-1;return [f*T.MathUtils.lerp(.866,.800,v),T.MathUtils.lerp(.658,.145,v),T.MathUtils.lerp(2.032,1.873,v)-.018*f*f];},m.carbon,96,24);
+  // Central painted chin and raised outer carbon corners share their rails
+  // with the side returns. Only the central fan enclosure extends down low.
+  patch(rear,rearFascia,m.paint,120,28);
+  patch(rear,rearValance,m.carbon,120,24);
+  line(rear,Array.from({length:121},(_,i)=>{const p=rearValance(i/120,1);p[2]+=.001;return p;}),.0025,m.graphite,false);
   const plateCanvas=document.createElement('canvas');plateCanvas.width=768;plateCanvas.height=192;const pc=plateCanvas.getContext('2d')!;
   pc.fillStyle='#13161b';pc.fillRect(0,0,768,192);pc.strokeStyle='#363b43';pc.lineWidth=6;pc.strokeRect(5,5,758,182);pc.fillStyle='#b2b9c1';pc.textAlign='center';pc.font='500 78px Arial';pc.fillText('R D S T R',384,125);
   const plateMap=new T.CanvasTexture(plateCanvas);plateMap.colorSpace=T.SRGBColorSpace;
@@ -66,7 +63,8 @@ export function createRear(body:T.Group,m:Materials){
   panel(rear,[[-.515,.525,2.082],[.515,.525,2.082],[.610,.466,2.073],[.610,.350,2.079],[-.610,.350,2.079],[-.610,.466,2.073]],m.carbon);
   line(rear,[[-.610,.352,2.082],[-.610,.466,2.077],[-.515,.525,2.086],[.515,.525,2.086],[.610,.466,2.077],[.610,.352,2.082]],.002,m.graphite);
   box(rear,[1.22,.014,.18],[0,.353,2.001],m.carbon,.004);
-  box(rear,[1.22,.220,.022],[0,.238,1.866],m.black,.006);
+  // Carry the recessed backing into the floor return below the fan ducts.
+  box(rear,[1.22,.246,.022],[0,.238,1.866],m.black,.006);
   for(const x of [-.444,-.148,.148,.444]){
     const fan=new T.Group();fan.position.set(x,.238,1.949);fan.rotation.x=-.20;fan.scale.setScalar(.82);rear.add(fan);staticGroups.push(fan);
     // 208 mm blade sweep, 296 mm centres: fitted to the whole-car rear image,
@@ -84,7 +82,12 @@ export function createRear(body:T.Group,m:Materials){
     torus(fan,.049,.0015,m.titanium,[0,0,.033],'z');
     cylinder(fan,.017,.002,[0,0,.062],m.black,'z');torus(fan,.018,.0012,m.titanium,[0,0,.064],'z');
   }
-  for(const x of [-.610,-.296,0,.296,.610])panel(rear,[[x,.35,2.08],[x,.35,1.83],[x,.132,1.88],[x,.122,1.975]],m.carbon);
+  for(const x of [-.296,0,.296])panel(rear,[[x,.35,2.08],[x,.35,1.83],[x,.132,1.88],[x,.122,1.975]],m.carbon);
+  // The two outboard strakes have short rounded feet. They border the fan
+  // cassette, not the full bumper width, and turn into the recessed corners.
+  for(const side of [-1,1]){
+    loft(rear,[[side*.610,.355,2.08],[side*.615,.233,2.047],[side*.618,.128,1.993],[side*.616,.108,1.970]],[[side*.603,.355,1.81],[side*.607,.237,1.828],[side*.609,.130,1.859],[side*.616,.108,1.905]],m.carbon,48,12);
+  }
   loft(rear,[[-.610,.122,1.975],[0,.116,1.987],[.610,.122,1.975]],[[-.600,.140,1.77],[0,.132,1.76],[.600,.140,1.77]],m.carbon,80,12);
   function nozzle(position:P,direction:P,kind:Jet['kind'],radius:number){
     const g=new T.Group();g.position.set(...position);g.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),V(direction));body.add(g);

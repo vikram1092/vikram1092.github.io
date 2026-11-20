@@ -105,3 +105,18 @@ Primary photographs: [rear hero](https://digitalassets.tesla.com/tesla-contents/
 Current model renders: [front quarter](review/glazing-front.jpg), [side profile](review/glazing-side.jpg), [rear quarter](review/glazing-rear.jpg), [deployed airfoil](review/glazing-braking.jpg). Development-only `?inspect=aft` and `?inspect=top` add elevated rear and overhead checks to the existing inspection views.
 
 Validation: `npm run build` passes with no type diagnostics; all nine tests in `roadster-geometry`, `roadster-physics` and `roadster-presentation` pass. Geometry checks cover closed side-window returns, aperture containment, rear-glass taper/symmetry and the deck/quarter join. Browser review covered front, side, rear, overhead and braking views, plus the production orbit, paint selection, acceleration, steering, reverse and kickflip. The production build measured 60 fps and a 0.58333 s 0–60 crossing on the review machine, with no console errors. This remains a photographic reconstruction; unseen geometry and exact dimensions cannot be verified without factory data.
+
+
+## Window angles and lower rear profile refinement
+
+A second pass compares the same official Tesla photographs across front, side and rear views. In particular, the head-on image constrains the roof-to-cowl width ratio; a side photograph by itself cannot determine the inward lean of the glass. These changes supersede the canopy dimensions in the preceding section.
+
+- Narrowed the crown from about 1.29 m to 1.00 m while retaining a 1.51 m windshield base. Raised the shallow crown by 10 mm and advanced the cowl and side-glass start by 80 mm. The hood, fenders, front glass return and wiper placement follow the revised boundary together.
+- Rebalanced the side-window lower rail, upper frame and front division angle. The rear quarter-light now ends against its upper rail with a short angled lower return, instead of a rounded teardrop. Paint and glass continue to use the same surface and aperture boundary.
+- Narrowed the backlight termination to 540 mm and the surrounding buttress crests to 830 mm, with a clearer raised crease carried into the flush airfoil. These are photographic modeling estimates, not published vehicle dimensions.
+- Rebuilt the lower rear perimeter around the compact central fan tray. The outer bumper now rises behind each tire and tucks inward; the former low, full-width carbon curtain and hanging outer triangles are gone. Raised the outer painted corners, retained the deeper central painted chin, closed the side-to-rear returns, and gave the two inboard cassette fins rounded feet. Extended the recessed fan backing into the floor return. Fan and nozzle scale and spacing retain the accepted previous-pass values.
+- Added development-only `?inspect=rearref` for a longer-lens elevated rear comparison. Production camera controls and presentation are unchanged.
+
+Review renders: [head-on](review/proportions-front.jpg), [front quarter](review/proportions-front-quarter.jpg), [side](review/proportions-side.jpg), [rear quarter](review/proportions-rear.jpg), [elevated rear](review/proportions-rear-profile.jpg), [braking](review/proportions-braking.jpg).
+
+Validation: production build and type check pass; all ten Roadster geometry, physics and presentation tests pass. The new rear-boundary check covers fascia continuity, the side skin join, inward tuck and the raised outer bumper. Browser review checked front, side, elevated/low rear and deployed-airfoil views. The production build also passed paint selection and acceleration checks with no browser console errors. The model remains a reconstruction from photographs, with no factory CAD dimensions available.

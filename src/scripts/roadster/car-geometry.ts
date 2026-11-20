@@ -106,17 +106,20 @@ export function sideX(z: number, y: number) {
   const taper=T.MathUtils.smoothstep(z,-2.065,-1.72);
   return width(z) + .039*v*(1-taper) - .067*v*taper + .018*Math.sin(v*Math.PI)*taper;
 }
+// Head-on photography constrains the crown to about two thirds of the cowl
+// width. The side photograph alone cannot establish this transverse lean.
 export const CANOPY = [
-  [-1.12, .755, .744], [-.92, .830, .720], [-.65, .931, .690],
-  [-.37, 1.030, .661], [-.12, 1.098, .644], [.13, 1.112, .643],
-  [.48, 1.102, .650], [.76, 1.071, .630], [1.04, 1.008, .590],
-  [1.30, .924, .560], [1.48, .863, .540], [1.60, .836, .530],
+  [-1.20, .746, .756], [-.96, .823, .700], [-.65, .934, .625],
+  [-.37, 1.034, .553], [-.10, 1.108, .505], [.16, 1.122, .500],
+  [.48, 1.111, .504], [.76, 1.078, .489], [1.04, 1.012, .468],
+  [1.30, .926, .445], [1.48, .866, .426], [1.60, .836, .415],
 ];
+export const CANOPY_FRONT = -1.20;
 export const CANOPY_REAR = 1.60;
 export function roof(z: number, f: number): P {
-  const front=clamp((z+1.12)/1.0,0,1),rear=T.MathUtils.smoothstep(z,.65,1.48);
-  const sweep=.10*(1-Math.min(1,Math.abs(f))**4)*(1-T.MathUtils.smoothstep(z,-1.12,-.50));
-  return [sample(z, CANOPY, 2) * f, sample(z, CANOPY, 1) + .045*(1-front)*f**6-.024*front*(1-rear)*f**2+.012*rear*f**2, z+sweep];
+  const front=clamp((z-CANOPY_FRONT)/1.10,0,1),rear=T.MathUtils.smoothstep(z,.65,1.48);
+  const sweep=.10*(1-Math.min(1,Math.abs(f))**4)*(1-T.MathUtils.smoothstep(z,CANOPY_FRONT,-.50));
+  return [sample(z, CANOPY, 2) * f, sample(z, CANOPY, 1) + .055*(1-front)*f**6-.018*front*(1-rear)*f**2+.030*rear*f**2, z+sweep];
 }
 
 // The backlight is a tapered inset between painted buttresses. Its width is
@@ -124,7 +127,7 @@ export function roof(z: number, f: number): P {
 // erased the characteristic rear shoulders visible in Tesla's overhead photos.
 export function backlightHalfWidth(z: number) {
   if(z<=.48)return sample(z,CANOPY,2);
-  return sample(z, [[.48,.650],[.72,.631],[.94,.598],[1.13,.510],[1.38,.415],[1.60,.352]]);
+  return sample(z, [[.48,.504],[.72,.491],[.94,.467],[1.13,.407],[1.38,.329],[1.60,.270]]);
 }
 export function upperBody(z: number, x: number): P {
   const edge=roof(z,1),f=Math.abs(x)/edge[0];
@@ -147,19 +150,41 @@ export function skinX(z:number,y:number) {
   return sail(z,v,1)[0];
 }
 export function sideGlassBase(z:number) {
-  return sample(z,[[-1.09,.796],[-.91,.775],[-.65,.771],[-.25,.786],[.15,.817],[.52,.861],[.80,.904],[.98,.941],[1.065,.972]]);
+  return sample(z,[[-1.17,.795],[-.94,.778],[-.65,.769],[-.25,.783],[.15,.813],[.52,.855],[.80,.897],[.92,.930],[.97,.955],[1.065,roof(1.065,1)[1]-.020]]);
 }
 
-export const SIDE_GLASS_START=-1.09, SIDE_GLASS_END=1.065;
+export const SIDE_GLASS_START=-1.17, SIDE_GLASS_END=1.065;
 export function sideGlassBounds(z:number):[number,number] {
-  const top=roof(z,1)[1]-.012;
+  const top=roof(z,1)[1]-(.010+.010*T.MathUtils.smoothstep(z,-.90,-.10));
   const base=Math.min(top-.002,sideGlassBase(z));
-  // Short rounded returns at both ends, rather than rectangular clipping or a
-  // pinched triangular point. The two rails meet at one shared perimeter.
+  // The forward return is soft; the quarter-light ends at its upper rail with
+  // a short angled lower return and only an 8 mm corner radius.
   const cap=z<SIDE_GLASS_START+.035
     ? Math.sqrt(Math.max(0,1-((z-SIDE_GLASS_START-.035)/.035)**2))
-    : z>SIDE_GLASS_END-.040
-      ? Math.sqrt(Math.max(0,1-((z-SIDE_GLASS_END+.040)/.040)**2)):1;
+    : z>SIDE_GLASS_END-.008
+      ? Math.sqrt(Math.max(0,1-((z-SIDE_GLASS_END+.008)/.008)**2)):1;
   const middle=(top+base)/2,half=(top-base)*cap/2;
   return [middle+half,middle-half];
+}
+
+// Shared rear boundaries: the painted central chin drops below the outer
+// shoulders, while the carbon corners tuck upward around a compact fan tray.
+// Keeping the side returns on these same rails prevents cracks at the bumper.
+export function rearPaintBottom(f:number) {
+  const a=Math.abs(f);
+  return .605+.095*T.MathUtils.smoothstep(a,.35,.68)-.012*T.MathUtils.smoothstep(a,.90,1);
+}
+export function rearFascia(u:number,v:number):P {
+  const f=u*2-1;
+  return [f*(.879-.011*v),mix(.773,rearPaintBottom(f),v),2.062+.015*(1-f*f)-.026*v*v];
+}
+export function rearValance(u:number,v:number):P {
+  const f=u*2-1,a=Math.abs(f);
+  const bottom=.350+.060*T.MathUtils.smoothstep(a,.68,1);
+  return [f*mix(.868,.825,v),mix(rearPaintBottom(f),bottom,v),mix(2.036,1.987,v)+.015*(1-f*f)];
+}
+export function rearCorner(u:number,v:number,side:number):P {
+  const topZ=mix(1.765,2.065,u),topY=mix(.452,rearPaintBottom(1),u);
+  const bottom:P=[mix(.875,.825,u),mix(.235,.410,u),mix(1.765,1.987,u)];
+  return [side*mix(sideX(topZ,topY),bottom[0],v),mix(topY,bottom[1],v),mix(topZ,bottom[2],v)];
 }

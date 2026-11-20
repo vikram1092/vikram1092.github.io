@@ -1,6 +1,6 @@
 import {test} from '@playwright/test';
 import assert from 'node:assert/strict';
-import {roof,sail,skinX,shoulder,width,upperBody,backlightHalfWidth,sideGlassBounds,CANOPY_REAR,SIDE_GLASS_START,SIDE_GLASS_END} from '../src/scripts/roadster/car-geometry';
+import {roof,sail,skinX,sideX,shoulder,width,upperBody,backlightHalfWidth,sideGlassBounds,rearFascia,rearValance,rearCorner,CANOPY_REAR,SIDE_GLASS_START,SIDE_GLASS_END} from '../src/scripts/roadster/car-geometry';
 
 test('side apertures stay inside the body and close at both rounded returns',()=>{
   for(let i=0;i<=1000;i++){
@@ -39,4 +39,22 @@ test('airfoil leading section meets the roof and both quarter surfaces',()=>{
     assert.deepEqual(p,q);
   }
   assert.ok(width(CANOPY_REAR)>roof(CANOPY_REAR,1)[0]);
+});
+
+test('rear carbon meets the fascia and returns upward from the wheel opening',()=>{
+  for(let i=0;i<=200;i++){
+    const u=i/200,paint=rearFascia(u,1),carbon=rearValance(u,0);
+    for(let axis=0;axis<3;axis++)assert.ok(Math.abs(paint[axis]-carbon[axis])<1e-8,`open fascia join at ${u}`);
+    const lower=rearValance(u,1);
+    assert.ok(lower[1]>=.3499,`outer bumper hangs into the fan tray at ${u}`);
+    for(const side of [-1,1]){
+      const top=rearCorner(u,0,side),bottom=rearCorner(u,1,side);
+      assert.ok(Math.abs(Math.abs(top[0])-sideX(top[2],top[1]))<1e-8);
+      assert.ok(bottom[1]<top[1]);
+      assert.ok(bottom[2]<=top[2]+1e-8);
+      assert.ok(Math.abs(bottom[0])<=Math.abs(top[0]));
+      const end=rearCorner(1,1,side),rear=rearValance((side+1)/2,1);
+      for(let axis=0;axis<3;axis++)assert.ok(Math.abs(end[axis]-rear[axis])<1e-8);
+    }
+  }
 });
