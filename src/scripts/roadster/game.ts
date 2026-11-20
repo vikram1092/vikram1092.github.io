@@ -57,7 +57,8 @@ const shadowCanvas=document.createElement('canvas');shadowCanvas.width=64;shadow
 const contact=new T.Mesh(new T.PlaneGeometry(3.1,5.7),new T.MeshBasicMaterial({map:new T.CanvasTexture(shadowCanvas),transparent:true,depthWrite:false,opacity:.85}));contact.rotation.x=-Math.PI/2;contact.position.y=.018;scene.add(contact);
 const renderTarget=new T.WebGLRenderTarget(innerWidth,innerHeight,{type:T.HalfFloatType,samples:4});
 const composer=new EffectComposer(renderer,renderTarget);composer.addPass(new RenderPass(scene,camera));
-const bloom=new UnrealBloomPass(new T.Vector2(innerWidth*.6,innerHeight*.6),.24,.45,1.15);composer.addPass(bloom);
+// Keep lamp highlights, but avoid turning the white body into a glowing surface.
+const bloom=new UnrealBloomPass(new T.Vector2(innerWidth*.6,innerHeight*.6),.10,.30,1.8);composer.addPass(bloom);
 const speedFX=new ShaderPass({uniforms:{tDiffuse:{value:null},amount:{value:0}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:`uniform sampler2D tDiffuse;uniform float amount;varying vec2 vUv;void main(){vec2 p=vUv-.5;float edge=smoothstep(.12,.65,length(p));vec2 d=p*amount*.009*edge;vec4 c=texture2D(tDiffuse,vUv)*.52;c+=texture2D(tDiffuse,vUv-d)*.24;c+=texture2D(tDiffuse,vUv-d*2.)*.14;c+=texture2D(tDiffuse,vUv-d*3.)*.1;c.rgb*=1.-smoothstep(.25,.76,length(p))*.2;gl_FragColor=c;}`});composer.addPass(speedFX);composer.addPass(new OutputPass());
 // A bounded particle pool for cold-gas plumes and impact sparks.
 const MAX=500,particlePos=new Float32Array(MAX*3),particleColor=new Float32Array(MAX*3),particleLife=new Float32Array(MAX),particleVelocity=new Float32Array(MAX*3);

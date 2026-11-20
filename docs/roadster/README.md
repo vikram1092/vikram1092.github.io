@@ -83,7 +83,7 @@ Compared the rear-quarter and deployed-airfoil source photographs again, concent
 - Replaced bright flared thrusters with short graphite barrels, thin machined lips, tapered metallic inner walls, recessed dark throats, mounting collars and small fasteners. The rear mouths are 104 mm across in model coordinates.
 - Increased the fan sweep from 218 mm to 254 mm and the hub base diameter from 52 mm to 112 mm. Broader swept blades, deep ducts and conical hubs better follow the visible reference proportions. These are photographic modeling estimates, not published engineering dimensions; blade construction and hidden hardware remain interpretive.
 - Added six clickable, keyboard-accessible swatches without visible labels or a surrounding panel. Clicks and number keys share one selection state. Space/Enter activate a focused swatch without firing rockets; selecting a color returns focus to the game.
-- Made pearl white the starting finish and removed its iridescence. Reduced violet's color shift and softened the clearcoat so body contours remain easier to read. Purple, silver, red, blue and black remain available.
+- Made pearl white the starting finish and removed its iridescence. Reduced violet's color shift and softened the white clearcoat, glass reflections and bloom so bright rear-quarter highlights do not obscure the body or lamp surround. Purple, silver, red, blue and black remain available.
 
 [Rear hardware close-up](review/rear-hardware.jpg), [rear quarter](review/rear.png), [braking state](review/braking.jpg).
 

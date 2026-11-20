@@ -28,7 +28,7 @@ export function createMaterials() {
     ctx.putImageData(image, 0, 0);
   }); flake.repeat.set(42, 42);
   const finish = finishes[DEFAULT_FINISH];
-  const paint = new T.MeshPhysicalMaterial({ color: finish.color, metalness: finish.metalness, roughness: finish.roughness, clearcoat: 1, clearcoatRoughness: .17, iridescence: finish.iridescence, iridescenceIOR: 1.28, iridescenceThicknessRange: [230, 350], envMapIntensity: 1.4, bumpMap: flake, bumpScale: .00004, side: T.DoubleSide });
+  const paint = new T.MeshPhysicalMaterial({ color: finish.color, metalness: finish.metalness, roughness: finish.roughness, clearcoat: .75, clearcoatRoughness: .23, iridescence: finish.iridescence, iridescenceIOR: 1.28, iridescenceThicknessRange: [230, 350], envMapIntensity: .8, bumpMap: flake, bumpScale: .00004, side: T.DoubleSide });
   const carbon = new T.MeshPhysicalMaterial({ color: 0x6a737e, map: carbonMap, bumpMap: carbonMap, bumpScale: .0008, roughness: .42, metalness: .38, clearcoat: .35, clearcoatRoughness: .25, side: T.DoubleSide });
   const black = new T.MeshStandardMaterial({ color: 0x080a0e, metalness: .25, roughness: .42, side: T.DoubleSide });
   const rubber = new T.MeshStandardMaterial({ color: 0x101112, roughness: .88, side: T.DoubleSide });
@@ -37,7 +37,7 @@ export function createMaterials() {
   const graphite = new T.MeshPhysicalMaterial({ color: 0x161b22, metalness: .72, roughness: .26, clearcoat: .45, side: T.DoubleSide });
   const machined = new T.MeshStandardMaterial({ color: 0x84939c, metalness: 1, roughness: .23, side: T.DoubleSide });
   const titanium = new T.MeshStandardMaterial({ color: 0x77716b, metalness: 1, roughness: .29, side: T.DoubleSide });
-  const glass = new T.MeshPhysicalMaterial({ color: 0x182027, metalness: 0, roughness: .085, clearcoat: 1, clearcoatRoughness: .12, envMapIntensity: 1.2, transparent: true, opacity: .97, side: T.DoubleSide });
+  const glass = new T.MeshPhysicalMaterial({ color: 0x182027, metalness: 0, roughness: .12, clearcoat: 1, clearcoatRoughness: .18, envMapIntensity: .65, transparent: true, opacity: .97, side: T.DoubleSide });
   const lens = new T.MeshPhysicalMaterial({ color: 0x27323e, metalness: .1, roughness: .11, clearcoat: 1, side: T.DoubleSide });
   const headlight = new T.MeshPhysicalMaterial({color:0x7b8792,metalness:.5,roughness:.18,clearcoat:1,emissive:0xb7d2df,emissiveIntensity:.12,side:T.DoubleSide});
   const white = new T.MeshStandardMaterial({ color: 0xdbe5ec, emissive: 0xccdfef, emissiveIntensity: 2.3, side: T.DoubleSide });
