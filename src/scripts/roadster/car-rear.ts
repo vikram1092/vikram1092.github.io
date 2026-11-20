@@ -1,14 +1,19 @@
 import * as T from 'three';
-import { box,cylinder,lathe,line,loft,panel,patch,torus,V,type P } from './car-geometry';
+import { box,cylinder,lathe,line,loft,panel,patch,torus,V,upperBody,width,CANOPY_REAR,type P } from './car-geometry';
 import type { Materials } from './car-materials';
 export type Jet={group:T.Group;kind:'rear'|'lift'|'side';cone:T.Mesh;halo:T.Mesh};
 export function createRear(body:T.Group,m:Materials){
   const rear=new T.Group();rear.name='06 Rear fascia, diffuser and fan system';body.add(rear);
   const underbody=new T.Group();underbody.name='07 Carbon floor and cold-gas plumbing';body.add(underbody);
   const jets:Jet[]=[],staticGroups:T.Group[]=[rear,underbody];
-  const wing=new T.Group();wing.name='Flush active rear airfoil';wing.position.set(0,.817,1.925);body.add(wing);
-  // Match the deck's leading edge exactly; the swept trailing edge follows the lamp.
-  const wingPoint=(u:number,v:number):P=>{const f=u*2-1;return [f*(.918-v*.033),T.MathUtils.lerp(.004+.006*f**4,-.009+.004*f*f,v),-.135+v*.275-.012*f*f*v];};
+  const wing=new T.Group();wing.name='Flush active rear airfoil';wing.position.set(0,.817,1.8325);body.add(wing);
+  // The inset backlight terminates at the leading shut line. Carry the two
+  // buttress creases into the wider, shallow airfoil rather than adding a flat
+  // shelf behind a full-width window. The trailing edge still follows the lamp.
+  const wingPoint=(u:number,v:number):P=>{
+    const f=u*2-1,start=upperBody(CANOPY_REAR,f*width(CANOPY_REAR))[1],z=CANOPY_REAR+v*.465-.012*f*f*v;
+    return [f*width(z),T.MathUtils.lerp(start,.808+.004*f*f,v)-.817,z-1.8325];
+  };
   patch(wing,wingPoint,m.paint,96,28);
   patch(wing,(u,v)=>{const p=wingPoint(u,v);p[1]-=.004;return p;},m.carbon,96,16);
   for(const edge of [0,1]){
@@ -28,7 +33,8 @@ export function createRear(body:T.Group,m:Materials){
     staticGroups.push(strut);
   }
   // Closed recessed mounting bed is visible only when the airfoil deploys.
-  patch(rear,(u,v)=>{const f=u*2-1;return [f*(.902-v*.017),.772-.004*f*f,1.774+v*.289];},m.paint,72,20);
+  patch(rear,(u,v)=>{const f=u*2-1;return [f*(.923-v*.038),.772-.004*f*f,1.584+v*.479];},m.paint,72,28);
+  patch(rear,(u,v)=>{const f=u*2-1,p=upperBody(CANOPY_REAR,f*width(CANOPY_REAR));return [p[0],T.MathUtils.lerp(p[1],.772-.004*f*f,v),CANOPY_REAR];},m.paint,96,12);
   for(const x of [-.53,.53])box(rear,[.085,.018,.13],[x,.773,1.883],m.graphite,.009);
   // The lens sits inside a black cassette, with end caps and visible upper/lower
   // margins. It must not touch the white body or the movable airfoil.
@@ -43,25 +49,28 @@ export function createRear(body:T.Group,m:Materials){
   patch(rear,(u,v)=>{const x=(u*2-1)*.841,h=roundedHeight(x,.841,.009,.008);return tailSurface(x,(v*2-1)*h,.011+.001*Math.sin(v*Math.PI));},m.red,144,8);
   const tailSpill=new T.SpotLight(0xff1224,.65,3,.85,.7,2);tailSpill.position.set(0,.60,2.24);tailSpill.target.position.set(0,.02,3.05);body.add(tailSpill,tailSpill.target);
   // Painted rear corners wrap around a single clean carbon centre panel.
-  for(const s of [-1,1]){
-    line(rear,[[s*.877,.765,2.042],[s*.871,.563,2.043],[s*.834,.367,2.045]],.0014,m.seam);
-  }
-  patch(rear,(u,v)=>{const f=u*2-1,edge=T.MathUtils.smoothstep(Math.abs(f),.79,1);return [f*(.879-.011*v),.773-v*(.248+.158*edge),2.062+.015*(1-f*f)-.007*v];},m.paint,100,24);
+  patch(rear,(u,v)=>{
+    const f=u*2-1,a=Math.abs(f),lower=.605+.058*T.MathUtils.smoothstep(a,.30,.61)-.025*T.MathUtils.smoothstep(a,.85,1);
+    return [f*(.879-.011*v),T.MathUtils.lerp(.773,lower,v),2.062+.015*(1-f*f)-.026*v*v];
+  },m.paint,120,28);
+  // Recessed dark bumper surfaces leave the painted upper band and compact
+  // central suction cassette legible in rear three-quarter views.
+  patch(rear,(u,v)=>{const f=u*2-1;return [f*T.MathUtils.lerp(.866,.800,v),T.MathUtils.lerp(.658,.145,v),T.MathUtils.lerp(2.032,1.873,v)-.018*f*f];},m.carbon,96,24);
   const plateCanvas=document.createElement('canvas');plateCanvas.width=768;plateCanvas.height=192;const pc=plateCanvas.getContext('2d')!;
   pc.fillStyle='#13161b';pc.fillRect(0,0,768,192);pc.strokeStyle='#363b43';pc.lineWidth=6;pc.strokeRect(5,5,758,182);pc.fillStyle='#b2b9c1';pc.textAlign='center';pc.font='500 78px Arial';pc.fillText('R D S T R',384,125);
   const plateMap=new T.CanvasTexture(plateCanvas);plateMap.colorSpace=T.SRGBColorSpace;
-  box(rear,[.349,.088,.012],[0,.645,2.087],new T.MeshStandardMaterial({map:plateMap,roughness:.45}),.003);
-  for(const x of [-.147,.147])cylinder(rear,.0025,.014,[x,.674,2.095],m.machined,'z',8);
+  box(rear,[.304,.136,.012],[0,.628,2.087],new T.MeshStandardMaterial({map:plateMap,roughness:.45}),.003);
+  for(const x of [-.125,.125])cylinder(rear,.0025,.014,[x,.679,2.095],m.machined,'z',8);
   box(rear,[.043,.018,.015],[0,.711,2.085],m.black,.004);cylinder(rear,.005,.017,[0,.711,2.097],m.lens,'z',16);
   // Carbon enclosure around the four nozzle mouths and the four individual fan bays.
-  panel(rear,[[-.72,.525,2.082],[.72,.525,2.082],[.796,.466,2.073],[.794,.350,2.079],[-.794,.350,2.079],[-.796,.466,2.073]],m.carbon);
-  line(rear,[[-.794,.352,2.082],[-.796,.466,2.077],[-.72,.525,2.086],[.72,.525,2.086],[.796,.466,2.077],[.794,.352,2.082]],.003,m.graphite);
-  box(rear,[1.59,.018,.18],[0,.353,2.001],m.carbon,.005);
-  box(rear,[1.59,.254,.022],[0,.224,1.866],m.black,.008);
-  for(const x of [-.59,-.197,.197,.59]){
-    const fan=new T.Group();fan.position.set(x,.233,1.966);fan.rotation.x=-.26;rear.add(fan);staticGroups.push(fan);
-    // Photo-fitted ratios: 254 mm blade sweep / 104 mm nozzle mouth. Large
-    // conical hubs and recessed, broad blades replace the tiny exposed propellers.
+  panel(rear,[[-.515,.525,2.082],[.515,.525,2.082],[.610,.466,2.073],[.610,.350,2.079],[-.610,.350,2.079],[-.610,.466,2.073]],m.carbon);
+  line(rear,[[-.610,.352,2.082],[-.610,.466,2.077],[-.515,.525,2.086],[.515,.525,2.086],[.610,.466,2.077],[.610,.352,2.082]],.002,m.graphite);
+  box(rear,[1.22,.014,.18],[0,.353,2.001],m.carbon,.004);
+  box(rear,[1.22,.220,.022],[0,.238,1.866],m.black,.006);
+  for(const x of [-.444,-.148,.148,.444]){
+    const fan=new T.Group();fan.position.set(x,.238,1.949);fan.rotation.x=-.20;fan.scale.setScalar(.82);rear.add(fan);staticGroups.push(fan);
+    // 208 mm blade sweep, 296 mm centres: fitted to the whole-car rear image,
+    // not the cropped hardware close-up. Keep the broad conical hub proportions.
     cylinder(fan,.132,.009,[0,0,-.032],m.black,'z');
     const duct=lathe(fan,[[.132,-.032],[.132,.016],[.129,.023],[.125,.018],[.125,-.026]],m.graphite,96);duct.rotation.x=Math.PI/2;
     torus(fan,.129,.0025,m.black,[0,0,.020],'z');
@@ -75,8 +84,8 @@ export function createRear(body:T.Group,m:Materials){
     torus(fan,.049,.0015,m.titanium,[0,0,.033],'z');
     cylinder(fan,.017,.002,[0,0,.062],m.black,'z');torus(fan,.018,.0012,m.titanium,[0,0,.064],'z');
   }
-  for(const x of [-.794,-.393,0,.393,.794])panel(rear,[[x,.35,2.08],[x,.35,1.83],[x,.113,1.88],[x,.103,1.975]],m.carbon);
-  loft(rear,[[-.795,.105,1.975],[0,.092,1.987],[.795,.105,1.975]],[[-.785,.124,1.77],[0,.108,1.76],[.785,.124,1.77]],m.carbon,80,12);
+  for(const x of [-.610,-.296,0,.296,.610])panel(rear,[[x,.35,2.08],[x,.35,1.83],[x,.132,1.88],[x,.122,1.975]],m.carbon);
+  loft(rear,[[-.610,.122,1.975],[0,.116,1.987],[.610,.122,1.975]],[[-.600,.140,1.77],[0,.132,1.76],[.600,.140,1.77]],m.carbon,80,12);
   function nozzle(position:P,direction:P,kind:Jet['kind'],radius:number){
     const g=new T.Group();g.position.set(...position);g.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),V(direction));body.add(g);
     const hardware=new T.Group();g.add(hardware);staticGroups.push(hardware);
@@ -97,7 +106,7 @@ export function createRear(body:T.Group,m:Materials){
     const cone=new T.Mesh(new T.ConeGeometry(radius*2.3,1.3,24,1,true),plumeMaterial);cone.rotation.z=Math.PI;cone.position.y=.7;cone.visible=false;g.add(cone);
     const halo=new T.Mesh(new T.ConeGeometry(radius*.7,.7,20,1,true),new T.MeshBasicMaterial({color:0xe2f9ff,transparent:true,opacity:.12,depthWrite:false,blending:T.AdditiveBlending}));halo.rotation.z=Math.PI;halo.position.y=.36;halo.visible=false;g.add(halo);jets.push({group:g,kind,cone,halo});
   }
-  for(const x of [-.48,-.16,.16,.48])nozzle([x,.445,2.091],[0,0,1],'rear',.052);
+  for(const x of [-.354,-.118,.118,.354])nozzle([x,.445,2.084],[0,0,1],'rear',.042);
   for(const s of [-1,1])for(const z of [-.92,.94])nozzle([s*.72,.132,z],[0,-1,0],'lift',.042);
   for(const s of [-1,1])nozzle([s*.891,.283,.66],[s,0,0],'side',.030);
   box(underbody,[1.53,.024,3.32],[0,.146,.0],m.carbon,.035);

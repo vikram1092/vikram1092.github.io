@@ -107,14 +107,32 @@ export function sideX(z: number, y: number) {
   return width(z) + .039*v*(1-taper) - .067*v*taper + .018*Math.sin(v*Math.PI)*taper;
 }
 export const CANOPY = [
-  [-1.12, .755, .744], [-.92, .812, .726], [-.65, .918, .696],
-  [-.37, 1.021, .667], [-.12, 1.088, .644], [.13, 1.105, .645],
-  [.48, 1.098, .657], [.76, 1.061, .675], [1.04, .972, .712],
-  [1.30, .875, .746], [1.52, .832, .782],
+  [-1.12, .755, .744], [-.92, .830, .720], [-.65, .931, .690],
+  [-.37, 1.030, .661], [-.12, 1.098, .644], [.13, 1.112, .643],
+  [.48, 1.102, .650], [.76, 1.071, .630], [1.04, 1.008, .590],
+  [1.30, .924, .560], [1.48, .863, .540], [1.60, .836, .530],
 ];
+export const CANOPY_REAR = 1.60;
 export function roof(z: number, f: number): P {
-  const front=T.MathUtils.smoothstep(z,-1.12,-.65),rear=1-T.MathUtils.smoothstep(z,1.1,1.52);
-  return [sample(z, CANOPY, 2) * f, sample(z, CANOPY, 1) + .045*(1-front)*f**6-.024*front*rear*f**2, z];
+  const front=clamp((z+1.12)/1.0,0,1),rear=T.MathUtils.smoothstep(z,.65,1.48);
+  const sweep=.10*(1-Math.min(1,Math.abs(f))**4)*(1-T.MathUtils.smoothstep(z,-1.12,-.50));
+  return [sample(z, CANOPY, 2) * f, sample(z, CANOPY, 1) + .045*(1-front)*f**6-.024*front*(1-rear)*f**2+.012*rear*f**2, z+sweep];
+}
+
+// The backlight is a tapered inset between painted buttresses. Its width is
+// independent of the roof/quarter envelope: the former widening glass footprint
+// erased the characteristic rear shoulders visible in Tesla's overhead photos.
+export function backlightHalfWidth(z: number) {
+  if(z<=.48)return sample(z,CANOPY,2);
+  return sample(z, [[.48,.650],[.72,.631],[.94,.598],[1.13,.510],[1.38,.415],[1.60,.352]]);
+}
+export function upperBody(z: number, x: number): P {
+  const edge=roof(z,1),f=Math.abs(x)/edge[0];
+  if(f<=1)return roof(z,x/edge[0]);
+  const span=width(z)-edge[0];
+  let v=clamp((Math.abs(x)-edge[0])/span,0,1);
+  for(let i=0;i<4;i++)v=clamp(v-(edge[0]+span*v+.007*Math.sin(Math.PI*v)-Math.abs(x))/(span+.007*Math.PI*Math.cos(Math.PI*v)),0,1);
+  return [x,mix(edge[1],shoulder(z),v),z];
 }
 export function sail(z: number, v: number, side: number, offset = 0): P {
   const upper = roof(z, 1), y = mix(upper[1], shoulder(z), v);
@@ -129,5 +147,19 @@ export function skinX(z:number,y:number) {
   return sail(z,v,1)[0];
 }
 export function sideGlassBase(z:number) {
-  return Math.min(roof(z,1)[1]-.002,sample(z,[[-1.055,.765],[-.65,.758],[-.20,.775],[.35,.817],[.75,.873],[1.12,.927]]));
+  return sample(z,[[-1.09,.796],[-.91,.775],[-.65,.771],[-.25,.786],[.15,.817],[.52,.861],[.80,.904],[.98,.941],[1.065,.972]]);
+}
+
+export const SIDE_GLASS_START=-1.09, SIDE_GLASS_END=1.065;
+export function sideGlassBounds(z:number):[number,number] {
+  const top=roof(z,1)[1]-.012;
+  const base=Math.min(top-.002,sideGlassBase(z));
+  // Short rounded returns at both ends, rather than rectangular clipping or a
+  // pinched triangular point. The two rails meet at one shared perimeter.
+  const cap=z<SIDE_GLASS_START+.035
+    ? Math.sqrt(Math.max(0,1-((z-SIDE_GLASS_START-.035)/.035)**2))
+    : z>SIDE_GLASS_END-.040
+      ? Math.sqrt(Math.max(0,1-((z-SIDE_GLASS_END+.040)/.040)**2)):1;
+  const middle=(top+base)/2,half=(top-base)*cap/2;
+  return [middle+half,middle-half];
 }

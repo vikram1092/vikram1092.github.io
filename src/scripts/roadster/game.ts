@@ -184,7 +184,7 @@ function render(dt:number,time:number) {
     camera.fov=lerp(camera.fov,58+Math.min(v*.16,22)+(state.boost?4:0),1-Math.exp(-dt*7));
     const vibration=(thrust?.018:0)+shock*.10+Math.max(0,v-55)*.0001;camera.position.x+=Math.sin(time*92)*vibration;camera.position.y+=Math.sin(time*71)*vibration;
   }
-  if(inspect&&!driving){const views:Record<string,number[]>={front:[0,.76,-18],side:[7,.64,0],rear:[0,.73,7],detail:[0,.60,4.8],hero:[-4.7,2.1,-6.3],back:[-4.7,2.1,6.3],reference:[-8,1.85,-15],profile:[-15,.64,0]};const view=views[inspect]||views.hero;camera.position.set(view[0],view[1],view[2]);target.set(0,.55,0);camera.fov=inspect==='reference'?10.5:inspect==='front'?9:inspect==='profile'?12:inspect==='back'?28:35;}
+  if(inspect&&!driving){const views:Record<string,number[]>={front:[0,1.7,-18],side:[7,.64,0],rear:[0,.73,7],detail:[0,.60,4.8],hero:[-4.7,2.1,-6.3],back:[-4.7,2.1,6.3],reference:[-8,1.85,-15],profile:[-15,.64,0],aft:[0,2.0,5.6],top:[0,8,.01]};const view=views[inspect]||views.hero;camera.position.set(view[0],view[1],view[2]);target.set(0,.55,0);camera.fov=inspect==='reference'?10.5:inspect==='front'?9:inspect==='aft'?32:inspect==='top'?34:inspect==='profile'?12:inspect==='back'?28:35;}
   camera.lookAt(target);camera.updateProjectionMatrix();shock=Math.max(0,shock-dt*2.8);
   speedFX.uniforms.amount.value=clamp(Math.abs(state.speed)/130,0,1);
   speedText.textContent=String(Math.round(Math.abs(state.speed)*2.236936));

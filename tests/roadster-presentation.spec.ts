@@ -15,7 +15,7 @@ test('forward braking visibly boosts the lamp and only tilts a lifted wing',()=>
     assert.equal(p.braking,true);assert.equal(p.lampIntensity,BRAKE_LAMP_INTENSITY);
     assert.ok(p.lampIntensity>=vehiclePresentation(speed,false).lampIntensity*3);
     // The swept wing edge must clear its recess throughout deployment.
-    assert.ok(p.wingLift-Math.sin(Math.abs(p.wingAngle))*.14>=0);
+    assert.ok(p.wingLift-Math.sin(Math.abs(p.wingAngle))*.24>=0);
   }
   assert.equal(vehiclePresentation(2,true).wingAngle,0);
   assert.ok(vehiclePresentation(50,false).wingLift>0);

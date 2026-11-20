@@ -1,6 +1,6 @@
 import * as T from 'three';
 import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
-import { box, panel, patch, line, points, loft, mix, clamp, width, shoulder, deck, sideX, sill, wheelStations, roof, sail, skinX, sideGlassBase, type P } from './car-geometry';
+import { box, panel, patch, line, points, loft, mix, clamp, width, shoulder, deck, sideX, sill, wheelStations, roof, skinX, sideGlassBase, sideGlassBounds, backlightHalfWidth, CANOPY_REAR, SIDE_GLASS_START, SIDE_GLASS_END, type P } from './car-geometry';
 import type { Materials } from './car-materials';
 
 // Triangulate actual apertures, then subdivide the surface before deformation.
@@ -28,9 +28,12 @@ function shapedSurface(parent: T.Object3D, outline: T.Vector2[], holes: T.Vector
   const mesh = new T.Mesh(geometry, material); parent.add(mesh); base.dispose(); raw.dispose(); return mesh;
 }
 const hoodWidth = (z: number) => mix(.642, .490, clamp((z + 2.065) / .985, 0, 1));
+// The cowl is bowed in plan: the windscreen corners lead its centre. Give the
+// hood and fenders the identical boundary instead of a ruler-straight glass base.
+const nosePoint=(x:number,y:number,z:number):P=>[x,y,z+.10*(1-Math.min(1,Math.abs(x)/.744)**4)*T.MathUtils.smoothstep(z,-1.40,-1.12)];
 const fenderY = (x: number, z: number) => {
   const v = clamp((Math.abs(x) - hoodWidth(z)) / Math.max(.003,(width(z) - hoodWidth(z))), 0, 1);
-  const base=mix(deck(z),shoulder(z),v)+.007*Math.sin(v*Math.PI);
+  const base=mix(deck(z),shoulder(z),v)+.003*Math.sin(v*Math.PI);
   const cowlBlend=T.MathUtils.smoothstep(z,-1.40,-1.12);if(cowlBlend===0)return base;
   const edge=roof(-1.12,1),ax=Math.abs(x);
   const span=width(z)-edge[0];
@@ -66,7 +69,7 @@ export function createBody(body: T.Group, m: Materials) {
     // Door gaps follow the actual skin rather than floating straight segments.
     const doorStations=[[-.66,sideGlassBase(-.66)],[-.735,.667],[-.59,.205],[-.05,.20],[.28,.215],[.43,.765],[.36,sideGlassBase(.36)]];
     const door:P[]=[];for(let k=1;k<doorStations.length;k++){const a=doorStations[k-1],b=doorStations[k];for(let j=0;j<25;j++){const z=mix(a[0],b[0],j/24),y=mix(a[1],b[1],j/24);door.push([side*(skinX(z,y)+.0018),y,z]);}}
-    line(shell, door, .0018, m.seam, false);
+    line(shell, door, .0011, m.seam, false);
     // Flush latch, side camera and amber repeater are recessed into the front fender.
     const handle = patch(shell, (u, v) => { const z = mix(.365, .412, u), y = mix(.791, .806, v); return [side * (skinX(z, y) + .001), y, z]; }, m.graphite, 8, 4); handle.name = 'Flush butterfly-door latch';
     const vent:P[]=[[-1.0,.610],[-.735,.632],[-.735,.594],[-.96,.582]].map(([z,y])=>[side*(skinX(z,y)+.0018),y,z]);
@@ -79,71 +82,90 @@ export function createBody(body: T.Group, m: Materials) {
   }
 
   const front = new T.Group(); front.name = '02 · trapezoidal nose, recessed lamps and intake'; body.add(front);
-  patch(front, (u, v) => { const z=mix(-2.065,-1.12,u),f=v*2-1,x=f*(hoodWidth(z)-.0015);const y=mix(deck(z)+.006*(1-f*f),roof(-1.12,x/roof(-1.12,1)[0])[1],T.MathUtils.smoothstep(z,-1.40,-1.12));return [x,y,z]; }, m.paint, 72, 40);
+  patch(front, (u, v) => { const z=mix(-2.065,-1.12,u),f=v*2-1,x=f*(hoodWidth(z)-.0015);const y=mix(deck(z)+.006*(1-f*f),roof(-1.12,x/roof(-1.12,1)[0])[1],T.MathUtils.smoothstep(z,-1.40,-1.12));return nosePoint(x,y,z); }, m.paint, 72, 40);
   for (const side of [-1, 1]) {
     const outline: T.Vector2[] = [];
     for (let j = 0; j <= 50; j++) { const z = mix(-2.065, -1.12, j / 50); outline.push(new T.Vector2(hoodWidth(z) + .0015, z)); }
     for (let j = 50; j >= 0; j--) { const z = mix(-2.065, -1.12, j / 50); outline.push(new T.Vector2(width(z), z)); }
     const lamp = [new T.Vector2(.651, -2.045), new T.Vector2(.624, -1.785), new T.Vector2(.791, -1.782)];
-    shapedSurface(front, outline, [lamp], (x, z) => [side * x, fenderY(x, z), z], m.paint, 4);
+    shapedSurface(front, outline, [lamp], (x, z) => nosePoint(side*x,fenderY(x,z),z), m.paint, 6);
     panel(front, lamp.map(p => [side * p.x, fenderY(p.x, p.y) - .014, p.y]), m.headlight);
     // A shallow lamp pocket with a crisp bezel; only the upper segment illuminates.
     for (let i = 0; i < 3; i++) { const a = lamp[i], b = lamp[(i + 1) % 3]; panel(front, [[side * a.x, fenderY(a.x, a.y), a.y], [side * b.x, fenderY(b.x, b.y), b.y], [side * b.x, fenderY(b.x, b.y) - .014, b.y], [side * a.x, fenderY(a.x, a.y) - .014, a.y]], m.graphite); }
     line(front, points(t => { const x = mix(.631, .781, t), z = -1.791; return [side * x, fenderY(x, z) - .003, z]; }, 24), .0038, m.white);
-    for (let j = 0; j < 9; j++) { const x = .637 + j * .015, z = -1.803; const led = box(front, [.008, .005, .020], [side * x, fenderY(x, z) - .009, z], m.white, .001); led.rotation.x = -.25; }
-    line(front, points(t => { const z = mix(-2.065, -1.12, t), x = hoodWidth(z); return [side * x, fenderY(x,z) + .0005, z]; }), .0013, m.seam);
+    // The diffused upper optic reads as a concealed lamp, without exposed
+    // oversized LED blocks drawing an extra outline around the nose.
+    line(front, points(t => { const z = mix(-2.065, -1.12, t), x = hoodWidth(z); return nosePoint(side*x,fenderY(x,z)+.0003,z); }), .0008, m.seam);
     // Swept carbon chin follows the recessed outer nose corners.
     loft(front, [[side*.690,.235,-2.065],[side*.845,.225,-1.90],[side*.906,.19,-1.68]], [[side*.701,.130,-2.08],[side*.859,.135,-1.91],[side*.920,.14,-1.67]], m.carbon,48,10);
   }
   patch(front, (u, v) => { const f = u * 2 - 1; return [f * mix(.645, .674, v), mix(.456, .345, v) + .003 * (1 - f * f), -2.065 + .017 * v + .007 * f * f]; }, m.lens, 64, 12);
   line(front, points(t => { const x = mix(-.642, .642, t); return [x, .465 + .002 * (1 - (x / .642) ** 2), -2.070]; }), .0036, m.white);
   const mouth: P[] = [[-.671, .341, -2.045], [.671, .341, -2.045], [.700, .191, -2.064], [.36, .173, -2.081], [-.36, .173, -2.081], [-.700, .191, -2.064]];
-  panel(front, mouth, m.black);
+  patch(front,(u,v)=>{const f=u*2-1;return [f*mix(.671,.700,v),mix(.341,.173+.018*Math.abs(f)**3,v),mix(-2.045,-2.081+.017*Math.abs(f)**3,v)];},m.black,72,16);
   for (let i = 0; i < mouth.length; i++) { const a = mouth[i], b = mouth[(i + 1) % mouth.length]; panel(front, [a, b, [b[0] * .95, b[1], -1.94], [a[0] * .95, a[1], -1.94]], m.carbon); }
   // Fine intake mesh and a central forward camera, kept dark like the real fascia.
   for (let i = -32; i <= 32; i++) { const slat = box(front, [.003, .103, .003], [i * .020, .270, -2.034], m.graphite); slat.rotation.z = .36; }
   box(front, [.13, .027, .016], [0, .339, -2.05], m.black, .004);
   const sensor = new T.Mesh(new T.SphereGeometry(.012, 20, 12), m.lens); sensor.scale.set(1, .55, .3); sensor.position.set(0, .337, -2.061); front.add(sensor);
   loft(front, [[-.920, .14, -1.67], [-.859, .135, -1.91], [-.74, .133, -2.07], [-.43, .152, -2.105], [0, .155, -2.11], [.43, .152, -2.105], [.74, .133, -2.07], [.859, .135, -1.91], [.920, .14, -1.67]], [[-.918, .118, -1.65], [-.858, .115, -1.90], [-.74, .110, -2.09], [-.43, .125, -2.125], [0, .127, -2.13], [.43, .125, -2.125], [.74, .110, -2.09], [.858, .115, -1.90], [.918, .118, -1.65]], m.carbon, 100, 6);
-  line(front, points(t => { const f=t*2-1,z=-1.19;const x=f*hoodWidth(z),y=mix(deck(z)+.006*(1-f*f),roof(-1.12,x/roof(-1.12,1)[0])[1],T.MathUtils.smoothstep(z,-1.40,-1.12));return [x,y+.001,z]; }),.0012,m.seam);
+  line(front, points(t => { const f=t*2-1,z=-1.30;const x=f*hoodWidth(z),y=mix(deck(z)+.006*(1-f*f),roof(-1.12,x/roof(-1.12,1)[0])[1],T.MathUtils.smoothstep(z,-1.40,-1.12));return nosePoint(x,y+.0005,z); }),.0008,m.seam);
 
   const cabin = new T.Group(); cabin.name = '03 · continuous canopy and flush side glazing'; body.add(cabin);
-  // Painted shoulders bridge the narrower canopy to the flared wheel arches.
+  // Cut the side glass out of the body surface. Shared vertices and curvature
+  // replace glass laid over paint, which caused noisy corners and dark doubled
+  // outlines. The aperture has its own upper/lower rails and rounded returns.
   for (const side of [-1, 1]) {
-    patch(cabin, (u, v) => sail(mix(-1.12, 1.36, u), v, side), m.paint, 120, 28);
-    const glassPoint = (u: number, v: number): P => {
-      const z = mix(-1.055,1.12,u);
-      const upper=roof(z,1)[1],bottom=clamp((upper-sideGlassBase(z))/Math.max(.001,upper-shoulder(z)),.05,.94);
-      return sail(z,mix(.048,bottom,v),side,.002);
-    };
-    patch(cabin, glassPoint, m.glass, 72, 24);
-    const boundary = [...points(t => glassPoint(t, 0)), ...points(t => glassPoint(1, t)), ...points(t => glassPoint(1 - t, 1)), ...points(t => glassPoint(0, 1 - t))];
-    line(cabin, boundary, .002, m.seam, false);
-    for(const [a,b,r] of [[.37,.1816,.0024],[.74,.65,.0021]]){
-      const top=glassPoint(a,0),bottom=glassPoint(b,1);
-      line(cabin,points(t=>{const z=mix(top[2],bottom[2],t),y=mix(top[1],bottom[1],t);return [side*(skinX(z,y)+.003),y+.001,z];},32),r,m.seam);
+    const aperture:T.Vector2[]=[];
+    // Cosine spacing resolves the small end radii without faceted glass corners.
+    const glassZ=(t:number)=>mix(SIDE_GLASS_START,SIDE_GLASS_END,(1-Math.cos(t*Math.PI))/2);
+    for(let j=0;j<=160;j++){const z=glassZ(j/160);aperture.push(new T.Vector2(z,sideGlassBounds(z)[0]));}
+    for(let j=159;j>0;j--){const z=glassZ(j/160);aperture.push(new T.Vector2(z,sideGlassBounds(z)[1]));}
+    const surface=(z:number,y:number):P=>[side*skinX(z,y),y,z];
+    // Parameterize the surrounding skin in strips with exactly the same rails.
+    // A large triangulated polygon here made long triangles cut across the
+    // curved A-pillar and rear quarter, leaving false dents in reflections.
+    for(const edge of [0,1])patch(cabin,(u,v)=>{
+      const z=glassZ(u),bounds=sideGlassBounds(z);
+      return surface(z,edge===0?mix(roof(z,1)[1],bounds[0],v):mix(bounds[1],shoulder(z),v));
+    },m.paint,160,20);
+    for(const [start,end] of [[-1.12,SIDE_GLASS_START],[SIDE_GLASS_END,CANOPY_REAR]])patch(cabin,(u,v)=>{
+      const z=mix(start,end,u);return surface(z,mix(roof(z,1)[1],shoulder(z),v));
+    },m.paint,60,28);
+    const glassPoint=(u:number,v:number):P=>{const z=glassZ(u),bounds=sideGlassBounds(z);return surface(z,mix(bounds[0],bounds[1],v));};
+    patch(cabin,glassPoint,m.glass,160,28);
+    const boundary=aperture.map(p=>surface(p.x,p.y));boundary.push(boundary[0]);
+    line(cabin,boundary,.0009,m.seam,false);
+    // Thin paired seals at the quarter-light and door divisions. They lie on the
+    // glazing and do not add raised rods to the car's silhouette.
+    for(const [topZ,bottomZ] of [[-.20,-.65],[.60,.35]]){
+      const topY=sideGlassBounds(topZ)[0],bottomY=sideGlassBounds(bottomZ)[1];
+      for(const shift of [-.007,.007])line(cabin,points(t=>{
+        const z=mix(topZ,bottomZ,t)+shift*Math.sin(Math.PI*t),y=mix(topY,bottomY,t);
+        return [side*(skinX(z,y)+.0007),y,z];
+      },44),.00085,m.seam);
     }
-    // Slim painted A-pillars are surfaced ribbons instead of oversized round tubes.
-    patch(cabin, (u, v) => { const z = mix(-1.12, .05, u); return sail(z, .014 + v * .036, side, .0008); }, m.paint, 68, 5);
   }
-  // Windshield and roof are one continuous surface with proper curvature at the crown.
-  patch(cabin, (u, v) => roof(mix(-1.12, 1.36, u), mix(-.994, .994, v)), m.glass, 140, 56);
-  line(cabin, points(t => { const p = roof(-1.119, mix(-.995, .995, t)); p[1] += .001; return p; }), .0025, m.seam);
-  line(cabin, points(t => { const p = roof(.02, mix(-1, 1, t)); p[1] += .0015; return p; }), .0015, m.seam);
-  // The fine centre roof joint and recessed single wiper are visible at close range.
-  line(cabin, points(t => { const p = roof(mix(.02, .67, t), 0); p[1] += .0008; return p; }), .0009, m.seam);
+  const frontReturn=(f:number)=>-1.12+.016*T.MathUtils.smoothstep(Math.abs(f),.95,1);
+  const rearReturn=(f:number)=>CANOPY_REAR-.012*T.MathUtils.smoothstep(Math.abs(f),.95,1);
+  patch(cabin,(u,v)=>{const f=v*2-1,z=mix(frontReturn(f),rearReturn(f),u);return roof(z,f*backlightHalfWidth(z)/roof(z,1)[0]);},m.glass,180,80);
+  for(const end of [0,1])patch(cabin,(u,v)=>{
+    const f=v*2-1,z=end===0?mix(-1.12,frontReturn(f),u):mix(rearReturn(f),CANOPY_REAR,u);
+    return roof(z,f*backlightHalfWidth(z)/roof(z,1)[0]);
+  },m.paint,8,80);
+  // Painted rear buttresses meet the inset backlight and the side apertures.
+  // No broad rectangular rear window, transverse cut-off or floating overlay.
+  for(const side of [-1,1]){
+    patch(cabin,(u,v)=>{const z=mix(.48,CANOPY_REAR,u),outer=roof(z,1)[0],x=mix(backlightHalfWidth(z),outer,v);return roof(z,side*x/outer);},m.paint,96,28);
+    line(cabin,points(t=>{const z=mix(.48,rearReturn(side),t),p=roof(z,side*backlightHalfWidth(z)/roof(z,1)[0]);p[1]+=.0004;return p;}),.0008,m.seam);
+  }
+  line(cabin, points(t => { const f=mix(-1,1,t),p=roof(frontReturn(f),f);p[1]+=.0005;return p; }), .0012, m.seam);
+  line(cabin, points(t => { const p = roof(-.08, mix(-1, 1, t)); p[1] += .0005; return p; }), .0007, m.seam);
+  // A pair of roof door joints, matching the split butterfly-door glazing.
+  for(const side of [-1,1])line(cabin,points(t=>{const z=mix(-.08,.70,t),x=side*mix(.12,.19,t),p=roof(z,x/roof(z,1)[0]);p[1]+=.0005;return p;}),.00065,m.seam);
   const wiperPoint=(x:number,z:number):P=>{const p=roof(z,x/roof(z,1)[0]);p[1]+=.003;return p;};
   line(cabin,[wiperPoint(-.46,-1.074),wiperPoint(-.1,-1.084),wiperPoint(.28,-1.088)],.003,m.black);
   line(cabin,[wiperPoint(-.43,-1.07),wiperPoint(-.28,-1.045),wiperPoint(-.11,-1.07)],.002,m.graphite);
 
-  const rearDeck = new T.Group(); rearDeck.name = '04 · rear haunches and deck shut lines'; body.add(rearDeck);
-  patch(rearDeck,(u,v)=>{
-    const z=mix(1.36,1.79,u),f=v*2-1,x=f*width(z),sx=Math.abs(f)*width(1.36),edge=roof(1.36,1);
-    const start=sx<=edge[0]?roof(1.36,sx/edge[0])[1]:mix(edge[1],shoulder(1.36),(sx-edge[0])/(width(1.36)-edge[0]));
-    const end=.821+.006*f**4,d0=-.050*(1-f*f),d1=-.0203-.0032*f*f;
-    const y=(2*u**3-3*u*u+1)*start+(u**3-2*u*u+u)*d0+(-2*u**3+3*u*u)*end+(u**3-u*u)*d1;
-    return [x,y,z];
-  },m.paint,80,64);
-  line(rearDeck,points(t=>{const f=t*2-1;return [f*width(1.79),.821+.006*f**4,1.79];}),.0012,m.seam);
-  return { shell, front, cabin, rearDeck };
+  return { shell, front, cabin };
 }
