@@ -17,7 +17,7 @@ The camera starts in an automatic orbit. Up immediately engages thrust and moves
 
 ## Model and performance references
 
-Original procedural geometry reconstructed from the October 2026 exterior images, including the wedge nose, full-width running lights, glass canopy, shoulder line, wheels, active rear wing, four rear cold-gas thrusters, four downward nozzles, and two lateral nozzles. No third-party model or Tesla asset is shipped. This is a visual reconstruction, not factory CAD or a claim of dimensional / mechanical accuracy. Hidden underbody details are interpretive.
+Original procedural geometry reconstructed from the October 2026 exterior images, including the wedge nose, central running light, recessed triangular lamps, glass canopy, shoulder line, aero wheels, active rear wing, four rear cold-gas thrusters, four rear fan bays, four downward nozzles, and two lateral nozzles. No third-party model or Tesla asset is shipped. This is a visual reconstruction, not factory CAD or a claim of dimensional / mechanical accuracy. Hidden underbody details are interpretive.
 
 - [Tesla Roadster](https://www.tesla.com/roadster?redirect=no): current exterior and Rocket / Thrust configuration descriptions.
 - [Reference image archive](https://www.emon100.com/lab/roadster/materials.html): Tesla front, rear and side images used for visual inspection only.
@@ -30,3 +30,30 @@ The simulation uses SI units and a 120 Hz physics step. The initial acceleration
 Three.js is bundled locally. There are no external model, shader, texture or CDN runtime dependencies. Geometry is batched by material; road reflections are rendered at 1024×768, and device pixel ratio is capped at 1.5. A bounded particle pool keeps repeated rocket use from creating unbounded scene objects. Web Audio starts on a driving gesture.
 
 Run `npm run build` and `npx playwright test tests/roadster-physics.spec.ts`. The physics checks cover launch time, braking, five minutes of sustained thrust and coasting to rest. Browser QA covers the initial orbit, immediate camera transition, measured acceleration, steering, braking, paint keys, rocket jump / kickflip / landing, and the speed-only production page. Runtime QA telemetry is available on the canvas's `data-telemetry` attribute; it is not rendered as UI.
+
+## Section-by-section fidelity revision
+
+The initial generic shell has been replaced by independently surfaced sections. The dimensions below are modeling coordinates fitted to photographic proportions; they are not published factory measurements.
+
+| Section | Revision |
+| --- | --- |
+| Silhouette | 4.13 m modeling length, 2.725 m wheelbase, 1.105 m roof crown; lower canopy, longer wheelbase, staggered tire diameters, and rising rear bumper edge. |
+| Front | Separate trapezoidal hood and fenders; real triangular lamp apertures with recessed lenses and LED elements; central light bar reduced to 1.284 m; deeper intake, camera, and swept carbon splitter. |
+| Canopy | Continuous curved windshield / roof, separately surfaced side glazing, slim A-pillars, window divisions, roof joints, and recessed wiper. The previous overlapping polygon windows were removed. |
+| Side body | Full circular wheel openings and returned lips, continuous skin normals, contour-following door gaps, flush latches, camera repeaters, and shaped carbon sills. |
+| Wheels | Five aluminium aero petals over split graphite spokes, machined lips, center caps and bolts, drilled rotors, fixed calipers, molded sidewall graphics, shoulder tread and grooves. Each tire uses its own rolling radius. |
+| Rear | Flush curved active airfoil with mounting struts and a closed recessed deck underneath; thin curved tail lamp, smooth painted fascia, recessed plate and camera, four small bell nozzles, four nine-blade fans, enclosed carbon diffuser bays. The invented horizontal metal grille is gone. |
+| Cockpit / floor | Carbon seat shell and cushion, yoke, dashboard, passenger-side pressure vessel, carbon floor, gas lines, fasteners, lift nozzles and lateral nozzles. Unseen mechanical details remain interpretive. |
+| Materials / rendering | Original carbon weave and tire textures, restrained paint microtexture, revised iridescent clearcoat and glazing, narrower reflection lights, multisampled rendering, and smaller cold-gas particles. |
+
+### Visual review
+
+Development builds accept `?inspect=front`, `side`, `rear`, `hero`, or `back`, optionally with zero-based `&paint=0`. These freeze the camera and use neutral lighting to reveal silhouette and surfacing errors. Inspection is enabled only in development; it adds no visible controls. The saved views are renders of our model, not Tesla photographs:
+
+- [Front quarter](review/front-quarter.png)
+- [Side profile](review/side.png)
+- [Rear quarter](review/rear.png)
+
+Reference comparison used the archived `Roadster-02-Pilot-Desktop`, `Roadster-03-Carousel-Slide-1-Desktop`, `Roadster-03-Carousel-Slide-2-Desktop`, `Roadster-07-Augments-Desktop`, and `Roadster-08-End-Desktop` images. Source photos and third-party meshes are not included in the repository.
+
+Revision validation: production build and type checks pass; all four physics tests pass. Desktop browser review at 1280×720 showed 60 fps, a 0.58333 s launch crossing, functioning steering / braking, paint selection, active aero deployment, rocket lift, kickflip completion and landing. The deployed-wing review caught and fixed an open deck beneath the lifted airfoil. The production DOM still contains only the game canvas and mph readout. Performance is a measurement on the review machine, not a guarantee for all hardware.
