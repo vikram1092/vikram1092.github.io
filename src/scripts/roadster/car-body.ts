@@ -1,6 +1,6 @@
 import * as T from 'three';
 import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
-import { box, panel, patch, line, points, loft, mix, clamp, width, shoulder, deck, sideX, sill, wheelStations, roof, skinX, sideGlassBase, sideGlassBounds, backlightHalfWidth, cowlSweep, CANOPY_FRONT, CANOPY_REAR, rearPaintBottom, rearFascia, rearValance, rearCorner, SIDE_GLASS_START, SIDE_GLASS_END, type P } from './car-geometry';
+import { box, panel, patch, line, points, loft, mix, clamp, width, shoulder, deck, sideX, sill, wheelStations, roof, skinX, sideGlassBase, sideGlassBounds, backlightHalfWidth, cowlSweep, bodySideTop, wingSideFoot, CANOPY_FRONT, CANOPY_REAR, rearPaintBottom, rearFascia, rearValance, rearCorner, SIDE_GLASS_START, SIDE_GLASS_END, type P } from './car-geometry';
 import type { Materials } from './car-materials';
 
 // Triangulate actual apertures, then subdivide the surface before deformation.
@@ -36,7 +36,7 @@ function outwardGlass(mesh:T.Mesh,reverse:boolean) {
 }
 const fenderY = (x: number, z: number) => {
   const v = clamp((Math.abs(x) - hoodWidth(z)) / Math.max(.003,(width(z) - hoodWidth(z))), 0, 1);
-  const base=mix(deck(z),shoulder(z),v)+.003*Math.sin(v*Math.PI);
+  const base=mix(deck(z),shoulder(z),v);
   const cowlBlend=T.MathUtils.smoothstep(z,-1.40,CANOPY_FRONT);if(cowlBlend===0)return base;
   const edge=roof(CANOPY_FRONT,1),ax=Math.abs(x);
   const span=width(z)-edge[0];
@@ -50,7 +50,8 @@ export function createBody(body: T.Group, m: Materials) {
   const shell = new T.Group(); shell.name = '01 · continuous body surfacing'; body.add(shell);
   for (const side of [-1, 1]) {
     const outline: T.Vector2[] = [];
-    for (let j = 0; j <= 100; j++) { const z = mix(-2.065, 2.065, j / 100); outline.push(new T.Vector2(z, shoulder(z))); }
+    const stations=[...Array.from({length:101},(_,j)=>mix(-2.065,2.065,j/100)),CANOPY_REAR,CANOPY_REAR+.045,2.053].sort((a,b)=>a-b);
+    for (const z of stations) outline.push(new T.Vector2(z,bodySideTop(z)));
     outline.push(new T.Vector2(2.065, rearPaintBottom(1)));
     outline.push(new T.Vector2(1.765, .452));
     for (const w of [...wheelStations].reverse()) {
@@ -90,8 +91,10 @@ export function createBody(body: T.Group, m: Materials) {
       const p=rearCorner(1,u,side),q=rearValance((side+1)/2,u);
       return [mix(p[0],q[0],v),mix(p[1],q[1],v),mix(p[2],q[2],v)];
     },m.carbon,28,8);
-    // Rear quarter-panel and bumper shut lines.
-    line(shell, [[side * sideX(1.74, .826), .826, 1.74], [side * sideX(1.88, .66), .66, 1.88], [side * sideX(1.96, .606), .606, 1.96]], .0016, m.seam, false);
+    // The fixed shut line starts below the movable end section, so it cannot
+    // hang in the open recess when the spoiler extends rearward.
+    const wingFoot=wingSideFoot(0,side);
+    line(shell, points(t=>{const z=mix(wingFoot[2],1.96,t),y=mix(wingFoot[1],.606,t);return [side*(sideX(z,y)+.0005),y,z];}), .0011, m.seam, false);
   }
 
   const front = new T.Group(); front.name = '02 · trapezoidal nose, recessed lamps and intake'; body.add(front);
@@ -182,8 +185,8 @@ export function createBody(body: T.Group, m: Materials) {
   // A pair of roof door joints, matching the split butterfly-door glazing.
   for(const side of [-1,1])line(cabin,points(t=>{const z=mix(-.08,.70,t),x=side*mix(.12,.19,t),p=roof(z,x/roof(z,1)[0]);p[1]+=.0005;return p;}),.00065,m.seam);
   const wiperPoint=(x:number,z:number):P=>{const p=roof(z,x/roof(z,1)[0]);p[1]+=.003;return p;};
-  line(cabin,[wiperPoint(-.46,-1.154),wiperPoint(-.1,-1.164),wiperPoint(.28,-1.168)],.003,m.black);
-  line(cabin,[wiperPoint(-.43,-1.15),wiperPoint(-.28,-1.125),wiperPoint(-.11,-1.15)],.002,m.graphite);
+  line(cabin,[wiperPoint(-.46,CANOPY_FRONT+.046),wiperPoint(-.1,CANOPY_FRONT+.036),wiperPoint(.28,CANOPY_FRONT+.032)],.003,m.black);
+  line(cabin,[wiperPoint(-.43,CANOPY_FRONT+.050),wiperPoint(-.28,CANOPY_FRONT+.075),wiperPoint(-.11,CANOPY_FRONT+.050)],.002,m.graphite);
 
   return { shell, front, cabin };
 }

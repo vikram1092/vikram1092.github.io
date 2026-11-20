@@ -31,5 +31,5 @@ export function createCar(){
   const staticGroups=[...Object.values(sections),...wheelAssembly.staticGroups,...rear.staticGroups,interior,yoke];
   root.traverse(o=>{if(o instanceof T.Mesh){o.castShadow=o.material!==m.glass;o.receiveShadow=o.material!==m.glass;}});
   function setFinish(index:number){const f=finishes[index];m.paint.color.set(f.color);m.paint.iridescence=f.iridescence;m.paint.metalness=f.metalness;m.paint.roughness=f.roughness;m.paint.envMapIntensity=index===1?.8:1.4;m.paint.clearcoat=index===1?.75:1;m.paint.clearcoatRoughness=index===1?.23:.17;}
-  return {root,body,paint:m.paint,glass:m.glass,wheels:wheelAssembly.wheels,steering:wheelAssembly.steering,wing:rear.wing,wingStruts:rear.wingStruts,tailSpill:rear.tailSpill,wingRestHeight:rear.wingRestHeight,jets:rear.jets,red:m.red,staticGroups,setFinish};
+  return {root,body,paint:m.paint,glass:m.glass,wheels:wheelAssembly.wheels,steering:wheelAssembly.steering,wing:rear.wing,wingStruts:rear.wingStruts,tailSpill:rear.tailSpill,wingRestHeight:rear.wingRestHeight,wingRestZ:rear.wingRestZ,jets:rear.jets,red:m.red,staticGroups,setFinish};
 }

@@ -82,8 +82,8 @@ export function sample(z: number, rows: number[][], column = 1) {
 export const BODY = [
   [-2.065, .648, .462, .462], [-1.99, .741, .502, .485],
   [-1.90, .839, .555, .513], [-1.78, .905, .628, .550],
-  [-1.67, .928, .695, .585], [-1.32, .937, .761, .693],
-  [-1.10, .926, .742, .752], [-.78, .914, .663, .767],
+  [-1.67, .928, .695, .585], [-1.32, .937, .724, .693],
+  [-1.10, .926, .716, .752], [-.78, .914, .663, .767],
   [-.20, .899, .709, .777], [.50, .914, .771, .811],
   [1.05, .939, .821, .826], [1.405, .943, .844, .829],
   [1.78, .919, .827, .817], [2.065, .885, .812, .803],
@@ -109,12 +109,12 @@ export function sideX(z: number, y: number) {
 // Head-on photography constrains the crown to about two thirds of the cowl
 // width. The side photograph alone cannot establish this transverse lean.
 export const CANOPY = [
-  [-1.20, .746, .756], [-.96, .823, .700], [-.65, .934, .625],
-  [-.37, 1.034, .553], [-.10, 1.108, .505], [.16, 1.122, .500],
+  [-1.10, .746, .756], [-.96, .79668, .72086], [-.65, .90890, .64305],
+  [-.37, 1.01026, .57277], [-.10, 1.108, .505], [.16, 1.122, .500],
   [.48, 1.111, .504], [.76, 1.078, .489], [1.04, 1.012, .468],
   [1.30, .926, .445], [1.48, .866, .426], [1.60, .836, .415],
 ];
-export const CANOPY_FRONT = -1.20;
+export const CANOPY_FRONT = -1.10;
 export const CANOPY_REAR = 1.60;
 // A broad, nearly straight windscreen base with short diagonal corner returns.
 // Round only the transition into each return, rather than bowing the full edge.
@@ -123,12 +123,15 @@ export function cowlCorner(f:number) {
   const ramp=t<=0?0:t<round?t*t/(2*round):t-round/2;
   return ramp/(1-start-round/2);
 }
-export const cowlSweep=(f:number)=>.10*(1-cowlCorner(f));
+// The centre of the cowl leads its corners. The return therefore sweeps BACK
+// into each A-pillar; the former forward-swept corners inverted this geometry.
+export const cowlSweep=(f:number)=>-.10*(1-cowlCorner(f));
 export function roof(z: number, f: number): P {
-  const front=clamp((z-CANOPY_FRONT)/1.10,0,1),rear=T.MathUtils.smoothstep(z,.65,1.48);
-  const sweep=cowlSweep(f)*(1-T.MathUtils.smoothstep(z,CANOPY_FRONT,-.50));
-  const corner=mix(cowlCorner(f),f**2,T.MathUtils.smoothstep(z,CANOPY_FRONT,-.55));
-  return [sample(z, CANOPY, 2) * f, sample(z, CANOPY, 1) + .055*(1-front)*corner-.018*front*(1-rear)*f**2+.030*rear*f**2, z+sweep];
+  const front=clamp((z-CANOPY_FRONT)/1.00,0,1),rear=T.MathUtils.smoothstep(z,.65,1.48);
+  // Straight generators from the cowl to the roof avoid the compound curl at
+  // the mirror/A-pillar corner. The shallow crown rounds only near the roof.
+  const sweep=cowlSweep(f)*(1-front);
+  return [sample(z, CANOPY, 2) * f, sample(z, CANOPY, 1) + .033*(1-front)*cowlCorner(f)-.018*front*(1-rear)*f**2+.030*rear*f**2, z+sweep];
 }
 
 // The backlight is a tapered inset between painted buttresses. Its width is
@@ -157,21 +160,22 @@ export function skinX(z:number,y:number) {
   if(y<=shoulder(z))return sideX(z,y);
   const top=roof(z,1),v=clamp((top[1]-y)/Math.max(.001,top[1]-shoulder(z)),0,1);
   const original=mix(top[0],width(z),v)+.007*Math.sin(v*Math.PI);
-  const blend=T.MathUtils.smoothstep(z,CANOPY_FRONT,-.92)*(1-T.MathUtils.smoothstep(z,SIDE_GLASS_END,1.38));
+  const blend=T.MathUtils.smoothstep(z,CANOPY_FRONT,SIDE_GLASS_START)*(1-T.MathUtils.smoothstep(z,SIDE_GLASS_END,1.38));
   if(blend===0)return original;
   const base=clamp(sideGlassBase(z),shoulder(z)+.001,top[1]-.001);
   const lean=1.10+.10*T.MathUtils.smoothstep(z,.35,1.08);
-  const pane=(height:number)=>top[0]+lean*(top[1]-height)+.002*Math.sin(clamp((top[1]-height)/(top[1]-base),0,1)*Math.PI);
+  const crown=.002*T.MathUtils.smoothstep(z,-.65,-.25);
+  const pane=(height:number)=>top[0]+lean*(top[1]-height)+crown*Math.sin(clamp((top[1]-height)/(top[1]-base),0,1)*Math.PI);
   const x=y>=base?pane(y):mix(pane(base),width(z),(base-y)/(base-shoulder(z)));
   return mix(original,x,blend);
 }
 export function sideGlassBase(z:number) {
   // One shallow forward dip, a long rising rail, then a short diagonal return.
   // Extra rear control points previously bent the return into an S-curve.
-  return sample(z,[[-1.17,.795],[-.94,.778],[-.65,.769],[-.25,.783],[.15,.8264],[.52,.8666],[.80,.897],[.96,.956],[1.065,roof(1.065,1)[1]-.020]]);
+  return sample(z,[[-1.07,.774],[-.94,.774],[-.65,.769],[-.25,.783],[.15,.8264],[.52,.8666],[.80,.897],[.96,.956],[1.065,roof(1.065,1)[1]-.020]]);
 }
 
-export const SIDE_GLASS_START=-1.17, SIDE_GLASS_END=1.065;
+export const SIDE_GLASS_START=-1.07, SIDE_GLASS_END=1.065;
 export function sideGlassBounds(z:number):[number,number] {
   const top=roof(z,1)[1]-(.010+.010*T.MathUtils.smoothstep(z,-.90,-.10));
   const base=Math.min(top-.002,sideGlassBase(z));
@@ -183,6 +187,29 @@ export function sideGlassBounds(z:number):[number,number] {
       ? Math.sqrt(Math.max(0,1-((z-SIDE_GLASS_END+.008)/.008)**2)):1;
   const middle=(top+base)/2,half=(top-base)*cap/2;
   return [middle+half,middle-half];
+}
+
+export const WING_REST_HEIGHT=.817, WING_REST_Z=1.8325;
+export function wingSurface(u:number,v:number):P {
+  const f=u*2-1,start=upperBody(CANOPY_REAR,f*width(CANOPY_REAR))[1],z=CANOPY_REAR+v*.465-.012*f*f*v;
+  return [f*width(z),mix(start,.808+.004*f*f,v),z];
+}
+// The spoiler includes folded-down body-side sections. Their slanted leading
+// edges and rising lower edges nest into the rear quarters when retracted.
+export function wingSideFoot(v:number,side:number):P {
+  const z=mix(CANOPY_REAR+.045,2.053,v);
+  const y=mix(shoulder(CANOPY_REAR)-.160,.812-.095,v);
+  return [side*sideX(z,y),y,z];
+}
+export function wingEndSection(u:number,v:number,side:number):P {
+  const top=wingSurface((side+1)/2,u),bottom=wingSideFoot(u,side);
+  return top.map((p,i)=>mix(p,bottom[i],v)) as P;
+}
+export function bodySideTop(z:number) {
+  if(z<=CANOPY_REAR)return shoulder(z);
+  const foot=wingSideFoot(0,1);
+  if(z<foot[2])return mix(shoulder(CANOPY_REAR),foot[1],(z-CANOPY_REAR)/(foot[2]-CANOPY_REAR));
+  return wingSideFoot(clamp((z-foot[2])/(2.053-foot[2]),0,1),1)[1];
 }
 
 // Shared rear boundaries: the painted central chin drops below the outer

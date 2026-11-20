@@ -164,6 +164,7 @@ function render(dt:number,time:number) {
   for(const pivot of car.steering)pivot.rotation.y=state.steer*.36/(1+Math.abs(state.speed)*.025);
   const aeroBlend=1-Math.exp(-dt*6);
   car.wing.position.y=lerp(car.wing.position.y,car.wingRestHeight-.55+presentation.wingLift,aeroBlend);
+  car.wing.position.z=lerp(car.wing.position.z,car.wingRestZ+presentation.wingRearward,aeroBlend);
   car.wing.rotation.x=lerp(car.wing.rotation.x,presentation.wingAngle,aeroBlend);
   for(const strut of car.wingStruts){
     strut.visible=car.wing.position.y-(car.wingRestHeight-.55)>.025;
@@ -207,7 +208,7 @@ function render(dt:number,time:number) {
   roadReflectionPending=true;renderer.info.reset();composer.render();
 }
 let last=performance.now(),accumulator=0;
-function animate(now:number){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.08);last=now;if(state.paused||document.hidden)return;accumulator+=dt;while(accumulator>=FIXED_STEP){step(FIXED_STEP);accumulator-=FIXED_STEP;}render(dt,now/1000);frameCount++;frameTime+=dt;if(frameTime>2){averageFPS=frameCount/frameTime;canvas.dataset.telemetry=JSON.stringify({...state,wingLift:car.wing.position.y-(car.wingRestHeight-.55),wingAngle:car.wing.rotation.x,tailIntensity:car.red.emissiveIntensity,fps:Math.round(averageFPS),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,camera:camera.position.toArray(),car:car.root.position.toArray()});frameCount=0;frameTime=0;}}
+function animate(now:number){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.08);last=now;if(state.paused||document.hidden)return;accumulator+=dt;while(accumulator>=FIXED_STEP){step(FIXED_STEP);accumulator-=FIXED_STEP;}render(dt,now/1000);frameCount++;frameTime+=dt;if(frameTime>2){averageFPS=frameCount/frameTime;canvas.dataset.telemetry=JSON.stringify({...state,wingLift:car.wing.position.y-(car.wingRestHeight-.55),wingRearward:car.wing.position.z-car.wingRestZ,wingAngle:car.wing.rotation.x,tailIntensity:car.red.emissiveIntensity,fps:Math.round(averageFPS),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,camera:camera.position.toArray(),car:car.root.position.toArray()});frameCount=0;frameTime=0;}}
 camera.position.set(-4,2.4,-5);camera.lookAt(0,.6,0);requestAnimationFrame(animate);
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);});
 canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();pause();});canvas.addEventListener('webglcontextrestored',()=>location.reload());

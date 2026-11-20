@@ -1,10 +1,10 @@
 import {test} from '@playwright/test';
 import assert from 'node:assert/strict';
-import {roof,sail,skinX,sideX,shoulder,width,upperBody,backlightHalfWidth,sideGlassBounds,cowlSweep,rearFascia,rearValance,rearCorner,CANOPY_FRONT,CANOPY_REAR,SIDE_GLASS_START,SIDE_GLASS_END} from '../src/scripts/roadster/car-geometry';
+import {roof,sail,skinX,sideX,shoulder,width,lowerEdge,upperBody,backlightHalfWidth,sideGlassBounds,cowlSweep,wingSurface,wingEndSection,bodySideTop,rearFascia,rearValance,rearCorner,CANOPY_FRONT,CANOPY_REAR,SIDE_GLASS_START,SIDE_GLASS_END} from '../src/scripts/roadster/car-geometry';
 
 test('side panes keep a consistent lean instead of flaring with the rear shoulder',()=>{
   for(let i=0;i<=200;i++){
-    const z=-.85+1.88*i/200,[top,bottom]=sideGlassBounds(z);
+    const z=SIDE_GLASS_START+.001+(1.03-SIDE_GLASS_START-.001)*i/200,[top,bottom]=sideGlassBounds(z);
     const topX=skinX(z,top),bottomX=skinX(z,bottom);
     const angle=Math.atan((bottomX-topX)/(top-bottom))*180/Math.PI;
     assert.ok(angle>43&&angle<52,`twisted glass rake ${angle} at ${z}`);
@@ -16,11 +16,41 @@ test('side panes keep a consistent lean instead of flaring with the rear shoulde
 });
 
 test('windscreen base has a straight centre and symmetric connected corner returns',()=>{
+  assert.ok(roof(CANOPY_FRONT,1)[2]>roof(CANOPY_FRONT,0)[2], 'cowl corners must sweep rearward from the centre');
   for(let i=0;i<=100;i++){
     const f=i/100,left=roof(CANOPY_FRONT,-f),right=roof(CANOPY_FRONT,f);
     assert.equal(left[1],right[1]);assert.equal(left[2],right[2]);
     assert.ok(Math.abs(right[2]-CANOPY_FRONT-cowlSweep(f))<1e-10);
     if(f<=.60){assert.equal(right[1],roof(CANOPY_FRONT,0)[1]);assert.equal(right[2],roof(CANOPY_FRONT,0)[2]);}
+  }
+});
+
+test('forward glass generators stay straight through the mirror corner',()=>{
+  for(const f of [0,.5,.8,1]){
+    const a=roof(CANOPY_FRONT,f),b=roof(-.37,f);
+    for(let i=0;i<=100;i++){
+      const t=i/100,p=roof(CANOPY_FRONT+(-.37-CANOPY_FRONT)*t,f);
+      for(let axis=0;axis<3;axis++)assert.ok(Math.abs(p[axis]-(a[axis]+(b[axis]-a[axis])*t))<.001,`curled windshield at ${f}, ${t}`);
+    }
+  }
+});
+
+test('front fender has a shallow crest with clearance above the wheel opening',()=>{
+  const heights=Array.from({length:101},(_,i)=>shoulder(-1.5+.4*i/100));
+  assert.ok(Math.max(...heights)-Math.min(...heights)<.015,'raised hump above the front tire');
+  for(let i=0;i<=100;i++){
+    const z=-1.6+.55*i/100;
+    assert.ok(shoulder(z)-lowerEdge(z)>.018,`wheel opening crosses the fender at ${z}`);
+  }
+});
+
+test('spoiler end sections join the upper wing and nest into the quarter-panel cutouts',()=>{
+  for(let i=0;i<=100;i++)for(const side of [-1,1]){
+    const u=i/100,top=wingEndSection(u,0,side),foot=wingEndSection(u,1,side);
+    assert.deepEqual(top,wingSurface((side+1)/2,u));
+    assert.ok(top[1]-foot[1]>.09,'missing downward end section');
+    assert.ok(Math.abs(foot[1]-bodySideTop(foot[2]))<1e-8,'open stowed spoiler/body join');
+    assert.ok(Math.abs(foot[0]-side*sideX(foot[2],foot[1]))<1e-8);
   }
 });
 

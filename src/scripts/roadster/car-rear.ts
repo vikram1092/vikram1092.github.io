@@ -1,24 +1,31 @@
 import * as T from 'three';
-import { box,cylinder,lathe,line,loft,panel,patch,torus,V,upperBody,width,rearFascia,rearValance,CANOPY_REAR,type P } from './car-geometry';
+import { box,cylinder,lathe,line,loft,panel,patch,torus,V,upperBody,width,sideX,bodySideTop,rearFascia,rearValance,wingSurface,wingEndSection,WING_REST_HEIGHT,WING_REST_Z,CANOPY_REAR,type P } from './car-geometry';
 import type { Materials } from './car-materials';
 export type Jet={group:T.Group;kind:'rear'|'lift'|'side';cone:T.Mesh;halo:T.Mesh};
 export function createRear(body:T.Group,m:Materials){
   const rear=new T.Group();rear.name='06 Rear fascia, diffuser and fan system';body.add(rear);
   const underbody=new T.Group();underbody.name='07 Carbon floor and cold-gas plumbing';body.add(underbody);
   const jets:Jet[]=[],staticGroups:T.Group[]=[rear,underbody];
-  const wing=new T.Group();wing.name='Flush active rear airfoil';wing.position.set(0,.817,1.8325);body.add(wing);
+  const wing=new T.Group();wing.name='Rearward-deploying spoiler with folded end sections';wing.position.set(0,WING_REST_HEIGHT,WING_REST_Z);body.add(wing);
   // The inset backlight terminates at the leading shut line. Carry the two
   // buttress creases into the wider, shallow airfoil rather than adding a flat
   // shelf behind a full-width window. The trailing edge still follows the lamp.
-  const wingPoint=(u:number,v:number):P=>{
-    const f=u*2-1,start=upperBody(CANOPY_REAR,f*width(CANOPY_REAR))[1],z=CANOPY_REAR+v*.465-.012*f*f*v;
-    return [f*width(z),T.MathUtils.lerp(start,.808+.004*f*f,v)-.817,z-1.8325];
-  };
+  const wingLocal=(p:P):P=>[p[0],p[1]-WING_REST_HEIGHT,p[2]-WING_REST_Z];
+  const wingPoint=(u:number,v:number):P=>wingLocal(wingSurface(u,v));
   patch(wing,wingPoint,m.paint,96,28);
   patch(wing,(u,v)=>{const p=wingPoint(u,v);p[1]-=.004;return p;},m.carbon,96,16);
   for(const edge of [0,1]){
     patch(wing,(u,v)=>{const p=wingPoint(u,edge);p[1]-=v*.004;return p;},m.paint,96,4);
-    patch(wing,(u,v)=>{const p=wingPoint(edge,u);p[1]-=v*.004;return p;},m.paint,28,4);
+  }
+  for(const side of [-1,1]){
+    const face=(u:number,v:number,inside=false):P=>{const p=wingLocal(wingEndSection(u,v,side));if(inside)p[0]-=side*.004;return p;};
+    patch(wing,(u,v)=>face(u,v),m.paint,48,16);
+    patch(wing,(u,v)=>face(u,v,true),m.carbon,48,16);
+    line(wing,Array.from({length:41},(_,i)=>{const p=face(0,i/40);p[0]+=side*.0005;return p;}),.0008,m.seam,false);
+    for(const edge of [0,1]){
+      patch(wing,(u,v)=>{const p=face(u,edge);p[0]-=side*.004*v;return p;},m.paint,48,3);
+      patch(wing,(u,v)=>{const p=face(edge,u);p[0]-=side*.004*v;return p;},m.paint,24,3);
+    }
   }
   staticGroups.push(wing);
   // Independent articulated supports keep their bases attached during lift and tilt.
@@ -35,6 +42,12 @@ export function createRear(body:T.Group,m:Materials){
   // Closed recessed mounting bed is visible only when the airfoil deploys.
   patch(rear,(u,v)=>{const f=u*2-1;return [f*(.923-v*.038),.772-.004*f*f,1.584+v*.479];},m.paint,72,28);
   patch(rear,(u,v)=>{const f=u*2-1,p=upperBody(CANOPY_REAR,f*width(CANOPY_REAR));return [p[0],T.MathUtils.lerp(p[1],.772-.004*f*f,v),CANOPY_REAR];},m.paint,96,12);
+  // Close the exposed side recess below the mounting bed. The folded spoiler
+  // ends cover these dark inner walls when stowed.
+  for(const side of [-1,1])patch(rear,(u,v)=>{
+    const z=T.MathUtils.lerp(CANOPY_REAR,2.063,u),bottom=bodySideTop(z),y=T.MathUtils.lerp(bottom,.768,v);
+    return [side*T.MathUtils.lerp(sideX(z,bottom)-.006,.923-(z-1.584)/.479*.038,v),y,z];
+  },m.carbon,60,12);
   for(const x of [-.53,.53])box(rear,[.085,.018,.13],[x,.773,1.883],m.graphite,.009);
   // The lens sits inside a black cassette, with end caps and visible upper/lower
   // margins. It must not touch the white body or the movable airfoil.
@@ -115,5 +128,5 @@ export function createRear(body:T.Group,m:Materials){
   box(underbody,[1.53,.024,3.32],[0,.146,.0],m.carbon,.035);
   for(const s of [-1,1])line(underbody,[[s*.70,.125,-1.2],[s*.70,.115,-.7],[s*.65,.115,.5],[s*.69,.135,1.53]],.009,m.titanium);
   for(const z of [-1.1,-.55,.15,.8,1.4])for(const x of [-.68,.68])cylinder(underbody,.006,.004,[x,.132,z],m.machined,'y',8);
-  return {wing,wingStruts,tailSpill,wingRestHeight:.817,jets,staticGroups};
+  return {wing,wingStruts,tailSpill,wingRestHeight:WING_REST_HEIGHT,wingRestZ:WING_REST_Z,jets,staticGroups};
 }

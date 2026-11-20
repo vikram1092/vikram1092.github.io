@@ -6,10 +6,12 @@ const smooth = (a:number,b:number,x:number) => {const t=Math.min(1,Math.max(0,(x
 export function vehiclePresentation(speed:number,down:boolean) {
   const braking=down&&speed>.15;
   const airBrake=braking?smooth(6,22,speed):0;
+  const deployment=Math.max(smooth(22,38,speed),airBrake);
   return {
     braking,
-    wingLift:.21*Math.max(smooth(22,38,speed),airBrake),
-    wingAngle:airBrake>0?-.28*airBrake:0,
+    wingLift:.125*deployment,
+    wingRearward:.29*deployment,
+    wingAngle:airBrake>0?-.20*airBrake:0,
     lampIntensity:braking?BRAKE_LAMP_INTENSITY:RUNNING_LAMP_INTENSITY,
     lampSpill:braking?5:.65,
   };
