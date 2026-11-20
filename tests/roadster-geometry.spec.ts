@@ -1,6 +1,28 @@
 import {test} from '@playwright/test';
 import assert from 'node:assert/strict';
-import {roof,sail,skinX,sideX,shoulder,width,upperBody,backlightHalfWidth,sideGlassBounds,rearFascia,rearValance,rearCorner,CANOPY_REAR,SIDE_GLASS_START,SIDE_GLASS_END} from '../src/scripts/roadster/car-geometry';
+import {roof,sail,skinX,sideX,shoulder,width,upperBody,backlightHalfWidth,sideGlassBounds,cowlSweep,rearFascia,rearValance,rearCorner,CANOPY_FRONT,CANOPY_REAR,SIDE_GLASS_START,SIDE_GLASS_END} from '../src/scripts/roadster/car-geometry';
+
+test('side panes keep a consistent lean instead of flaring with the rear shoulder',()=>{
+  for(let i=0;i<=200;i++){
+    const z=-.85+1.88*i/200,[top,bottom]=sideGlassBounds(z);
+    const topX=skinX(z,top),bottomX=skinX(z,bottom);
+    const angle=Math.atan((bottomX-topX)/(top-bottom))*180/Math.PI;
+    assert.ok(angle>43&&angle<52,`twisted glass rake ${angle} at ${z}`);
+    const middleX=skinX(z,(top+bottom)/2);
+    assert.ok(Math.abs(middleX-(topX+bottomX)/2)<.003,`bulging pane at ${z}`);
+    // Both paint strips and the pane share position-continuous boundaries.
+    for(const y of [top,bottom])assert.ok(Math.abs(skinX(z,y+1e-7)-skinX(z,y-1e-7))<1e-5);
+  }
+});
+
+test('windscreen base has a straight centre and symmetric connected corner returns',()=>{
+  for(let i=0;i<=100;i++){
+    const f=i/100,left=roof(CANOPY_FRONT,-f),right=roof(CANOPY_FRONT,f);
+    assert.equal(left[1],right[1]);assert.equal(left[2],right[2]);
+    assert.ok(Math.abs(right[2]-CANOPY_FRONT-cowlSweep(f))<1e-10);
+    if(f<=.60){assert.equal(right[1],roof(CANOPY_FRONT,0)[1]);assert.equal(right[2],roof(CANOPY_FRONT,0)[2]);}
+  }
+});
 
 test('side apertures stay inside the body and close at both rounded returns',()=>{
   for(let i=0;i<=1000;i++){

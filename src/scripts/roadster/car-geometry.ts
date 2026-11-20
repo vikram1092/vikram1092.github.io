@@ -116,10 +116,19 @@ export const CANOPY = [
 ];
 export const CANOPY_FRONT = -1.20;
 export const CANOPY_REAR = 1.60;
+// A broad, nearly straight windscreen base with short diagonal corner returns.
+// Round only the transition into each return, rather than bowing the full edge.
+export function cowlCorner(f:number) {
+  const a=Math.min(1,Math.abs(f)),start=.61,round=.08,t=a-start;
+  const ramp=t<=0?0:t<round?t*t/(2*round):t-round/2;
+  return ramp/(1-start-round/2);
+}
+export const cowlSweep=(f:number)=>.10*(1-cowlCorner(f));
 export function roof(z: number, f: number): P {
   const front=clamp((z-CANOPY_FRONT)/1.10,0,1),rear=T.MathUtils.smoothstep(z,.65,1.48);
-  const sweep=.10*(1-Math.min(1,Math.abs(f))**4)*(1-T.MathUtils.smoothstep(z,CANOPY_FRONT,-.50));
-  return [sample(z, CANOPY, 2) * f, sample(z, CANOPY, 1) + .055*(1-front)*f**6-.018*front*(1-rear)*f**2+.030*rear*f**2, z+sweep];
+  const sweep=cowlSweep(f)*(1-T.MathUtils.smoothstep(z,CANOPY_FRONT,-.50));
+  const corner=mix(cowlCorner(f),f**2,T.MathUtils.smoothstep(z,CANOPY_FRONT,-.55));
+  return [sample(z, CANOPY, 2) * f, sample(z, CANOPY, 1) + .055*(1-front)*corner-.018*front*(1-rear)*f**2+.030*rear*f**2, z+sweep];
 }
 
 // The backlight is a tapered inset between painted buttresses. Its width is
@@ -132,25 +141,34 @@ export function backlightHalfWidth(z: number) {
 export function upperBody(z: number, x: number): P {
   const edge=roof(z,1),f=Math.abs(x)/edge[0];
   if(f<=1)return roof(z,x/edge[0]);
-  const span=width(z)-edge[0];
-  let v=clamp((Math.abs(x)-edge[0])/span,0,1);
-  for(let i=0;i<4;i++)v=clamp(v-(edge[0]+span*v+.007*Math.sin(Math.PI*v)-Math.abs(x))/(span+.007*Math.PI*Math.cos(Math.PI*v)),0,1);
-  return [x,mix(edge[1],shoulder(z),v),z];
+  let low=shoulder(z),high=edge[1];
+  for(let i=0;i<24;i++){const mid=(low+high)/2;if(skinX(z,mid)>Math.abs(x))low=mid;else high=mid;}
+  return [x,(low+high)/2,z];
 }
 export function sail(z: number, v: number, side: number, offset = 0): P {
   const upper = roof(z, 1), y = mix(upper[1], shoulder(z), v);
-  const x = mix(upper[0], width(z), v) + .007 * Math.sin(v * Math.PI);
-  return [side * (x + offset), y + offset * .4, z];
+  return [side * (skinX(z,y) + offset), y + offset * .4, z];
 }
 
-// Upper door skin and glazing share one continuous transverse surface.
+// Glass has its own almost ruled transverse surface. Tying its rake to the
+// undulating fender shoulder twisted the pane and scalloped its lower edge.
+// The painted door shoulder meets the pane at the same lower rail.
 export function skinX(z:number,y:number) {
   if(y<=shoulder(z))return sideX(z,y);
   const top=roof(z,1),v=clamp((top[1]-y)/Math.max(.001,top[1]-shoulder(z)),0,1);
-  return sail(z,v,1)[0];
+  const original=mix(top[0],width(z),v)+.007*Math.sin(v*Math.PI);
+  const blend=T.MathUtils.smoothstep(z,CANOPY_FRONT,-.92)*(1-T.MathUtils.smoothstep(z,SIDE_GLASS_END,1.38));
+  if(blend===0)return original;
+  const base=clamp(sideGlassBase(z),shoulder(z)+.001,top[1]-.001);
+  const lean=1.10+.10*T.MathUtils.smoothstep(z,.35,1.08);
+  const pane=(height:number)=>top[0]+lean*(top[1]-height)+.002*Math.sin(clamp((top[1]-height)/(top[1]-base),0,1)*Math.PI);
+  const x=y>=base?pane(y):mix(pane(base),width(z),(base-y)/(base-shoulder(z)));
+  return mix(original,x,blend);
 }
 export function sideGlassBase(z:number) {
-  return sample(z,[[-1.17,.795],[-.94,.778],[-.65,.769],[-.25,.783],[.15,.813],[.52,.855],[.80,.897],[.92,.930],[.97,.955],[1.065,roof(1.065,1)[1]-.020]]);
+  // One shallow forward dip, a long rising rail, then a short diagonal return.
+  // Extra rear control points previously bent the return into an S-curve.
+  return sample(z,[[-1.17,.795],[-.94,.778],[-.65,.769],[-.25,.783],[.15,.8264],[.52,.8666],[.80,.897],[.96,.956],[1.065,roof(1.065,1)[1]-.020]]);
 }
 
 export const SIDE_GLASS_START=-1.17, SIDE_GLASS_END=1.065;

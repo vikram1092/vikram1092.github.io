@@ -1,6 +1,6 @@
 import * as T from 'three';
 import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
-import { box, panel, patch, line, points, loft, mix, clamp, width, shoulder, deck, sideX, sill, wheelStations, roof, skinX, sideGlassBase, sideGlassBounds, backlightHalfWidth, CANOPY_FRONT, CANOPY_REAR, rearPaintBottom, rearFascia, rearValance, rearCorner, SIDE_GLASS_START, SIDE_GLASS_END, type P } from './car-geometry';
+import { box, panel, patch, line, points, loft, mix, clamp, width, shoulder, deck, sideX, sill, wheelStations, roof, skinX, sideGlassBase, sideGlassBounds, backlightHalfWidth, cowlSweep, CANOPY_FRONT, CANOPY_REAR, rearPaintBottom, rearFascia, rearValance, rearCorner, SIDE_GLASS_START, SIDE_GLASS_END, type P } from './car-geometry';
 import type { Materials } from './car-materials';
 
 // Triangulate actual apertures, then subdivide the surface before deformation.
@@ -28,9 +28,12 @@ function shapedSurface(parent: T.Object3D, outline: T.Vector2[], holes: T.Vector
   const mesh = new T.Mesh(geometry, material); parent.add(mesh); base.dispose(); raw.dispose(); return mesh;
 }
 const hoodWidth = (z: number) => mix(.642, .490, clamp((z + 2.065) / .985, 0, 1));
-// The cowl is bowed in plan: the windscreen corners lead its centre. Give the
-// hood and fenders the identical boundary instead of a ruler-straight glass base.
-const nosePoint=(x:number,y:number,z:number):P=>[x,y,z+.10*(1-Math.min(1,Math.abs(x)/roof(CANOPY_FRONT,1)[0])**4)*T.MathUtils.smoothstep(z,-1.40,CANOPY_FRONT)];
+// Share the windscreen's straight centre and swept corner returns with the hood.
+const nosePoint=(x:number,y:number,z:number):P=>[x,y,z+cowlSweep(x/roof(CANOPY_FRONT,1)[0])*T.MathUtils.smoothstep(z,-1.40,CANOPY_FRONT)];
+function outwardGlass(mesh:T.Mesh,reverse:boolean) {
+  if(reverse){const index=mesh.geometry.index!;for(let i=0;i<index.count;i+=3){const b=index.getX(i+1);index.setX(i+1,index.getX(i+2));index.setX(i+2,b);}mesh.geometry.computeVertexNormals();}
+  mesh.castShadow=false;mesh.receiveShadow=false;
+}
 const fenderY = (x: number, z: number) => {
   const v = clamp((Math.abs(x) - hoodWidth(z)) / Math.max(.003,(width(z) - hoodWidth(z))), 0, 1);
   const base=mix(deck(z),shoulder(z),v)+.003*Math.sin(v*Math.PI);
@@ -143,7 +146,8 @@ export function createBody(body: T.Group, m: Materials) {
       const z=mix(start,end,u);return surface(z,mix(roof(z,1)[1],shoulder(z),v));
     },m.paint,60,28);
     const glassPoint=(u:number,v:number):P=>{const z=glassZ(u),bounds=sideGlassBounds(z);return surface(z,mix(bounds[0],bounds[1],v));};
-    patch(cabin,glassPoint,m.glass,160,28);
+    const sidePane=patch(cabin,glassPoint,m.glass,160,28);
+    outwardGlass(sidePane,side===1);
     const boundary=aperture.map(p=>surface(p.x,p.y));boundary.push(boundary[0]);
     line(cabin,boundary,.0009,m.seam,false);
     // Thin paired seals at the quarter-light and door divisions. They lie on the
@@ -158,7 +162,11 @@ export function createBody(body: T.Group, m: Materials) {
   }
   const frontReturn=(f:number)=>CANOPY_FRONT+.016*T.MathUtils.smoothstep(Math.abs(f),.95,1);
   const rearReturn=(f:number)=>CANOPY_REAR-.012*T.MathUtils.smoothstep(Math.abs(f),.95,1);
-  patch(cabin,(u,v)=>{const f=v*2-1,z=mix(frontReturn(f),rearReturn(f),u);return roof(z,f*backlightHalfWidth(z)/roof(z,1)[0]);},m.glass,180,80);
+  const canopyPane=patch(cabin,(u,v)=>{const f=v*2-1,z=mix(frontReturn(f),rearReturn(f),u);return roof(z,f*backlightHalfWidth(z)/roof(z,1)[0]);},m.glass,180,100);
+  outwardGlass(canopyPane,true);
+  // The real windscreen has a dark ceramic bond at its foot. Place it just
+  // inside the transparent pane, following the same chamfered cowl boundary.
+  patch(cabin,(u,v)=>{const f=v*2-1,z=frontReturn(f)+u*.038,p=roof(z,f);p[1]-=.0015;return p;},m.glassFrit,8,100);
   for(const end of [0,1])patch(cabin,(u,v)=>{
     const f=v*2-1,z=end===0?mix(CANOPY_FRONT,frontReturn(f),u):mix(rearReturn(f),CANOPY_REAR,u);
     return roof(z,f*backlightHalfWidth(z)/roof(z,1)[0]);

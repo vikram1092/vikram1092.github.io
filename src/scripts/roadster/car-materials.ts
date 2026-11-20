@@ -37,12 +37,15 @@ export function createMaterials() {
   const graphite = new T.MeshPhysicalMaterial({ color: 0x161b22, metalness: .72, roughness: .26, clearcoat: .45, side: T.DoubleSide });
   const machined = new T.MeshStandardMaterial({ color: 0x84939c, metalness: 1, roughness: .23, side: T.DoubleSide });
   const titanium = new T.MeshStandardMaterial({ color: 0x77716b, metalness: 1, roughness: .29, side: T.DoubleSide });
-  const glass = new T.MeshPhysicalMaterial({ color: 0x231d1a, metalness: 0, roughness: .15, clearcoat: 1, clearcoatRoughness: .20, envMapIntensity: .55, side: T.DoubleSide });
+  // Copper-tinted glazing: light passes into the cabin, while grazing angles
+  // retain a sharp dielectric reflection instead of an opaque plastic sheen.
+  const glass = new T.MeshPhysicalMaterial({ color: 0x766452, metalness: 0, roughness: .035, transmission: .90, thickness: .004, ior: 1.5, attenuationColor: 0xb58a59, attenuationDistance: .016, specularColor: 0xe2c5a7, envMapIntensity: 1.15, side: T.FrontSide });
+  const glassFrit = new T.MeshPhysicalMaterial({color:0x13100e,roughness:.08,metalness:0,envMapIntensity:.8,side:T.DoubleSide});
   const lens = new T.MeshPhysicalMaterial({ color: 0x27323e, metalness: .1, roughness: .11, clearcoat: 1, side: T.DoubleSide });
   const headlight = new T.MeshPhysicalMaterial({color:0x667078,metalness:.3,roughness:.32,clearcoat:1,emissive:0xb7d2df,emissiveIntensity:.04,side:T.DoubleSide});
   const white = new T.MeshStandardMaterial({ color: 0xdbe5ec, emissive: 0xccdfef, emissiveIntensity: 2.3, side: T.DoubleSide });
   const red = new T.MeshStandardMaterial({ color: 0x83121d, emissive: 0xff162b, emissiveIntensity: RUNNING_LAMP_INTENSITY, side: T.DoubleSide });
   const amber = new T.MeshStandardMaterial({ color: 0xa75d1a, emissive: 0xff6d0b, emissiveIntensity: .7, side: T.DoubleSide });
-  return { paint, carbon, black, rubber, seam, alloy, graphite, machined, titanium, glass, lens, headlight, white, red, amber };
+  return { paint, carbon, black, rubber, seam, alloy, graphite, machined, titanium, glass, glassFrit, lens, headlight, white, red, amber };
 }
 export type Materials = ReturnType<typeof createMaterials>;

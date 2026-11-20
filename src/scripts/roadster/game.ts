@@ -22,6 +22,8 @@ const state={mode:'orbit',speed:0,x:0,z:0,heading:0,height:0,verticalSpeed:0,ste
 let renderer:T.WebGLRenderer;
 try {renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});}catch(error){console.error('Roadster requires WebGL2.',error);throw error;}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);
+// Cabin detail occupies a small part of the frame; reflections remain full size.
+renderer.transmissionResolutionScale=.5;
 renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.16;
 renderer.info.autoReset=false;
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;
@@ -33,7 +35,7 @@ box(environment,[16,.1,10],[0,10,0],new T.MeshBasicMaterial({color:new T.Color(.
 box(environment,[12,.1,1.5],[-1,6,-2],softbox);box(environment,[.1,1.3,12],[-7,2.5,-1],new T.MeshBasicMaterial({color:new T.Color(.8,1.2,1.6)}));
 box(environment,[.1,1,10],[7,3,1],new T.MeshBasicMaterial({color:new T.Color(.8,.6,1.2)}));
 box(environment,[7,.65,.1],[0,3,-8],softbox);box(environment,[7,.45,.1],[0,2,7],softbox);
-const pmrem=new T.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(environment,.035).texture;pmrem.dispose();
+const pmrem=new T.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(environment,.01).texture;pmrem.dispose();
 scene.add(new T.HemisphereLight(0xa1c5ed,0x080511,.92));
 const keyLight=new T.DirectionalLight(0xd9e4ff,2.65);keyLight.position.set(-3,7,-3);keyLight.castShadow=true;keyLight.shadow.mapSize.set(2048,2048);keyLight.shadow.camera.left=-6;keyLight.shadow.camera.right=6;keyLight.shadow.camera.top=6;keyLight.shadow.camera.bottom=-6;keyLight.shadow.camera.near=.1;keyLight.shadow.camera.far=25;keyLight.shadow.radius=2.5;keyLight.shadow.normalBias=.006;keyLight.shadow.bias=-.0001;scene.add(keyLight,keyLight.target);
 RectAreaLightUniformsLib.init();
@@ -46,9 +48,21 @@ scene.add(car.root);
 function batchStatic(parent:T.Group) {
   const groups=new Map<T.Material,T.Mesh[]>();
   for(const child of parent.children)if(child instanceof T.Mesh && !Array.isArray(child.material)) {const arr=groups.get(child.material)||[];arr.push(child);groups.set(child.material,arr);}
-  for(const [material,meshes]of groups)if(meshes.length>1){const gs=meshes.map(m=>{m.updateMatrix();return (m.geometry.index ? m.geometry.toNonIndexed() : m.geometry.clone()).applyMatrix4(m.matrix);});for(const g of gs)if(!g.getAttribute('uv'))g.setAttribute('uv',new T.BufferAttribute(new Float32Array(g.getAttribute('position').count*2),2));const merged=new T.Mesh(mergeGeometries(gs),material);merged.castShadow=true;merged.receiveShadow=true;parent.add(merged);for(const m of meshes)parent.remove(m);for(const g of gs)g.dispose();}
+  for(const [material,meshes]of groups)if(meshes.length>1){const gs=meshes.map(m=>{m.updateMatrix();return (m.geometry.index ? m.geometry.toNonIndexed() : m.geometry.clone()).applyMatrix4(m.matrix);});for(const g of gs)if(!g.getAttribute('uv'))g.setAttribute('uv',new T.BufferAttribute(new Float32Array(g.getAttribute('position').count*2),2));const merged=new T.Mesh(mergeGeometries(gs),material);merged.castShadow=meshes.some(m=>m.castShadow);merged.receiveShadow=meshes.some(m=>m.receiveShadow);parent.add(merged);for(const m of meshes)parent.remove(m);for(const g of gs)g.dispose();}
 }
 for(const section of car.staticGroups)batchStatic(section);
+// Capture the wet-road reflection once per frame. The transmission prepass also
+// draws the road; allowing its Reflector to recapture recursively doubled work.
+// The faint road reflection needs only the glass's outer reflective surface.
+const reflectedGlass=car.glass.clone();reflectedGlass.transmission=0;reflectedGlass.color.set(0x211a15);
+const glassMeshes:T.Mesh[]=[];car.root.traverse(o=>{if(o instanceof T.Mesh&&o.material===car.glass)glassMeshes.push(o);});
+const captureRoad=world.road.onBeforeRender.bind(world.road);
+let roadReflectionPending=true;
+world.road.onBeforeRender=(...args)=>{
+  if(!roadReflectionPending)return;roadReflectionPending=false;
+  for(const mesh of glassMeshes)mesh.material=reflectedGlass;
+  try{captureRoad(...args);}finally{for(const mesh of glassMeshes)mesh.material=car.glass;}
+};
 for(const child of car.body.children)child.position.y-=.55;car.body.position.y=.55;
 const headlights:T.SpotLight[]=[];
 for(const x of [-.65,.65]){const l=new T.SpotLight(0xd5eaff,55,38,.40,.65,1.7);l.position.set(x,.46,-2.10);l.target.position.set(x,.05,-24);car.root.add(l,l.target);headlights.push(l);}
@@ -185,11 +199,12 @@ function render(dt:number,time:number) {
     const vibration=(thrust?.018:0)+shock*.10+Math.max(0,v-55)*.0001;camera.position.x+=Math.sin(time*92)*vibration;camera.position.y+=Math.sin(time*71)*vibration;
   }
   if(inspect&&!driving){const views:Record<string,number[]>={front:[0,1.7,-18],side:[7,.64,0],rear:[0,.73,7],detail:[0,.60,4.8],hero:[-4.7,2.1,-6.3],back:[-4.7,2.1,6.3],reference:[-8,1.85,-15],profile:[-15,.64,0],aft:[0,2.0,5.6],rearref:[0,2.6,8.0],top:[0,8,.01]};const view=views[inspect]||views.hero;camera.position.set(view[0],view[1],view[2]);target.set(0,.55,0);camera.fov=inspect==='reference'?10.5:inspect==='front'?9:inspect==='aft'?32:inspect==='rearref'?22:inspect==='top'?34:inspect==='profile'?12:inspect==='back'?28:35;}
+  if(inspect==='glass'&&!driving){camera.position.set(-4.5,2,-6);target.set(0,.88,-.15);camera.fov=11;}
   camera.lookAt(target);camera.updateProjectionMatrix();shock=Math.max(0,shock-dt*2.8);
   speedFX.uniforms.amount.value=clamp(Math.abs(state.speed)/130,0,1);
   speedText.textContent=String(Math.round(Math.abs(state.speed)*2.236936));
   if(audio&&motor&&motorGain&&windGain&&jetGain&&!state.paused){const now=audio.currentTime;motor.frequency.setTargetAtTime(38+Math.abs(state.speed)*3.5,now,.06);motorGain.gain.setTargetAtTime(driving?Math.min(.035,Math.abs(state.speed)*.001):0,now,.07);windGain.gain.setTargetAtTime(driving?Math.min(.15,Math.abs(state.speed)*.001):0,now,.1);jetGain.gain.setTargetAtTime(thrust||lifting?.11:0,now,.04);}
-  renderer.info.reset();composer.render();
+  roadReflectionPending=true;renderer.info.reset();composer.render();
 }
 let last=performance.now(),accumulator=0;
 function animate(now:number){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.08);last=now;if(state.paused||document.hidden)return;accumulator+=dt;while(accumulator>=FIXED_STEP){step(FIXED_STEP);accumulator-=FIXED_STEP;}render(dt,now/1000);frameCount++;frameTime+=dt;if(frameTime>2){averageFPS=frameCount/frameTime;canvas.dataset.telemetry=JSON.stringify({...state,wingLift:car.wing.position.y-(car.wingRestHeight-.55),wingAngle:car.wing.rotation.x,tailIntensity:car.red.emissiveIntensity,fps:Math.round(averageFPS),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,camera:camera.position.toArray(),car:car.root.position.toArray()});frameCount=0;frameTime=0;}}

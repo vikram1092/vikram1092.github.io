@@ -120,3 +120,19 @@ A second pass compares the same official Tesla photographs across front, side an
 Review renders: [head-on](review/proportions-front.jpg), [front quarter](review/proportions-front-quarter.jpg), [side](review/proportions-side.jpg), [rear quarter](review/proportions-rear.jpg), [elevated rear](review/proportions-rear-profile.jpg), [braking](review/proportions-braking.jpg).
 
 Validation: production build and type check pass; all ten Roadster geometry, physics and presentation tests pass. The new rear-boundary check covers fascia continuity, the side skin join, inward tuck and the raised outer bumper. Browser review checked front, side, elevated/low rear and deployed-airfoil views. The production build also passed paint selection and acceleration checks with no browser console errors. The model remains a reconstruction from photographs, with no factory CAD dimensions available.
+
+## Glass material and lower window borders
+
+Studied Tesla's full-resolution side, front-quarter and open-door windshield photographs again. The official page's **Gold Glazed** description identifies a copper-inspired window tint. The open-door view makes the windshield's straight central base and short diagonal corner returns particularly clear; the side and front-quarter views distinguish the lower window rail from reflections within the pane.
+
+- Decoupled the side glass's transverse lean from the changing fender shoulder. The glazing now uses a shallow, almost ruled surface, with the painted shoulder meeting its lower rail. This removes the excessive rear flare and the associated distortion of the lower edge and reflections.
+- Straightened the long rising lower side-window rail and simplified the short rear return, removing the extra control points that produced an S-shaped bend.
+- Replaced the windshield's continuously bowed base with a broad straight centre and gently rounded diagonal corners. Hood, fenders, glass and the dark ceramic bond at the windshield foot follow the same boundary.
+- Replaced opaque glass with thin copper-tinted dielectric transmission, sharper reflections and angle-dependent reflectivity. Corrected outward mesh winding and prevented the glazing from casting an opaque shadow over the interior. Static mesh batching preserves those shadow settings.
+- Kept transmission sampling at half resolution and capture the wet-road reflection only once per frame. That faint secondary reflection uses the glass's outer reflective surface, avoiding nested transmission captures while preserving the primary glass rendering.
+
+Detailed primary references: [Gold Glazed / open-door windshield](https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Roadster-03-Carousel-Slide-3-Desktop.jpg), [side glazing](https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Roadster-02-Pilot-Desktop.jpg), [front-quarter reflections and lower borders](https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Roadster-08-End-Desktop.jpg). These are photographic constraints, not factory CAD or measured optical specifications.
+
+Model review renders: [window close-up](review/glass-detail-close.jpg), [front quarter](review/glass-detail-front.jpg), [side profile](review/glass-detail-side.jpg), [rear quarter](review/glass-detail-rear.jpg). Development-only `?inspect=glass&paint=1` provides the close-up camera.
+
+Validation: production build/type check passes; all twelve geometry, physics and presentation tests pass, including new checks for bounded pane lean, minimal transverse bulging, continuous glass/paint joins, and the connected symmetric windshield base. Browser review covered the close-up, front, side and rear, with production acceleration, paint selection and night-scene reflections checked separately. The isolated production page measured approximately 56 fps on the review machine, retained the 0.58333 s launch crossing, and produced no browser console errors.
