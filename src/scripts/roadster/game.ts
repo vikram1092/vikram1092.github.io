@@ -9,6 +9,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { createCar, box } from './car';
 import { createWorld } from './world';
+import { DEFAULT_FINISH, finishes } from './finishes';
 import { FIXED_STEP, SIXTY_MPH, integrateSpeed } from './physics';
 
 const canvas=document.querySelector<HTMLCanvasElement>('#roadster')!;
@@ -17,7 +18,7 @@ const clamp=T.MathUtils.clamp, lerp=T.MathUtils.lerp;
 const review=import.meta.env.DEV?new URLSearchParams(location.search):new URLSearchParams();
 const inspect=review.get('inspect');
 const keys=new Set<string>();
-const state={mode:'orbit',speed:0,x:0,z:0,heading:0,height:0,verticalSpeed:0,steer:0,boost:false,flip:0,flipAxis:'z',flipDirection:1,flipDuration:1.04,launchTime:0,zeroToSixty:0,finish:0,airtime:0,distance:0,crashes:0,tricks:0,paused:false};
+const state={mode:'orbit',speed:0,x:0,z:0,heading:0,height:0,verticalSpeed:0,steer:0,boost:false,flip:0,flipAxis:'z',flipDirection:1,flipDuration:1.04,launchTime:0,zeroToSixty:0,finish:DEFAULT_FINISH,airtime:0,distance:0,crashes:0,tricks:0,paused:false};
 let renderer:T.WebGLRenderer;
 try {renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});}catch(error){console.error('Roadster requires WebGL2.',error);throw error;}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);
@@ -76,12 +77,21 @@ function reset(full=true) {
   if(full){state.mode='orbit';document.body.dataset.driving='false';orbitAngle=-.66;cameraBlend=0;}
 }
 reset();
-if(inspect){state.x=0;state.z=0;state.heading=0;car.setFinish(Number(review.get('paint')??1));}
+const paintButtons=[...document.querySelectorAll<HTMLButtonElement>('#paint-selector button')];
+function selectFinish(index:number){
+  if(!Number.isInteger(index)||!finishes[index])return;
+  state.finish=index;car.setFinish(index);
+  for(const button of paintButtons)button.setAttribute('aria-pressed',String(Number(button.dataset.finish)===index));
+}
+for(const button of paintButtons)button.addEventListener('click',()=>{selectFinish(Number(button.dataset.finish));canvas.focus({preventScroll:true});});
+selectFinish(DEFAULT_FINISH);
+if(inspect){state.x=0;state.z=0;state.heading=0;selectFinish(Number(review.get('paint')??DEFAULT_FINISH));}
+function swatchActivation(event:KeyboardEvent){return (event.code==='Space'||event.code==='Enter')&&event.target instanceof HTMLElement&&!!event.target.closest('#paint-selector');}
 function jump(){startDrive();if(state.height<.15){state.verticalSpeed=13.5;state.height=.03;}else state.verticalSpeed=Math.max(state.verticalSpeed,10);jumpPulse=.55;}
 function trick(axis:string,direction:number){startDrive();if(state.flip>0)return;if(state.height<1)jump();else if(state.verticalSpeed<4)state.verticalSpeed=9;state.flip=.0001;state.flipAxis=axis;state.flipDirection=direction;jumpPulse=.8;}
 const controlKeys=['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','ShiftLeft','ShiftRight','KeyF','KeyQ','KeyE','KeyX','KeyR','KeyC','KeyM','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6'];
-window.addEventListener('keydown',event=>{if(!controlKeys.includes(event.code))return;event.preventDefault();keys.add(event.code);if(event.code==='ArrowUp'||event.code==='ArrowDown')startDrive();if(event.repeat)return;if(event.code==='Space')jump();if(event.code==='KeyF'||event.code==='KeyE')trick('z',-1);if(event.code==='KeyQ')trick('z',1);if(event.code==='KeyX')trick('x',-1);if(event.code==='KeyR')reset(false);if(event.code==='KeyC'){state.mode='orbit';state.speed=0;state.height=0;state.verticalSpeed=0;state.flip=0;orbitAngle=state.heading-.66;document.body.dataset.driving='false';}if(event.code==='KeyM'){muted=!muted;if(master)master.gain.setTargetAtTime(muted?0:.27,audio!.currentTime,.1);}if(event.code.startsWith('Digit')){state.finish=Number(event.code.slice(-1))-1;car.setFinish(state.finish);}});
-window.addEventListener('keyup',event=>{keys.delete(event.code);if(controlKeys.includes(event.code))event.preventDefault();});
+window.addEventListener('keydown',event=>{if(swatchActivation(event)||!controlKeys.includes(event.code))return;event.preventDefault();keys.add(event.code);if(event.code==='ArrowUp'||event.code==='ArrowDown')startDrive();if(event.repeat)return;if(event.code==='Space')jump();if(event.code==='KeyF'||event.code==='KeyE')trick('z',-1);if(event.code==='KeyQ')trick('z',1);if(event.code==='KeyX')trick('x',-1);if(event.code==='KeyR')reset(false);if(event.code==='KeyC'){state.mode='orbit';state.speed=0;state.height=0;state.verticalSpeed=0;state.flip=0;orbitAngle=state.heading-.66;document.body.dataset.driving='false';}if(event.code==='KeyM'){muted=!muted;if(master)master.gain.setTargetAtTime(muted?0:.27,audio!.currentTime,.1);}if(event.code.startsWith('Digit'))selectFinish(Number(event.code.slice(-1))-1);});
+window.addEventListener('keyup',event=>{keys.delete(event.code);if(swatchActivation(event))return;if(controlKeys.includes(event.code))event.preventDefault();});
 function pause(){keys.clear();state.paused=true;if(audio)void audio.suspend();}
 window.addEventListener('blur',pause);window.addEventListener('focus',()=>{state.paused=false;});document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();else state.paused=false;});
 canvas.addEventListener('pointerdown',event=>{if(state.mode!=='orbit')return;drag=true;lastX=event.clientX;lastY=event.clientY;canvas.setPointerCapture(event.pointerId);});
@@ -173,7 +183,7 @@ function render(dt:number,time:number) {
     camera.fov=lerp(camera.fov,58+Math.min(v*.16,22)+(state.boost?4:0),1-Math.exp(-dt*7));
     const vibration=(thrust?.018:0)+shock*.10+Math.max(0,v-55)*.0001;camera.position.x+=Math.sin(time*92)*vibration;camera.position.y+=Math.sin(time*71)*vibration;
   }
-  if(inspect&&!driving){const views:Record<string,number[]>={front:[0,.76,-18],side:[7,.64,0],rear:[0,.73,7],hero:[-4.7,2.1,-6.3],back:[-4.7,2.1,6.3],reference:[-8,1.85,-15],profile:[-15,.64,0]};const view=views[inspect]||views.hero;camera.position.set(view[0],view[1],view[2]);target.set(0,.55,0);camera.fov=inspect==='reference'?10.5:inspect==='front'?9:inspect==='profile'?12:inspect==='back'?28:35;}
+  if(inspect&&!driving){const views:Record<string,number[]>={front:[0,.76,-18],side:[7,.64,0],rear:[0,.73,7],detail:[0,.60,4.8],hero:[-4.7,2.1,-6.3],back:[-4.7,2.1,6.3],reference:[-8,1.85,-15],profile:[-15,.64,0]};const view=views[inspect]||views.hero;camera.position.set(view[0],view[1],view[2]);target.set(0,.55,0);camera.fov=inspect==='reference'?10.5:inspect==='front'?9:inspect==='profile'?12:inspect==='back'?28:35;}
   camera.lookAt(target);camera.updateProjectionMatrix();shock=Math.max(0,shock-dt*2.8);
   speedFX.uniforms.amount.value=clamp(Math.abs(state.speed)/130,0,1);
   speedText.textContent=String(Math.round(Math.abs(state.speed)*2.236936));

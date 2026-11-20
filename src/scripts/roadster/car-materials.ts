@@ -1,14 +1,7 @@
 import * as T from 'three';
 import {RUNNING_LAMP_INTENSITY} from './presentation';
-
-export const finishes = [
-  { name: 'Iridescent violet', color: '#7940b2', iridescence: .65, metalness: .62, roughness: .25 },
-  { name: 'Arctic pearl', color: '#d5dce2', iridescence: .05, metalness: .24, roughness: .27 },
-  { name: 'Liquid silver', color: '#a0a7b0', iridescence: .04, metalness: .9, roughness: .24 },
-  { name: 'Crimson', color: '#92182d', iridescence: .12, metalness: .55, roughness: .26 },
-  { name: 'Ion blue', color: '#17658c', iridescence: .45, metalness: .68, roughness: .25 },
-  { name: 'Obsidian', color: '#171c24', iridescence: .12, metalness: .65, roughness: .26 },
-];
+import { DEFAULT_FINISH, finishes } from './finishes';
+export { finishes } from './finishes';
 
 function canvasTexture(size: number, paint: (ctx: CanvasRenderingContext2D) => void) {
   const canvas = document.createElement('canvas'); canvas.width = canvas.height = size;
@@ -34,7 +27,8 @@ export function createMaterials() {
     for (let i = 0; i < image.data.length; i += 4) { seed = (seed * 1664525 + 1013904223) >>> 0; const v = 116 + seed % 26; image.data.set([v, v, v, 255], i); }
     ctx.putImageData(image, 0, 0);
   }); flake.repeat.set(42, 42);
-  const paint = new T.MeshPhysicalMaterial({ color: finishes[0].color, metalness: finishes[0].metalness, roughness: .25, clearcoat: 1, clearcoatRoughness: .13, iridescence: .65, iridescenceIOR: 1.28, iridescenceThicknessRange: [230, 350], envMapIntensity: 1.4, bumpMap: flake, bumpScale: .00004, side: T.DoubleSide });
+  const finish = finishes[DEFAULT_FINISH];
+  const paint = new T.MeshPhysicalMaterial({ color: finish.color, metalness: finish.metalness, roughness: finish.roughness, clearcoat: 1, clearcoatRoughness: .17, iridescence: finish.iridescence, iridescenceIOR: 1.28, iridescenceThicknessRange: [230, 350], envMapIntensity: 1.4, bumpMap: flake, bumpScale: .00004, side: T.DoubleSide });
   const carbon = new T.MeshPhysicalMaterial({ color: 0x6a737e, map: carbonMap, bumpMap: carbonMap, bumpScale: .0008, roughness: .42, metalness: .38, clearcoat: .35, clearcoatRoughness: .25, side: T.DoubleSide });
   const black = new T.MeshStandardMaterial({ color: 0x080a0e, metalness: .25, roughness: .42, side: T.DoubleSide });
   const rubber = new T.MeshStandardMaterial({ color: 0x101112, roughness: .88, side: T.DoubleSide });

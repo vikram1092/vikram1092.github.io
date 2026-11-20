@@ -1,5 +1,6 @@
 ---
 import '@fontsource/rajdhani/500.css';
+import { DEFAULT_FINISH, finishes } from '../../scripts/roadster/finishes';
 ---
 <!doctype html>
 <html lang="en">
@@ -13,10 +14,21 @@ import '@fontsource/rajdhani/500.css';
   </head>
   <body>
     <canvas id="roadster" aria-label="Roadster night driving game. Arrow keys drive, Space jumps, F kickflips, Q and E roll, X frontflips, Shift boosts, 1 to 6 change paint, C orbits, R resets, M mutes." tabindex="0"></canvas>
+    <div id="paint-selector" role="group" aria-label="Paint color">
+      {finishes.map((finish, index) => <button type="button" data-finish={index} aria-label={finish.name} aria-pressed={index === DEFAULT_FINISH} style={`--swatch:${finish.swatch}`}><span aria-hidden="true"></span></button>)}
+    </div>
     <div id="speed" aria-label="Speed in miles per hour"><span id="velocity">0</span><small>mph</small></div>
     <script>import '../../scripts/roadster/game';</script>
   </body>
 </html>
 <style is:global>
   *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050810;color:#dfe8f6}body{overscroll-behavior:none}canvas#roadster{display:block;width:100%;height:100%;outline:none;cursor:grab}canvas#roadster:active{cursor:grabbing}#speed{position:fixed;right:38px;bottom:27px;display:flex;align-items:baseline;gap:8px;pointer-events:none;font-family:'Rajdhani',sans-serif;font-weight:500;text-shadow:0 0 24px #86a8d444;opacity:.8;font-variant-numeric:tabular-nums}#velocity{font-size:40px;line-height:1;letter-spacing:.025em}#speed small{font-size:12px;letter-spacing:.13em;color:#8e9bab}body[data-driving="true"] canvas{cursor:none}
+</style>
+<style>
+  #paint-selector{position:fixed;left:30px;bottom:26px;display:flex;gap:4px;align-items:center}
+  #paint-selector button{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer;outline-offset:2px;-webkit-tap-highlight-color:transparent}
+  #paint-selector span{display:block;width:17px;height:17px;border-radius:50%;background:var(--swatch);border:1px solid #dce7f54d;box-shadow:0 2px 8px #0008;transition:transform .15s,outline-color .15s;outline:1px solid transparent;outline-offset:4px}
+  #paint-selector button:hover span{transform:scale(1.12)}
+  #paint-selector button[aria-pressed="true"] span{outline-color:#dce7f5c4}
+  #paint-selector button:focus-visible{outline:1px solid #dce7f5}
 </style>
