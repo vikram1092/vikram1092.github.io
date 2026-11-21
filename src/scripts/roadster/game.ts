@@ -6,6 +6,7 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import { vehiclePresentation } from './presentation';
 import { PoseInterpolator, ChaseCamera, damp } from './motion';
+import { DrivingEffects, speedFragmentShader } from './effects';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { createCar, box } from './car';
@@ -20,7 +21,7 @@ const review=import.meta.env.DEV?new URLSearchParams(location.search):new URLSea
 const inspect=review.get('inspect');
 const keys=new Set<string>();
 const state={mode:'orbit',speed:0,x:0,z:0,heading:0,height:0,verticalSpeed:0,steer:0,boost:false,flip:0,flipAxis:'z',flipDirection:1,flipDuration:1.04,launchTime:0,zeroToSixty:0,finish:DEFAULT_FINISH,airtime:0,distance:0,crashes:0,tricks:0,paused:false};
-const motion=new PoseInterpolator(state),chase=new ChaseCamera();
+const motion=new PoseInterpolator(state),chase=new ChaseCamera(),effects=new DrivingEffects();
 let accumulator=0,bodyPitch=0,bodyRoll=0,cameraGapMin=Infinity,cameraGapMax=-Infinity;
 let renderer:T.WebGLRenderer;
 try {renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});}catch(error){console.error('Roadster requires WebGL2.',error);throw error;}
@@ -76,7 +77,7 @@ const renderTarget=new T.WebGLRenderTarget(innerWidth,innerHeight,{type:T.HalfFl
 const composer=new EffectComposer(renderer,renderTarget);composer.addPass(new RenderPass(scene,camera));
 // Keep lamp highlights, but avoid turning the white body into a glowing surface.
 const bloom=new UnrealBloomPass(new T.Vector2(innerWidth*.6,innerHeight*.6),.10,.30,1.8);composer.addPass(bloom);
-const speedFX=new ShaderPass({uniforms:{tDiffuse:{value:null},amount:{value:0}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:`uniform sampler2D tDiffuse;uniform float amount;varying vec2 vUv;void main(){vec2 p=vUv-.5;float edge=smoothstep(.12,.65,length(p));vec2 d=p*amount*.009*edge;vec4 c=texture2D(tDiffuse,vUv)*.52;c+=texture2D(tDiffuse,vUv-d)*.24;c+=texture2D(tDiffuse,vUv-d*2.)*.14;c+=texture2D(tDiffuse,vUv-d*3.)*.1;c.rgb*=1.-smoothstep(.25,.76,length(p))*.2;gl_FragColor=c;}`});composer.addPass(speedFX);composer.addPass(new OutputPass());
+const speedFX=new ShaderPass({uniforms:{tDiffuse:{value:null},amount:{value:0},boost:{value:0},aspect:{value:camera.aspect},carUv:{value:new T.Vector2(.5,.3)}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:speedFragmentShader});composer.addPass(speedFX);composer.addPass(new OutputPass());
 // A bounded particle pool for cold-gas plumes and impact sparks.
 const MAX=500,particlePos=new Float32Array(MAX*3),particleColor=new Float32Array(MAX*3),particleLife=new Float32Array(MAX),particleVelocity=new Float32Array(MAX*3);
 particlePos.fill(-9999);let particleCursor=0;
@@ -92,7 +93,7 @@ function startDrive(){if(state.mode!=='drive'){state.mode='drive';document.body.
 function reset(full=true) {
   const near=world.nearest(state.x,state.z);const p=full?world.route.getPointAt(0):near.point,t=full?world.route.getTangentAt(0):near.tangent;
   state.x=p.x;state.z=p.z;state.heading=Math.atan2(-t.x,-t.z);state.speed=0;state.height=0;state.verticalSpeed=0;state.flip=0;state.steer=0;shock=0;jumpPulse=0;
-  motion.snap(state);accumulator=0;bodyPitch=bodyRoll=0;chase.snap(state);cameraGapMin=Infinity;cameraGapMax=-Infinity;
+  motion.snap(state);accumulator=0;bodyPitch=bodyRoll=0;chase.snap(state);effects.reset();cameraGapMin=Infinity;cameraGapMax=-Infinity;
   if(full){state.mode='orbit';document.body.dataset.driving='false';orbitAngle=-.66;}
   else if(state.mode==='drive')camera.position.copy(chase.position);
 }
@@ -170,6 +171,7 @@ function render(dt:number,time:number) {
   car.root.position.set(pose.x,pose.height,pose.z);car.root.rotation.y=pose.heading;
   car.body.rotation.set(0,0,0);car.body.position.y=.55-Math.sin(shock*Math.PI)*.035;
   const presentation=vehiclePresentation(inspect?Number(review.get('speed')??pose.speed):pose.speed,(inspect&&review.has('brake'))||keys.has('ArrowDown')&&driving);
+  const fx=effects.update({driving,speed:pose.speed,boost:throttle&&state.boost,braking:presentation.braking,shock},dt);
   const pitch=throttle?-.018:presentation.braking?.027:0;
   bodyPitch=damp(bodyPitch,pitch,9,dt);bodyRoll=damp(bodyRoll,-pose.steer*Math.min(Math.abs(pose.speed)*.001,.045),9,dt);
   car.body.rotation.x=bodyPitch;car.body.rotation.z=bodyRoll;
@@ -205,20 +207,25 @@ function render(dt:number,time:number) {
   else {
     const v=Math.abs(pose.speed);
     chase.update(pose,dt);camera.position.copy(chase.position);target.copy(chase.target);
-    camera.fov=damp(camera.fov,58+Math.min(v*.16,22)+(state.boost?4:0),7,dt);
+    camera.fov=damp(camera.fov,58+Math.min(v*.16,22)+fx.fov,7,dt);
     const gap=Math.hypot(camera.position.x-pose.x,camera.position.z-pose.z);
     cameraGapMin=Math.min(cameraGapMin,gap);cameraGapMax=Math.max(cameraGapMax,gap);
   }
   if(inspect&&!driving){const views:Record<string,number[]>={front:[0,1.7,-18],side:[7,.64,0],rear:[0,.73,7],detail:[0,.60,4.8],hero:[-4.7,2.1,-6.3],back:[-4.7,2.1,6.3],reference:[-8,1.85,-15],profile:[-15,.64,0],aft:[0,2.0,5.6],rearref:[0,2.6,8.0],top:[0,8,.01]};const view=views[inspect]||views.hero;camera.position.set(view[0],view[1],view[2]);target.set(0,.55,0);camera.fov=inspect==='reference'?10.5:inspect==='front'?9:inspect==='aft'?32:inspect==='rearref'?22:inspect==='top'?34:inspect==='profile'?12:inspect==='back'?28:35;}
   if(inspect==='glass'&&!driving){camera.position.set(-4.5,2,-6);target.set(0,.88,-.15);camera.fov=11;}
-  camera.lookAt(target);camera.updateProjectionMatrix();shock=Math.max(0,shock-dt*2.8);
-  speedFX.uniforms.amount.value=clamp(Math.abs(pose.speed)/130,0,1);
+  camera.lookAt(target);
+  camera.rotateX(fx.pitch);camera.rotateZ(fx.roll);camera.updateProjectionMatrix();camera.updateMatrixWorld();
+  worldPoint.set(pose.x,pose.height+.65,pose.z).project(camera);
+  speedFX.uniforms.carUv.value.set(worldPoint.x*.5+.5,worldPoint.y*.5+.5);
+  speedFX.uniforms.aspect.value=camera.aspect;
+  speedFX.uniforms.amount.value=fx.blur;speedFX.uniforms.boost.value=fx.boost;
+  shock=Math.max(0,shock-dt*2.8);
   speedText.textContent=String(Math.round(Math.abs(pose.speed)*2.236936));
   if(audio&&motor&&motorGain&&windGain&&jetGain&&!state.paused){const now=audio.currentTime;motor.frequency.setTargetAtTime(38+Math.abs(pose.speed)*3.5,now,.06);motorGain.gain.setTargetAtTime(driving?Math.min(.035,Math.abs(pose.speed)*.001):0,now,.07);windGain.gain.setTargetAtTime(driving?Math.min(.15,Math.abs(pose.speed)*.001):0,now,.1);jetGain.gain.setTargetAtTime(thrust||lifting?.11:0,now,.04);}
   roadReflectionPending=true;renderer.info.reset();composer.render();
 }
 let last=performance.now();
-function animate(now:number){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.08);last=now;if(state.paused||document.hidden)return;accumulator+=dt;while(accumulator>=FIXED_STEP){motion.capture(state);step(FIXED_STEP);accumulator=Math.max(0,accumulator-FIXED_STEP);}render(dt,now/1000);frameCount++;frameTime+=dt;if(frameTime>2){averageFPS=frameCount/frameTime;canvas.dataset.telemetry=JSON.stringify({...state,district:world.district(world.nearest(state.x,state.z).progress),roadDistance:world.nearest(state.x,state.z).distance,routeLength:world.length,roadWidth:world.roadHalfWidth*2,cameraGapRange:Number.isFinite(cameraGapMin)?cameraGapMax-cameraGapMin:0,bodyPitch,wingLift:car.wing.position.y-(car.wingRestHeight-.55),wingRearward:car.wing.position.z-car.wingRestZ,wingAngle:car.wing.rotation.x,tailIntensity:car.red.emissiveIntensity,fps:Math.round(averageFPS),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,camera:camera.position.toArray(),car:car.root.position.toArray()});frameCount=0;frameTime=0;cameraGapMin=Infinity;cameraGapMax=-Infinity;}}
+function animate(now:number){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.08);last=now;if(state.paused||document.hidden)return;accumulator+=dt;while(accumulator>=FIXED_STEP){motion.capture(state);step(FIXED_STEP);accumulator=Math.max(0,accumulator-FIXED_STEP);}render(dt,now/1000);frameCount++;frameTime+=dt;if(frameTime>2){averageFPS=frameCount/frameTime;canvas.dataset.telemetry=JSON.stringify({...state,district:world.district(world.nearest(state.x,state.z).progress),roadDistance:world.nearest(state.x,state.z).distance,routeLength:world.length,roadWidth:world.roadHalfWidth*2,cameraGapRange:Number.isFinite(cameraGapMin)?cameraGapMax-cameraGapMin:0,effects:{...effects.value},bodyPitch,wingLift:car.wing.position.y-(car.wingRestHeight-.55),wingRearward:car.wing.position.z-car.wingRestZ,wingAngle:car.wing.rotation.x,tailIntensity:car.red.emissiveIntensity,fps:Math.round(averageFPS),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,camera:camera.position.toArray(),car:car.root.position.toArray()});frameCount=0;frameTime=0;cameraGapMin=Infinity;cameraGapMax=-Infinity;}}
 camera.position.set(state.x-4,2.4,state.z-5);camera.lookAt(state.x,.6,state.z);requestAnimationFrame(animate);
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);});
 canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();pause();});canvas.addEventListener('webglcontextrestored',()=>location.reload());

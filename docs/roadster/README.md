@@ -26,9 +26,17 @@ Validation: `npm run build` and the four `tests/roadster-{route,physics,presenta
 
 The car, chase camera, lights and contact shadow now share a pose interpolated between the 120 Hz physics steps. The chase mount follows that position directly and smooths only its relative orientation/height, with a fixed 4.8 m stand-off. This removes the world-space camera lag and speed-based prediction that made the car appear to surge under uneven frame timing. The previous follower varied its spacing by about 1.21 m at 156 m/s in a repeatable mixed-refresh simulation.
 
-Continuous thrust/speed camera shake is removed. Body pitch and roll now ease into and out of throttle, brake and steering inputs. Braking takes visual priority when Up and Down are held together. Recovery synchronizes the interpolated pose and camera immediately, and returning from a hidden tab resets the frame clock.
+The old camera displacement is removed. Body pitch and roll ease into and out of throttle, brake and steering inputs. Braking takes visual priority when Up and Down are held together. Recovery synchronizes the interpolated pose and camera immediately, and returning from a hidden tab resets the frame clock.
 
 Validation adds `tests/roadster-motion.spec.ts`: 30, 60, 90 and 144 Hz plus uneven refresh timing, full-speed continuity, fixed camera spacing during hard braking, recovery, angle wrapping and flip completion. All 24 Roadster tests and the production build pass. Browser checks cover full boost followed by hard braking, steering, reverse, orbit transitions, reset and kickflip landing. The read-only `cameraGapRange` telemetry reports the last two-second variation in horizontal camera spacing (steering and the initial orbit transition can intentionally change it).
+
+## Driving effects
+
+Speed feedback is a separate presentation layer on top of the stable chase mount. Gentle 2.2–3.7 Hz angular buffeting replaces the old high-frequency position shake. Full-boost roll stays below 0.115 degrees and pitch below 0.035 degrees; the car's projected centre moves less than half a pixel at 1440×900 in the regression check. Offsets are rebuilt from the clean camera orientation every frame and never change its position or feed into physics.
+
+Peripheral scenery stretches progressively with speed, increasing during boost with a subtle optical colour fringe and eased four-degree field-of-view expansion. A mask follows the projected car to keep its silhouette sharp, while the central road and sky stay clear. Braking suppresses turbulence, eases away the boost blur, and adds one small, smoothly settling camera pitch/FOV response. Landing and collision feedback use a bounded pitch impulse. Recovery and orbit clear the effect state; reverse cannot trigger boost/brake presentation.
+
+`tests/roadster-effects.spec.ts` checks refresh-rate independence, gradual boost/brake transitions, subpixel buffeting with unchanged chase spacing, and effect resets. All 28 Roadster tests pass. A full-speed causeway run followed by hard braking reported zero camera spacing variation and 53–54 fps on the review machine; hardware and scenery affect performance. The read-only `effects` telemetry exposes the presentation envelopes and offsets without adding interface controls.
 
 ## Keys
 
