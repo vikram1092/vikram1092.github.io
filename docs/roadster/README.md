@@ -22,6 +22,14 @@ Place/architecture references: [Miami-Dade causeway transit map](https://www.mia
 
 Validation: `npm run build` and the four `tests/roadster-{route,physics,presentation,geometry}.spec.ts` suites. Route regression checks cover loop closure, full-boost runway, curvature transitions, steering reserve, centerline/edge projection and fine steering corrections. Browser review checks the city and causeways, sustained boost, steering, barrier scraping, recovery, braking, reverse, paint, kickflip and landing. A 19-second causeway boost reached 155.94 m/s (about 349 mph), on the centerline with no crashes, at 60 fps on the review machine. Performance varies with hardware. [Production Miami Beach review](review/miami-beach.jpg).
 
+## High-speed and braking stability
+
+The car, chase camera, lights and contact shadow now share a pose interpolated between the 120 Hz physics steps. The chase mount follows that position directly and smooths only its relative orientation/height, with a fixed 4.8 m stand-off. This removes the world-space camera lag and speed-based prediction that made the car appear to surge under uneven frame timing. The previous follower varied its spacing by about 1.21 m at 156 m/s in a repeatable mixed-refresh simulation.
+
+Continuous thrust/speed camera shake is removed. Body pitch and roll now ease into and out of throttle, brake and steering inputs. Braking takes visual priority when Up and Down are held together. Recovery synchronizes the interpolated pose and camera immediately, and returning from a hidden tab resets the frame clock.
+
+Validation adds `tests/roadster-motion.spec.ts`: 30, 60, 90 and 144 Hz plus uneven refresh timing, full-speed continuity, fixed camera spacing during hard braking, recovery, angle wrapping and flip completion. All 24 Roadster tests and the production build pass. Browser checks cover full boost followed by hard braking, steering, reverse, orbit transitions, reset and kickflip landing. The read-only `cameraGapRange` telemetry reports the last two-second variation in horizontal camera spacing (steering and the initial orbit transition can intentionally change it).
+
 ## Keys
 
 - Arrow Up: accelerate; Arrow Down: brake, then reverse.
