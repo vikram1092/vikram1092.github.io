@@ -171,7 +171,7 @@ function render(dt:number,time:number) {
   car.root.position.set(pose.x,pose.height,pose.z);car.root.rotation.y=pose.heading;
   car.body.rotation.set(0,0,0);car.body.position.y=.55-Math.sin(shock*Math.PI)*.035;
   const presentation=vehiclePresentation(inspect?Number(review.get('speed')??pose.speed):pose.speed,(inspect&&review.has('brake'))||keys.has('ArrowDown')&&driving);
-  const fx=effects.update({driving,speed:pose.speed,boost:throttle&&state.boost,braking:presentation.braking,shock},dt);
+  const fx=effects.update({driving,speed:pose.speed,throttle,boost:throttle&&state.boost,braking:presentation.braking,shock},dt);
   const pitch=throttle?-.018:presentation.braking?.027:0;
   bodyPitch=damp(bodyPitch,pitch,9,dt);bodyRoll=damp(bodyRoll,-pose.steer*Math.min(Math.abs(pose.speed)*.001,.045),9,dt);
   car.body.rotation.x=bodyPitch;car.body.rotation.z=bodyRoll;
@@ -214,7 +214,7 @@ function render(dt:number,time:number) {
   if(inspect&&!driving){const views:Record<string,number[]>={front:[0,1.7,-18],side:[7,.64,0],rear:[0,.73,7],detail:[0,.60,4.8],hero:[-4.7,2.1,-6.3],back:[-4.7,2.1,6.3],reference:[-8,1.85,-15],profile:[-15,.64,0],aft:[0,2.0,5.6],rearref:[0,2.6,8.0],top:[0,8,.01]};const view=views[inspect]||views.hero;camera.position.set(view[0],view[1],view[2]);target.set(0,.55,0);camera.fov=inspect==='reference'?10.5:inspect==='front'?9:inspect==='aft'?32:inspect==='rearref'?22:inspect==='top'?34:inspect==='profile'?12:inspect==='back'?28:35;}
   if(inspect==='glass'&&!driving){camera.position.set(-4.5,2,-6);target.set(0,.88,-.15);camera.fov=11;}
   camera.lookAt(target);
-  camera.rotateX(fx.pitch);camera.rotateZ(fx.roll);camera.updateProjectionMatrix();camera.updateMatrixWorld();
+  camera.rotateX(fx.pitch);camera.rotateY(fx.yaw);camera.rotateZ(fx.roll);camera.updateProjectionMatrix();camera.updateMatrixWorld();
   worldPoint.set(pose.x,pose.height+.65,pose.z).project(camera);
   speedFX.uniforms.carUv.value.set(worldPoint.x*.5+.5,worldPoint.y*.5+.5);
   speedFX.uniforms.aspect.value=camera.aspect;
