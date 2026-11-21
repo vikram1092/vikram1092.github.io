@@ -13,3 +13,12 @@ export function integrateSpeed(speed:number, throttle:boolean, brake:boolean, bo
   if(throttle) return Math.max(0,speed+acceleration(Math.max(0,speed),boost)*dt);
   return Math.sign(speed)*Math.max(0,Math.abs(speed)-(2.4+Math.abs(speed)*.016)*dt);
 }
+
+// Speed-sensitive arcade steering. Even at 156 m/s the tightest bay corner
+// leaves useful steering reserve; small inputs no longer immediately hit a yaw cap.
+export function steeringYaw(speed:number,steer:number) {
+  const v=Math.abs(speed);
+  const lowSpeedYaw=speed/2.725*Math.tan(steer*.48/(1+v*.026));
+  const limit=(20+v*.16)/Math.max(8,v);
+  return Math.max(-limit,Math.min(limit,lowSpeedYaw))*Math.min(1,Math.abs(steer)*1.7);
+}

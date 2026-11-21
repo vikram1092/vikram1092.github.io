@@ -1,8 +1,26 @@
-# Roadster / Night Run
+# Roadster / Miami Nights
 
 Standalone desktop WebGL2 game at `/roadster/`. The visible page contains the rendered world, a small mph readout, and six unlabeled paint swatches at the lower left. No menu, instruction overlay, loading copy, popups, or panels.
 
 The car starts in pearl white. Click a swatch to change paint; the selected swatch has a thin ring. The camera starts in an automatic orbit. Up immediately engages thrust and moves the camera behind the car. Mouse dragging and the scroll wheel also control the parked orbit view.
+
+
+## Miami bay circuit
+
+The current world is a stylized, driving-scale interpretation of Miami and Miami Beach around Biscayne Bay. Its connected loop follows the idea of Alton Road / Miami Beach → Venetian Causeway → Biscayne Boulevard / Downtown → MacArthur Causeway → South Beach. Geography, street widths and landmark placement are adapted for play; this is not a street-accurate reconstruction. The Art Deco hotel frontage is brought alongside the bay route so it can be experienced while driving.
+
+- **15.2 km circuit**, including two uninterrupted 3.2 km causeway straights and two 1.6 km city straights (the starting line splits one of these).
+- **36 m driving surface**, six lanes, broad shoulders, sidewalks, bridge parapets, road markings, reflective chevrons and overhead direction signs. All driving lanes are clear; the previous ramp/block pairs are removed. Rocket jumps and flips remain available anywhere.
+- **About 731 m minimum turn radius**, with 252 m eased entries/exits. Corner curvature is within the steering envelope at the game's 156 m/s boost ceiling, with more than 20% yaw reserve. This is arcade tuning, not a road-safety or real-vehicle performance claim.
+- Smoother, speed-sensitive steering; glancing barrier contacts reduce speed and align the car along the road instead of reversing it. Landing in the bay recovers to the nearest road. R continues to recover manually.
+- Animated bay water, Venetian islands and villas, palms with individual leaflets, marinas and tapered yacht hulls, pastel Art Deco hotels with neon fins, window canopies and sidewalk cafes, beachfront, a dense downtown skyline, a Freedom Tower-inspired silhouette, a Bayside observation wheel, and PortMiami cranes, containers and a cruise ship.
+- In-world place names provide orientation. The visible interface remains the car, speed and paint swatches. There are no external asset requests.
+
+Scenery is batched by material and spatial cell, with distant street detail culled separately from skyline towers. Water uses a procedural shader; the road retains its actual planar reflection. Development-only `?driveAt=9900` places the car on the MacArthur straight; `?driveAt=2500` reviews Venetian Causeway. Values are circuit distance in meters. These parameters have no effect in production.
+
+Place/architecture references: [Miami-Dade causeway transit map](https://www.miamidade.gov/resources/transportation_publicworks/existing-area-map-miami-beach.pdf), [City of Miami Beach Art Deco architecture](https://www.miamibeachfl.gov/architecture/art-deco/), and [Greater Miami's Art Deco guide](https://www.miamiandbeaches.com/things-to-do/history-and-heritage/art-deco-historic-district). These informed the setting; no reference images or third-party city models are shipped.
+
+Validation: `npm run build` and the four `tests/roadster-{route,physics,presentation,geometry}.spec.ts` suites. Route regression checks cover loop closure, full-boost runway, curvature transitions, steering reserve, centerline/edge projection and fine steering corrections. Browser review checks the city and causeways, sustained boost, steering, barrier scraping, recovery, braking, reverse, paint, kickflip and landing. A 19-second causeway boost reached 155.94 m/s (about 349 mph), on the centerline with no crashes, at 60 fps on the review machine. Performance varies with hardware. [Production Miami Beach review](review/miami-beach.jpg).
 
 ## Keys
 

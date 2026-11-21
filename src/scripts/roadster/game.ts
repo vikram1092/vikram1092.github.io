@@ -10,7 +10,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { createCar, box } from './car';
 import { createWorld } from './world';
 import { DEFAULT_FINISH, finishes } from './finishes';
-import { FIXED_STEP, SIXTY_MPH, integrateSpeed } from './physics';
+import { FIXED_STEP, SIXTY_MPH, integrateSpeed, steeringYaw } from './physics';
 
 const canvas=document.querySelector<HTMLCanvasElement>('#roadster')!;
 const speedText=document.querySelector<HTMLElement>('#velocity')!;
@@ -27,8 +27,8 @@ renderer.transmissionResolutionScale=.5;
 renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.16;
 renderer.info.autoReset=false;
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;
-const scene=new T.Scene();scene.background=new T.Color(0x050913);scene.fog=new T.FogExp2(0x070d1b,.0038);
-const camera=new T.PerspectiveCamera(42,innerWidth/innerHeight,.08,1800);
+const scene=new T.Scene();scene.background=new T.Color(0x0b1429);scene.fog=new T.FogExp2(0x17243c,.00024);
+const camera=new T.PerspectiveCamera(42,innerWidth/innerHeight,.08,24000);
 const environment=new T.Scene();environment.background=new T.Color(0x111722);
 const softbox=new T.MeshBasicMaterial({color:new T.Color(2.2,2.3,2.5)});
 box(environment,[16,.1,10],[0,10,0],new T.MeshBasicMaterial({color:new T.Color(.38,.42,.48)}));
@@ -36,7 +36,7 @@ box(environment,[12,.1,1.5],[-1,6,-2],softbox);box(environment,[.1,1.3,12],[-7,2
 box(environment,[.1,1,10],[7,3,1],new T.MeshBasicMaterial({color:new T.Color(.8,.6,1.2)}));
 box(environment,[7,.65,.1],[0,3,-8],softbox);box(environment,[7,.45,.1],[0,2,7],softbox);
 const pmrem=new T.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(environment,.01).texture;pmrem.dispose();
-scene.add(new T.HemisphereLight(0xa1c5ed,0x080511,.92));
+scene.add(new T.HemisphereLight(0x9cbde9,0x22182a,1.05));
 const keyLight=new T.DirectionalLight(0xd9e4ff,2.65);keyLight.position.set(-3,7,-3);keyLight.castShadow=true;keyLight.shadow.mapSize.set(2048,2048);keyLight.shadow.camera.left=-6;keyLight.shadow.camera.right=6;keyLight.shadow.camera.top=6;keyLight.shadow.camera.bottom=-6;keyLight.shadow.camera.near=.1;keyLight.shadow.camera.far=25;keyLight.shadow.radius=2.5;keyLight.shadow.normalBias=.006;keyLight.shadow.bias=-.0001;scene.add(keyLight,keyLight.target);
 RectAreaLightUniformsLib.init();
 const rim=new T.RectAreaLight(0xb8a4ed,2.8,6,2.5),fill=new T.RectAreaLight(0xc7e7ff,3.6,7,3);scene.add(rim,fill);
@@ -92,6 +92,7 @@ function reset(full=true) {
   if(full){state.mode='orbit';document.body.dataset.driving='false';orbitAngle=-.66;cameraBlend=0;}
 }
 reset();
+if(review.has('driveAt')){const progress=Number(review.get('driveAt'))/world.length;if(Number.isFinite(progress)){const p=world.route.getPointAt(progress),t=world.route.getTangentAt(progress);state.x=p.x;state.z=p.z;state.heading=Math.atan2(-t.x,-t.z);orbitAngle=state.heading-.66;}}
 const paintButtons=[...document.querySelectorAll<HTMLButtonElement>('#paint-selector button')];
 function selectFinish(index:number){
   if(!Number.isInteger(index)||!finishes[index])return;
@@ -123,9 +124,8 @@ function step(dt:number) {
   state.speed=integrateSpeed(state.speed,throttle,brake,state.boost,dt);
   if(throttle&&state.speed>=SIXTY_MPH&&state.zeroToSixty===0)state.zeroToSixty=state.launchTime;
   const steering=(keys.has('ArrowLeft')?1:0)-(keys.has('ArrowRight')?1:0);
-  state.steer=lerp(state.steer,steering,1-Math.exp(-dt*12));
-  const angle=state.steer*.48/(1+Math.abs(state.speed)*.026);
-  const yaw=clamp(state.speed/2.725*Math.tan(angle),-(40+Math.abs(state.speed)*.2)/Math.max(8,Math.abs(state.speed)),(40+Math.abs(state.speed)*.2)/Math.max(8,Math.abs(state.speed)));
+  state.steer=lerp(state.steer,steering,1-Math.exp(-dt*(Math.abs(state.speed)>60?7:12)));
+  const yaw=steeringYaw(state.speed,state.steer);
   state.heading+=yaw*dt*(state.height>.3?.65:1);
   const oldX=state.x,oldZ=state.z;
   state.x-=Math.sin(state.heading)*state.speed*dt;state.z-=Math.cos(state.heading)*state.speed*dt;state.distance+=Math.abs(state.speed)*dt;
@@ -138,20 +138,26 @@ function step(dt:number) {
   }
   if(state.flip>0){state.flip+=dt/state.flipDuration;if(state.flip>=1){state.flip=0;state.tricks++;}else if(state.height<.7){state.height=.7;state.verticalSpeed=Math.max(state.verticalSpeed,2);}}
   const near=world.nearest(state.x,state.z);
-  if(near.distance>11.1&&near.distance<15&&state.height<.55){const n=new T.Vector3(-near.tangent.z,0,near.tangent.x);const side=Math.sign(near.side);state.x=near.point.x+n.x*side*11.05;state.z=near.point.z+n.z*side*11.05;collision(Math.abs(state.speed)/65);}
-  if(near.distance>15&&state.height<.1)state.speed*=1-dt*.65;
-  for(const ob of world.obstacles) {
-    const dx=state.x-ob.position.x,dz=state.z-ob.position.z;if(Math.abs(dx)>15||Math.abs(dz)>15)continue;
-    const x=dx*Math.cos(ob.angle)-dz*Math.sin(ob.angle),z=dx*Math.sin(ob.angle)+dz*Math.cos(ob.angle);
-    if(Math.abs(x)<ob.width/2+.75&&Math.abs(z)<ob.depth/2+1.5) {
-      if(ob.kind==='ramp'&&state.height<ob.height+.05&&state.speed>0){const rampY=clamp((5-z)/10,0,1)*ob.height;if(state.height<rampY){state.height=rampY;state.verticalSpeed=Math.max(3,state.speed*.17);jumpPulse=.15;}}
-      else if(ob.kind==='block'&&state.height<ob.height){state.x=oldX;state.z=oldZ;collision(Math.abs(state.speed)/50);}
-    }
+  const safeEdge=world.roadHalfWidth-1.1;
+  if(near.distance>safeEdge&&near.distance<world.roadHalfWidth+6&&state.height<1.05){
+    const side=Math.sign(near.side),n=new T.Vector3(-near.tangent.z,0,near.tangent.x);
+    state.x=near.point.x+n.x*side*safeEdge;state.z=near.point.z+n.z*side*safeEdge;
+    // A glancing barrier scrape sheds speed and aligns the car with the road.
+    // Retain forward motion instead of bouncing into reverse at 300 mph.
+    const roadHeading=Math.atan2(-near.tangent.x,-near.tangent.z);
+    const difference=Math.atan2(Math.sin(state.heading-roadHeading),Math.cos(state.heading-roadHeading));
+    if(Math.abs(difference)<Math.PI/2){state.heading-=difference*Math.min(1,dt*9);state.speed*=Math.exp(-dt*1.7);shock=Math.max(shock,.15);}
+    else collision(Math.abs(state.speed)/65);
   }
-  if(near.distance>24)for(const b of world.buildings)if(Math.abs(state.x-b.x)<b.w/2+1&&Math.abs(state.z-b.z)<b.d/2+2&&state.height<b.h){state.x=oldX;state.z=oldZ;collision(.8);break;}
+  if(near.distance>world.roadHalfWidth+6&&state.height<.1){
+    if(!world.onLand(state.x,state.z)){reset(false);return;}
+    state.speed*=Math.exp(-dt*.65);
+  }
+  if(near.distance>world.roadHalfWidth+6)for(const b of world.buildings)if(Math.abs(state.x-b.x)<b.w/2+1&&Math.abs(state.z-b.z)<b.d/2+2&&state.height<b.h){state.x=oldX;state.z=oldZ;collision(.8);break;}
   if(near.distance>180)reset(false);
 }
 function render(dt:number,time:number) {
+  if(!inspect)world.update(time,state.x,state.z);
   const driving=state.mode==='drive',throttle=keys.has('ArrowUp')&&driving;
   const thrust=throttle&&(Math.abs(state.speed)<30||state.boost),lifting=jumpPulse>0;
   car.root.position.set(state.x,state.height,state.z);car.root.rotation.y=state.heading;
@@ -208,9 +214,9 @@ function render(dt:number,time:number) {
   roadReflectionPending=true;renderer.info.reset();composer.render();
 }
 let last=performance.now(),accumulator=0;
-function animate(now:number){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.08);last=now;if(state.paused||document.hidden)return;accumulator+=dt;while(accumulator>=FIXED_STEP){step(FIXED_STEP);accumulator-=FIXED_STEP;}render(dt,now/1000);frameCount++;frameTime+=dt;if(frameTime>2){averageFPS=frameCount/frameTime;canvas.dataset.telemetry=JSON.stringify({...state,wingLift:car.wing.position.y-(car.wingRestHeight-.55),wingRearward:car.wing.position.z-car.wingRestZ,wingAngle:car.wing.rotation.x,tailIntensity:car.red.emissiveIntensity,fps:Math.round(averageFPS),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,camera:camera.position.toArray(),car:car.root.position.toArray()});frameCount=0;frameTime=0;}}
-camera.position.set(-4,2.4,-5);camera.lookAt(0,.6,0);requestAnimationFrame(animate);
+function animate(now:number){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.08);last=now;if(state.paused||document.hidden)return;accumulator+=dt;while(accumulator>=FIXED_STEP){step(FIXED_STEP);accumulator-=FIXED_STEP;}render(dt,now/1000);frameCount++;frameTime+=dt;if(frameTime>2){averageFPS=frameCount/frameTime;canvas.dataset.telemetry=JSON.stringify({...state,district:world.district(world.nearest(state.x,state.z).progress),roadDistance:world.nearest(state.x,state.z).distance,routeLength:world.length,roadWidth:world.roadHalfWidth*2,wingLift:car.wing.position.y-(car.wingRestHeight-.55),wingRearward:car.wing.position.z-car.wingRestZ,wingAngle:car.wing.rotation.x,tailIntensity:car.red.emissiveIntensity,fps:Math.round(averageFPS),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,camera:camera.position.toArray(),car:car.root.position.toArray()});frameCount=0;frameTime=0;}}
+camera.position.set(state.x-4,2.4,state.z-5);camera.lookAt(state.x,.6,state.z);requestAnimationFrame(animate);
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);});
 canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();pause();});canvas.addEventListener('webglcontextrestored',()=>location.reload());
 // Read-only telemetry enables browser checks without adding any on-screen interface.
-Object.defineProperty(window,'__roadster',{value:{snapshot:()=>({...state,fps:averageFPS,camera:camera.position.toArray(),car:car.root.position.toArray(),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,ready:true}),route:()=>world.samples.map(p=>[p.x,p.z])},configurable:true});
+Object.defineProperty(window,'__roadster',{value:{snapshot:()=>({...state,district:world.district(world.nearest(state.x,state.z).progress),roadDistance:world.nearest(state.x,state.z).distance,routeLength:world.length,roadWidth:world.roadHalfWidth*2,fps:averageFPS,camera:camera.position.toArray(),car:car.root.position.toArray(),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,ready:true}),route:()=>world.samples.map(p=>[p.x,p.z])},configurable:true});
