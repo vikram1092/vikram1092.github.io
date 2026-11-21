@@ -6,7 +6,7 @@ import { DEFAULT_FINISH, finishes } from '../../scripts/roadster/finishes';
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="A high-speed Roadster night drive through Miami, Miami Beach and the Biscayne Bay causeways." />
     <meta name="theme-color" content="#050810" />
     <title>Roadster · Miami Nights</title>
@@ -18,6 +18,12 @@ import { DEFAULT_FINISH, finishes } from '../../scripts/roadster/finishes';
       {finishes.map((finish, index) => <button type="button" data-finish={index} aria-label={finish.name} aria-pressed={index === DEFAULT_FINISH} style={`--swatch:${finish.swatch}`}><span aria-hidden="true"></span></button>)}
     </div>
     <div id="speed" aria-label="Speed in miles per hour"><span id="velocity">0</span><small>mph</small></div>
+    <button id="brake" type="button" aria-label="Brake (hold to stop)" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <circle cx="12" cy="12" r="6" />
+        <path d="M4.5 5.5a10 10 0 0 0 0 13m15-13a10 10 0 0 1 0 13M10.5 9v6m3-6v6" stroke-linecap="round" />
+      </svg>
+    </button>
     <script>import '../../scripts/roadster/game';</script>
   </body>
 </html>
@@ -31,4 +37,15 @@ import { DEFAULT_FINISH, finishes } from '../../scripts/roadster/finishes';
   #paint-selector button:hover span{transform:scale(1.12)}
   #paint-selector button[aria-pressed="true"] span{outline-color:#dce7f5c4}
   #paint-selector button:focus-visible{outline:1px solid #dce7f5}
+  #brake{display:none;position:fixed;left:calc(18px + env(safe-area-inset-left,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));width:48px;height:48px;place-items:center;padding:10px;border:1px solid #dce7f54d;border-radius:50%;background:#080e1dc2;color:#dfe8f6;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+  #brake svg{width:26px;height:26px;pointer-events:none}
+  #brake[aria-pressed="true"]{background:#dfe8f6;color:#080e1d;border-color:#dfe8f6}
+  #brake:focus-visible{outline:2px solid #dce7f5;outline-offset:4px}
+  body[data-touch-controls="true"]{height:100dvh}
+  body[data-touch-controls="true"] #roadster{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  body[data-touch-controls="true"] #brake{display:grid}
+  body[data-touch-controls="true"] #paint-selector{display:none}
+  body[data-touch-controls="true"] #speed{right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+  body[data-touch-controls="true"] #velocity{font-size:32px}
+  @media (pointer:coarse){#roadster{touch-action:none}}
 </style>

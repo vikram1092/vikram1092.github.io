@@ -13,6 +13,7 @@ import { createCar, box } from './car';
 import { createWorld } from './world';
 import { DEFAULT_FINISH, finishes } from './finishes';
 import { FIXED_STEP, SIXTY_MPH, integrateSpeed, steeringYaw } from './physics';
+import { TouchControls } from './touch-controls';
 
 const canvas=document.querySelector<HTMLCanvasElement>('#roadster')!;
 const speedText=document.querySelector<HTMLElement>('#velocity')!;
@@ -89,7 +90,7 @@ let audio:AudioContext|null=null,motor:OscillatorNode|null=null,motorGain:GainNo
 function startAudio(){if(audio){void audio.resume();return;}try {audio=new AudioContext();master=audio.createGain();master.gain.value=.27;master.connect(audio.destination);motor=audio.createOscillator();motor.type='sawtooth';motorGain=audio.createGain();motorGain.gain.value=0;const filter=audio.createBiquadFilter();filter.type='lowpass';filter.frequency.value=550;motor.connect(filter);filter.connect(motorGain);motorGain.connect(master);motor.start();const buffer=audio.createBuffer(1,audio.sampleRate*2,audio.sampleRate);const data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;const noise=audio.createBufferSource();noise.buffer=buffer;noise.loop=true;const wind=audio.createBiquadFilter();wind.type='lowpass';wind.frequency.value=450;windGain=audio.createGain();windGain.gain.value=0;noise.connect(wind);wind.connect(windGain);windGain.connect(master);const jet=audio.createBiquadFilter();jet.type='bandpass';jet.frequency.value=1200;jet.Q.value=.4;jetGain=audio.createGain();jetGain.gain.value=0;noise.connect(jet);jet.connect(jetGain);jetGain.connect(master);noise.start();}catch{/* Audio remains optional. */}}
 let orbitAngle=-.66,orbitElevation=.16,orbitRadius=6.4,drag=false,lastX=0,lastY=0,manualOrbit=0,shock=0,collisionCooldown=0,jumpPulse=0,frameCount=0,frameTime=0,averageFPS=60;
 const target=new T.Vector3(),desired=new T.Vector3();
-function startDrive(){if(state.mode!=='drive'){state.mode='drive';document.body.dataset.driving='true';chase.enter(camera.position,motion.value);}startAudio();}
+function startDrive(withAudio=true){if(state.mode!=='drive'){state.mode='drive';document.body.dataset.driving='true';chase.enter(camera.position,motion.value);}if(withAudio)startAudio();}
 function reset(full=true) {
   const near=world.nearest(state.x,state.z);const p=full?world.route.getPointAt(0):near.point,t=full?world.route.getTangentAt(0):near.tangent;
   state.x=p.x;state.z=p.z;state.heading=Math.atan2(-t.x,-t.z);state.speed=0;state.height=0;state.verticalSpeed=0;state.flip=0;state.steer=0;shock=0;jumpPulse=0;
@@ -112,12 +113,15 @@ motion.snap(state);
 function swatchActivation(event:KeyboardEvent){return (event.code==='Space'||event.code==='Enter')&&event.target instanceof HTMLElement&&!!event.target.closest('#paint-selector');}
 function jump(){startDrive();if(state.height<.15){state.verticalSpeed=13.5;state.height=.03;}else state.verticalSpeed=Math.max(state.verticalSpeed,10);jumpPulse=.55;}
 function trick(axis:string,direction:number){startDrive();if(state.flip>0)return;if(state.height<1)jump();else if(state.verticalSpeed<4)state.verticalSpeed=9;state.flip=.0001;state.flipAxis=axis;state.flipDirection=direction;jumpPulse=.8;}
+const touch=new TouchControls(canvas,document.querySelector<HTMLButtonElement>('#brake')!,()=>startDrive(),()=>trick('z',-1));
+const braking=()=>keys.has('ArrowDown')||touch.braking;
+const accelerating=()=>(keys.has('ArrowUp')||touch.enabled)&&!braking();
 const controlKeys=['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','ShiftLeft','ShiftRight','KeyF','KeyQ','KeyE','KeyX','KeyR','KeyC','KeyM','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6'];
 window.addEventListener('keydown',event=>{if(swatchActivation(event)||!controlKeys.includes(event.code))return;event.preventDefault();keys.add(event.code);if(event.code==='ArrowUp'||event.code==='ArrowDown')startDrive();if(event.repeat)return;if(event.code==='Space')jump();if(event.code==='KeyF'||event.code==='KeyE')trick('z',-1);if(event.code==='KeyQ')trick('z',1);if(event.code==='KeyX')trick('x',-1);if(event.code==='KeyR')reset(false);if(event.code==='KeyC'){state.mode='orbit';state.speed=0;state.height=0;state.verticalSpeed=0;state.flip=0;motion.snap(state);accumulator=0;orbitAngle=state.heading-.66;document.body.dataset.driving='false';}if(event.code==='KeyM'){muted=!muted;if(master)master.gain.setTargetAtTime(muted?0:.27,audio!.currentTime,.1);}if(event.code.startsWith('Digit'))selectFinish(Number(event.code.slice(-1))-1);});
 window.addEventListener('keyup',event=>{keys.delete(event.code);if(swatchActivation(event))return;if(controlKeys.includes(event.code))event.preventDefault();});
-function pause(){keys.clear();state.paused=true;if(audio)void audio.suspend();}
+function pause(){keys.clear();touch.clear();drag=false;state.boost=false;state.paused=true;if(audio)void audio.suspend();}
 window.addEventListener('blur',pause);window.addEventListener('focus',()=>{last=performance.now();state.paused=false;});document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();else{last=performance.now();state.paused=false;}});
-canvas.addEventListener('pointerdown',event=>{if(state.mode!=='orbit')return;drag=true;lastX=event.clientX;lastY=event.clientY;canvas.setPointerCapture(event.pointerId);});
+canvas.addEventListener('pointerdown',event=>{if(event.pointerType==='touch'||state.mode!=='orbit')return;drag=true;lastX=event.clientX;lastY=event.clientY;canvas.setPointerCapture(event.pointerId);});
 canvas.addEventListener('pointermove',event=>{if(!drag)return;orbitAngle-=(event.clientX-lastX)*.006;orbitElevation=clamp(orbitElevation+(event.clientY-lastY)*.004,.06,1.15);lastX=event.clientX;lastY=event.clientY;manualOrbit=3;});
 canvas.addEventListener('pointerup',()=>{drag=false;});canvas.addEventListener('wheel',event=>{event.preventDefault();orbitRadius=clamp(orbitRadius+event.deltaY*.003,3.5,12);},{passive:false});
 const worldPoint=new T.Vector3(),jetDirection=new T.Vector3(),wingAttachment=new T.Vector3(),strutDirection=new T.Vector3(),upAxis=new T.Vector3(0,1,0);
@@ -125,12 +129,13 @@ function collision(strength:number){if(collisionCooldown>0)return;state.crashes+
 function step(dt:number) {
   collisionCooldown=Math.max(0,collisionCooldown-dt);jumpPulse=Math.max(0,jumpPulse-dt);
   if(state.mode!=='drive')return;
-  const throttle=keys.has('ArrowUp'),brake=keys.has('ArrowDown');state.boost=keys.has('ShiftLeft')||keys.has('ShiftRight');
+  const throttle=accelerating(),brake=braking();state.boost=keys.has('ShiftLeft')||keys.has('ShiftRight')||touch.boosting;
   if(throttle&&state.speed===0){state.launchTime=0;state.zeroToSixty=0;}
   if(throttle&&state.speed<SIXTY_MPH)state.launchTime+=dt;
   state.speed=integrateSpeed(state.speed,throttle,brake,state.boost,dt);
+  if(touch.braking)state.speed=Math.max(0,state.speed);
   if(throttle&&state.speed>=SIXTY_MPH&&state.zeroToSixty===0)state.zeroToSixty=state.launchTime;
-  const steering=(keys.has('ArrowLeft')?1:0)-(keys.has('ArrowRight')?1:0);
+  const steering=clamp((keys.has('ArrowLeft')?1:0)-(keys.has('ArrowRight')?1:0)+touch.steering,-1,1);
   state.steer=lerp(state.steer,steering,1-Math.exp(-dt*(Math.abs(state.speed)>60?7:12)));
   const yaw=steeringYaw(state.speed,state.steer);
   state.heading+=yaw*dt*(state.height>.3?.65:1);
@@ -166,11 +171,11 @@ function step(dt:number) {
 function render(dt:number,time:number) {
   const pose=motion.sample(state,accumulator/FIXED_STEP);
   if(!inspect)world.update(time,pose.x,pose.z);
-  const driving=state.mode==='drive',throttle=keys.has('ArrowUp')&&!keys.has('ArrowDown')&&driving;
+  const driving=state.mode==='drive',throttle=accelerating()&&driving;
   const thrust=throttle&&(Math.abs(pose.speed)<30||state.boost),lifting=jumpPulse>0;
   car.root.position.set(pose.x,pose.height,pose.z);car.root.rotation.y=pose.heading;
   car.body.rotation.set(0,0,0);car.body.position.y=.55-Math.sin(shock*Math.PI)*.035;
-  const presentation=vehiclePresentation(inspect?Number(review.get('speed')??pose.speed):pose.speed,(inspect&&review.has('brake'))||keys.has('ArrowDown')&&driving);
+  const presentation=vehiclePresentation(inspect?Number(review.get('speed')??pose.speed):pose.speed,(inspect&&review.has('brake'))||braking()&&driving);
   const fx=effects.update({driving,speed:pose.speed,throttle,boost:throttle&&state.boost,braking:presentation.braking,shock},dt);
   const pitch=throttle?-.018:presentation.braking?.027:0;
   bodyPitch=damp(bodyPitch,pitch,9,dt);bodyRoll=damp(bodyRoll,-pose.steer*Math.min(Math.abs(pose.speed)*.001,.045),9,dt);
@@ -207,7 +212,12 @@ function render(dt:number,time:number) {
   else {
     const v=Math.abs(pose.speed);
     chase.update(pose,dt);camera.position.copy(chase.position);target.copy(chase.target);
-    camera.fov=damp(camera.fov,58+Math.min(v*.16,22)+fx.fov,7,dt);
+    const driveFov=58+Math.min(v*.16,22)+fx.fov;
+    // Preserve enough horizontal view on a portrait phone to fit the car.
+    // The chase mount and desktop/landscape perspective stay unchanged.
+    const portraitScale=touch.enabled?Math.max(1,.9/camera.aspect):1;
+    const framedFov=T.MathUtils.radToDeg(2*Math.atan(Math.tan(T.MathUtils.degToRad(driveFov)/2)*portraitScale));
+    camera.fov=damp(camera.fov,framedFov,7,dt);
     const gap=Math.hypot(camera.position.x-pose.x,camera.position.z-pose.z);
     cameraGapMin=Math.min(cameraGapMin,gap);cameraGapMax=Math.max(cameraGapMax,gap);
   }
@@ -227,6 +237,7 @@ function render(dt:number,time:number) {
 let last=performance.now();
 function animate(now:number){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.08);last=now;if(state.paused||document.hidden)return;accumulator+=dt;while(accumulator>=FIXED_STEP){motion.capture(state);step(FIXED_STEP);accumulator=Math.max(0,accumulator-FIXED_STEP);}render(dt,now/1000);frameCount++;frameTime+=dt;if(frameTime>2){averageFPS=frameCount/frameTime;canvas.dataset.telemetry=JSON.stringify({...state,district:world.district(world.nearest(state.x,state.z).progress),roadDistance:world.nearest(state.x,state.z).distance,routeLength:world.length,roadWidth:world.roadHalfWidth*2,cameraGapRange:Number.isFinite(cameraGapMin)?cameraGapMax-cameraGapMin:0,effects:{...effects.value},bodyPitch,wingLift:car.wing.position.y-(car.wingRestHeight-.55),wingRearward:car.wing.position.z-car.wingRestZ,wingAngle:car.wing.rotation.x,tailIntensity:car.red.emissiveIntensity,fps:Math.round(averageFPS),calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,camera:camera.position.toArray(),car:car.root.position.toArray()});frameCount=0;frameTime=0;cameraGapMin=Infinity;cameraGapMax=-Infinity;}}
 camera.position.set(state.x-4,2.4,state.z-5);camera.lookAt(state.x,.6,state.z);requestAnimationFrame(animate);
+if(touch.enabled&&!inspect)startDrive(false);
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);});
 canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();pause();});canvas.addEventListener('webglcontextrestored',()=>location.reload());
 // Read-only telemetry enables browser checks without adding any on-screen interface.
